@@ -18,7 +18,7 @@ import time
 import httpx
 import psutil
 
-MODULE = '''from biopipe_sdk import Step
+MODULE = '''from operon_sdk import Step
 class ReleaseRefresh(Step):
     name = "release.hot_refresh"
     title = "Release refresh check"
@@ -58,9 +58,9 @@ def main():
     profile.mkdir()
     temporary.mkdir()
     environment = {k: v for k, v in os.environ.items()
-                   if k not in ("BIOPIPE_BACKEND_ROOT", "PYTHONPATH", "PYTHONHOME")}
-    environment.update(BIOPIPE_PYTHON=sys.executable,
-                       BIOPIPE_RUNTIME_CONFIG=str(output / "runtime.json"),
+                   if k not in ("OPERON_BACKEND_ROOT", "PYTHONPATH", "PYTHONHOME")}
+    environment.update(OPERON_PYTHON=sys.executable,
+                       OPERON_RUNTIME_CONFIG=str(output / "runtime.json"),
                        PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1",
                        TEMP=str(temporary), TMP=str(temporary),
                        DOTNET_BUNDLE_EXTRACT_BASE_DIR=str(temporary / "bundle"))

@@ -1,6 +1,6 @@
 # Registry maintenance
 
-BioPipe loads checked-in JSON indexes at startup. It does not repeatedly scan
+Operon loads checked-in JSON indexes at startup. It does not repeatedly scan
 source folders or fetch GitHub while the user edits a canvas. Maintainers use one
 explicit discover/check/build workflow; plugin wheel installation remains a
 separate, hot-install operation. For **live operator library updates**, the
@@ -13,13 +13,13 @@ below maintain the repository indexes and are not required for local hot refresh
 Run these commands from a source checkout with its Python environment installed:
 
 ```bash
-python -m biopipe registry discover
-python -m biopipe registry check
-python -m biopipe registry build
-python -m biopipe registry check
+python -m operon registry discover
+python -m operon registry check
+python -m operon registry build
+python -m operon registry check
 ```
 
-`biopipe registry ...` is equivalent when the CLI is on PATH. No running Studio,
+`operon registry ...` is equivalent when the CLI is on PATH. No running Studio,
 desktop host, datasets, profile migration or fixed machine path is required.
 
 ## What each action does
@@ -44,9 +44,9 @@ missing or stale entry point does not prevent source repair.
 
 ```bash
 # Preview generated artifacts outside the source indexes:
-python -m biopipe registry build --output-dir .tmp/registry-preview
+python -m operon registry build --output-dir .tmp/registry-preview
 # Discover additional route roots (repeat the option to combine roots):
-python -m biopipe registry check --route-root routes --route-root extra_routes
+python -m operon registry check --route-root routes --route-root extra_routes
 # Compatibility commands; use the unified build for complete validation:
 python scripts/build_builtin_packages.py --refresh
 python scripts/build_builtin_routes.py
@@ -78,8 +78,8 @@ the biological meaning of data, implement a streaming kernel, or make an
 unbounded calculation fit a memory budget.
 
 Existing package ownership is retained. Unassigned new Steps enter
-`biopipe-core`; new Readers enter `biopipe-readers`. An extension can declare
-`provider = "biopipe-microbiome"` to create/use a separate installation
+`operon-core`; new Readers enter `operon-readers`. An extension can declare
+`provider = "operon-microbiome"` to create/use a separate installation
 unit. New provider metadata starts at version `1.0.0`; review its title/version
 in the package manifest before distribution. Moving an already-owned ID into a
 different provider is rejected to protect version locks.
@@ -119,7 +119,7 @@ generated graph changes. Source hashes use normalized text, so LF/CRLF checkouts
 produce the same result. Input paths must be relative; research data is not read
 or embedded. The generated files are:
 
-- `library/seed/biopipe/builtin_packages.json`: all Python providers and descriptors.
+- `library/seed/operon/builtin_packages.json`: all Python providers and descriptors.
 - `library/seed/src/web/builtin_routes.json`: reusable graph snapshots and source provenance.
 
 Deleting a local route definition removes it from the next shipped bundle. It
@@ -132,7 +132,7 @@ and wheel-replaced providers retain their state.
 
 ```bash
 git fetch origin main
-python -m biopipe registry discover --source-ref origin/main
+python -m operon registry discover --source-ref origin/main
 ```
 
 This compares local indexed IDs with Step/Reader classes and `tasks/**/task.yaml`
@@ -145,7 +145,7 @@ limited to `discover`.
 
 ## CI and verification
 
-Use `python -m biopipe registry check` as a required CI command after installing
+Use `python -m operon registry check` as a required CI command after installing
 the project. `tests/test_registry_maintenance.py` exercises actual CLI processes
 in isolated checkouts: newly added modules/routes, duplicate IDs, missing schemas,
 unknown operators, import failures, idempotence, custom roots and profile upgrades.

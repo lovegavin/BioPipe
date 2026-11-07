@@ -1,6 +1,6 @@
 # Upstream Changelog
 
-Version history of the BioPipe Python engine and its operators.
+Version history of the Operon Python engine and its operators.
 
 | Version | Date | Summary |
 |---|---|---|

@@ -5,9 +5,14 @@ from ._ml_common import _RegressionBase
 
 
 class QuantileRegressionStep(_RegressionBase):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'quantile_regression.QuantileRegressionStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'quantile_regression',
      'version': '1.0.0',
      'kind': 'operator',

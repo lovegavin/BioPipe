@@ -3,9 +3,14 @@ from src.reader.base import Reader
 
 
 class SbmlFileReader(Reader):
-    provider = "biopipe-readers"
+    provider = "operon-readers"
     parameters_file = "sbml_file.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         "protocol_version": 3,
         "id": "SbmlFileReader",
         "version": "1.0.0",

@@ -97,10 +97,13 @@ def encode_generated(sequence: str, operator: str) -> tuple[Form, dict]:
 class Esm3SequenceGenerationStep(Step):
     """Sample a protein sequence from an ESM-3 masked prompt."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "esm3_sequence_generation.Esm3SequenceGenerationStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "esm3_sequence_generation",
         "version": "1.0.0",

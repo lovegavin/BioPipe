@@ -7,12 +7,16 @@ statically discoverable, so refreshing the library does not run module imports.
 Save this as `scale.py`:
 
 ```python
-from biopipe_sdk import Operator, Form, project_metadata
+from operon_sdk import Operator, Form, project_metadata
 
 class Scale(Operator):
     parameters_file = "scale.parameters.json"
     definition = {
         "protocol_version": 3, "id": "lab.scale", "version": "0.1.0",
+        "protocol_revision": "3.7",
+        "data_formats": {
+            "inputs": [{"logical_type": "form", "representations": ["form"]}],
+            "outputs": [{"logical_type": "form", "representations": ["form"]}]},
         "kind": "operator", "title": "Scale matrix", "category": "data",
         "inputs_arity": 1, "output_parameter": "output",
         "contracts": {"version": 1, "inputs": [{"numeric": True, "ndim": 2}],
@@ -54,9 +58,9 @@ its own `parameters.json`. Never load the authoring JSON inside `compute` or `ru
 to replace those supplied values. See [workflow values](workflow_parameters.md).
 
 Place both files in the operator directory shown by **Library Management**, then
-refresh. For an external package, run `biopipe plugin init my_lab`, adapt its generated
-code/JSON/Markdown files, run `biopipe plugin check my_lab`, `biopipe plugin test my_lab`, and
-`biopipe plugin build my_lab`. Install the wheel or put the project in the inbox.
+refresh. For an external package, run `operon plugin init my_lab`, adapt its generated
+code/JSON/Markdown files, run `operon plugin check my_lab`, `operon plugin test my_lab`, and
+`operon plugin build my_lab`. Install the wheel or put the project in the inbox.
 Include `*.json` and optional icons in setuptools package data.
 
 `Step` exposes `run(ctx, inputs)` and `export(ctx)` for reports or named outputs.
@@ -79,7 +83,7 @@ never reference a developer's home directory or installation drive.
 The Hi-C implementation keeps scientific tools behind three small SDK v3 Steps:
 `align_reads`, `build_contacts`, and `analyze_contacts`. Each Step has its own
 `*.parameters.json`; command execution, cancellation and logs share
-`biopipe/tool_runner.py`. `sequence_stats` and `select` demonstrate extending an
+`operon/tool_runner.py`. `sequence_stats` and `select` demonstrate extending an
 existing operator to accept both Form and FileArtifact explicitly, while keeping
 the original numeric path. The frozen run workspace is admitted through
 `estimate_memory`; subprocesses do not rescan available host memory. See

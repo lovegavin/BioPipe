@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 
 from src.core import ReaderError
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 
 
 class DenseDiskWriter:

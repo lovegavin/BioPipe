@@ -12,7 +12,7 @@ from ._order_rank_common import align_ordered, finite_groups, pava
 
 
 class ChackoTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Rank-based test for a monotone ordered alternative.
 
     The statistic follows ``PMCMRplus::chackoTest``: global ranks are
@@ -21,7 +21,12 @@ class ChackoTestStep(Step):
     approximation with ``k - 1`` degrees of freedom.
     """
     parameters_file = 'chacko_test.ChackoTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'chacko_test',
      'version': '1.0.0',
      'kind': 'operator',

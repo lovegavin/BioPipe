@@ -47,6 +47,7 @@ def updates(client, key):
 def test_spawn_failure_is_a_persisted_job_with_console_and_events(studio, monkeypatch):
     client, data, service = studio
     monkeypatch.setattr(service.plugins, "python_for", lambda _: str(service.root / "missing-python.exe"))
+    monkeypatch.setattr(service.application.readiness, "require_ready", lambda result: None)
     response = client.post("/api/jobs", json=data["demo"])
     assert response.status_code == 202, response.text
     job = response.json()
@@ -79,14 +80,14 @@ def test_silent_worker_exit_keeps_exit_code_and_nonempty_console(studio):
 
 def test_cli_records_failure_before_engine_import(tmp_path):
     code = tmp_path / "code"
-    for name in ("scripts", "src/task", "biopipe"):
+    for name in ("scripts", "src/task", "operon"):
         (code / name).mkdir(parents=True)
     shutil.copy2(ROOT / "scripts/run.py", code / "scripts/run.py")
-    shutil.copy2(ROOT / "biopipe/__init__.py", code / "biopipe/__init__.py")
-    shutil.copy2(ROOT / "biopipe/worker.py", code / "biopipe/worker.py")
-    shutil.copy2(ROOT / "biopipe/bytecode.py", code / "biopipe/bytecode.py")
-    if (ROOT / "biopipe/run_log.py").exists():
-        shutil.copy2(ROOT / "biopipe/run_log.py", code / "biopipe/run_log.py")
+    shutil.copy2(ROOT / "operon/__init__.py", code / "operon/__init__.py")
+    shutil.copy2(ROOT / "operon/worker.py", code / "operon/worker.py")
+    shutil.copy2(ROOT / "operon/bytecode.py", code / "operon/bytecode.py")
+    if (ROOT / "operon/run_log.py").exists():
+        shutil.copy2(ROOT / "operon/run_log.py", code / "operon/run_log.py")
     (code / "src/__init__.py").write_text("", encoding="utf-8")
     (code / "src/task/__init__.py").write_text("raise RuntimeError('bootstrap sentinel')\n", encoding="utf-8")
     task = tmp_path / "task"

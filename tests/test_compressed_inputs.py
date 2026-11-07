@@ -7,7 +7,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from biopipe.packages import bundled_state
+from operon.packages import bundled_state
 from src.reader import pick_reader, read_source
 from src.web.assets import plan_input
 

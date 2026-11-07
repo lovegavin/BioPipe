@@ -8,7 +8,7 @@ import uuid
 from .graph import GraphError, project_path
 from .storage import atomic_json
 from .service import read_json
-from biopipe.file_formats import reader_extensions, uncompressed_path
+from operon.file_formats import reader_extensions, uncompressed_path
 
 
 def safe_filename(name):
@@ -30,6 +30,12 @@ def accepted_extensions(catalog):
     return sorted(result)
 
 
+def _reader_output_kind(reader):
+    contracts = reader.get("contracts") or {}
+    output = contracts.get("output") or {}
+    return str(output.get("kind") or "form")
+
+
 def plan_input(names, catalog, reader_id=None):
     """Choose one data set and validate companions using filenames only."""
     if not isinstance(names, list) or not 1 <= len(names) <= 32:
@@ -38,13 +44,16 @@ def plan_input(names, catalog, reader_id=None):
     if len({name.casefold() for name in names}) != len(names):
         raise GraphError('同组文件不能重名（不区分大小写）。')
     present = set(names)
-    from biopipe.reader_selection import candidates as select
+    from operon.reader_selection import candidates as select
     selected_readers = select(catalog['readers'], '', reader_id) if reader_id else catalog['readers']
     candidates, incomplete = [], []
     for name in names:
-        for reader in selected_readers:
-            if not select([reader], name, reader_id):
-                continue
+        matching = [reader for reader in selected_readers if select([reader], name, reader_id)]
+        if not reader_id:
+            typed = [reader for reader in matching if _reader_output_kind(reader) != "file"]
+            if typed:
+                matching = typed
+        for reader in matching:
             path = uncompressed_path(Path(name))
             if not reader_id and any(path.with_suffix(ext).name in present for ext in reader.get('excludes_siblings', [])):
                 continue

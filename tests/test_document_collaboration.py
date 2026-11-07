@@ -3,12 +3,12 @@ from types import SimpleNamespace
 
 import pytest
 
-from biopipe.documents import CommandError, DocumentHub
+from operon.documents import CommandError, DocumentHub
 
 
 @pytest.fixture
 def canvas(tmp_path, monkeypatch):
-    monkeypatch.setattr('biopipe.documents.analyze_graph', lambda *a, **k: {'nodes': {}, 'edges': []})
+    monkeypatch.setattr('operon.documents.analyze_graph', lambda *a, **k: {'nodes': {}, 'edges': []})
     mirrored = []
     service = SimpleNamespace(directory=tmp_path, root=tmp_path, base_catalog={},
         settings=SimpleNamespace(input_roots=[]), routes=SimpleNamespace(save_workspace=mirrored.append),
@@ -127,7 +127,7 @@ def test_legacy_latest_undo_still_works(canvas):
 
 
 def test_order_is_part_of_the_transaction_and_reordering_never_erases_later_edits():
-    from biopipe.document_changes import changes, compensate
+    from operon.document_changes import changes, compensate
     before = {'nodes': [{'id': 'a', 'params': {}}, {'id': 'b', 'params': {}}]}
     after = {'nodes': list(reversed(deepcopy(before['nodes'])))}
     delta = changes(before, after)

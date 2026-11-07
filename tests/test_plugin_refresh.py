@@ -13,16 +13,16 @@ import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
-from biopipe.dropins import single_file_wheel, snapshot
-from biopipe.plugins import PluginManager, run_process
-from biopipe.bytecode import io_path
+from operon.dropins import single_file_wheel, snapshot
+from operon.plugins import PluginManager, run_process
+from operon.bytecode import io_path
 from src.web.api import create_app
 from src.web.models import Graph
 from src.web.service import Settings
 from test_packages import run_worker
 
 ROOT = Path(__file__).resolve().parents[1]
-REPORT = '''from biopipe_sdk import Step
+REPORT = '''from operon_sdk import Step
 class Hello(Step):
     name = "lab.hello"
     category = "Quality control"
@@ -79,7 +79,7 @@ def test_single_file_wrapper_is_deterministic_and_does_not_execute(tmp_path):
     with zipfile.ZipFile(first) as archive:
         assert any(n.endswith('/entry_points.txt') for n in archive.namelist())
         assert all(str(tmp_path).encode() not in archive.read(n) for n in archive.namelist())
-    write_extension(source, 'BIOPIPE_PLUGIN = {"dependencies": ["numpy\\nInvalid: value"]}\n' + REPORT)
+    write_extension(source, 'OPERON_PLUGIN = {"dependencies": ["numpy\\nInvalid: value"]}\n' + REPORT)
     with pytest.raises(ValueError, match='requirement strings'):
         single_file_wheel(source, tmp_path / 'bad')
 
@@ -113,7 +113,7 @@ def test_empty_and_syntax_failure_leave_registry_unchanged(tmp_path, monkeypatch
 def test_dropins_hot_run_update_rollback_and_retained_pins(tmp_path, monkeypatch):
     manager = PluginManager(tmp_path / 's', source_root=None)
     hello = manager.inbox / 'hello.py'
-    write_extension(hello, 'BIOPIPE_PLUGIN = {"name": "lab-hello", "dependencies": ["numpy>=1.26"]}\n' + REPORT)
+    write_extension(hello, 'OPERON_PLUGIN = {"name": "lab-hello", "dependencies": ["numpy>=1.26"]}\n' + REPORT)
     resource = manager.inbox / 'resources.py'
     shutil.copy2(ROOT / 'examples/resource_plugin/resource_example/__init__.py', resource)
     for parameter in (ROOT / 'examples/resource_plugin/resource_example').glob('*.parameters.json'):
@@ -121,7 +121,7 @@ def test_dropins_hot_run_update_rollback_and_retained_pins(tmp_path, monkeypatch
     before_modules = set(sys.modules)
     result = manager.refresh()
     assert result['updated'] == ['hello.py', 'resources.py']
-    assert not any(n.startswith('biopipe_dropin_') for n in set(sys.modules) - before_modules)
+    assert not any(n.startswith('operon_dropin_') for n in set(sys.modules) - before_modules)
     old = manager.state()
     descriptor = next(d for d in old['descriptors'] if d['id'] == 'lab.hello')
     assert descriptor['category'] == 'Quality control' and descriptor['icon'] == 'CheckCircle'
@@ -168,8 +168,8 @@ def test_dropins_hot_run_update_rollback_and_retained_pins(tmp_path, monkeypatch
 
 
 def test_long_cached_wheel_paths_support_reinstall_and_failed_transaction(tmp_path):
-    from biopipe.bytecode import filesystem_path
-    from biopipe.install_targets import execution_digest, wheel_entries
+    from operon.bytecode import filesystem_path
+    from operon.install_targets import execution_digest, wheel_entries
 
     source = tmp_path / 'hello.py'
     write_extension(source, REPORT)
@@ -237,9 +237,9 @@ def test_refresh_api_is_async_token_protected_and_reports_errors(tmp_path, monke
 
 def test_source_library_discovers_plain_author_modules_without_manifest_edits(tmp_path, monkeypatch):
     import ast
-    from biopipe.source_library import SOURCE_DIRS
+    from operon.source_library import SOURCE_DIRS
     source_root = tmp_path / 'code'
-    for relative in [*SOURCE_DIRS.values(), 'biopipe/builtin_packages.json']:
+    for relative in [*SOURCE_DIRS.values(), 'operon/builtin_packages.json']:
         source, target = ROOT / "library/seed" / relative, source_root / relative
         if source.is_dir():
             target.mkdir(parents=True)
@@ -261,7 +261,7 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
         else:
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
-    manifest_before = (source_root / 'biopipe/builtin_packages.json').read_bytes()
+    manifest_before = (source_root / 'operon/builtin_packages.json').read_bytes()
     new_operator = source_root / SOURCE_DIRS['operator'] / 'hello.py'
     # Existing author style: original, unqualified IDs are accepted in their provider.
     write_extension(new_operator, REPORT.replace('lab.hello', 'hello_hot').replace('CheckCircle', 'assets/hello.svg'))
@@ -279,10 +279,10 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
     state = manager.state()
     assert len(initial['updated']) == 7
     descriptor = next(d for d in state['descriptors'] if d['id'] == 'hello_hot')
-    assert descriptor['distribution'] == 'biopipe-core'
+    assert descriptor['distribution'] == 'operon-core'
     assert descriptor['category'] == 'Quality control'
     assert descriptor['icon_image'].startswith('data:image/svg+xml;base64,')
-    core = next(p for p in state['packages'] if p['name'] == 'biopipe-core')
+    core = next(p for p in state['packages'] if p['name'] == 'operon-core')
     with zipfile.ZipFile(manager.directory / core['wheel']) as archive:
         resource_file = next(n for n in archive.namelist() if n.endswith('/steps/assets/hello.txt'))
         assert archive.read(resource_file) == b'retained resource'
@@ -293,7 +293,7 @@ def test_source_library_discovers_plain_author_modules_without_manifest_edits(tm
     report, _ = run_worker(manager, state, tmp_path / 'reader',
         {'X': {'path': str(path), 'dims': ['sample', 'feature']}}, [{'name': 'describe', 'inputs': ['X']}])
     assert report['plans'][0]['mode'] == 'stream' and report['event_counts']['source_prepare_complete'] == 1
-    assert (source_root / 'biopipe/builtin_packages.json').read_bytes() == manifest_before
+    assert (source_root / 'operon/builtin_packages.json').read_bytes() == manifest_before
     with monkeypatch.context() as scoped:
         scoped.setattr(manager, '_install_many', lambda *a, **kw: pytest.fail('unchanged library was rebuilt'))
         assert manager.refresh()['updated'] == []

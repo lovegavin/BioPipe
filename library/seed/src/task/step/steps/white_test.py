@@ -13,9 +13,13 @@ from ._stats21_common import design_matrix, numeric_column, table_frame
 
 
 class WhiteTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'white_test.WhiteTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'white_test',
      'version': '1.0.0',
      'kind': 'operator',

@@ -84,10 +84,13 @@ def residue_groups(form: Form, atom_dim: str, field_dim: str) -> list[dict]:
 
 
 class StructureProtonationSitesStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_protonation_sites.StructureProtonationSitesStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_protonation_sites",
         "version": "1.0.0",

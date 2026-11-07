@@ -18,7 +18,7 @@ class SelectStep(Step):
         labels : list of label names to keep, in output order
         output : context key for the result
     """
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'select.parameters.json'
     definition = {'protocol_version': 3,
      'id': 'select',

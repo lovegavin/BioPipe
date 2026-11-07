@@ -2,9 +2,9 @@ import json
 
 import pytest
 
-from biopipe.desktop_upgrade import upgrade_profile
-from biopipe.migrate import convert_documents, convert_task
-from biopipe.plugins import PluginManager
+from operon.desktop_upgrade import upgrade_profile
+from operon.migrate import convert_documents, convert_task
+from operon.plugins import PluginManager
 from src.web.profile import resolve_profile
 
 

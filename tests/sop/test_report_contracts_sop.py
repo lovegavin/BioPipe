@@ -24,7 +24,7 @@ def test_all_plot_operators_are_report_only_and_have_valid_schemas():
         assert operator["contracts"]["output"]["mode"] in ("report", "none"), name
         assert operator["output_parameter"] is None, name
         schema = operator["parameters_schema"]
-        from biopipe_sdk.protocol import validate_schema
+        from operon_sdk.protocol import validate_schema
         validate_schema(schema)
 
 

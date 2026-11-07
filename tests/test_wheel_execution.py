@@ -17,10 +17,10 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_installed_wheel_runs_headless_worker_without_checkout(tmp_path):
     if importlib.util.find_spec('build') is None:
         pytest.skip('Install the dev extra for wheel acceptance')
-    from biopipe.bytecode import io_path
+    from operon.bytecode import io_path
     tmp_path = io_path(tmp_path)
     env = dict(os.environ, PYTHONPATH='', PYTHONNOUSERSITE='1', PYTHONUTF8='1',
-               PYTHONIOENCODING='utf-8', BIOPIPE_ADMISSION_DIR=str(tmp_path / 'admission'),
+               PYTHONIOENCODING='utf-8', OPERON_ADMISSION_DIR=str(tmp_path / 'admission'),
                TEMP=str(tmp_path), TMP=str(tmp_path))
     def command(args, cwd=tmp_path, timeout=120):
         result = subprocess.run([str(arg) for arg in args], cwd=cwd, env=env,
@@ -31,34 +31,34 @@ def test_installed_wheel_runs_headless_worker_without_checkout(tmp_path):
     # Build from clean source, never a stale setuptools build/lib containing
     # implementation files removed by the application/library split.
     source = tmp_path / 'source'; source.mkdir()
-    for name in ('biopipe', 'biopipe_sdk', 'src'):
+    for name in ('operon', 'operon_sdk', 'src'):
         shutil.copytree(ROOT / name, source / name,
                         ignore=shutil.ignore_patterns('build', '*.egg-info', '__pycache__', '*.pyc'))
     for name in ('pyproject.toml', 'README.md'):
         shutil.copy2(ROOT / name, source / name)
     output = tmp_path / 'dist'
     command([sys.executable, '-m', 'build', '--wheel', '--no-isolation', '--outdir', output], cwd=source)
-    wheel = next(output.glob('biopipe_studio-*.whl'))
+    wheel = next(output.glob('operon_studio-*.whl'))
     with zipfile.ZipFile(wheel) as archive:
         assert not any(name.endswith('.parameters.json') for name in archive.namelist())
         assert not any(name.endswith('builtin_packages.json') for name in archive.namelist())
     command([sys.executable, '-m', 'build', '--wheel', '--no-isolation', '--outdir', output], cwd=ROOT / 'library')
-    seed = next(output.glob('biopipe_builtin_library-*.whl'))
+    seed = next(output.glob('operon_builtin_library-*.whl'))
     runtime = tmp_path / 'runtime'
-    # Reuse already installed third-party libraries; the BioPipe package itself
+    # Reuse already installed third-party libraries; the Operon package itself
     # must come solely from this freshly built wheel in the isolated venv.
     command([sys.executable, '-m', 'venv', '--without-pip', '--system-site-packages', runtime])
     python = runtime / ('Scripts/python.exe' if os.name == 'nt' else 'bin/python')
     command([sys.executable, '-m', 'pip', '--python', python, 'install', '--ignore-installed', '--no-deps', '--no-index', wheel, seed])
     probe = json.loads(command([python, '-c',
-        'import json,sys,biopipe,biopipe.worker; print(json.dumps({"path":biopipe.__file__,"worker":biopipe.worker.__file__,"sys_path":sys.path}))']))
+        'import json,sys,operon,operon.worker; print(json.dumps({"path":operon.__file__,"worker":operon.worker.__file__,"sys_path":sys.path}))']))
     assert Path(probe['path']).is_relative_to(runtime)
     assert Path(probe['worker']).is_relative_to(runtime)
     assert all(Path(path or tmp_path).resolve() != ROOT for path in probe['sys_path'])
     installed_root = Path(probe['path']).parent.parent
     for resource in ('guides/start.md',):
-        assert (installed_root / 'biopipe' / resource).is_file(), resource
-    assert (installed_root / 'biopipe_builtin_library/biopipe/environments.json').is_file()
+        assert (installed_root / 'operon' / resource).is_file(), resource
+    assert (installed_root / 'operon_builtin_library/operon/environments.json').is_file()
     assert not (installed_root / 'scripts/run.py').exists()
     assert not (installed_root / 'frontend/dist').exists()
 
@@ -72,12 +72,12 @@ def test_installed_wheel_runs_headless_worker_without_checkout(tmp_path):
                        {'id': 'summary', 'kind': 'operator', 'operator': 'describe', 'params': {}}],
              'edges': [{'id': 'edge', 'source': 'input', 'target': 'summary'}]}
     graph_file = workspace / 'graph.json'; graph_file.write_text(json.dumps(graph), encoding='utf-8')
-    cli = [python, '-m', 'biopipe', '--workspace', workspace]
+    cli = [python, '-m', 'operon', '--workspace', workspace]
     try:
         result = json.loads(command(cli + ['run', graph_file, '--request-id', 'installed-wheel', '--wait', '--timeout', '90']))
         assert result['status'] == 'complete', result.get('error')
         job_dir = workspace / '.studio/jobs' / result['id']
-        checked = command([python, '-m', 'biopipe.worker', job_dir, '--check'])
+        checked = command([python, '-m', 'operon.worker', job_dir, '--check'])
         assert 'CHECK OK' in checked
         report = tmp_path / 'summary.json'
         command(cli + ['artifacts', 'report', result['id'], '0', '--output', report])

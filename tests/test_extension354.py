@@ -16,7 +16,7 @@ from src.task.step.steps._sequence_common import encode_sequences
 from src.task.step.steps.flye_assemble import n50, parse_assembly_info, parse_fasta
 
 FIXTURES = Path(__file__).parent / "fixtures"
-FLYE = os.environ.get("BIOPIPE_FLYE") or shutil.which("flye")
+FLYE = os.environ.get("OPERON_FLYE") or shutil.which("flye")
 
 FAKE = '''
 import pathlib, sys
@@ -113,7 +113,7 @@ def simulate_reads(genome: str, coverage: int = 30, read_length: int = 6000, see
 
 @pytest.mark.skipif(not FLYE, reason="Flye is not available")
 @pytest.mark.skipif(
-    not os.environ.get("BIOPIPE_REAL_ASSEMBLY"), reason="set BIOPIPE_REAL_ASSEMBLY=1"
+    not os.environ.get("OPERON_REAL_ASSEMBLY"), reason="set OPERON_REAL_ASSEMBLY=1"
 )
 def test_real_flye_from_simulated_reads(tmp_path) -> None:
     genome = "".join(

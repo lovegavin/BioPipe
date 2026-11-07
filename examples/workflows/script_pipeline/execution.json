@@ -1,5 +1,5 @@
 {
-  "format": "biopipe.workflow-execution",
+  "format": "operon.workflow-execution",
   "schema_version": 1,
   "memory": {"enabled": true, "auto_spill": true, "budget_mb": 128},
   "runtime": {}

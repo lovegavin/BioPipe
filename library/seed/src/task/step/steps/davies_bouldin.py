@@ -12,10 +12,15 @@ from ._metric_common import label_series
 
 
 class DaviesBouldinStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Davies-Bouldin index for features and a label column."""
     parameters_file = 'davies_bouldin.DaviesBouldinStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'davies_bouldin',
      'version': '1.0.0',
      'kind': 'operator',

@@ -56,9 +56,12 @@ def tautomer_profile(smiles: str, max_tautomers: int = 64) -> dict:
 class RdkitTautomerStep(Step):
     """Enumerate tautomers and report the canonical tautomer of each molecule."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'rdkit_tautomer.RdkitTautomerStep.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'rdkit_tautomer',
         'version': '1.0.0',

@@ -29,11 +29,11 @@ _HEADER_FIELD = re.compile(r"([A-Za-z_]+)=([^,]+)")
 
 
 def _repo_path(value: str) -> Path:
-    text = value or os.environ.get("BIOPIPE_LIGANDMPNN_PATH", "")
+    text = value or os.environ.get("OPERON_LIGANDMPNN_PATH", "")
     if not text:
         raise StepError(
             "ligandmpnn_design: ligandmpnn_path is required; point it at a LigandMPNN checkout "
-            "or set BIOPIPE_LIGANDMPNN_PATH"
+            "or set OPERON_LIGANDMPNN_PATH"
         )
     return Path(text).expanduser()
 
@@ -129,9 +129,12 @@ def _parse_bias(value: str) -> str:
 
 
 class LigandMpnnDesignStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "ligandmpnn_design.LigandMpnnDesignStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "ligandmpnn_design",
         "kind": "operator",
@@ -224,7 +227,7 @@ class LigandMpnnDesignStep(Step):
 
         python = _python(str(params.get("python_executable", "")))
         output = str(params.get("output", "output"))
-        out_dir = Path(tempfile.mkdtemp(prefix="biopipe-ligandmpnn-"))
+        out_dir = Path(tempfile.mkdtemp(prefix="operon-ligandmpnn-"))
         environment = dict(os.environ)
         if device == "cpu":
             environment["CUDA_VISIBLE_DEVICES"] = ""

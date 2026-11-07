@@ -30,9 +30,16 @@ def _info_value(info, key):
 
 
 class CodingVariantFilterStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "coding_variant_filter.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         "protocol_version": 3,
         "id": "coding_variant_filter",
         "version": "1.0.0",

@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
 import pytest
 
 pytest.importorskip("openmm")
@@ -48,7 +53,6 @@ def _ctx(params):
 
 def test_real_mmgbsa(tmp_path):
     import tempfile
-    from pathlib import Path
 
     from src.reader import read_source
     from src.task.context import Context
@@ -56,7 +60,7 @@ def test_real_mmgbsa(tmp_path):
 
     lines = [
         line
-        for line in open("/home/gavin/BioPipe/tests/fixtures/vhh_1mel.pdb")
+        for line in open(str(ROOT / "tests" / "fixtures" / "vhh_1mel.pdb"))
         if line.startswith("ATOM") and line[21] in "ABLM"
     ]
     path = tmp_path / "complex.pdb"

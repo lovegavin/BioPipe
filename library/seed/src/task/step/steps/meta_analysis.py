@@ -34,9 +34,14 @@ _CORRECTIONS = ("fdr", "bonferroni", "holm", "hommel", "fdr_by")
 
 
 class MetaAnalysisStep(Step):
-    provider = 'biopipe-genetics'
+    provider = 'operon-genetics'
     parameters_file = 'meta_analysis.MetaAnalysisStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'meta_analysis',
      'version': '1.0.0',
      'kind': 'operator',

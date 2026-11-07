@@ -22,9 +22,14 @@ def _aligned(form, dim: str, dim_b: str, name: str):
 
 
 class MantelStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'mantel.MantelStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'mantel',
      'version': '1.0.0',
      'kind': 'operator',

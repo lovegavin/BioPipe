@@ -120,8 +120,8 @@ operators that lack it.
 
 ## Shared memory and CPU admission
 
-Each machine has a resource pool shared by BioPipe launchers under the **same
-operating-system user**. At the start of a new host execution session, BioPipe
+Each machine has a resource pool shared by Operon launchers under the **same
+operating-system user**. At the start of a new host execution session, Operon
 takes one available-memory snapshot and assigns 90% as the host pool. Linux
 container limits constrain that snapshot. The Windows budget is never substituted
 for the server's budget.
@@ -138,7 +138,7 @@ concurrency. Disabling managed memory requires exclusive host admission. Request
 larger than the host capacity fail clearly. The task panel shows available pool
 capacity, active work and queued work for each connected machine.
 
-Within an admitted scientific process, BioPipe retains planned spill, disk-backed
+Within an admitted scientific process, Operon retains planned spill, disk-backed
 sources, streaming capabilities, size corrections and emergency spill. The host
 also monitors worker-tree memory, including child tools. If emergency spill cannot
 recover from sustained pressure beyond a reservation, that task can be stopped to
@@ -236,8 +236,8 @@ using the documented v3 parameter schema. See
 - `src/web/execution_plan.py`: bounded placement heuristic.
 - `src/web/execution.py`: durable parent tasks, stages and data movement.
 - `src/web/admission.py`: shared host resource reservations.
-- `src/web/transfers.py` and `biopipe/remote/transfers.py`: verified resumable files.
-- `biopipe/exchange.py`: portable scientific handoffs and managed-source loading.
+- `src/web/transfers.py` and `operon/remote/transfers.py`: verified resumable files.
+- `operon/exchange.py`: portable scientific handoffs and managed-source loading.
 
 These APIs retain Studio's local access controls. SSH credentials stay in the
 connection session and do not belong in graph files, parameter files or logs.

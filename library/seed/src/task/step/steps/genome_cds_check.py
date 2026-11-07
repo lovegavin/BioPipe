@@ -32,9 +32,13 @@ _STOP_CODONS = frozenset({"TAA", "TAG", "TGA"})
 class GenomeCdsCheckStep(Step):
     """Length, start/stop codon and internal-stop check for CDS records."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "genome_cds_check.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "genome_cds_check",
         "version": "1.0.0",

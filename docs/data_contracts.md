@@ -20,7 +20,7 @@ New external plugins use the [public protocol](operator_protocol.md) and
 semantics; new modules must pass protocol validation before index generation.
 
 ```python
-from biopipe_sdk import MISSING, param, port
+from operon_sdk import MISSING, param, port
 
 input_contracts = [port(
     dims=[param("dim")],

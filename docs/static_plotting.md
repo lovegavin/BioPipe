@@ -1,6 +1,6 @@
 # Static plotting adapters (protocol v3)
 
-BioPipe keeps the existing operator protocol: Python implementation, separate
+Operon keeps the existing operator protocol: Python implementation, separate
 parameter-schema JSON, and frozen per-workflow/per-run parameter values. Plotting
 backends are implementation choices. Neither Matplotlib Figure objects nor R
 objects cross worker boundaries. Files and JSON reports do.
@@ -8,7 +8,7 @@ objects cross worker boundaries. Files and JSON reports do.
 ## Public figure SDK
 
 ```python
-from biopipe_sdk import publication_style, save_matplotlib, figure_collection
+from operon_sdk import publication_style, save_matplotlib, figure_collection
 publication_style(context)
 # fig_a and fig_b are author-created Matplotlib figures.
 report = figure_collection(
@@ -27,7 +27,7 @@ underlying library before saving. Domain tools retain their native capabilities.
 For R, command-line tools, or another renderer, save files first, then describe them:
 
 ```python
-from biopipe_sdk import register_figure
+from operon_sdk import register_figure
 return register_figure(context, "heatmap", {
     "pdf": output_dir / "heatmap.pdf",
     "svg": output_dir / "heatmap.svg",
@@ -79,7 +79,7 @@ Names, sources and version constraints are validated without executing operator
 code. `source` is `cran` or `bioconductor`. Optionally specify a Bioconductor
 release, for example `"bioconductor":"3.20"`, together with a compatible R
 constraint. Unsupported/inconsistent combinations fail with the install/probe
-error; BioPipe never silently weakens a constraint. CRAN exact `==` constraints
+error; Operon never silently weakens a constraint. CRAN exact `==` constraints
 use `remotes::install_version`; other constraints install the repository candidate
 and verify it. Bioconductor uses `BiocManager::install(ask=FALSE, update=FALSE)`;
 choose a release compatible with required package versions. This is not a promise
@@ -93,7 +93,7 @@ changes also invalidate server readiness. Server registry refresh prepares missi
 R dependencies without changing its existing Python inspection policy. Source
 discovery remains metadata-only.
 
-On repair, BioPipe uses a compatible `Rscript` on PATH, or bootstraps a user-local
+On repair, Operon uses a compatible `Rscript` on PATH, or bootstraps a user-local
 R through micromamba/conda-forge (Windows x64, Linux x64/aarch64, macOS x64/arm64).
 CRAN packages come from cloud.r-project.org; Bioconductor installs use BiocManager.
 There is no administrator or shell-profile requirement. Installation needs network
@@ -109,7 +109,7 @@ lockfile. Prefer exact constraints and an explicit Bioconductor release when nee
 The default directory follows the selected Studio profile:
 `<data-dir>/runtimes/r`. Workers inherit the plugin installation's runtime root;
 servers use their own profile, never a desktop path. Standalone scripts can set
-`BIOPIPE_R_HOME` to a writable runtime directory, and `BIOPIPE_RSCRIPT` to an explicit
+`OPERON_R_HOME` to a writable runtime directory, and `OPERON_RSCRIPT` to an explicit
 compatible interpreter. These are user overrides, not paths embedded in packages.
 Managed receipts are reusable across launches; session checks can verify them again.
 The SDK also prepares missing R dependencies before executing an R adapter.
@@ -117,7 +117,7 @@ The SDK also prepares missing R dependencies before executing an R adapter.
 ## Run R with frozen parameters
 
 ```python
-from biopipe_sdk import run_r
+from operon_sdk import run_r
 output_dir = run_r(context, self.definition["resources"]["r"], R_SCRIPT,
                    inputs={"matrix": str(matrix_path)})
 ```
@@ -151,7 +151,7 @@ PDF/SVG may contain rasterized dense artists; they are not necessarily all-vecto
 See [the installable examples](../examples/plotting_plugin/README.md): a Python
 volcano plot plus companion distribution, and an R ComplexHeatmap adapter. Both
 use v3 declarations and their own `*.parameters.json`. The examples are optional,
-so installing BioPipe alone does not download R or large domain packages.
+so installing Operon alone does not download R or large domain packages.
 
 References: [R library installation](https://stat.ethz.ch/CRAN/doc/manuals/r-devel/R-admin.html),
 [BiocManager installation](https://bioconductor.github.io/BiocManager/reference/install.html),

@@ -49,9 +49,14 @@ _STATISTIC_COLUMNS = ["term_size", "n_hit", "expected", "P_VALUE", "Q_VALUE"]
 
 class EnrichGoStep(Step):
     """Hypergeometric enrichment of one term axis over two inputs."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'enrich_go.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'enrich_go',
      'version': '1.0.0',
      'kind': 'operator',

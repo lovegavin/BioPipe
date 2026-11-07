@@ -20,9 +20,14 @@ _FIELDS = {
 
 
 class ChainCoverageSummaryStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "version": "1.0.0",
         "id": "chain_coverage_summary",

@@ -65,12 +65,15 @@ def packing_rows(
 class StructurePackingDensityStep(Step):
     """Per-residue local packing density of heavy atoms."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "structure_packing_density.StructurePackingDensityStep.parameters.json"
 
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_packing_density",
         "version": "1.0.0",

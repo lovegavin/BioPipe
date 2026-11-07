@@ -12,10 +12,14 @@ from src.reader.readers._table_common import table_form
 
 
 class MgfReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """MGF reader returning one row per spectrum (peak lists are summarized)."""
     parameters_file = 'mgf_reader.MgfReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'MgfReader',
      'version': '1.0.0',
      'kind': 'reader',

@@ -24,7 +24,7 @@
     "hmm_path": {
       "type": "string",
       "title": "HMM 数据库",
-      "description": "已 hmmpress 的 Pfam-A.hmm 路径；留空读 BIOPIPE_PFAM_HMM",
+      "description": "已 hmmpress 的 Pfam-A.hmm 路径；留空读 OPERON_PFAM_HMM",
       "default": "",
       "x-ui-group": "数据库",
       "x-ui-order": 1

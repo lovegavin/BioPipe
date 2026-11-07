@@ -32,7 +32,7 @@ def _natural_groups(values: list[str]) -> list[str]:
 
 
 class JonckheereTerpstraStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Rank-based test for a monotone trend across ordered groups.
 
     The p-value uses the normal approximation, matching
@@ -41,7 +41,11 @@ class JonckheereTerpstraStep(Step):
     tie correction (the same convention as the R implementation).
     """
     parameters_file = 'jonckheere_terpstra.JonckheereTerpstraStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'jonckheere_terpstra',
      'version': '1.0.0',
      'kind': 'operator',

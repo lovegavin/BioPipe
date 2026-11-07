@@ -20,10 +20,14 @@ def _attrs(line: str, name: str) -> dict:
 
 
 class WigReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for fixedStep and variableStep WIG tracks; output is region x field."""
     parameters_file = 'wig_reader.WigReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'WigReader',
      'version': '1.0.0',
      'kind': 'reader',

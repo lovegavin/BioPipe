@@ -6,9 +6,9 @@ import zipfile
 
 import pytest
 
-from biopipe.library_bundle import build_bundle, unpack_bundle
-from biopipe.plugins import PluginManager
-from biopipe.source_library import SOURCE_DIRS
+from operon.library_bundle import build_bundle, unpack_bundle
+from operon.plugins import PluginManager
+from operon.source_library import SOURCE_DIRS
 from test_packages import run_worker
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,7 +32,7 @@ def test_sources_are_lazy_persistent_and_outside_application(tmp_path):
     restarted.ensure_source_root()
     assert restarted.source_root == target
     assert json.loads(parameter.read_text(encoding='utf-8')) == {'author_edit': True}
-    from biopipe.library_location import source_root
+    from operon.library_location import source_root
     assert json.loads((source_root(ROOT) / parameter.relative_to(target)).read_text(encoding='utf-8')) != {'author_edit': True}
 
 
@@ -42,8 +42,8 @@ def test_unchanged_factory_refresh_preserves_pins_and_skips_build_install(tmp_pa
     def forbidden(*args, **kwargs):
         pytest.fail('Unmodified factory refresh tried to rebuild or install providers')
     monkeypatch.setattr(manager, '_install_many', forbidden)
-    monkeypatch.setattr('biopipe.registry.scan_sources', forbidden)
-    monkeypatch.setattr('biopipe.source_library.provider_wheel', forbidden)
+    monkeypatch.setattr('operon.registry.scan_sources', forbidden)
+    monkeypatch.setattr('operon.source_library.provider_wheel', forbidden)
     for instance in (manager, PluginManager(tmp_path)):
         result = instance.refresh()
         assert not result['updated'] and result['unchanged']
@@ -69,7 +69,7 @@ def test_edited_source_refresh_detaches_factory_without_changing_application(tmp
     assert next(d for d in state['descriptors'] if d['id'] == 'pca')['parameters_schema']['properties']['n_components']['default'] == 7
     assert manager.refresh()['generation'] == state['generation']
     # Simulate a profile already refreshed by 0.8.2, before source-root receipts.
-    from biopipe.plugins import atomic_json
+    from operon.plugins import atomic_json
     state.pop('library_detached')
     state['source_library'].pop('root')
     atomic_json(manager.registry, state)
@@ -81,14 +81,14 @@ def test_edited_source_refresh_detaches_factory_without_changing_application(tmp
 def test_bundle_validation_and_atomic_independent_install(tmp_path, library_bundle, monkeypatch):
     manager = PluginManager(tmp_path / 'profile')
     before = manager.state()
-    manager.manage('biopipe-microbiome', 'disable')
+    manager.manage('operon-microbiome', 'disable')
     state = manager.install(library_bundle)
     assert state['generation'] != before['generation']
     assert {d['id'] for d in state['descriptors']} == {d['id'] for d in before['descriptors']}
     assert all(p['origin'] == 'wheel' for p in state['packages'])
-    assert next(p for p in state['packages'] if p['name'] == 'biopipe-microbiome')['enabled'] is False
+    assert next(p for p in state['packages'] if p['name'] == 'operon-microbiome')['enabled'] is False
     assert manager.source_root.is_relative_to(tmp_path)
-    assert manager.source_root.joinpath('biopipe/builtin_packages.json').is_file()
+    assert manager.source_root.joinpath('operon/builtin_packages.json').is_file()
     assert manager.refresh()['updated'] == []
     assert manager.install(library_bundle)['generation'] == state['generation']
     # A newer factory library in the application must not replace an installed one.
@@ -107,7 +107,7 @@ def test_bundle_validation_and_atomic_independent_install(tmp_path, library_bund
         [{'name': 'describe', 'inputs': ['X']}])
     assert summary['steps']
     # Tampering and an unrefreshed local edit must both leave the registry intact.
-    damaged = tmp_path / 'damaged.biopipe-library.zip'
+    damaged = tmp_path / 'damaged.operon-library.zip'
     with zipfile.ZipFile(library_bundle) as source, zipfile.ZipFile(damaged, 'w') as destination:
         first = next(n for n in source.namelist() if n.endswith('.parameters.json'))
         for entry in source.infolist():
@@ -132,9 +132,9 @@ def test_unsafe_archive_is_rejected_before_writing(tmp_path):
 
 
 def test_new_library_rejects_runtime_without_shared_io(tmp_path, library_bundle, monkeypatch):
-    import biopipe
-    monkeypatch.setattr(biopipe, '__version__', '0.116.1')
+    import operon
+    monkeypatch.setattr(operon, '__version__', '0.116.1')
     destination = tmp_path / 'unsupported-runtime'
-    with pytest.raises(ValueError, match=r'requires BioPipe 2\.0\.1'):
+    with pytest.raises(ValueError, match=r'requires Operon 2\.0\.1'):
         unpack_bundle(library_bundle, destination)
     assert not destination.exists()

@@ -69,10 +69,14 @@ def _exact_hwe(aa: int, ab: int, bb: int) -> float:
 
 
 class HardyWeinbergStep(Step):
-    provider = 'biopipe-genetics'
+    provider = 'operon-genetics'
     """Exact and descriptive Hardy-Weinberg statistics for biallelic variants."""
     parameters_file = 'hardy_weinberg.HardyWeinbergStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'hardy_weinberg',
      'version': '1.0.0',
      'kind': 'operator',

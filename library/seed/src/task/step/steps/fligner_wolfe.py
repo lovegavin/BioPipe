@@ -12,7 +12,7 @@ from ._order_rank_common import align_ordered, finite_groups
 
 
 class FlignerWolfeStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Rank test comparing every treatment group with a control group.
 
     The implementation follows ``PMCMRplus::flignerWolfeTest`` with
@@ -21,7 +21,12 @@ class FlignerWolfeStep(Step):
     standardized with the tie-corrected null variance.
     """
     parameters_file = 'fligner_wolfe.FlignerWolfeStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'fligner_wolfe',
      'version': '1.0.0',
      'kind': 'operator',

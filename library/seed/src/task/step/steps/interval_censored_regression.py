@@ -79,7 +79,7 @@ def _exact_log_density(
 
 
 class IntervalCensoredRegressionStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Fit a Weibull AFT model to interval-censored observations.
 
     Each row supplies a lower and upper observation time.  ``lower < upper``
@@ -89,7 +89,11 @@ class IntervalCensoredRegressionStep(Step):
     R's ``survival::survreg(..., dist="weibull")`` for interval2 responses.
     """
     parameters_file = 'interval_censored_regression.IntervalCensoredRegressionStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'interval_censored_regression',
      'version': '1.0.0',
      'kind': 'operator',

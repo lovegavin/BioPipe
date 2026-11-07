@@ -13,9 +13,14 @@ from ._tests39_common import select_groups
 
 
 class HotellingT2Step(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'hotelling_t2.HotellingT2Step.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'hotelling_t2',
      'version': '1.0.0',
      'kind': 'operator',

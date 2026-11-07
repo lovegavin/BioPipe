@@ -84,12 +84,12 @@ def test_real_amrfinder_tem1(tmp_path):
     import shutil
     from pathlib import Path
 
-    if os.environ.get("BIOPIPE_AMRFINDER_REAL") != "1":
-        pytest.skip("set BIOPIPE_AMRFINDER_REAL=1 to run the real AMRFinderPlus check")
-    binary = os.environ.get("BIOPIPE_AMRFINDER_BIN", "/home/gavin/miniconda3/envs/amrfinder/bin/amrfinder")
+    if os.environ.get("OPERON_AMRFINDER_REAL") != "1":
+        pytest.skip("set OPERON_AMRFINDER_REAL=1 to run the real AMRFinderPlus check")
+    binary = os.environ.get("OPERON_AMRFINDER_BIN", "/home/gavin/miniconda3/envs/amrfinder/bin/amrfinder")
     if not Path(binary).is_file() and shutil.which("amrfinder"):
         binary = shutil.which("amrfinder")
-    database = Path(os.environ.get("BIOPIPE_AMRFINDER_DB", "/home/gavin/tools/amrfinder_db/2026-10-29.1"))
+    database = Path(os.environ.get("OPERON_AMRFINDER_DB", "/home/gavin/tools/amrfinder_db/2026-10-29.1"))
     if not Path(binary).is_file() or not (database / "AMRProt.fa").is_file():
         pytest.skip("AMRFinderPlus or its database is missing")
     form = encode_sequences([TEM1], "sequence", "position", "protein")

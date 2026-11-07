@@ -57,10 +57,13 @@ def group_counts(molecule, patterns) -> list[int]:
 
 
 class RdkitFunctionalGroupCountsStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "rdkit_functional_group_counts.RdkitFunctionalGroupCountsStep.parameters.json"
 
     definition: dict[str, Any] = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "rdkit_functional_group_counts",
         "version": "1.0.0",

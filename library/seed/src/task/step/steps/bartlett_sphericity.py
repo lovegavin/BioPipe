@@ -13,10 +13,14 @@ from ._stats20_common import scalar_form
 
 
 class BartlettSphericityStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Test whether a correlation matrix differs from the identity."""
     parameters_file = 'bartlett_sphericity.BartlettSphericityStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'bartlett_sphericity',
      'version': '1.0.0',
      'kind': 'operator',

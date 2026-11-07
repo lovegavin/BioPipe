@@ -8,11 +8,11 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from biopipe.migrate import convert_documents, convert_source, convert_task, migrate, _publish
-from biopipe.packages import bundled_state
-from biopipe.plugins import PluginManager
-from biopipe_sdk.declarations import DeclarationCompiler, source_declarations
-from biopipe_sdk.protocol import Descriptor, PackageDescriptor, catalog_entry
+from operon.migrate import convert_documents, convert_source, convert_task, migrate, _publish
+from operon.packages import bundled_state
+from operon.plugins import PluginManager
+from operon_sdk.declarations import DeclarationCompiler, source_declarations
+from operon_sdk.protocol import Descriptor, PackageDescriptor, catalog_entry
 from src.web.models import Graph
 
 
@@ -32,7 +32,7 @@ def test_every_implementation_declares_schema_without_registry_injection(monkeyp
         return original_import(name, *args, **kwargs)
     monkeypatch.setattr(importlib, "import_module", reject_implementation_import)
     canonical = bundled_state()["descriptors"]
-    from biopipe.library_location import source_root
+    from operon.library_location import source_root
     root = source_root(Path(__file__).resolve().parents[1])
     compiler = DeclarationCompiler(root)
     expected = {d["entry_point"]: d for d in canonical}
@@ -103,7 +103,7 @@ def test_file_dry_run_backup_idempotence_and_cli(tmp_path):
     assert manifest["status"] == "complete"
     assert (backup / manifest["files"][0]["backup"]).read_bytes() == original
     assert migrate(path=target, apply=True)["changed"] == []
-    from biopipe.cli import parser, execute
+    from operon.cli import parser, execute
     assert execute(parser().parse_args(["migrate", str(target)]))["changed"] == []
 
 
@@ -115,9 +115,9 @@ def test_profile_migration_preserves_disabled_removed_and_historical_jobs(tmp_pa
     state["protocol_version"] = state["package_protocol_version"] = 1
     for d in state["descriptors"]:
         d["protocol_version"] = 1
-    removed = "biopipe-microbiome"
+    removed = "operon-microbiome"
     state["packages"] = [p for p in state["packages"] if p["name"] != removed]
-    next(p for p in state["packages"] if p["name"] == "biopipe-genetics")["enabled"] = False
+    next(p for p in state["packages"] if p["name"] == "operon-genetics")["enabled"] = False
     manager.registry.write_text(json.dumps(state), encoding="utf-8")
     workspace = directory / "workflows/workspace.json"
     workspace.parent.mkdir()
@@ -135,7 +135,7 @@ def test_profile_migration_preserves_disabled_removed_and_historical_jobs(tmp_pa
     new = manager.state()
     assert new["package_protocol_version"] == 3
     assert removed not in {p["name"] for p in new["packages"]}
-    assert not next(p for p in new["packages"] if p["name"] == "biopipe-genetics")["enabled"]
+    assert not next(p for p in new["packages"] if p["name"] == "operon-genetics")["enabled"]
     assert json.loads(workspace.read_text())["documents"][0]["graph"]["schema_version"] == 2
     assert migrate(profile_dir=root)["changed"] == []
 
@@ -208,7 +208,7 @@ def test_source_conversion_is_static_and_keeps_author_code():
     result = convert_source(text, manifest)
     assert 'legacy_parameters' not in result
     assert 'return 42' in result and 'must never execute' in result
-    from biopipe.migrate import convert_source_parts
+    from operon.migrate import convert_source_parts
     assert convert_source_parts(text, manifest)[1]["Example.parameters.json"]["properties"]["x"]["x-ui-default"] == 2
     assert convert_source(result, manifest) == result
 
@@ -233,16 +233,16 @@ def test_preflight_failure_never_rewrites_valid_files(tmp_path):
     with pytest.raises(ValueError, match="Missing v3 operator"):
         migrate(path=path, apply=True)
     assert path.read_bytes() == original
-    assert not (tmp_path / ".biopipe-migration-backups").exists()
+    assert not (tmp_path / ".operon-migration-backups").exists()
 
 
 def test_sdk_requirement_checks_running_code_not_stale_build_metadata(tmp_path, monkeypatch):
-    from biopipe import __version__
-    from biopipe.targets import TargetBuilder
+    from operon import __version__
+    from operon.targets import TargetBuilder
     from importlib import metadata
     monkeypatch.setattr(metadata, "version", lambda name: "0.4.1")
     builder = TargetBuilder(PluginManager(tmp_path), {})
-    assert builder.prepare([f"biopipe-studio>={__version__},<4"])["mode"] == "shared"
-    assert builder.prepare(['biopipe-studio>=999; python_version < "0"'])["mode"] == "shared"
-    with pytest.raises(ValueError, match="incompatible BioPipe SDK"):
-        builder.prepare(["biopipe-studio>=999"])
+    assert builder.prepare([f"operon-studio>={__version__},<4"])["mode"] == "shared"
+    assert builder.prepare(['operon-studio>=999; python_version < "0"'])["mode"] == "shared"
+    with pytest.raises(ValueError, match="incompatible Operon SDK"):
+        builder.prepare(["operon-studio>=999"])

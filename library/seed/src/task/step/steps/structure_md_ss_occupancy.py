@@ -45,7 +45,7 @@ def write_frame(lines: list[str], coordinates: np.ndarray, path: Path) -> None:
             "structure_md_ss_occupancy: the trajectory has "
             f"{coordinates.shape[0]} atoms but the topology has {len(lines)}"
         )
-    output = ["HEADER    BIOPIPE MD FRAME"]
+    output = ["HEADER    OPERON MD FRAME"]
     for line, (x, y, z) in zip(lines, coordinates):
         output.append(f"{line[:30]}{x:8.3f}{y:8.3f}{z:8.3f}{line[54:]}")
     output.append("END")
@@ -76,9 +76,12 @@ def occupancy_rows(state_sets: list[dict[str, str]], labels: list[str]) -> list[
 
 
 class StructureMdSsOccupancyStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_md_ss_occupancy.StructureMdSsOccupancyStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_md_ss_occupancy",
         "version": "1.0.0",

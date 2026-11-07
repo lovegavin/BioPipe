@@ -22,9 +22,13 @@ from ._tree_build_common import TreeNode, _InternalNamer, build_tree_form, dista
 
 
 class NeighborJoiningStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'neighbor_joining.NeighborJoiningStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'neighbor_joining',
      'version': '1.0.0',
      'kind': 'operator',

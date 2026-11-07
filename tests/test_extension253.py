@@ -74,7 +74,7 @@ def test_run(tmp_path) -> None:
 
 
 def test_run_errors(tmp_path, monkeypatch) -> None:
-    monkeypatch.delenv("BIOPIPE_PFAM_HMM", raising=False)
+    monkeypatch.delenv("OPERON_PFAM_HMM", raising=False)
     form = encode_sequences(["MKV"], "sequence", "position", "protein")
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     ctx["protein"] = form
@@ -95,9 +95,9 @@ def test_real_hmmscan_when_available():
     import shutil
 
     binary = shutil.which("hmmscan")
-    hmm = os.environ.get("BIOPIPE_PFAM_HMM", "")
+    hmm = os.environ.get("OPERON_PFAM_HMM", "")
     if not binary or not hmm or not os.path.isfile(hmm):
-        pytest.skip("BIOPIPE_PFAM_HMM or hmmscan is not available")
+        pytest.skip("OPERON_PFAM_HMM or hmmscan is not available")
 
     from src.task.context import Context
     from src.task.runner import run

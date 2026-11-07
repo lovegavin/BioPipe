@@ -52,7 +52,7 @@ def _form():
 
 
 def test_run_requires_openmm():
-    ctx = Context("/tmp/biopipe_md_299", {"params": {}})
+    ctx = Context("/tmp/operon_md_299", {"params": {}})
     ctx["pdb"] = _form()
     if shutil.which("pdbfixer") is None and not pytest.importorskip("openmm", reason="openmm is not installed"):
         return
@@ -62,10 +62,10 @@ def test_run_requires_openmm():
     assert result.data.shape == (3, 5)
 
 
-@pytest.mark.skipif(os.environ.get("BIOPIPE_OPENMM_REAL") != "1", reason="set BIOPIPE_OPENMM_REAL=1 for a real trajectory")
+@pytest.mark.skipif(os.environ.get("OPERON_OPENMM_REAL") != "1", reason="set OPERON_OPENMM_REAL=1 for a real trajectory")
 def test_real_trajectory():
     pytest.importorskip("openmm")
-    ctx = Context("/tmp/biopipe_md_299_real", {"params": {}})
+    ctx = Context("/tmp/operon_md_299_real", {"params": {}})
     ctx["pdb"] = _form()
     run(ctx, [{"name": "structure_openmm_md_stability", "inputs": ["pdb"], "params": {"output": "frames", "steps": 200, "sample_every": 50, "temperature": 300.0, "seed": 3, "minimize_iterations": 200}}])
     result = ctx["frames"]

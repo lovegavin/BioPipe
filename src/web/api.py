@@ -13,11 +13,11 @@ import uuid
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 import yaml
 
 from src.core import ManifestError
-from biopipe import __version__
+from operon import __version__
 from .operator_catalog import catalog_from_descriptors
 from src.task.memory.config import AUTO_BUDGET_FRACTION
 from .graph import GraphError, compile_graph, import_manifest, project_path, relative_manifest
@@ -34,7 +34,7 @@ def create_app(settings=None):
     if settings is None:
         from .profile import make_settings
         settings = make_settings(root, root / "frontend/dist")
-    from biopipe.application import Application
+    from operon.application import Application
     application = Application(settings)
     service = application.service
     catalog = service.catalog
@@ -46,7 +46,7 @@ def create_app(settings=None):
     async def lifespan(app):
         bridge.publish(getattr(app.state, "instance_url", None) or settings.instance_url)
         if not settings.testing:
-            from biopipe.runtime import remember_runtime
+            from operon.runtime import remember_runtime
             remember_runtime()
         yield
         bridge.close()
@@ -54,7 +54,7 @@ def create_app(settings=None):
     app = FastAPI(title="Operon Studio", version=__version__, lifespan=lifespan)
     app.state.service, app.state.token = service, token
     app.state.application = application
-    from biopipe.bridge import Bridge
+    from operon.bridge import Bridge
     bridge = Bridge(app, service, token)
     app.state.bridge = bridge
     from .plugin_api import mount_plugins
@@ -69,7 +69,7 @@ def create_app(settings=None):
     app.state.executions = service.executions = executions
     from .execution_api import mount_execution, ACTIVE_STATUSES
     execution_events, execution_console = mount_execution(app, service, executions)
-    from biopipe.control_api import mount_control
+    from operon.control_api import mount_control
     mount_control(app, application, bridge)
 
     def graph_catalog(graph):
@@ -131,7 +131,7 @@ def create_app(settings=None):
         import sys
         import platform
         from .preferences import load as load_preferences
-        agent_args = ["-m", "biopipe", "--workspace", str(service.root), "--data-dir", str(service.directory), "mcp", "--allow-run"]
+        agent_args = ["-m", "operon", "--workspace", str(service.root), "--data-dir", str(service.directory), "mcp", "--allow-run"]
         return {"token": token, "catalog": catalog, "demo": service.demo,
                 "system": platform.system().lower().replace('darwin', 'macos'),
                 "automatic_memory_fraction": AUTO_BUDGET_FRACTION,
@@ -168,7 +168,7 @@ def create_app(settings=None):
 
     @app.post('/api/workflows/export-yaml')
     def export_public_yaml(graph: Graph):
-        from biopipe.workflow_archive import export_archive
+        from operon.workflow_archive import export_archive
         staging = service.directory / 'staging'
         staging.mkdir(exist_ok=True)
         return Response(export_archive(prepare(graph), staging), media_type='application/zip')
@@ -177,7 +177,7 @@ def create_app(settings=None):
     async def import_workflow(request: Request):
         try:
             data = await request.body()
-            from biopipe.workflow_archive import is_workflow_archive, import_archive
+            from operon.workflow_archive import is_workflow_archive, import_archive
             if is_workflow_archive(data):
                 staging = service.directory / 'staging'
                 staging.mkdir(exist_ok=True)
@@ -188,7 +188,7 @@ def create_app(settings=None):
 
     @app.post("/api/workflows/save")
     def save_workflow(payload: SaveWorkflow):
-        from biopipe.documents import CommandError
+        from operon.documents import CommandError
         try:
             return application.workflows.save(payload.graph, workflow_id=payload.id, expected_version=payload.expected_version)
         except CommandError as error:
@@ -252,8 +252,8 @@ def create_app(settings=None):
         try:
             import_root = settings.code_root or settings.root
             raw = yaml.safe_load(payload.text)
-            if isinstance(raw, dict) and raw.get('format') == 'biopipe.workflow':
-                from biopipe.workflow_spec import parse, compile_spec, WorkflowError
+            if isinstance(raw, dict) and raw.get('format') in ('operon.workflow', 'biopipe.workflow'):
+                from operon.workflow_spec import parse, compile_spec, WorkflowError
                 try:
                     directory = project_path(settings.root, '.', payload.base_dir)
                 except GraphError as error:

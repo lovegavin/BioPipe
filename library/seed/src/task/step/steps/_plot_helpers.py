@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 
 import matplotlib
 matplotlib.use("Agg")

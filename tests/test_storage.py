@@ -7,7 +7,7 @@ import sys
 
 import pytest
 
-from biopipe.bytecode import filesystem_path
+from operon.bytecode import filesystem_path
 from src.web.storage import FileLock, atomic_json
 
 
@@ -116,8 +116,8 @@ def test_atomic_json_keeps_lexical_path_without_resolving_links(tmp_path, monkey
 
 
 def test_deep_profile_snapshot_and_generation_docs_remain_readable(tmp_path):
-    from biopipe.plugins import PluginManager
-    from biopipe.operator_docs import OperatorDocs
+    from operon.plugins import PluginManager
+    from operon.operator_docs import OperatorDocs
     from src.web.models import Graph
     profile = deep_directory(tmp_path)
     manager = PluginManager(profile, source_root=None, manifest_only=True)

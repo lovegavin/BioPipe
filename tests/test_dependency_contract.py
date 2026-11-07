@@ -14,9 +14,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from biopipe import dependencies as module
-from biopipe.dependencies import DependencySession, find_tool, probe
-from biopipe.remote.handshake import ManifestHandshake
+from operon import dependencies as module
+from operon.dependencies import DependencySession, find_tool, probe
+from operon.remote.handshake import ManifestHandshake
 
 
 def descriptor(name, *, environment=None, external_tools=None, dependencies=None,

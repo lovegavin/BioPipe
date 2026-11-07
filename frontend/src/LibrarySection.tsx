@@ -6,7 +6,7 @@ export function LibrarySection({name, count, sectionKey, search, children, class
   name: string; count: number; sectionKey: string; search: string; children: ReactNode; className?: string; defaultCollapsed?: boolean;
 }) {
   const id = useId();
-  const storageKey = `biopipe-library-collapsed:${sectionKey}`;
+  const storageKey = `operon-library-collapsed:${sectionKey}`;
   const [collapsed, setCollapsed] = useState(() => {
     try { const saved = localStorage.getItem(storageKey); return saved === null ? defaultCollapsed : saved === "true"; } catch { return defaultCollapsed; }
   });

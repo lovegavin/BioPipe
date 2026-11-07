@@ -32,10 +32,14 @@ def _float(value, default=np.nan) -> float:
 
 
 class MzmlReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """One row per mzML spectrum, with peak lists summarized."""
     parameters_file = 'mzml_reader.MzmlReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'MzmlReader',
      'version': '1.0.0',
      'kind': 'reader',

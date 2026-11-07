@@ -10,10 +10,14 @@ from ._metric_common import binary_truth, label_series, score_series
 
 
 class DecisionCurveStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Net benefit across risk thresholds (decision-curve analysis)."""
     parameters_file = 'decision_curve.DecisionCurveStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'decision_curve',
      'version': '1.0.0',
      'kind': 'operator',

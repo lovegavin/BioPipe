@@ -8,10 +8,10 @@ import uuid
 
 import pytest
 
-from biopipe.remote.handshake import (
+from operon.remote.handshake import (
     CAPABILITIES, HandshakeError, daemon_request, installation_readiness,
 )
-from biopipe.remote.server import RemoteService
+from operon.remote.server import RemoteService
 
 
 def forbidden(*args, **kwargs):
@@ -25,12 +25,12 @@ def request(**values):
 @pytest.fixture
 def remote(tmp_path, monkeypatch):
     # Cold startup must also be document-only, including bundled provider pins.
-    monkeypatch.setenv('BIOPIPE_ADMISSION_DIR', str(tmp_path / 'admission'))
-    monkeypatch.setattr('biopipe.packages._provider_paths', forbidden)
+    monkeypatch.setenv('OPERON_ADMISSION_DIR', str(tmp_path / 'admission'))
+    monkeypatch.setattr('operon.packages._provider_paths', forbidden)
     value = RemoteService(tmp_path / 'server', input_roots=[tmp_path])
     monkeypatch.setattr(value.service.plugins, 'refresh', forbidden)
     monkeypatch.setattr(value.service.dependencies, '_inspect', forbidden)
-    monkeypatch.setattr('biopipe.install_targets.repair_entries', forbidden)
+    monkeypatch.setattr('operon.install_targets.repair_entries', forbidden)
     yield value
     value.service.shutdown()
     value.handshake.close()
@@ -79,7 +79,7 @@ def test_repeated_handshake_uses_documents_and_caches_tool_lookups(remote, monke
     def which(name):
         lookups.append(name)
         return sys.executable
-    monkeypatch.setattr('biopipe.remote.handshake.shutil.which', which)
+    monkeypatch.setattr('operon.remote.handshake.shutil.which', which)
     first = remote.dispatch('handshake', request(client_version='0.1.0'))
     count = len(lookups)
     assert count and len(set(lookups)) == count
@@ -152,10 +152,10 @@ def test_declaration_changes_keep_readiness_requirements_invalidate_one_entry(re
 
 def test_readiness_and_server_identity_survive_daemon_restart(remote, monkeypatch):
     enable_probes(remote, monkeypatch)
-    monkeypatch.setattr('biopipe.remote.handshake.shutil.which', lambda name: sys.executable)
+    monkeypatch.setattr('operon.remote.handshake.shutil.which', lambda name: sys.executable)
     first = refresh(remote)
     remote.service.shutdown()
-    monkeypatch.setattr('biopipe.remote.handshake.shutil.which', forbidden)
+    monkeypatch.setattr('operon.remote.handshake.shutil.which', forbidden)
     reopened = RemoteService(remote.service.root, input_roots=[remote.service.root.parent])
     try:
         monkeypatch.setattr(reopened.service.dependencies, '_inspect', forbidden)
@@ -167,12 +167,12 @@ def test_readiness_and_server_identity_survive_daemon_restart(remote, monkeypatc
 
 
 def test_runtime_identity_change_invalidates_durable_passed_entries(remote, monkeypatch):
-    from biopipe.remote.handshake import runtime_identity
+    from operon.remote.handshake import runtime_identity
     enable_probes(remote, monkeypatch)
     refresh(remote)
     remote.service.shutdown()
     altered = {**runtime_identity(), 'version': 'replacement interpreter'}
-    monkeypatch.setattr('biopipe.remote.handshake.runtime_identity', lambda: altered)
+    monkeypatch.setattr('operon.remote.handshake.runtime_identity', lambda: altered)
     reopened = RemoteService(remote.service.root, input_roots=[remote.service.root.parent])
     try:
         state = reopened.dispatch('handshake', request())
@@ -183,21 +183,21 @@ def test_runtime_identity_change_invalidates_durable_passed_entries(remote, monk
 
 @pytest.mark.parametrize('site_changed', [False, True])
 def test_managed_install_receipt_seeds_matching_base_dependencies(remote, monkeypatch, site_changed):
-    import biopipe.remote.handshake as module
-    from biopipe.packages import bundled_manifest
+    import operon.remote.handshake as module
+    from operon.packages import bundled_manifest
     original_read = module._read
     descriptors = [entry for package in bundled_manifest()['packages'] for entry in package['descriptors']]
     results = {entry['id']: {'status': 'passed', 'error': ''} for entry in descriptors}
     receipt = {'dependency_readiness': installation_readiness(descriptors, results)}
     if site_changed:
         receipt['dependency_readiness']['runtime']['environment'] = [['directory stamp before unrelated pytest install']]
-    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'biopipe-ready.json' else original_read(path))
+    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'operon-ready.json' else original_read(path))
     reopened = module.ManifestHandshake(remote.service, remote.memory)
     assert all(entry['status'] == 'passed' for entry in entries(reopened.response(request())).values())
 
 
 def test_installer_receipt_cannot_bypass_changed_requirements(remote, monkeypatch):
-    import biopipe.remote.handshake as module
+    import operon.remote.handshake as module
     original_read = module._read
     state = json.loads(remote.service.plugins.registry.read_text(encoding='utf-8'))
     results = {entry['id']: {'status': 'passed', 'error': ''} for entry in state['descriptors']}
@@ -206,7 +206,7 @@ def test_installer_receipt_cannot_bypass_changed_requirements(remote, monkeypatc
     def update(value):
         value['descriptors'][0]['dependencies'] = ['changed-requirement>=1']
     change_registry(remote, update)
-    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'biopipe-ready.json' else original_read(path))
+    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'operon-ready.json' else original_read(path))
     reopened = module.ManifestHandshake(remote.service, remote.memory)
     status = entries(reopened.response(request()))
     assert status[changed]['status'] == 'unchecked'
@@ -214,14 +214,14 @@ def test_installer_receipt_cannot_bypass_changed_requirements(remote, monkeypatc
 
 
 def test_installer_failed_capability_is_visible_and_never_promoted(remote, monkeypatch):
-    import biopipe.remote.handshake as module
+    import operon.remote.handshake as module
     original_read = module._read
     state = json.loads(remote.service.plugins.registry.read_text(encoding='utf-8'))
     missing = state['descriptors'][0]['id']
     results = {entry['id']: {'status': 'passed', 'error': ''} for entry in state['descriptors']}
     results[missing] = {'status': 'failed', 'error': 'optional-tool: not on PATH'}
     receipt = {'dependency_readiness': installation_readiness(state['descriptors'], results)}
-    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'biopipe-ready.json' else original_read(path))
+    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'operon-ready.json' else original_read(path))
     handshake = module.ManifestHandshake(remote.service, remote.memory)
     status = entries(handshake.response(request()))
     assert status[missing]['status'] == 'failed'
@@ -236,7 +236,7 @@ def test_installer_failed_capability_is_visible_and_never_promoted(remote, monke
 
 @pytest.mark.parametrize('resource,value', [('external_tools', ['new-tool']), ('environment', 'new-environment')])
 def test_installer_receipt_invalidates_changed_tool_or_environment(remote, monkeypatch, resource, value):
-    import biopipe.remote.handshake as module
+    import operon.remote.handshake as module
     original_read = module._read
     state = json.loads(remote.service.plugins.registry.read_text(encoding='utf-8'))
     results = {entry['id']: {'status': 'passed', 'error': ''} for entry in state['descriptors']}
@@ -245,13 +245,13 @@ def test_installer_receipt_invalidates_changed_tool_or_environment(remote, monke
     def update(state):
         state['descriptors'][0].setdefault('resources', {})[resource] = value
     change_registry(remote, update)
-    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'biopipe-ready.json' else original_read(path))
+    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'operon-ready.json' else original_read(path))
     handshake = module.ManifestHandshake(remote.service, remote.memory)
     assert entries(handshake.response(request()))[changed]['status'] == 'unchecked'
 
 
 def mock_daemon_lock(tmp_path, monkeypatch):
-    import biopipe.remote.server as module
+    import operon.remote.server as module
     monkeypatch.setitem(sys.modules, 'fcntl', SimpleNamespace(LOCK_EX=1, LOCK_NB=2, flock=lambda *args: None))
     monkeypatch.setattr(module, 'socket_path', lambda workspace: tmp_path / 'daemon.sock')
     monkeypatch.setattr(module.subprocess, 'Popen', forbidden)
@@ -290,16 +290,16 @@ def test_busy_daemon_is_never_replaced(tmp_path, monkeypatch):
 
 
 def test_startup_errors_have_structured_sentinel(tmp_path, monkeypatch, capsys):
-    import biopipe.remote.server as module
+    import operon.remote.server as module
     monkeypatch.setattr(sys, 'argv', ['server', '--workspace', str(tmp_path)])
     def incompatible(*args):
         raise HandshakeError('Upgrade the running server', code='handshake_required')
     monkeypatch.setattr(module, 'ensure_daemon', incompatible)
     module.main()
     output = capsys.readouterr().out
-    assert output.startswith('BIOPIPE_REMOTE_ERROR ')
+    assert output.startswith('OPERON_REMOTE_ERROR ')
     assert json.loads(output.split(' ', 1)[1])['code'] == 'handshake_required'
-    assert 'BIOPIPE_REMOTE_READY' not in output
+    assert 'OPERON_REMOTE_READY' not in output
 
 
 def test_refresh_is_single_flight_and_slow_scan_or_probe_does_not_block_handshakes(remote, monkeypatch):
@@ -371,13 +371,13 @@ def test_explicit_verify_all_rechecks_passed_entries(remote, monkeypatch):
 
 
 def test_forced_revalidation_revokes_installer_receipt_before_probe_finishes(remote, monkeypatch):
-    import biopipe.remote.handshake as module
-    from biopipe.dependencies import DependencySession
+    import operon.remote.handshake as module
+    from operon.dependencies import DependencySession
     original_read = module._read
     state = json.loads(remote.service.plugins.registry.read_text(encoding='utf-8'))
     results = {entry['id']: {'status': 'passed', 'error': ''} for entry in state['descriptors']}
     receipt = {'dependency_readiness': installation_readiness(state['descriptors'], results)}
-    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'biopipe-ready.json' else original_read(path))
+    monkeypatch.setattr(module, '_read', lambda path: receipt if path.name == 'operon-ready.json' else original_read(path))
     remote.handshake = module.ManifestHandshake(remote.service, remote.memory)
     assert all(entry['status'] == 'passed' for entry in entries(remote.dispatch('handshake', request())).values())
     inspecting, release = threading.Event(), threading.Event()
@@ -406,8 +406,8 @@ def test_forced_revalidation_revokes_installer_receipt_before_probe_finishes(rem
 
 
 def test_runtime_identity_ignores_site_packages_mtime_drift():
-    from biopipe.remote.handshake import runtime_compatible
-    base = {'python': ['/home/gavin/miniconda3/envs/biopipe/bin/python3.12', 31509696, 1793555547906412713, 1793555550650316209], 'version': '3.12.14 | packaged by Anaconda, Inc. | (main, Aug 27 2026, 14:46:43) [GCC 14.3.0]', 'prefix': '/home/gavin/miniconda3/envs/biopipe', 'base_prefix': '/home/gavin/miniconda3/envs/biopipe', 'environment': [['/home/gavin/miniconda3/envs/biopipe/lib/python3.12/site-packages', 20480, 1793731289809813295, 1793731289809813295]], 'base_paths': ''}
+    from operon.remote.handshake import runtime_compatible
+    base = {'python': ['/home/gavin/miniconda3/envs/operon/bin/python3.12', 31509696, 1793555547906412713, 1793555550650316209], 'version': '3.12.14 | packaged by Anaconda, Inc. | (main, Aug 27 2026, 14:46:43) [GCC 14.3.0]', 'prefix': '/home/gavin/miniconda3/envs/operon', 'base_prefix': '/home/gavin/miniconda3/envs/operon', 'environment': [['/home/gavin/miniconda3/envs/operon/lib/python3.12/site-packages', 20480, 1793731289809813295, 1793731289809813295]], 'base_paths': ''}
     drifted = {**base, 'environment': [['/tmp/site-packages', 1, 2]]}
     assert runtime_compatible(drifted, base) is True
     assert runtime_compatible({**base, 'version': 'other'}, base) is False
@@ -417,7 +417,7 @@ def test_runtime_identity_ignores_site_packages_mtime_drift():
 
 
 def test_readiness_capability_keeps_old_clients_but_rejects_old_servers(remote):
-    from biopipe.remote.handshake import validate_daemon_response
+    from operon.remote.handshake import validate_daemon_response
     legacy = [name for name in CAPABILITIES if name != 'workflow_readiness']
     response = remote.dispatch('handshake', request(required_capabilities=legacy))
     assert 'workflow_readiness' in response['handshake']['capabilities']

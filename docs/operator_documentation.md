@@ -1,6 +1,6 @@
 # Operator documentation and progressive discovery
 
-BioPipe 1.0.0 / SDK 3.1 keeps operator protocol version 3. Documentation is
+Operon 1.0.0 / SDK 3.1 keeps operator protocol version 3. Documentation is
 optional for compatibility with existing v3 installations and included for the
 consolidated bundled library. New operators and Readers should ship it.
 
@@ -36,7 +36,7 @@ Include Markdown in setuptools package data, alongside parameter JSON and icons:
 "lab_package" = ["*.json", "*.md", "*.svg", "*.png"]
 ```
 
-`biopipe plugin check` reads AST, JSON and Markdown without importing calculation
+`operon plugin check` reads AST, JSON and Markdown without importing calculation
 code. `plugin build` verifies that the wheel contains the exact declared Markdown.
 Installing a wheel or a whole library installs its documentation too. Reading it
 does not install scientific dependencies or launch an analysis.
@@ -75,7 +75,7 @@ targets without recompilation; old-style pins still require their exact archive.
 
 ## Efficient discovery for agents
 
-All transports use `biopipe.operator_docs.OperatorDocs`:
+All transports use `operon.operator_docs.OperatorDocs`:
 
 ```python
 docs = OperatorDocs(plugin_manager)
@@ -106,11 +106,11 @@ supports declared title aliases, not arbitrary translation. See the
 ```text
 python scripts/build_operator_docs.py
 python scripts/build_operator_docs.py --check
-biopipe registry build --scope packages
+operon registry build --scope packages
 ```
 
 The generator reads module/class docstrings using AST and preserves authored
-pages. Generated companions are explicitly marked `<!-- biopipe:generated -->`;
+pages. Generated companions are explicitly marked `<!-- operon:generated -->`;
 they are never labelled scientifically reviewed. Replace that marker and refine
 the page when providing authored guidance. A generated reference is a useful
 starting point, not evidence that every algorithm has been scientifically

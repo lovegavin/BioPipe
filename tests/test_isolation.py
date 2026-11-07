@@ -10,16 +10,16 @@ import numpy as np
 import pytest
 import yaml
 
-from biopipe.dropins import write_wheel
-from biopipe.plugins import PluginManager
-from biopipe.wire import Wire
+from operon.dropins import write_wheel
+from operon.plugins import PluginManager
+from operon.wire import Wire
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def prepare_dependencies(manager, ids=None):
     """Installation registers source only; explicit environment setup owns pip."""
-    from biopipe.dependencies import DependencySession
+    from operon.dependencies import DependencySession
     ids = ids or [d['id'] for d in manager.state()['descriptors'] if d['id'].startswith('test.')]
     result = DependencySession(manager).check(repair=True, ids=ids)
     selected = {entry['id']: entry for entry in result['entries'] if entry['id'] in ids}
@@ -29,14 +29,14 @@ def prepare_dependencies(manager, ids=None):
 
 
 def provider(tmp_path, name, version, body):
-    from biopipe.dropins import single_file_wheel
+    from operon.dropins import single_file_wheel
     path = tmp_path / (name + '.py')
-    write_extension(path, 'BIOPIPE_PLUGIN = ' + repr({'name': name, 'dependencies': [f'biopipe-test-dependency=={version}']}) + '\n' + body)
+    write_extension(path, 'OPERON_PLUGIN = ' + repr({'name': name, 'dependencies': [f'operon-test-dependency=={version}']}) + '\n' + body)
     return single_file_wheel(path, tmp_path / 'providers')
 
 
-REPORT = '''from biopipe_sdk import Step
-import biopipe_test_dependency as dep
+REPORT = '''from operon_sdk import Step
+import operon_test_dependency as dep
 import os, sys
 class Shared(Step):
     name = 'test.shared'
@@ -49,8 +49,8 @@ class Shared(Step):
         return {'version': dep.VERSION, 'pid': os.getpid(), 'python': sys.executable}
 '''
 
-ISOLATED = '''from biopipe_sdk import Step, Form
-import biopipe_test_dependency as dep
+ISOLATED = '''from operon_sdk import Step, Form
+import operon_test_dependency as dep
 import os, sys
 class Scale(Step):
     name = 'test.scale'
@@ -71,8 +71,8 @@ class Scale(Step):
         return {'version': dep.VERSION, 'pid': os.getpid(), 'python': sys.executable}
 '''
 
-STREAM = '''from biopipe_sdk import Step
-import biopipe_test_dependency as dep
+STREAM = '''from operon_sdk import Step
+import operon_test_dependency as dep
 import os, sys
 class Sum(Step):
     name = 'test.sum'
@@ -95,10 +95,10 @@ class Sum(Step):
                 'pid': os.getpid(), 'python': sys.executable}
 '''
 
-READER = '''from biopipe_sdk import Reader, Form
+READER = '''from operon_sdk import Reader, Form
 from src.core.contracts import reader_contract
 import numpy as np
-import biopipe_test_dependency as dep
+import operon_test_dependency as dep
 class DiskReader(Reader):
     name = 'test.reader'
     extensions = ['.isolated']
@@ -124,8 +124,8 @@ class DiskReader(Reader):
 def installed(tmp_path, monkeypatch):
     wheelhouse = tmp_path / 'wheels'
     for version in ['1', '2']:
-        write_wheel({'biopipe_test_dependency/__init__.py': f'VERSION = "{version}"\n'.encode()},
-                    'biopipe-test-dependency', version, [], wheelhouse)
+        write_wheel({'operon_test_dependency/__init__.py': f'VERSION = "{version}"\n'.encode()},
+                    'operon-test-dependency', version, [], wheelhouse)
     monkeypatch.setenv('PIP_NO_INDEX', '1')
     monkeypatch.setenv('PIP_FIND_LINKS', str(wheelhouse))
     manager = PluginManager(tmp_path / 'data', source_root=None)
@@ -160,7 +160,7 @@ def test_conflicts_use_same_python_and_only_conflicting_steps_leave_worker(insta
     assert ds['test.scale']['execution']['mode'] == ds['test.sum']['execution']['mode'] == 'isolated'
     assert 'python' not in state
     assert installed.python_for(state) == sys.executable
-    assert 'biopipe_test_dependency' not in sys.modules
+    assert 'operon_test_dependency' not in sys.modules
     steps = [{'name': 'test.shared', 'inputs': []}, {'name': 'test.scale', 'inputs': ['X'], 'params': {'output': 'Y'}},
              {'name': 'test.sum', 'inputs': ['Y']}, {'name': 'test.sum', 'inputs': ['X']}, {'name': 'test.shared', 'inputs': []}]
     result, summary, data = worker(installed, tmp_path / 'run', steps)
@@ -230,13 +230,13 @@ def test_failed_child_preserves_traceback_and_exits(installed, tmp_path):
 
 
 def test_one_source_file_can_keep_compatible_class_shared(installed, tmp_path):
-    from biopipe.dropins import single_file_wheel
+    from operon.dropins import single_file_wheel
     source = tmp_path / 'mixed.py'
     shared = REPORT.replace('test.shared', 'test.mixed_shared').replace('class Shared(Step):',
-        'class Shared(Step):\n    dependencies = ["biopipe-test-dependency==1"]')
+        'class Shared(Step):\n    dependencies = ["operon-test-dependency==1"]')
     isolated = ISOLATED.replace('test.scale', 'test.mixed_scale').replace('class Scale(Step):',
-        'class Scale(Step):\n    dependencies = ["biopipe-test-dependency==2"]')
-    write_extension(source, 'BIOPIPE_PLUGIN = {"name": "test-mixed"}\n' + shared + '\n' + isolated)
+        'class Scale(Step):\n    dependencies = ["operon-test-dependency==2"]')
+    write_extension(source, 'OPERON_PLUGIN = {"name": "test-mixed"}\n' + shared + '\n' + isolated)
     installed.install(single_file_wheel(source, tmp_path / 'mixed-wheel'))
     prepare_dependencies(installed, ['test.mixed_shared', 'test.mixed_scale'])
     descriptors = {d['id']: d for d in installed.state()['descriptors']}
@@ -251,13 +251,13 @@ def test_one_source_file_can_keep_compatible_class_shared(installed, tmp_path):
 
 
 def test_session_probes_selected_targets_and_retains_passed_status(installed, monkeypatch):
-    from biopipe.dependencies import DependencySession
-    from biopipe.targets import inspect_entries
+    from operon.dependencies import DependencySession
+    from operon.targets import inspect_entries
     calls = []
     def inspect(state, entries, directory):
         calls.append([e['id'] for e in entries])
         return inspect_entries(state, entries, directory)
-    monkeypatch.setattr('biopipe.targets.inspect_entries', inspect)
+    monkeypatch.setattr('operon.targets.inspect_entries', inspect)
     session = DependencySession(installed)
     ids = [d['id'] for d in installed.state()['descriptors'] if d['id'].startswith('test.')]
     first = session.check(repair=False, ids=ids)
@@ -306,11 +306,11 @@ def test_desktop_cancel_stops_isolated_child_and_preserves_logs(installed, tmp_p
 
 
 def test_transitive_conflict_and_failed_preparation_preserves_registration(installed, tmp_path):
-    from biopipe.dropins import single_file_wheel
-    write_wheel({'biopipe_test_transitive.py': b'VALUE = 2\n'}, 'biopipe-test-transitive', '1',
-                ['biopipe-test-dependency==2'], tmp_path / 'wheels')
+    from operon.dropins import single_file_wheel
+    write_wheel({'operon_test_transitive.py': b'VALUE = 2\n'}, 'operon-test-transitive', '1',
+                ['operon-test-dependency==2'], tmp_path / 'wheels')
     source = tmp_path / 'transitive.py'
-    write_extension(source, 'BIOPIPE_PLUGIN = {"name": "test-transitive", "dependencies": ["biopipe-test-transitive==1"]}\n'
+    write_extension(source, 'OPERON_PLUGIN = {"name": "test-transitive", "dependencies": ["operon-test-transitive==1"]}\n'
                       + REPORT.replace('test.shared', 'test.transitive'))
     installed.install(single_file_wheel(source, tmp_path / 'transitive-wheel'))
     prepare_dependencies(installed, ['test.transitive'])
@@ -320,12 +320,12 @@ def test_transitive_conflict_and_failed_preparation_preserves_registration(insta
     assert result.returncode == 0, result.stdout + result.stderr
     exported = json.loads((tmp_path / 'transitive-run/output' / summary['steps'][0]['export_path']).read_text())
     assert exported['version'] == '2'
-    source.write_text(source.read_text().replace('biopipe-test-transitive==1', 'biopipe-no-such-test-distribution==0'))
+    source.write_text(source.read_text().replace('operon-test-transitive==1', 'operon-no-such-test-distribution==0'))
     # An unavailable dependency does not prevent static registration. An
     # explicitly requested repair must fail without publishing broken targets.
     installed.install(single_file_wheel(source, tmp_path / 'missing-wheel'))
     original = installed.registry.read_bytes()
-    from biopipe.dependencies import DependencySession
+    from operon.dependencies import DependencySession
     checked = DependencySession(installed).check(repair=True, ids=['test.transitive'])
     entry = next(e for e in checked['entries'] if e['id'] == 'test.transitive')
     assert entry['status'] == 'failed'
@@ -335,7 +335,7 @@ def test_transitive_conflict_and_failed_preparation_preserves_registration(insta
 
 def test_forced_cancel_reaps_owned_descendants():
     import psutil
-    from biopipe.processes import stop_tree
+    from operon.processes import stop_tree
     process = subprocess.Popen([sys.executable, '-u', '-c',
         'import subprocess,sys,time; child=subprocess.Popen([sys.executable,"-c","import time; time.sleep(60)"]); '
         'print(child.pid, flush=True); time.sleep(60)'], stdout=subprocess.PIPE, text=True)
@@ -370,12 +370,12 @@ def test_wire_preserves_axis_metadata_encoders_and_rejects_unknown_objects(tmp_p
         wire.encode(object())
 
 
-@pytest.mark.parametrize('group, entry', [('biopipe.operators', 'mixed:Shared\nisolated = mixed:Isolated'), ('biopipe.modules', 'mixed')])
+@pytest.mark.parametrize('group, entry', [('operon.operators', 'mixed:Shared\nisolated = mixed:Isolated'), ('operon.modules', 'mixed')])
 def test_ordinary_wheel_requires_explicit_v3_manifest(tmp_path, group, entry):
-    from biopipe.install_targets import wheel_entries
+    from operon.install_targets import wheel_entries
     wheel = write_wheel({
-        'mixed.py': b'from biopipe_sdk import Step\nclass Shared(Step):\n dependencies = ["example==1"]\nclass Isolated(Step):\n dependencies = ["example==2"]\n',
+        'mixed.py': b'from operon_sdk import Step\nclass Shared(Step):\n dependencies = ["example==1"]\nclass Isolated(Step):\n dependencies = ["example==2"]\n',
         'ordinary-1.dist-info/entry_points.txt': f'[{group}]\nshared = {entry}\n'.encode(),
     }, 'ordinary', '1', ['common>=1'], tmp_path)
-    with pytest.raises(ValueError, match='protocol v3 wheel requires biopipe.json'):
+    with pytest.raises(ValueError, match='protocol v3 wheel requires operon.json'):
         wheel_entries(wheel)

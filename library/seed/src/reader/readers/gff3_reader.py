@@ -65,9 +65,13 @@ _GFF3_COLUMNS = [
 
 class Gff3Reader(Reader):
     """Reader for .gff / .gff3 files."""
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     parameters_file = 'gff3_reader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'Gff3Reader',
      'version': '1.0.0',
      'kind': 'reader',

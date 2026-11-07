@@ -1,4 +1,4 @@
-# BioPipe Quickstart
+# Operon Quickstart
 
 - [中文版（Chinese）](quickstart_full_flow.zh.md)
 - [English version](quickstart_full_flow.en.md)

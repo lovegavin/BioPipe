@@ -28,7 +28,7 @@ def resolve_profile(code_root, *, profile_dir=None, workspace=None, data_dir=Non
 
     # Setup-created installations own their profile. This marker contains only
     # a product name and random identity, never a developer path or migrated registry.
-    from biopipe.installation import isolated_root, profile_id, profile_namespace
+    from operon.installation import isolated_root, profile_id, profile_namespace
     installation = isolated_root(code_root)
     if installation is not None:
         profile = home / profile_namespace(installation) / 'profiles' / profile_id(installation)
@@ -46,8 +46,8 @@ def resolve_profile(code_root, *, profile_dir=None, workspace=None, data_dir=Non
             text = str(home / text[2:])
         return (base / text).resolve()
 
-    override = profile_dir or env.get("BIOPIPE_STUDIO_HOME")
-    workspace_data = data_dir or env.get("BIOPIPE_STUDIO_DATA")
+    override = profile_dir or env.get("OPERON_STUDIO_HOME")
+    workspace_data = data_dir or env.get("OPERON_STUDIO_DATA")
     if workspace is not None:
         if profile_dir is not None:
             raise ValueError("--workspace 与 --profile-dir 不能同时使用。")
@@ -57,21 +57,21 @@ def resolve_profile(code_root, *, profile_dir=None, workspace=None, data_dir=Non
             raise ValueError("--data-dir 必须位于 --workspace 内。")
         return StudioProfile(None, root, data)
     if workspace_data is not None:
-        raise ValueError("BIOPIPE_STUDIO_DATA / --data-dir requires --workspace; use BIOPIPE_STUDIO_HOME / --profile-dir for a shared profile.")
-    profile = expand(override or ".biopipe/studio", home)
+        raise ValueError("OPERON_STUDIO_DATA / --data-dir requires --workspace; use OPERON_STUDIO_HOME / --profile-dir for a shared profile.")
+    profile = expand(override or ".operon/studio", home)
     return StudioProfile(profile, profile / "workspace", profile / "workspace/.studio")
 
 
 
 def upload_limit_from_env():
     """Optional explicit limit shared by both launchers; unset/zero is unlimited."""
-    raw = os.environ.get("BIOPIPE_STUDIO_MAX_UPLOAD_MB", "0")
+    raw = os.environ.get("OPERON_STUDIO_MAX_UPLOAD_MB", "0")
     try:
         value = int(raw)
     except ValueError as exc:
-        raise ValueError("BIOPIPE_STUDIO_MAX_UPLOAD_MB must be a non-negative integer (MiB)") from exc
+        raise ValueError("OPERON_STUDIO_MAX_UPLOAD_MB must be a non-negative integer (MiB)") from exc
     if value < 0:
-        raise ValueError("BIOPIPE_STUDIO_MAX_UPLOAD_MB must be a non-negative integer (MiB)")
+        raise ValueError("OPERON_STUDIO_MAX_UPLOAD_MB must be a non-negative integer (MiB)")
     return value * 1024**2 if value else None
 
 

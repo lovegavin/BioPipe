@@ -13,7 +13,7 @@ from ._stats21_common import numeric_column, table_frame
 
 
 class ChiSquareOutTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Chi-square test for one extreme observation.
 
     Mirrors ``outliers::chisq.out.test``: the farther of the minimum and
@@ -22,7 +22,11 @@ class ChiSquareOutTestStep(Step):
     ``opposite`` forces the other extreme, as in the R implementation.
     """
     parameters_file = 'chisq_out_test.ChiSquareOutTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'chisq_out_test',
      'version': '1.0.0',
      'kind': 'operator',

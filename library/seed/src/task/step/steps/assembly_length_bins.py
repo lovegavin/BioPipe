@@ -14,16 +14,19 @@ from ._assembly_utils import contig_records
 
 class AssemblyLengthBinsStep(Step):
     id = "assembly_length_bins"
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "assembly_length_bins.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "assembly_length_bins",
         "version": "1.0.0",
         "kind": "operator",
         "title": "Contig length bins",
         "description": "Bin assembly contigs by length and report counts and bases per bin.",
-        "provider": "biopipe-core",
+        "provider": "operon-core",
         "category": "Genome",
         "icon": "BarChart3",
         "resources": {

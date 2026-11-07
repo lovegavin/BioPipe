@@ -11,10 +11,15 @@ STATISTICS = ("n_called", "n_missing", "call_rate")
 
 
 class VcfSiteMissingnessStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     """One row per site with called/missing sample counts and call rate."""
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "version": "1.0.0",
         "id": "vcf_site_missingness",
         "title": "Per-site VCF call rate",

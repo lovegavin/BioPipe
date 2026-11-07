@@ -16,10 +16,13 @@ from ._protein_common import (
 
 
 class LigandContactProfileStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Profile per-atom ligand contacts against the surrounding structure."""
     parameters_file = 'ligand_contact_profile.LigandContactProfileStep.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'ligand_contact_profile',
         'version': '1.0.0',

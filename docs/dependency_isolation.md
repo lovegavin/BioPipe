@@ -1,6 +1,6 @@
 # Selective dependency isolation
 
-BioPipe uses **one Python executable**. Compatible operators run in the pipeline
+Operon uses **one Python executable**. Compatible operators run in the pipeline
 worker with shared dependencies. A declared direct or transitive version conflict
 selects a private dependency directory and a fresh subprocess for that operator.
 It does not create another Python installation, rewrite imports, or rename packages.
@@ -24,7 +24,7 @@ Another operator can declare `some-library>=2,<3`. If version 2 is already share
 only the version-1 operator is isolated. Keep requirements literal so source
 scanning can prepare dependencies before importing a module. A direct SDK subclass
 in a single-file drop-in gets its own dependency declaration. Module-wide
-`BIOPIPE_PLUGIN.dependencies` and wheel `project.dependencies` apply to **every**
+`OPERON_PLUGIN.dependencies` and wheel `project.dependencies` apply to **every**
 entry in that module/package. Do not put contradictory per-operator requirements
 in the common package requirements. SDK-generated manifests preserve per-entry
 requirements; generated provider modules load entries lazily.
@@ -33,7 +33,7 @@ Ordinary Python imports keep their normal meaning inside each process. Modules
 that eagerly import sibling implementations also require those siblings' imports.
 Use separate modules or lazy imports when siblings need conflicting dependencies.
 Definitions must be literal dictionaries; dynamic declarations are rejected.
-Build the generated wheel manifest with `biopipe plugin build`.
+Build the generated wheel manifest with `operon plugin build`.
 
 ## Installation and readiness
 
@@ -78,7 +78,7 @@ operators keep the existing in-process execution path.
 
 The local exchange protocol uses tagged JSON and NPY files, not pickled
 dependency-owned objects. Forms preserve `dims`, `labels`, `info`, `axis_info`,
-NumPy metadata arrays, non-finite floats and BioPipe LabelEncoder mappings.
+NumPy metadata arrays, non-finite floats and Operon LabelEncoder mappings.
 Lists, tuples, sets, dictionaries and paths retain their types. Arbitrary custom
 Python objects and object-dtype arrays fail with an explicit type error; convert
 such metadata to supported values before crossing the boundary.

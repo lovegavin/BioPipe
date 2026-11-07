@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
 import json
 import sys
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -164,7 +168,7 @@ def test_runner_failure_reports_exit_code(tmp_path: Path) -> None:
     reason="the official ProteinMPNN checkout and weights are required",
 )
 def test_official_runner_perplexity(tmp_path: Path) -> None:
-    structure = Path("/home/gavin/BioPipe/tests/fixtures/backbone_1bc8_c60_75.pdb")
+    structure = Path(str(ROOT / "tests" / "fixtures" / "backbone_1bc8_c60_75.pdb"))
     if not structure.is_file():
         pytest.skip("fixture is missing")
     step = _run(

@@ -79,7 +79,7 @@ def test_run_round_trip(monkeypatch):
 
 def test_errors():
     form = encode_sequences(["ACDE"], "sequence", "position", "protein")
-    ctx = Context("/tmp/biopipe_esm3_sasa_err", {"params": {}})
+    ctx = Context("/tmp/operon_esm3_sasa_err", {"params": {}})
     ctx["sequence"] = form
     with pytest.raises((StepError, ValueError)):
         run(ctx, [{"name": "esm3_sasa_prediction", "inputs": ["sequence"], "params": {"output": "sasa", "num_steps": 0}}])
@@ -89,8 +89,8 @@ def test_errors():
 def test_real_esm3_sasa():
     import os
 
-    if os.environ.get("BIOPIPE_ESM3_REAL") != "1":
-        pytest.skip("set BIOPIPE_ESM3_REAL=1 to run the ESM-3 SASA track")
+    if os.environ.get("OPERON_ESM3_REAL") != "1":
+        pytest.skip("set OPERON_ESM3_REAL=1 to run the ESM-3 SASA track")
     model = module.load_model("esm3_sm_open_v1", "cpu")
     values = predict_sasa(model, "MKVLAAGIVGLLLA", num_steps=4)
     assert len(values) == 14

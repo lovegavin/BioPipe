@@ -183,11 +183,14 @@ def boundary_rows(
 class StructureDomainBoundaryStep(Step):
     """Split a CA contact graph into domains and flag the boundary residues."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "structure_domain_boundary.StructureDomainBoundaryStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_domain_boundary",
         "version": "1.0.0",

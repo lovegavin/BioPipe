@@ -15,10 +15,14 @@ from src.reader.readers._table_common import table_form
 
 
 class PafReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Pairwise mapping format (PAF) reader."""
     parameters_file = 'paf_reader.PafReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'PafReader',
      'version': '1.0.0',
      'kind': 'reader',

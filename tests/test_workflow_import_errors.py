@@ -5,13 +5,13 @@ import pytest
 import yaml
 from fastapi.testclient import TestClient
 
-from biopipe.workflow_spec import compile_spec
+from operon.workflow_spec import compile_spec
 from src.web.api import create_app
 from src.web.service import Settings
 
 
 def document():
-    return {'format': 'biopipe.workflow', 'schema_version': 1, 'sources': {}, 'steps': {}}
+    return {'format': 'operon.workflow', 'schema_version': 1, 'sources': {}, 'steps': {}}
 
 
 @pytest.mark.parametrize('field', ['parameters_file', 'execution_file', 'lock_file', 'ui_file', 'script'])

@@ -36,20 +36,20 @@ def test_profile_independent_of_checkout_cwd_and_appdata(tmp_path, monkeypatch):
     first = resolve_profile(tmp_path / "checkout A", home=user, environ={"LOCALAPPDATA": str(tmp_path / "real")})
     second = resolve_profile(tmp_path / "relocated exe", home=user, environ={"LOCALAPPDATA": str(tmp_path / "MSIX/cache")})
     assert first == second
-    assert first.profile_dir == user / ".biopipe/studio"
+    assert first.profile_dir == user / ".operon/studio"
     assert not user.exists()  # Path diagnostics must be read-only.
-    assert resolve_profile(ROOT, home=user, environ={"BIOPIPE_STUDIO_HOME": "custom"}).profile_dir == user / "custom"
-    override = resolve_profile(ROOT, home=user, environ={"BIOPIPE_STUDIO_HOME": "env"}, profile_dir="cli")
+    assert resolve_profile(ROOT, home=user, environ={"OPERON_STUDIO_HOME": "custom"}).profile_dir == user / "custom"
+    override = resolve_profile(ROOT, home=user, environ={"OPERON_STUDIO_HOME": "env"}, profile_dir="cli")
     assert override.profile_dir == user / "cli"
     with pytest.raises(ValueError, match="--workspace"):
-        resolve_profile(ROOT, home=user, environ={"BIOPIPE_STUDIO_DATA": "old"})
+        resolve_profile(ROOT, home=user, environ={"OPERON_STUDIO_DATA": "old"})
     with pytest.raises(ValueError):
         resolve_profile(ROOT, home=user, environ={}, workspace=tmp_path, data_dir="../escape")
 
 
 def test_both_python_entrypoints_use_identical_resolver(tmp_path):
-    env = {k: v for k, v in os.environ.items() if k != "BIOPIPE_STUDIO_DATA"}
-    env.update(BIOPIPE_STUDIO_HOME=str(tmp_path / "shared 中文"), PYTHONIOENCODING="utf-8")
+    env = {k: v for k, v in os.environ.items() if k != "OPERON_STUDIO_DATA"}
+    env.update(OPERON_STUDIO_HOME=str(tmp_path / "shared 中文"), PYTHONIOENCODING="utf-8")
     results = []
     for script in ("studio.py", "desktop_server.py"):
         result = subprocess.run([sys.executable, "-B", str(ROOT / "scripts" / script), "--resolve-profile"],

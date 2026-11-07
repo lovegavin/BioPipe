@@ -17,10 +17,14 @@ TOKEN = re.compile(r"\[[^\]]+\]|[A-Z][a-z]?|[a-z]")
 
 
 class SmiReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """SMILES .smi reader with length and approximate heavy-atom count."""
     parameters_file = 'smi_reader.SmiReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'SmiReader',
      'version': '1.0.0',
      'kind': 'reader',

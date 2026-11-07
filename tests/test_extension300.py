@@ -136,7 +136,7 @@ def test_errors(tmp_path):
         run(ctx, [{"name": "antifold_design", "params": {**params, "runner_path": str(missing)}}])
 
 
-@pytest.mark.skipif(os.environ.get("BIOPIPE_ANTIFOLD_REAL") != "1", reason="set BIOPIPE_ANTIFOLD_REAL=1 to run AntiFold")
+@pytest.mark.skipif(os.environ.get("OPERON_ANTIFOLD_REAL") != "1", reason="set OPERON_ANTIFOLD_REAL=1 to run AntiFold")
 def test_real_antifold(tmp_path):
     pytest.importorskip("antifold")
     fixture = Path(__file__).resolve().parent / "fixtures" / "vhh_1mel.pdb"

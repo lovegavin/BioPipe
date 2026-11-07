@@ -35,7 +35,7 @@ from src.task.step.base import Step
 
 class OrderAxisStep(Step):
     """Reorder an axis by a numeric info field, keeping all positions."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'order_axis.parameters.json'
     definition = {'protocol_version': 3,
      'id': 'order_axis',

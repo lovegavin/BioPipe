@@ -37,14 +37,19 @@ def _adjust(pvalues: np.ndarray, method: str) -> np.ndarray:
 
 
 class ConoverTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """All-pairwise Conover comparisons for every feature.
 
     Mean-rank differences are tested with the Conover variance correction
     after Kruskal-Wallis, matching ``DescTools::ConoverTest``.
     """
     parameters_file = 'conover_test.ConoverTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'conover_test',
      'version': '1.0.0',
      'kind': 'operator',

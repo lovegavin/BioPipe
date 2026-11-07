@@ -86,7 +86,7 @@ def service(tmp_path, monkeypatch):
     (code / 'scripts/run.py').write_text('''import json,os,sys,time
 from pathlib import Path
 task=Path(sys.argv[1]); output=task/'output'; output.mkdir()
-(output/'started.json').write_text(json.dumps({'pid':os.getpid(),'cpu':os.environ.get('BIOPIPE_CPU_LIMIT'), 'blas':os.environ.get('OPENBLAS_NUM_THREADS')}))
+(output/'started.json').write_text(json.dumps({'pid':os.getpid(),'cpu':os.environ.get('OPERON_CPU_LIMIT'), 'blas':os.environ.get('OPENBLAS_NUM_THREADS')}))
 events=output/'runs'/'r'; events.mkdir(parents=True)
 (events/'events.jsonl').write_text(json.dumps({'event':'step_started','index':1,'name':'synthetic'})+'\\n')
 while not (task/'finish').exists():
@@ -191,7 +191,7 @@ def test_restart_resumes_durable_queue_without_replaying_running_job(service):
 
 def test_worker_handoff_retains_startup_snapshot_without_scanning(monkeypatch):
     from src.task.memory.config import MemoryConfig
-    monkeypatch.setenv('BIOPIPE_AVAILABLE_AT_START_BYTES', str(4096 * MIB))
+    monkeypatch.setenv('OPERON_AVAILABLE_AT_START_BYTES', str(4096 * MIB))
     def forbidden():
         raise AssertionError('Workers must not scan available memory again')
     monkeypatch.setattr('src.task.memory.system.available_memory', forbidden)
@@ -201,9 +201,9 @@ def test_worker_handoff_retains_startup_snapshot_without_scanning(monkeypatch):
 
 
 def test_native_tool_thread_count_honors_admission(tmp_path, monkeypatch):
-    from biopipe.tool_runner import ToolRunner
+    from operon.tool_runner import ToolRunner
     from src.task.context import Context
-    monkeypatch.setenv('BIOPIPE_CPU_LIMIT', '2')
+    monkeypatch.setenv('OPERON_CPU_LIMIT', '2')
     ctx = Context(tmp_path, {})
     try:
         runner = ToolRunner(ctx, {'executor': 'native', 'threads': 16})

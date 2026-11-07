@@ -12,9 +12,13 @@ from ._timeseries63_common import numeric_series
 
 
 class DifferenceSignStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'difference_sign.DifferenceSignStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'difference_sign',
      'version': '1.0.0',
      'kind': 'operator',

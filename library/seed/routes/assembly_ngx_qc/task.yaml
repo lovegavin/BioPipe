@@ -1,5 +1,5 @@
 {
-  "format": "biopipe.task",
+  "format": "operon.task",
   "schema_version": 1,
   "name": "Assembly completeness (NGx/auN) of S. cerevisiae S288C",
   "sources": {

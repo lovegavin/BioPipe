@@ -7,9 +7,9 @@ import numpy as np
 import pytest
 import yaml
 
-from biopipe.bytecode import io_path
-from biopipe.parameter_values import read_values, split_task
-from biopipe.wire import Wire
+from operon.bytecode import io_path
+from operon.parameter_values import read_values, split_task
+from operon.wire import Wire
 from src.core import ContextError, FileArtifact, Form
 from src.task import Context, load_manifest, run
 from src.web.storage import atomic_json
@@ -52,7 +52,7 @@ def test_deep_job_frozen_values_stream_spill_mmap_exchange_and_logs(tmp_path):
         mapped['info']['pos']._mmap.close()
         run(ctx, loaded['steps'])
         assert entry.form is None
-        from biopipe.exchange import export_outputs
+        from operon.exchange import export_outputs
         exported = export_outputs(ctx)['X']
         assert Path(exported['path']).is_relative_to(ctx.out_dir)
         assert all(not item['path'].startswith('\\\\?\\') for item in exported['files'])
@@ -99,7 +99,7 @@ def test_deep_wire_file_artifacts_and_memory_maps_keep_logical_references(tmp_pa
 
 
 def test_deep_publication_outputs_and_native_alias_registration(tmp_path):
-    from biopipe_sdk.figures import register_figure, save_matplotlib
+    from operon_sdk.figures import register_figure, save_matplotlib
     from src.task.step.steps._plot_helpers import plt
     directory = deep_directory(tmp_path)
     ctx = SimpleNamespace(memory=None, out_dir=directory, metadata={}, step_params={'figure_width_mm': 60, 'figure_dpi': 100})

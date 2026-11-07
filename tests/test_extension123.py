@@ -228,13 +228,13 @@ def test_step_errors(tmp_path, fake_esm):
 
 
 @pytest.mark.skipif(
-    __import__("os").environ.get("BIOPIPE_ESM_CHECKPOINT", "") == "",
-    reason="BIOPIPE_ESM_CHECKPOINT is not set",
+    __import__("os").environ.get("OPERON_ESM_CHECKPOINT", "") == "",
+    reason="OPERON_ESM_CHECKPOINT is not set",
 )
 def test_official_checkpoint_variant_effect():
     import os
 
-    checkpoint = os.environ["BIOPIPE_ESM_CHECKPOINT"]
+    checkpoint = os.environ["OPERON_ESM_CHECKPOINT"]
     step = EsmVariantEffectStep()
     ctx = Ctx({"model_path": checkpoint, "positions": "2", "device": "cpu"})
     step.run(ctx, [_protein_form(["ACDE"])])

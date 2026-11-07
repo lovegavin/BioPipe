@@ -37,10 +37,14 @@ def _expected_richness(counts: np.ndarray, depth: int) -> float:
 
 
 class RarefactionStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Expected species richness at a fixed number of individuals."""
     parameters_file = 'rarefaction.RarefactionStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'rarefaction',
      'version': '1.0.0',
      'kind': 'operator',

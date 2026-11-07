@@ -9,8 +9,8 @@ The same registry manages bundled and wheel providers. See
 hot replacement, enable/disable/restore, and public stream/disk hooks.
 
 Studio, CLI and MCP locate the same data directory through `src/web/profile.py`.
-The default is `~/.biopipe/studio/workspace/.studio`. A user can select a profile
-with `BIOPIPE_STUDIO_HOME` or `--profile-dir`, or use an explicit `--workspace`.
+The default is `~/.operon/studio/workspace/.studio`. A user can select a profile
+with `OPERON_STUDIO_HOME` or `--profile-dir`, or use an explicit `--workspace`.
 
 ```text
 <data directory>/
@@ -68,7 +68,7 @@ providers and do not resurrect removed providers or override independently insta
 provider wheels. This is the same operator library and execution engine, not a
 parallel extension-only system. Stream operators and disk Readers retain their hooks.
 
-The CLI equivalent is `biopipe plugin refresh`; `biopipe plugin list` reports
+The CLI equivalent is `operon plugin refresh`; `operon plugin list` reports
 `source_directories` and the optional `inbox`. Paths are resolved from the running
 selected profile, never from a fixed drive or developer account.
 Desktop and development launches sharing a profile read the same active registry.
@@ -82,7 +82,7 @@ The application version and the managed source library version are independent.
 Official library releases use `library-v…` tags; software releases use `v…`.
 See the [release guide](library_releases.md) for tested compatibility, publishing
 and user update instructions. Operator-only changes do not bump the application.
-**Import package** accepts a `.biopipe-library.zip` for the complete managed
+**Import package** accepts a `.operon-library.zip` for the complete managed
 source library, or `.whl` for one provider. Import validates checksums, protocol,
 minimum application version and source/wheel consistency before preparing the
 environment. The existing dependency manager handles shared and conflicting
@@ -100,8 +100,8 @@ python scripts/build_builtin_packages.py --library-version 1.0.0 --output build/
 Export the editable library in the selected profile, or install a supplied bundle:
 
 ```bash
-biopipe plugin export-library ./library-release --library-version 1.0.1
-biopipe plugin install ./library-release/BioPipe-Library-v1.0.1.biopipe-library.zip
+operon plugin export-library ./library-release --library-version 1.0.1
+operon plugin install ./library-release/Operon-Library-v1.0.1.operon-library.zip
 ```
 
 This exports the managed source trees, not unrelated standalone packages installed
@@ -116,7 +116,7 @@ Do not copy another branch's frontend, engine or legacy declarations into these
 directories. Convert older declarations to v3 and validate them before exporting.
 
 Source refresh updates the **active profile**, not the checked-in JSON manifests.
-Maintainers still run `biopipe registry build` before committing/publishing source
+Maintainers still run `operon registry build` before committing/publishing source
 changes. Declare algorithm dependencies in the Reader/Step's literal `definition`
 as `dependencies: ["package>=version"]` and, optionally,
 `dependency_imports: ["module_name"]`. Refresh reads these declarations without
@@ -148,7 +148,7 @@ Supported inputs, placed directly inside `inbox/`:
   classes are excluded. No manual JSON registry or wheel build is needed.
 - **One `.whl` file:** the existing unified package protocol and validation apply.
 - **One project folder:** include `pyproject.toml` with the usual
-  `biopipe.operators` / `biopipe.readers` entry points. BioPipe snapshots the folder
+  `operon.operators` / `operon.readers` entry points. Operon snapshots the folder
   and runs `pip wheel --no-deps` with build isolation, then installs the result.
   Build requirements and additional runtime dependencies may need network access.
 
@@ -156,7 +156,7 @@ For a single file, an optional **literal** module-level dictionary supplies the
 package identity and additional dependencies before the module is imported:
 
 ```python
-BIOPIPE_PLUGIN = {
+OPERON_PLUGIN = {
     "name": "my-lab-scale",       # Stable distribution name, independent of the file path
     "version": "0.1.0",
     "dependencies": ["numpy>=1.26"],
@@ -193,7 +193,7 @@ not reinstall an unchanged file after an explicit package removal. To reinstall 
 use **Install / Update** with its wheel, or change/rebuild its source.
 
 Code installations use ordinary cached wheels and immutable environment snapshots.
-Single-file wrappers emit `biopipe.operators` / `biopipe.readers` entries and a
+Single-file wrappers emit `operon.operators` / `operon.readers` entries and a
 protocol-3 manifest using static inspection. Parameter-only refresh publishes
 metadata without a new environment. There is one execution/resource protocol.
 
@@ -241,7 +241,7 @@ prepared graph as a new version to persist the updated pins.
 Code-change fallback requires a matching bundled entry in the profile's registry history.
 Unknown pins and installed wheel pins remain strict; real plugin generations keep
 their original code and dependency targets. For exact historical built-in replay,
-retain the original BioPipe source/release or distribute the provider as an
+retain the original Operon source/release or distribute the provider as an
 immutable wheel. A metadata-only snapshot cannot reconstruct deleted source.
 
 The manifest and known source-file metadata invalidate the lightweight fingerprint
@@ -254,7 +254,7 @@ Create a new run once the source update is complete.
 changing them. The obsolete `repin_all.py` alias has been removed.
 Historical locks are never rewritten by diagnostics or profile migration. The normal profile environment override is supported as well.
 
-`biopipe plugin remove <distribution-name>` publishes a generation without that
+`operon plugin remove <distribution-name>` publishes a generation without that
 package. It does not delete its wheels or historical environments. Saved pinned
 graphs can still run against a matching generation. Route saving and registration
 also validate against the graph's pinned catalog, including after removal.
@@ -273,7 +273,7 @@ present alongside the task. Original built-in-only YAML tasks remain unchanged.
 
 ## Moving to another computer
 
-Transfer source/wheels, graph JSON and required input data. Install BioPipe in a
+Transfer source/wheels, graph JSON and required input data. Install Operon in a
 working environment on the target computer, then install the original wheels there.
 Matching wheel digests allow saved pins to resolve. New generations use relative
 dependency-directory paths; old venv generations remain readable. Reinstall from
@@ -286,7 +286,7 @@ do not contain developer-specific paths.
 
 Python plugins are executable code with the current user's permissions. Dependency
 isolation is not an OS sandbox. Installation requires an explicit CLI command or an
-MCP connection started with `--allow-plugins`. BioPipe does not download arbitrary
+MCP connection started with `--allow-plugins`. Operon does not download arbitrary
 code based on graph labels. MCP defaults permit context and graph editing, with job
 execution and plugin installation requiring separate capabilities.
 

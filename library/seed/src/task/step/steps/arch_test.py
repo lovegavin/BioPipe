@@ -16,9 +16,13 @@ _NAMES = ["lm_statistic", "lm_p", "f_statistic", "f_p", "lags", "n"]
 
 
 class ArchTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'arch_test.ArchTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'arch_test',
      'version': '1.0.0',
      'kind': 'operator',

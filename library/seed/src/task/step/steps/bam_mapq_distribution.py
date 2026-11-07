@@ -10,10 +10,15 @@ from ._bam_qc_utils import bam_path, mapq_histogram, median_from_histogram
 
 
 class BamMapqDistributionStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "bam_mapq_distribution.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "bam_mapq_distribution",
         "version": "1.0.0",

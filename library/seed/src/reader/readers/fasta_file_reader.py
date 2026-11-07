@@ -8,9 +8,15 @@ from src.reader.base import Reader
 
 
 class FastaFileReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     parameters_file = 'fasta_file.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'FastaFileReader',
      'version': '1.0.0',
      'kind': 'reader',

@@ -11,9 +11,9 @@ import time
 import pytest
 from fastapi.testclient import TestClient
 
-from biopipe.headless import create_headless_app
-from biopipe.application import ACTIVE
-from biopipe.client import Client, instances
+from operon.headless import create_headless_app
+from operon.application import ACTIVE
+from operon.client import Client, instances
 from src.web.service import Settings
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,8 +34,8 @@ def graph(root):
 def environment(tmp_path, monkeypatch):
     monkeypatch.setenv('PYTHONUTF8', '1')
     monkeypatch.setenv('PYTHONIOENCODING', 'utf-8')
-    monkeypatch.setenv('BIOPIPE_REGISTRY_MAINTENANCE', '1')
-    monkeypatch.setenv('BIOPIPE_ADMISSION_DIR', str(tmp_path / 'admission'))
+    monkeypatch.setenv('OPERON_REGISTRY_MAINTENANCE', '1')
+    monkeypatch.setenv('OPERON_ADMISSION_DIR', str(tmp_path / 'admission'))
     scratch = tmp_path / 'tmp'; scratch.mkdir()
     monkeypatch.setenv('TEMP', str(scratch))
     monkeypatch.setenv('TMP', str(scratch))
@@ -43,7 +43,7 @@ def environment(tmp_path, monkeypatch):
 
 
 def auth(client, app, scopes):
-    response = client.post('/api/agent/connect', headers={'X-BioPipe-Bridge': app.state.bridge.secret},
+    response = client.post('/api/agent/connect', headers={'X-Operon-Bridge': app.state.bridge.secret},
                            json={'name': 'headless-test', 'scopes': scopes})
     assert response.status_code == 200, response.text
     return {'Authorization': 'Bearer ' + response.json()['token']}
@@ -132,7 +132,7 @@ def test_shared_services_permissions_frozen_values_and_artifacts(environment):
         # Original-file links are enumerated for every figure and format from
         # the run index, without reading pixels or fetching whole reports.
         from types import SimpleNamespace
-        from biopipe_sdk.figures import register_figure, figure_collection
+        from operon_sdk.figures import register_figure, figure_collection
         output = root / '.studio/jobs' / key / 'output'
         figures = []
         originals = {}
@@ -186,7 +186,7 @@ def test_submission_receipt_recovers_after_lost_response(environment, monkeypatc
 def test_headless_submission_preserves_released_pin_migration_evidence(environment):
     root = environment
     app = create_headless_app(Settings(root, root / '.studio', root / 'no-ui', testing=True, code_root=ROOT))
-    released = json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))
+    released = json.loads((ROOT / 'operon/bundled_history.json').read_text(encoding='utf-8'))
     old = next(package['implementation'] for package in released['packages']
                if 'describe' in package['operators'] and any(item['tag'] == 'v0.5.1' for item in package['releases']))
     body = graph(root); body['plugin_lock'] = {'describe': old}
@@ -202,7 +202,7 @@ def test_headless_submission_preserves_released_pin_migration_evidence(environme
 
 
 def test_unknown_submission_result_is_never_relaunched(environment, monkeypatch):
-    from biopipe.documents import CommandError
+    from operon.documents import CommandError
     root = environment
     app = create_headless_app(Settings(root, root / '.studio', root / 'no-ui', testing=True, code_root=ROOT))
     calls = []
@@ -221,7 +221,7 @@ def test_unknown_submission_result_is_never_relaunched(environment, monkeypatch)
 
 
 def test_manifest_only_startup_and_lifecycle_refuses_active_queue(environment, monkeypatch):
-    from biopipe import packages
+    from operon import packages
     def no_source_scan(*args, **kwargs):
         pytest.fail('Headless startup or polling scanned implementation sources')
     monkeypatch.setattr(packages, '_provider_paths', no_source_scan)
@@ -252,7 +252,7 @@ def test_manifest_only_startup_and_lifecycle_refuses_active_queue(environment, m
 def test_remote_log_window_preserves_bytes_against_old_server():
     from types import SimpleNamespace
     import base64
-    from biopipe.application import TaskService
+    from operon.application import TaskService
     payload = ('alpha测试beta\n' * 100).encode('utf-8')
     calls = []
     class Remote:
@@ -309,7 +309,7 @@ def test_real_cli_autostart_and_mcp_no_window(environment):
     root = environment
     source = root / 'route.json'; source.write_text(json.dumps(graph(root)), encoding='utf-8')
     directory = root / '.studio'
-    args = [sys.executable, '-m', 'biopipe', '--workspace', str(root)]
+    args = [sys.executable, '-m', 'operon', '--workspace', str(root)]
     def cli(*tail):
         result = subprocess.run(args + list(tail), cwd=ROOT, capture_output=True, encoding='utf-8', timeout=100)
         assert result.returncode == 0, result.stderr
@@ -368,10 +368,10 @@ def test_real_cli_autostart_and_mcp_no_window(environment):
             async with stdio_client(config) as (reader, writer):
                 async with ClientSession(reader, writer) as mcp:
                     await mcp.initialize()
-                    listed = await mcp.call_tool('biopipe_sessions', {})
+                    listed = await mcp.call_tool('operon_sessions', {})
                     assert not listed.isError
                     request = {'graph': graph(root), 'request_id': 'mcp-no-window'}
-                    value = await mcp.call_tool('biopipe_submit', request)
+                    value = await mcp.call_tool('operon_submit', request)
                     if not allow_run:
                         assert value.isError and 'capability' in value.content[0].text
                         return None

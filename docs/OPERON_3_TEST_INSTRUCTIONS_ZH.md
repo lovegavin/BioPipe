@@ -35,11 +35,11 @@ RC3 尚未验证的旧路线导入、原图实际打开、节点拖动、多选�
 Agent 的 backend 阶段额外传 `--prepare-environment`，明确授权仅准备合成路线。
 下面独立诊断命令传 `--prepare-analysis`，同时验证实际 PCA 和 PNG/PDF/SVG；
 它仍不替代界面测试。检查依赖安装进新档案的管理目录，应用 runtime 仍无这些
-分析库，旧 BioPipe 档案和全局 runtime.json 仍不变。
+分析库，旧 Operon 档案和全局 runtime.json 仍不变。
 
 请验收本次收到的 **Operon_Setup.exe 3.0.0 候选包**，先核对随包 SHA256
 清单。请阅读同包 `OPERON_3_TEST_ACCEPTANCE.md`；详细步骤以该英文指南为准。
-这是实际安装验收，不发布，不修改或清理旧 BioPipe、旧档案、旧证据、系统
+这是实际安装验收，不发布，不修改或清理旧 Operon、旧档案、旧证据、系统
 Python、Conda 或 VS Code。使用新的独立测试目录保存报告和证据。
 
 可选先补一项“安装包后端诊断”：使用**本次安装的随包 Python**运行以下
@@ -65,7 +65,7 @@ Python、Conda 或 VS Code。使用新的独立测试目录保存报告和证据
    Operon、版本 3.0.0、图标正常。不得用命令行启动后端代替此项。
 2. **新环境与旧版隔离。** 从本次安装凭据和启动日志确认随包 Python、安装
    ID、新档案和工作区；新安装应使用 `.operon/profiles` 下的新档案。记录
-   旧 BioPipe 的全局 runtime.json、旧快捷方式/卸载登记、已约定的旧档案及
+   旧 Operon 的全局 runtime.json、旧快捷方式/卸载登记、已约定的旧档案及
    provider wheel 样本基线。新安装不得改写旧全局解释器记录、自动迁移旧
    注册表或删除旧数据。
 3. **启动不偷偷装科学依赖。** 空闲启动和读取算子库期间查看任务数、子进程
@@ -104,7 +104,7 @@ Python、Conda 或 VS Code。使用新的独立测试目录保存报告和证据
    正常关闭的耗时、后端退出码和残留进程。再次实际双击同一 Setup，应创建
    新软件目录和新空档案，前一测试档案/结果哈希不变。仅用 Windows 卸载
    本轮 Operon，保留测试档案与证据，复核旧版基线，列出保留缓存/未知文件。
-10. **CLI 回归。** 用本次随包 Python 的 `-m biopipe --version` 确认 3.0.0；
+10. **CLI 回归。** 用本次随包 Python 的 `-m operon --version` 确认 3.0.0；
     `help server` 应返回服务器指引。通过实际桌面工作区查询 `environment status`，
     核对解释器、工作区及显式依赖准备策略。直接对导出的 YAML 执行
     `environment check`，随后用 `run --progress --brief` 主动运行标准库脚本路线；

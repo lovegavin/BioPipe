@@ -24,9 +24,14 @@ def _statistic(ranks: np.ndarray, codes: np.ndarray) -> float:
 
 
 class AnosimStep(Step):
-    provider = 'biopipe-microbiome'
+    provider = 'operon-microbiome'
     parameters_file = 'anosim.AnosimStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'anosim',
      'version': '1.0.0',
      'kind': 'operator',

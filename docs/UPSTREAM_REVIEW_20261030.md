@@ -1,6 +1,6 @@
 # Upstream review and application/library boundary
 
-Checked upstream `lovegavin/BioPipe` main at
+Checked upstream `lovegavin/Operon` main at
 `9fccadb24624f9fffb8ab756fa730adbb9857fb2` on 2026-10-30.
 The comparison uses common ancestor `3d57139167ee07428bf41276b84999feb84a06c0`.
 At review time, no upstream merge or GitHub publication had been performed.
@@ -70,7 +70,7 @@ keep their own installation lifecycle.
    algorithm code where possible; verify contracts and actual resource hooks.
 2. Review shared IDs before replacement, especially FASTQ and file references.
 3. Run registry checks, numerical/format fixtures, memory-mode tests and route tests.
-4. Build a versioned `.biopipe-library.zip`, separate from the application package.
+4. Build a versioned `.operon-library.zip`, separate from the application package.
 5. Import that library in Studio. The existing transaction validates all providers
    and prepares dependencies before one active-registry switch. Frozen job locks
    and independent saved-route parameter values are retained.

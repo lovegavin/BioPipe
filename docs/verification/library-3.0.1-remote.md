@@ -1,6 +1,6 @@
-# BioPipe Operator Library 3.0.1 - Remote Cluster Verification
+# Operon Operator Library 3.0.1 - Remote Cluster Verification
 
-Date: 2026-11-06 (Asia/Shanghai). Workdir: /public/home/lihj/biopipe-verify-301.
+Date: 2026-11-06 (Asia/Shanghai). Workdir: /public/home/lihj/operon-verify-301.
 Scope: dynamic smoke execution of the full operator catalog plus real-weight ESM runs and
 domain batteries (structure, sequence, omics, MD). Read-only with respect to the repository.
 
@@ -8,8 +8,8 @@ domain batteries (structure, sequence, omics, MD). Read-only with respect to the
 
 | Item | Value |
 |---|---|
-| Repository | github.com/lovegavin/BioPipe, commit 740bd860 (public clone) |
-| Library | biopipe_builtin_library-3.0.1-py3-none-any.whl, 3,964,117 B |
+| Repository | github.com/lovegavin/Operon, commit 740bd860 (public clone) |
+| Library | operon_builtin_library-3.0.1-py3-none-any.whl, 3,964,117 B |
 | Registry | 717 operators / 101 Readers / 7 packages / 24 routes, errors [] |
 | Runtime | managed app 1.125.3 (Python 3.11.18, torch 2.6.0+cu124), isolated venv-esm2 |
 | ESM stack | fair-esm 2.0.0 in esm_pkgs, openfold sm75 extension, dm-tree 0.1.10 (py311), torch_geometric 2.8.1, torch_scatter 2.1.2+pt26cu124 |
@@ -21,7 +21,7 @@ All writes stayed under /public/home/lihj; no deletions were performed.
 
 ## 2. Method
 
-- `biopipe operators list --view full` exported all 717 descriptors to logs/ops_full.json.
+- `operon operators list --view full` exported all 717 descriptors to logs/ops_full.json.
 - harness families: numeric/statistics/ML (harness_num4.py), structure/sequence/omics
   (harness_dom.py), tools (tools_battery.py), ProteinMPNN (mpnn_family.py), MD (md_battery.py),
   ESM (esm_battery.py, esm_if_battery2.py, esm3_battery.py, esmfold_smoke.py).
@@ -116,7 +116,7 @@ Tool/version defects:
 | logs/md_battery.log, md_fix.log | MD batteries |
 | logs/fix3.log | ProteinMPNN parameter fixes |
 | REPORT_NUM4.md, REPORT_DOM.md | sub-agent reports |
-| BIOPIPE_REMOTE_ASSETS.md | AF2/RFantibody/ESM resource locations |
+| OPERON_REMOTE_ASSETS.md | AF2/RFantibody/ESM resource locations |
 
 ## 9. 24-route end-to-end verification (real data)
 
@@ -162,7 +162,7 @@ sha256-identical to the route's `contacts.cool`; CSV parse-checked 24x25
 3,579-contig/173,971-bin pairs matrix stalls (>15 min, 7.6 GB RSS; `hictk
 convert` shows the same), so that route exports cool+csv and the `.hic`
 roundtrip is evidenced on the 24-bin routes. This is a writer-scaling
-limitation, not a BioPipe defect.
+limitation, not a Operon defect.
 
 Known skip defect: `bgen_qc` with a plink2 BGEN. `bgen-reader` returns
 `(2504, 648, 4)` one-hot 2-bit planes instead of `(..., 3)`; dosage
@@ -192,7 +192,7 @@ Notes: antiSMASH needs an explicit `database_dir`; `rfam_scan` was not run
 because no pressed Rfam.cm / Infernal database exists in this workspace
 (tRNAscan-SE covers the tRNA item); Flye emits contig statistics but no
 sequences in its output Form, so `assembly_stats` is a separate route over the
-exported FASTA; the venv used for these runs reports `biopipe 3.0.0`.
+exported FASTA; the venv used for these runs reports `operon 3.0.0`.
 
 ## 11. Family coverage graphs (real data)
 
@@ -253,7 +253,7 @@ Fix: each is now `@classmethod` with the base signature and returns
 reservation. `tests/test_extension359.py` asserts the decorator and the
 two-int return for all ten (plus the two inheriting steps).
 
-Evidence (local `biopipe` env, library tree at commit 018fb29b + fix):
+Evidence (local `operon` env, library tree at commit 018fb29b + fix):
 
 | stage | result |
 | --- | --- |
@@ -371,7 +371,7 @@ binary:
 
 ```
 env PATH=$PWD/tools/bioconda/bin:$PATH \
-  venv/bin/python repo/biopipe/scripts/run.py runs/route_dssp_fix --memory-mb 4096
+  venv/bin/python repo/operon/scripts/run.py runs/route_dssp_fix --memory-mb 4096
 ```
 
 ```
@@ -535,7 +535,7 @@ documentation-only commits), after all fixes in sections 12-19:
 
 | gate | command | result |
 | --- | --- | --- |
-| registry | `python -m biopipe registry check` | 717 operators / 101 Readers / 7 packages / 24 routes, `errors []` |
+| registry | `python -m operon registry check` | 717 operators / 101 Readers / 7 packages / 24 routes, `errors []` |
 | operator docs | `python scripts/build_operator_docs.py --check` | `changed []`, `errors []`, 7 authored pages preserved |
 | full suite | `python -m pytest -q -rs` | **2896 passed, 220 skipped, 0 failed** in 1730.80 s |
 | packaging | `pytest tests/test_packages.py tests/test_release_build.py tests/test_release_agent_harness.py tests/test_library_release.py` | 26 passed in 93.64 s (section 14) |

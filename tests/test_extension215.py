@@ -105,7 +105,7 @@ def test_runner_contract_and_empty_result() -> None:
     from src.task.runner import run
 
     form = encode_sequences(["AT" * 200], "sequence", "position", "dna")
-    context = Context(__import__("pathlib").Path("/tmp/biopipe_cpg_runner"), {"params": {}})
+    context = Context(__import__("pathlib").Path("/tmp/operon_cpg_runner"), {"params": {}})
     context["data"] = form
     run(
         context,

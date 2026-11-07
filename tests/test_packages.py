@@ -9,9 +9,9 @@ import sys
 import numpy as np
 import pytest
 
-from biopipe.packages import bundled_manifest, bundled_state
-from biopipe.plugins import PluginManager, active_descriptors
-from biopipe_sdk.protocol import PackageDescriptor, validate_declaration
+from operon.packages import bundled_manifest, bundled_state
+from operon.plugins import PluginManager, active_descriptors
+from operon_sdk.protocol import PackageDescriptor, validate_declaration
 from src.task import STEPS
 from src.reader import READERS
 from src.task.operator_catalog import build_catalog
@@ -47,16 +47,16 @@ def test_package_disable_remove_restore_and_pinned_graph(tmp_path):
     graph = Graph.model_validate({'nodes': [{'id': 'pca', 'kind': 'operator', 'operator': 'pca',
                                            'position': {'x': 0, 'y': 0}, 'params': {}}], 'edges': []})
     pinned = manager.pin(graph)
-    assert pinned.plugin_lock['pca']['package'] == 'biopipe-genetics'
-    manager.manage('biopipe-genetics', 'disable')
+    assert pinned.plugin_lock['pca']['package'] == 'operon-genetics'
+    manager.manage('operon-genetics', 'disable')
     assert 'pca' not in {d['id'] for d in active_descriptors(manager.state())}
     assert manager.snapshot(pinned)['generation'] == initial['generation']
     assert 'pca' in {d['id'] for d in manager.catalog_for(pinned, build_catalog(STEPS))['operators']}
-    manager.manage('biopipe-genetics', 'enable')
-    manager.install(None, remove='biopipe-genetics')
-    assert not any(p['name'] == 'biopipe-genetics' for p in manager.state()['packages'])
+    manager.manage('operon-genetics', 'enable')
+    manager.install(None, remove='operon-genetics')
+    assert not any(p['name'] == 'operon-genetics' for p in manager.state()['packages'])
     assert 'pca' not in {d['id'] for d in manager.extend_catalog(build_catalog(STEPS))['operators']}
-    manager.manage('biopipe-genetics', 'restore')
+    manager.manage('operon-genetics', 'restore')
     assert 'pca' in {d['id'] for d in active_descriptors(manager.state())}
     before = manager.state()
     with pytest.raises(ValueError):
@@ -75,18 +75,18 @@ def test_pre_package_registry_requires_explicit_migration(tmp_path):
 
 
 @pytest.mark.parametrize('requirement,accepted', [
-    ('biopipe-studio>=999', False),
-    ('biopipe-studio>=3.0.0,<4', True),
-    ('biopipe-studio>=999; python_version < "0"', True),
+    ('operon-studio>=999', False),
+    ('operon-studio>=3.0.0,<4', True),
+    ('operon-studio>=999; python_version < "0"', True),
 ])
 def test_static_install_enforces_host_version_without_dependency_repair(tmp_path, monkeypatch, requirement, accepted):
     from extension_fixtures import write_extension
-    from biopipe.dropins import single_file_wheel
+    from operon.dropins import single_file_wheel
     source = tmp_path / 'future.py'
     monkeypatch.setenv('TEMP', str(tmp_path))
     monkeypatch.setenv('TMP', str(tmp_path))
-    write_extension(source, 'BIOPIPE_PLUGIN = ' + repr({'name': 'future-host', 'dependencies': [requirement]}) + '\n' + '''
-from biopipe_sdk import Step
+    write_extension(source, 'OPERON_PLUGIN = ' + repr({'name': 'future-host', 'dependencies': [requirement]}) + '\n' + '''
+from operon_sdk import Step
 class Future(Step):
     name = 'test.future_host'
     input_contracts = []
@@ -98,20 +98,20 @@ class Future(Step):
     manager = PluginManager(tmp_path / 'state', source_root=None)
     manager.state()
     original = manager.registry.read_bytes()
-    monkeypatch.setattr('biopipe.targets.TargetBuilder.prepare', lambda *a, **kw: pytest.fail('Static registration cannot resolve dependencies'))
+    monkeypatch.setattr('operon.targets.TargetBuilder.prepare', lambda *a, **kw: pytest.fail('Static registration cannot resolve dependencies'))
     wheel = single_file_wheel(source, tmp_path / 'future-wheel')
     if accepted:
         state = manager.install(wheel)
         assert any(d['id'] == 'test.future_host' for d in state['descriptors'])
         assert not state.get('shared_paths')
     else:
-        with pytest.raises(ValueError, match='incompatible BioPipe SDK'):
+        with pytest.raises(ValueError, match='incompatible Operon SDK'):
             manager.install(wheel)
         assert manager.registry.read_bytes() == original
 
 
 def test_resource_claims_require_real_hooks():
-    from biopipe_sdk import Step, Reader, port, reader_contract
+    from operon_sdk import Step, Reader, port, reader_contract
     class BrokenStream(Step):
         name = 'test.bad'
         inputs_arity = 1
@@ -132,7 +132,7 @@ def test_resource_claims_require_real_hooks():
         def read(self, *args, **kwargs): pass
     with pytest.raises(ValueError, match='probe'):
         bound_fixture(BrokenReader, 'reader')
-    from biopipe_sdk.resources import validate_probe
+    from operon_sdk.resources import validate_probe
     with pytest.raises(ValueError, match='dense_bytes'):
         validate_probe({'shape': [2, 3], 'dtype': 'float32', 'dense_bytes': 4})
 
@@ -140,9 +140,9 @@ def test_resource_claims_require_real_hooks():
 @pytest.mark.parametrize('value', [1, 9])
 def test_disk_reader_checks_actual_values_before_publishing(tmp_path, monkeypatch, value):
     from examples.resource_plugin.resource_example import NpyReader
-    from biopipe_sdk import reader_contract
+    from operon_sdk import reader_contract
     from src.task import Context
-    from biopipe_sdk.declarations import bind_class, for_class
+    from operon_sdk.declarations import bind_class, for_class
     NpyReader = bind_class(NpyReader, for_class(NpyReader))
     class Genotypes(NpyReader):
         output_contract = reader_contract(representation='hard_call', ploidy=2)
@@ -183,16 +183,16 @@ def test_every_builtin_package_builds(builtin_wheels):
     import zipfile
     for name, wheel in builtin_wheels.items():
         with zipfile.ZipFile(wheel) as archive:
-            path = next(n for n in archive.namelist() if n.endswith('.dist-info/biopipe.json'))
+            path = next(n for n in archive.namelist() if n.endswith('.dist-info/operon.json'))
             manifest = json.loads(archive.read(path))
         original = next(p for p in bundled_manifest()['packages'] if p['name'] == name)
         assert {d['id'] for d in manifest['descriptors']} == {d['id'] for d in original['descriptors']}
-        assert all(d['entry_point'].startswith('biopipe_library_' + name.replace('-', '_') + '.') for d in manifest['descriptors'])
+        assert all(d['entry_point'].startswith('operon_library_' + name.replace('-', '_') + '.') for d in manifest['descriptors'])
 
 
 def run_worker(manager, state, directory, sources, steps):
     import yaml
-    from biopipe.bytecode import io_path
+    from operon.bytecode import io_path
     io_path(directory).mkdir(parents=True, exist_ok=True)
     io_path(directory / 'plugins.lock.json').write_text(json.dumps(state), encoding='utf-8')
     manifest = {'sources': sources, 'steps': steps, 'runtime': {'memory': {'enabled': True, 'budget_mb': 4, 'chunk_mb': .01}}}
@@ -209,8 +209,8 @@ def test_hot_builtin_wheels_preserve_disk_and_stream_and_old_lock(tmp_path, buil
     from scipy.sparse import csr_matrix
     manager = PluginManager(tmp_path / 'state')
     old = manager.state()
-    manager.install(builtin_wheels['biopipe-core'])
-    state = manager.install(builtin_wheels['biopipe-readers'])
+    manager.install(builtin_wheels['operon-core'])
+    state = manager.install(builtin_wheels['operon-readers'])
     assert len(state['descriptors']) == len(bundled_state()['descriptors'])
     assert sum(p.get('origin') == 'wheel' for p in state['packages']) == 2
     inputs = tmp_path / 'inputs'
@@ -228,18 +228,18 @@ def test_hot_builtin_wheels_preserve_disk_and_stream_and_old_lock(tmp_path, buil
     for exported, expected in zip(summary['steps'], [1.5, 2.5]):
         content = json.loads((tmp_path / 'run/output' / exported['export_path']).read_text())
         assert content['global']['mean'] == expected
-    manager.manage('biopipe-core', 'disable')
+    manager.manage('operon-core', 'disable')
     assert 'describe' not in {d['id'] for d in active_descriptors(manager.state())}
     # A frozen lock is independent of later package changes.
     previous_report, _ = run_worker(manager, old, tmp_path / 'old', sources, steps)
     assert all(p['mode'] == 'stream' for p in previous_report['plans'])
-    manager.manage('biopipe-core', 'restore')
-    assert next(p for p in manager.state()['packages'] if p['name'] == 'biopipe-core')['origin'] == 'bundled'
+    manager.manage('operon-core', 'restore')
+    assert next(p for p in manager.state()['packages'] if p['name'] == 'operon-core')['origin'] == 'bundled'
 
 
 def test_hot_microbiome_wheel_runs_with_strict_contracts(tmp_path, builtin_wheels):
     manager = PluginManager(tmp_path / 'state')
-    installed = manager.install(builtin_wheels['biopipe-microbiome'])
+    installed = manager.install(builtin_wheels['operon-microbiome'])
     descriptor = next(d for d in installed['descriptors'] if d['id'] == 'diversity')
     assert descriptor['origin'] == 'wheel' and 'legacy_parameters' not in descriptor
     path = tmp_path / 'counts.csv'
@@ -256,7 +256,7 @@ def test_hot_microbiome_wheel_runs_with_strict_contracts(tmp_path, builtin_wheel
 def test_external_sdk_resource_package_runs_compressed_source(tmp_path):
     import gzip
     import shutil
-    from biopipe.developer import build
+    from operon.developer import build
     source = tmp_path / 'resource_plugin'
     shutil.copytree(ROOT / 'examples/resource_plugin', source)
     manager = PluginManager(tmp_path / 'state')

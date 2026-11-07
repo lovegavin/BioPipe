@@ -44,10 +44,13 @@ def qed_row(molecule) -> dict[str, float]:
 class RdkitQedStep(Step):
     """Compute the QED drug-likeness score from RDKit."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "rdkit_qed.RdkitQedStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "rdkit_qed",
         "version": "1.0.0",

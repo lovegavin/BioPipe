@@ -3,7 +3,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from biopipe_sdk import register_figure, figure_collection
+from operon_sdk import register_figure, figure_collection
 from src.web.service import JobService
 
 

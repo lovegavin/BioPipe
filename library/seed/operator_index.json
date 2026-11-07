@@ -2275,7 +2275,7 @@
     "title": "ESMFold structure prediction",
     "category": "Machine Learning",
     "version": "1.0.0",
-    "description": "Fold one amino-acid sequence with the official ESMFold implementation shipped in fair-esm (esm.pretrained.esmfold_v1) and return the predicted PDB together with its mean pLDDT. The 3B checkpoint is downloaded on first use; set BIOPIPE_ESMFOLD_WEIGHTS or pre-populate the torch hub cache to run offline.",
+    "description": "Fold one amino-acid sequence with the official ESMFold implementation shipped in fair-esm (esm.pretrained.esmfold_v1) and return the predicted PDB together with its mean pLDDT. The 3B checkpoint is downloaded on first use; set OPERON_ESMFOLD_WEIGHTS or pre-populate the torch hub cache to run offline.",
     "doc": "src/task/step/steps/esmfold_predict.EsmfoldPredictStep.md",
     "status": "generated"
   },

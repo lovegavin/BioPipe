@@ -39,8 +39,8 @@ def descriptor(attributes, classname, kind, module='fixture'):
 
 def write_extension(path, text, **kwargs):
     """Convert old fixture source statically and write its parameter sidecars."""
-    from biopipe.migrate import convert_source_parts
-    from biopipe_sdk.declarations import DECLARATION_ATTRIBUTES
+    from operon.migrate import convert_source_parts
+    from operon_sdk.declarations import DECLARATION_ATTRIBUTES
     from src.core.contracts import port, param, reader_contract, MISSING
     records = []
     namespace = {'port': port, 'param': param, 'reader_contract': reader_contract, 'MISSING': MISSING}
@@ -65,7 +65,7 @@ def write_extension(path, text, **kwargs):
 
 
 def bound_fixture(cls, kind='operator'):
-    from biopipe_sdk.declarations import DECLARATION_ATTRIBUTES, bind_class, declaration_hash
+    from operon_sdk.declarations import DECLARATION_ATTRIBUTES, bind_class, declaration_hash
     attributes = {k: deepcopy(getattr(cls, k)) for k in DECLARATION_ATTRIBUTES if hasattr(cls, k)}
     d = descriptor(attributes, cls.__name__, kind, cls.__module__)
     d['code_sha'] = '0' * 64

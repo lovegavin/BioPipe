@@ -100,8 +100,8 @@ def test_errors(tmp_path):
 def test_real_fold():
     import os
 
-    if os.environ.get("BIOPIPE_ESM3_REAL") != "1":
-        pytest.skip("set BIOPIPE_ESM3_REAL=1 to run the real ESM-3 check")
+    if os.environ.get("OPERON_ESM3_REAL") != "1":
+        pytest.skip("set OPERON_ESM3_REAL=1 to run the real ESM-3 check")
     pytest.importorskip("esm")
     lines = (FIXTURES / "vhh_1mel.pdb").read_text().splitlines()
     sequence = []
@@ -116,7 +116,7 @@ def test_real_fold():
         seen.add(key)
         sequence.append(table.get(line[17:20].strip(), "X"))
     sequence = "".join(sequence)
-    ctx = Context("/tmp/biopipe_esm3_fold", {"params": {}})
+    ctx = Context("/tmp/operon_esm3_fold", {"params": {}})
     ctx["sequence"] = encode_sequences([sequence], "sequence", "position", "protein")
     run(ctx, [{"name": "esm3_fold", "inputs": ["sequence"], "params": {"output": "structure", "num_steps": 10}}])
     result = ctx["structure"]

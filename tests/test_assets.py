@@ -176,14 +176,14 @@ def test_default_upload_streams_past_previous_256_mib_limit(studio):
 @pytest.mark.parametrize(('raw', 'expected'), [(None, None), ('0', None), ('512', 512 * 1024**2)])
 def test_optional_upload_limit_configuration(monkeypatch, raw, expected):
     if raw is None:
-        monkeypatch.delenv('BIOPIPE_STUDIO_MAX_UPLOAD_MB', raising=False)
+        monkeypatch.delenv('OPERON_STUDIO_MAX_UPLOAD_MB', raising=False)
     else:
-        monkeypatch.setenv('BIOPIPE_STUDIO_MAX_UPLOAD_MB', raw)
+        monkeypatch.setenv('OPERON_STUDIO_MAX_UPLOAD_MB', raw)
     assert upload_limit_from_env() == expected
 
 
 @pytest.mark.parametrize('raw', ['-1', 'many', '1.5'])
 def test_invalid_upload_limit_is_not_silently_applied(monkeypatch, raw):
-    monkeypatch.setenv('BIOPIPE_STUDIO_MAX_UPLOAD_MB', raw)
+    monkeypatch.setenv('OPERON_STUDIO_MAX_UPLOAD_MB', raw)
     with pytest.raises(ValueError, match='non-negative integer'):
         upload_limit_from_env()

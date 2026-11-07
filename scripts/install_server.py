@@ -14,7 +14,7 @@ import urllib.request
 import uuid
 
 OWNER = 'Operon.Server.Install.v1'
-REPOSITORY = 'https://api.github.com/repos/lovegavin/BioPipe'
+REPOSITORY = 'https://api.github.com/repos/lovegavin/Operon'
 
 
 def no_links(path):
@@ -85,7 +85,7 @@ def release_wheels(version, directory):
     download(REPOSITORY + endpoint, metadata)
     data = json.loads(metadata.read_text(encoding='utf-8'))
     wheels = []
-    for prefix in ('biopipe_studio-', 'biopipe_builtin_library-'):
+    for prefix in ('operon_studio-', 'operon_builtin_library-'):
         assets = [item for item in data['assets'] if item['name'].startswith(prefix) and item['name'].endswith('-py3-none-any.whl')]
         if len(assets) != 1:
             raise ValueError(f'Release must contain exactly one {prefix} wheel')
@@ -93,7 +93,7 @@ def release_wheels(version, directory):
         if not re.fullmatch(r'sha256:[0-9a-f]{64}', asset.get('digest') or ''):
             raise ValueError(f'Release asset has no SHA256 digest: {asset["name"]}')
         url = asset['browser_download_url']
-        if not url.startswith('https://github.com/lovegavin/BioPipe/releases/download/'):
+        if not url.startswith('https://github.com/lovegavin/Operon/releases/download/'):
             raise ValueError('Unexpected release download location')
         target = directory / Path(asset['name']).name
         download(url, target, asset['digest'].split(':', 1)[1])
@@ -103,7 +103,7 @@ def release_wheels(version, directory):
 
 def child_environment():
     environment = {key: value for key, value in os.environ.items()
-                   if not key.startswith(('PYTHON', 'CONDA', 'MAMBA', 'BIOPIPE_', 'OPERON_', 'PIP_'))
+                   if not key.startswith(('PYTHON', 'CONDA', 'MAMBA', 'OPERON_', 'OPERON_', 'PIP_'))
                    and key not in ('VIRTUAL_ENV', '_CE_CONDA', '_CE_M')}
     environment.update(PYTHONNOUSERSITE='1', PIP_CONFIG_FILE=os.devnull)
     return environment
@@ -205,11 +205,11 @@ def install(args):
             run([*pip, *packages])
             run([python, '-I', '-m', 'pip', 'check'])
             progress('Checking installed CLI and server registration')
-            version = run([python, '-I', '-m', 'biopipe', '--version'], capture=True).strip()
+            version = run([python, '-I', '-m', 'operon', '--version'], capture=True).strip()
             workspace = Path(args.workspace).expanduser().resolve() if args.workspace else Path((old or {}).get('workspace', root / 'workspace'))
             # Build the new server document separately, then atomically publish it.
             pending = attempt / 'registration'
-            run([python, '-I', '-m', 'biopipe.remote.installation', 'register', '--base', pending,
+            run([python, '-I', '-m', 'operon.remote.installation', 'register', '--base', pending,
                  '--workspace', workspace], capture=True)
             document = json.loads((pending / 'server.json').read_text(encoding='utf-8'))
             no_links(root / 'server.json')
@@ -217,7 +217,7 @@ def install(args):
                 previous = json.loads((root / 'server.json').read_text(encoding='utf-8'))
                 document['server_id'] = previous['server_id']
             launcher = root / 'bin/operon'
-            content = '#!/bin/sh\nexec ' + shlex.quote(str(python)) + ' -I -m biopipe --workspace ' + shlex.quote(str(workspace)) + ' "$@"\n'
+            content = '#!/bin/sh\nexec ' + shlex.quote(str(python)) + ' -I -m operon --workspace ' + shlex.quote(str(workspace)) + ' "$@"\n'
             result = {'owner': OWNER, 'status': 'installed', 'version': version,
                       'install_dir': str(root), 'python': str(python), 'workspace': str(workspace),
                       'server_document': str(root / 'server.json'), 'command': str(launcher), 'log': str(log_path)}

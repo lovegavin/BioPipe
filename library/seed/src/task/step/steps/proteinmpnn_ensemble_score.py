@@ -51,10 +51,13 @@ def parse_models(text: str) -> list[str]:
 class ProteinmpnnEnsembleScoreStep(Step):
     """Negative log-likelihood of one structure under several ProteinMPNN models."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "proteinmpnn_ensemble_score.ProteinmpnnEnsembleScoreStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_ensemble_score",
         "version": "1.0.0",
@@ -102,7 +105,7 @@ class ProteinmpnnEnsembleScoreStep(Step):
         ).expanduser()
         proteinmpnn_path = Path(
             str(params.get("proteinmpnn_path", "") or "").strip()
-            or os.environ.get("BIOPIPE_PROTEINMPNN_PATH", "")
+            or os.environ.get("OPERON_PROTEINMPNN_PATH", "")
         ).expanduser()
         weights_text = str(params.get("weights_path", "") or "").strip()
         python_executable = str(params.get("python_executable", "") or "").strip()
@@ -130,7 +133,7 @@ class ProteinmpnnEnsembleScoreStep(Step):
         if not proteinmpnn_path.is_dir():
             raise StepError(
                 "proteinmpnn_ensemble_score: proteinmpnn_path is not a directory "
-                "(set BIOPIPE_PROTEINMPNN_PATH or the proteinmpnn_path parameter)"
+                "(set OPERON_PROTEINMPNN_PATH or the proteinmpnn_path parameter)"
             )
         runner = proteinmpnn_path / "protein_mpnn_run.py"
         if not runner.is_file():
@@ -163,7 +166,7 @@ class ProteinmpnnEnsembleScoreStep(Step):
 
         columns: list[list[float]] = []
         started = time.monotonic()
-        out_dir = Path(tempfile.mkdtemp(prefix="biopipe-mpnn-ensemble-"))
+        out_dir = Path(tempfile.mkdtemp(prefix="operon-mpnn-ensemble-"))
         try:
             for model in models:
                 model_dir = out_dir / model

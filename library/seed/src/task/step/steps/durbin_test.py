@@ -13,7 +13,7 @@ from ._ext_common import make_form
 
 
 class DurbinTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Durbin's rank sum test for a balanced incomplete block design.
 
     Each block contains the same number ``k`` of the ``t`` treatments, every
@@ -21,7 +21,11 @@ class DurbinTestStep(Step):
     incomplete (``k < t``). Missing cells are represented by NaN.
     """
     parameters_file = 'durbin_test.DurbinTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'durbin_test',
      'version': '1.0.0',
      'kind': 'operator',

@@ -31,9 +31,15 @@ _LABELS = (
 
 class AtacPeakQualityStep(Step):
     """Fraction of reads in peaks and peak width statistics."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'atac_peak_quality.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'atac_peak_quality',
         'version': '1.0.0',

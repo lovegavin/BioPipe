@@ -27,7 +27,7 @@ beforeEach(()=>{hooks.values=[];hooks.cursor=0;vi.clearAllMocks();vi.mocked(api.
   vi.mocked(api.saveWorkflow).mockResolvedValue({id:'saved',version:1,graph,updated_at:''});vi.mocked(api.registerRoutes).mockResolvedValue([]);});
 it('imports a bundle, saves its graph and registers it without opening or running a canvas',async()=>{
   vi.mocked(api.importWorkflow).mockResolvedValue(graph);
-  const file={name:'route.biopipe.zip'};triggerFiles([file]);
+  const file={name:'route.operon.zip'};triggerFiles([file]);
   await vi.waitFor(()=>expect(onPending).toHaveBeenLastCalledWith(false));
   expect(api.importWorkflow).toHaveBeenCalledWith(file);expect(vi.mocked(api.saveWorkflow).mock.calls[0][0]).toMatchObject(graph);
   expect(api.registerRoutes).toHaveBeenCalledWith(['saved']);expect(onChanged).toHaveBeenCalledOnce();

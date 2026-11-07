@@ -13,7 +13,7 @@ from .models import StrictModel, Graph
 from .storage import atomic_json
 from .service import read_json
 from .source_paths import remote_profile
-from biopipe.remote.client import SSHConnection, HostKeyRequired, RemoteError
+from operon.remote.client import SSHConnection, HostKeyRequired, RemoteError
 
 
 class ConnectionProfile(StrictModel):
@@ -49,7 +49,7 @@ class ConnectionProfile(StrictModel):
     @model_validator(mode='after')
     def required_existing_paths(self):
         if self.environment == 'existing' and (not self.app_dir or not self.workspace or not self.python):
-            raise ValueError('Existing environments require BioPipe, Python and workspace paths')
+            raise ValueError('Existing environments require Operon, Python and workspace paths')
         return self
 
 
@@ -236,7 +236,7 @@ class RemoteManager:
         from .routes import prepare_interface
         catalog = self.catalog(graph)
         graph = graph.model_copy(deep=True)
-        from biopipe.pins import graphs
+        from operon.pins import graphs
         for part in graphs(graph):
             used = {node.operator for node in part.nodes if node.kind == 'operator'}
             # Readers are keyed by file extension; the server resolves ambiguous
@@ -304,7 +304,7 @@ class RemoteManager:
     def fetch_output(self, profile, job_id, kind, **fields):
         """Resolve an authorized job output, then reuse the resumable transfer cache."""
         from .transfers import TransferClient
-        from biopipe.remote.transfers import basename
+        from operon.remote.transfers import basename
         self.profile(profile)
         result = self.call(profile, 'output_file', {'job_id': job_id, 'kind': kind, **fields})
         name = basename(result['name'])

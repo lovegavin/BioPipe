@@ -3,8 +3,8 @@ import json
 from pathlib import Path, PureWindowsPath
 import shutil
 
-from biopipe.packages import bundled_state
-from biopipe.registry import build_routes
+from operon.packages import bundled_state
+from operon.registry import build_routes
 from src.web.operator_catalog import catalog_from_descriptors
 
 
@@ -39,7 +39,7 @@ def test_bundled_route_graphs_are_identical_across_build_roots(tmp_path):
                 elif node['kind'] == 'operator':
                     fields = operators[node['operator']]['parameters_schema'].get('properties', {})
                     paths.extend(node['params'][key] for key, field in fields.items()
-                                 if field.get('x-biopipe-path') == 'workflow' and node['params'].get(key))
+                                 if field.get('x-operon-path') == 'workflow' and node['params'].get(key))
             assert all(not Path(path).is_absolute() and not PureWindowsPath(path).is_absolute()
                        for path in paths), (route['name'], paths)
         results.append(built)

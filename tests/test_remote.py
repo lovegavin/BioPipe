@@ -10,10 +10,10 @@ import time
 import pytest
 from fastapi.testclient import TestClient
 
-from biopipe.remote.client import SSHConnection, HostKeyRequired, RemoteError
-from biopipe.remote.protocol import Decoder, frames
-from biopipe.remote.server import RemoteService
-from biopipe.platforms import supported_systems, systems_status
+from operon.remote.client import SSHConnection, HostKeyRequired, RemoteError
+from operon.remote.protocol import Decoder, frames
+from operon.remote.server import RemoteService
+from operon.platforms import supported_systems, systems_status
 from src.web.api import create_app
 from src.web.models import Graph
 from src.web.service import Settings
@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def profile(**values):
     return dict(name='Test server', host='127.0.0.1', port=22, username='test', auth='password',
-                key_path='', python='python3', app_dir='/opt/biopipe', workspace='/work', mode='exec', menu_choice='', **values)
+                key_path='', python='python3', app_dir='/opt/operon', workspace='/work', mode='exec', menu_choice='', **values)
 
 
 @pytest.mark.parametrize('lineage', ['summary', 'graph'])
@@ -115,14 +115,14 @@ def test_real_local_ssh_host_trust_and_transport():
                 except (EOFError, OSError):
                     continue
                 if channel is None: continue
-                channel.sendall(b'BIOPIPE_REMOTE_READY 1\n')
+                channel.sendall(b'OPERON_REMOTE_READY 1\n')
                 decoder = Decoder('Q')
                 for line in channel.makefile('r'):
                     request = decoder.feed(line.decode() if isinstance(line, bytes) else line)
                     if decoder.ack: channel.sendall(decoder.ack.encode())
                     if request is None: continue
                     if request['method'] == 'handshake':
-                        from biopipe.remote.handshake import CAPABILITIES
+                        from operon.remote.handshake import CAPABILITIES
                         value = {'protocol_version': 1, 'catalog': {'operators': [], 'readers': []},
                                  'handshake': {'version': 1, 'operator_protocol': 3,
                                                'capabilities': list(CAPABILITIES), 'catalog_digest': 'test'}}
@@ -140,7 +140,7 @@ def test_real_local_ssh_host_trust_and_transport():
         client = SSHConnection(record, {'password': 'session-secret'})
         assert client.call('echo', {'path': '/数据/input.pairs.gz'}) == {'path': '/数据/input.pairs.gz'}
         assert 'session-secret' not in commands[-1]
-        assert '-m biopipe.remote.server' in commands[-1]
+        assert '-m operon.remote.server' in commands[-1]
         client.close()
     finally:
         for transport in transports: transport.close()
@@ -150,7 +150,7 @@ def test_real_local_ssh_host_trust_and_transport():
 
 def test_numbered_gateway_attaches_with_blank_line_not_repeated_selection(monkeypatch):
     from types import SimpleNamespace
-    import biopipe.remote.client as module
+    import operon.remote.client as module
     tick = [0]
     def sleep(duration): tick[0] += duration
     monkeypatch.setattr(module, 'time', SimpleNamespace(monotonic=lambda: tick[0], sleep=sleep))
@@ -183,14 +183,14 @@ def test_container_gateway_envelopes_and_corrupt_frames_cannot_change_payload():
         assert response == payload
     decoder = Decoder('R'); parts = frames(payload, 'R')
     decoder.feed(parts[0])
-    with pytest.raises(ValueError): decoder.feed(parts[1].replace('BIOPIPE-R ', 'BIOPIPE-R bad'))
+    with pytest.raises(ValueError): decoder.feed(parts[1].replace('OPERON-R ', 'OPERON-R bad'))
     assert decoder.ack is None
     for part in parts[1:]: response = decoder.feed(part)
     assert response == payload
 
 
 def test_framed_transport_retries_damage_and_bounds_unresponsive_peer():
-    from biopipe.remote.protocol import transmit
+    from operon.remote.protocol import transmit
     payload = {'items': [hashlib.sha256(str(i).encode()).hexdigest() for i in range(100)]}
     decoder = Decoder('Q'); queue = []; sent = []; received = []
     def write(part):
@@ -273,7 +273,7 @@ def test_remote_worker_survives_client_disconnect_and_keeps_logs_parameters(remo
     assert completed['status'] == 'complete', completed.get('error')
     assert completed['report'] and completed['summary']
     log = client.get('/api/jobs/'+job['id']+'/console')
-    assert log.status_code == 200 and '[BioPipe launcher]' in log.text
+    assert log.status_code == 200 and '[Operon launcher]' in log.text
     events = client.get('/api/jobs/'+job['id']+'/events')
     assert '"done": true' in events.text and 'run_finished' in events.text
     assert client.get('/api/jobs').json()[0]['remote']['profile_id'] == key

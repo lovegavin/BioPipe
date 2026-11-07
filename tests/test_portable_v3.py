@@ -7,8 +7,8 @@ import sys
 
 import pytest
 
-from biopipe.portable import check_portable, export_portable
-from biopipe.script_operators import inspect_script
+from operon.portable import check_portable, export_portable
+from operon.script_operators import inspect_script
 
 
 def graph(tmp_path):
@@ -41,7 +41,7 @@ def test_unsupported_native_and_missing_runtime_fail_closed(tmp_path):
 
 
 @pytest.mark.skipif(sys.platform != 'win32', reason='Windows self-contained runtime relocation acceptance')
-def test_actual_bundled_runtime_runs_after_relocation_without_biopipe(tmp_path):
+def test_actual_bundled_runtime_runs_after_relocation_without_operon(tmp_path):
     # Prepare a standard-library-only CPython tree, not a venv or a reference
     # back to the developer interpreter. No scientific dependencies are needed.
     base = Path(sys.base_prefix)
@@ -53,7 +53,7 @@ def test_actual_bundled_runtime_runs_after_relocation_without_biopipe(tmp_path):
     for directory in ('Lib', 'DLLs'):
         shutil.copytree(base / directory, runtime / directory,
                         ignore=shutil.ignore_patterns('site-packages', '__pycache__', 'test', 'tests'))
-    (runtime / 'portable-runtime.json').write_text(json.dumps({'format': 'biopipe.portable-runtime',
+    (runtime / 'portable-runtime.json').write_text(json.dumps({'format': 'operon.portable-runtime',
         'schema_version': 1, 'platform': sys.platform, 'machine': platform.machine(), 'python': 'python.exe'}))
     result = export_portable(graph(tmp_path), tmp_path / 'export', runtime_dir=runtime)
     assert result['runtime_bundled']
@@ -67,6 +67,6 @@ def test_actual_bundled_runtime_runs_after_relocation_without_biopipe(tmp_path):
     assert run.returncode == 0, run.stderr
     assert (moved / 'results/copy/result.txt').read_text() == 'PORTABLE'
     probe = subprocess.run([str(moved / 'runtime/python.exe'), '-I', '-c',
-                            "import importlib.util; assert importlib.util.find_spec('biopipe') is None"],
+                            "import importlib.util; assert importlib.util.find_spec('operon') is None"],
                            capture_output=True, text=True)
     assert probe.returncode == 0, probe.stderr

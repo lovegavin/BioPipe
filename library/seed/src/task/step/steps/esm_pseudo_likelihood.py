@@ -66,12 +66,16 @@ def masked_log_probs(model, alphabet, torch, sequence: str, device: str,
 
 
 class EsmPseudoLikelihoodStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Masked pseudo-likelihood of protein sequences under a local ESM model."""
     parameters_file = (
         'esm_pseudo_likelihood.EsmPseudoLikelihoodStep.parameters.json'
     )
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'esm_pseudo_likelihood',
      'version': '1.0.0',
      'kind': 'operator',

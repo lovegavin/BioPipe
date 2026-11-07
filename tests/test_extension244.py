@@ -36,12 +36,12 @@ fasta = Path(arguments[0])
 outdir = Path(arguments[1])
 outdir.mkdir(parents=True, exist_ok=True)
 sequence = "".join(line.strip() for line in fasta.read_text().splitlines() if not line.startswith(">"))
-shutil.copy(os.environ["BIOPIPE_TEST_PDB"], outdir / "query_unrelaxed_rank_001_alphafold2_ptm_model_1_seed_000.pdb")
+shutil.copy(os.environ["OPERON_TEST_PDB"], outdir / "query_unrelaxed_rank_001_alphafold2_ptm_model_1_seed_000.pdb")
 (outdir / "query_scores_rank_001_alphafold2_ptm_model_1_seed_000.json").write_text(
     json.dumps({"plddt": [91.0, 84.0, 77.0], "ptm": 0.83, "pae": [[0.0, 4.0], [4.0, 0.0]], "max_pae": 4.0})
 )
-if os.environ.get("BIOPIPE_TEST_CAPTURE"):
-    Path(os.environ["BIOPIPE_TEST_CAPTURE"]).write_text(
+if os.environ.get("OPERON_TEST_CAPTURE"):
+    Path(os.environ["OPERON_TEST_CAPTURE"]).write_text(
         json.dumps({"argv": arguments, "sequence": sequence})
     )
 '''
@@ -88,8 +88,8 @@ def test_helper_functions(tmp_path) -> None:
 def test_prediction_parses_structure_and_scores(tmp_path, monkeypatch) -> None:
     script = _script(tmp_path)
     capture = tmp_path / "capture.json"
-    monkeypatch.setenv("BIOPIPE_TEST_PDB", str(FIXTURE))
-    monkeypatch.setenv("BIOPIPE_TEST_CAPTURE", str(capture))
+    monkeypatch.setenv("OPERON_TEST_PDB", str(FIXTURE))
+    monkeypatch.setenv("OPERON_TEST_CAPTURE", str(capture))
 
     ctx = Ctx(_params(script, output="structure"))
     form = encode_sequences([SEQUENCE], "sequence", "position", "protein")
@@ -146,7 +146,7 @@ def test_invalid_msa_mode_is_rejected(tmp_path) -> None:
 
 def test_runner_round_trip(tmp_path, monkeypatch) -> None:
     script = _script(tmp_path)
-    monkeypatch.setenv("BIOPIPE_TEST_PDB", str(FIXTURE))
+    monkeypatch.setenv("OPERON_TEST_PDB", str(FIXTURE))
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     ctx["sequence"] = encode_sequences([SEQUENCE], "sequence", "position", "protein")
     run(

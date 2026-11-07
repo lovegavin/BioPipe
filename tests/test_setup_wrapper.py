@@ -27,7 +27,7 @@ def test_wrapper_preserves_executable_and_exact_verified_payload(tmp_path):
     append_payload(host, payload, output)
     raw = output.read_bytes()
     magic, offset, length = struct.unpack('<16sqq', raw[-32:])
-    assert magic == MAGIC and raw[:offset] == host.read_bytes()
+    assert magic.rstrip(bytes([0])) == MAGIC and raw[:offset] == host.read_bytes()
     assert raw[offset:offset+length] == payload.read_bytes()
     assert spec['bytes'] == length and spec['files'] == 2
     assert hashlib.sha256(raw[offset:-32]).hexdigest() == spec['sha256']

@@ -63,9 +63,12 @@ def lddt_table(mobile: np.ndarray, reference: np.ndarray, labels: list[str], *, 
 
 
 class StructureLddtStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_lddt.StructureLddtStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_lddt",
         "version": "1.0.0",

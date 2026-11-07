@@ -72,11 +72,14 @@ def humanization_mutations(sequence: str) -> tuple[list[dict], str]:
 class VhhHumanizationMutationsStep(Step):
     """List the framework substitutions that humanize a VHH."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = (
         "vhh_humanization_mutations.VhhHumanizationMutationsStep.parameters.json"
     )
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "vhh_humanization_mutations",
         "version": "1.0.0",

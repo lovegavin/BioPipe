@@ -111,9 +111,13 @@ def communication_scores(expression, genes, clusters, pairs, min_mean=0.1):
 class CellCommunicationStep(Step):
     """Ligand-receptor communication scores between clusters."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "cell_communication.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "cell_communication",
         "version": "1.0.0",

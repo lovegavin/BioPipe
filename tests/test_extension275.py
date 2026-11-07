@@ -63,7 +63,7 @@ def test_enumerate_pairs_truncates():
 
 
 def test_run_writes_product_table():
-    ctx = Context("/tmp/biopipe_test_275", {"params": {}})
+    ctx = Context("/tmp/operon_test_275", {"params": {}})
     ctx.step_params = {
         "output": "products",
         "reactants_a": "C1CO1 oxirane",

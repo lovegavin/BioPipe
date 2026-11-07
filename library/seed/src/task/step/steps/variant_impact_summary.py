@@ -29,9 +29,14 @@ def _info_value(info, key):
 
 
 class VariantImpactSummaryStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "variant_impact_summary.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "variant_impact_summary",
         "version": "1.0.0",

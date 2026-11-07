@@ -9,8 +9,8 @@ import time
 
 import pytest
 
-from biopipe.remote.client import RemoteError
-from biopipe.remote.provision import Shell, source_archive
+from operon.remote.client import RemoteError
+from operon.remote.provision import Shell, source_archive
 from src.web.remote_service import ConnectionProfile, RemoteManager
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,7 +88,7 @@ def test_setup_status_remains_responsive_while_connect_is_busy(tmp_path):
 
 
 def test_deployment_requirements_are_independent_of_optional_library():
-    from biopipe.remote import install_linux as installer
+    from operon.remote import install_linux as installer
     specs, entries = installer.requirements(ROOT)
     assert {'pairtools==1.1.2', 'cooltools==0.7.1', 'pandas==2.2.3'} <= set(specs)
     assert {'build_contacts', 'analyze_contacts', 'align_reads'} <= {d['id'] for d in entries}
@@ -104,7 +104,7 @@ def test_deployment_requirements_are_independent_of_optional_library():
 @pytest.mark.parametrize('broken', [False, True])
 def test_installer_repairs_transitive_dependencies_without_reinstalling_healthy_graph(monkeypatch, tmp_path, broken):
     from types import SimpleNamespace
-    from biopipe.remote import install_linux as installer
+    from operon.remote import install_linux as installer
     # Every declared package is present, but a dependency of one may be missing.
     monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
     installs = []
@@ -126,7 +126,7 @@ def test_installer_repairs_transitive_dependencies_without_reinstalling_healthy_
 
 
 def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch):
-    import biopipe.remote.provision as module
+    import operon.remote.provision as module
     uploaded = {}
     class ScriptShell:
         def __init__(self, *args): pass
@@ -149,11 +149,11 @@ def test_native_bootstrap_does_not_mix_conda_and_pip_scientific_abis(monkeypatch
     assert f"printf '%s' '{module.CONDA_SPECS}'" in script
     assert '/bin/micromamba' in script
     assert 'unset CONDA_PREFIX' in script
-    assert result['workspace'] == '/home/test/.local/share/biopipe/workspace'
+    assert result['workspace'] == '/home/test/.local/share/operon/workspace'
 
 
 def test_setup_log_is_created_before_upload_and_reported_on_failure(monkeypatch):
-    import biopipe.remote.provision as module
+    import operon.remote.provision as module
     commands, uploads, messages = [], [], []
     class ScriptShell:
         def __init__(self, *args): pass
@@ -180,7 +180,7 @@ def test_setup_log_is_created_before_upload_and_reported_on_failure(monkeypatch)
 
 def test_installer_prefers_mirror_wheels_and_falls_back_to_source(monkeypatch, tmp_path):
     from types import SimpleNamespace
-    from biopipe.remote import install_linux as installer
+    from operon.remote import install_linux as installer
 
     monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
     calls = []
@@ -210,16 +210,16 @@ def test_installer_prefers_mirror_wheels_and_falls_back_to_source(monkeypatch, t
 
 
 def test_cxx_toolchain_is_installed_only_for_source_builds():
-    from biopipe.remote import install_linux as module
+    from operon.remote import install_linux as module
 
     source = Path(module.__file__).read_text()
     assert 'gxx_linux-64' in source
     assert 'cmake' in source and 'make' in source
-    assert 'BIOPIPE_MAMBA' in source
+    assert 'OPERON_MAMBA' in source
 
 def test_installer_skips_conda_only_packages_and_pins_build_fragile_sdists(monkeypatch, tmp_path):
     from types import SimpleNamespace
-    from biopipe.remote import install_linux as installer
+    from operon.remote import install_linux as installer
 
     specs, _ = installer.requirements(ROOT)
     assert not any(spec.lower().startswith(('pdbfixer', 'openmm', 'pysam', 'antifold')) for spec in specs)
@@ -249,7 +249,7 @@ def test_installer_skips_conda_only_packages_and_pins_build_fragile_sdists(monke
 
 def test_installer_source_fallback_prefers_binaries_and_keeps_constraints(monkeypatch, tmp_path):
     from types import SimpleNamespace
-    from biopipe.remote import install_linux as installer
+    from operon.remote import install_linux as installer
 
     monkeypatch.setattr(installer.metadata, 'version', lambda name: '1.0')
     calls = []
@@ -276,7 +276,7 @@ def test_installer_source_fallback_prefers_binaries_and_keeps_constraints(monkey
         assert '--constraint' in command
 
 def test_split_failures_keeps_openmm_extras_non_fatal():
-    from biopipe.remote.install_linux import split_failures
+    from operon.remote.install_linux import split_failures
 
     results = {
         'structure_openmm_energy': {'status': 'failed', 'error': "No module named 'openmm'"},

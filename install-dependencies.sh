@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# BioPipe Operator Library: install the dependencies declared by the library.
+# Operon Operator Library: install the dependencies declared by the library.
 #
-#   ./install-dependencies.sh --profile-dir /srv/biopipe --dry-run
-#   ./install-dependencies.sh --profile-dir /srv/biopipe
-#   ./install-dependencies.sh --profile-dir /srv/biopipe --tools
+#   ./install-dependencies.sh --profile-dir /srv/operon --dry-run
+#   ./install-dependencies.sh --profile-dir /srv/operon
+#   ./install-dependencies.sh --profile-dir /srv/operon --tools
 #
 # The script re-launches itself with the interpreter recorded in server.json,
 # so the calling python only needs to be a recent Python 3.

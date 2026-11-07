@@ -19,10 +19,14 @@ _STATISTICS = (
 
 
 class RdkitScaffoldStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Bemis-Murcko scaffold extraction and ring-system counts."""
     parameters_file = 'rdkit_scaffold.RdkitScaffoldStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'rdkit_scaffold',
      'version': '1.0.0',
      'kind': 'operator',

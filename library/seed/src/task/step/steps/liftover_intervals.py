@@ -63,9 +63,17 @@ def _numeric(form, field_dim, name, operator):
 
 
 class LiftoverIntervalsStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         "protocol_version": 3,
         "version": "1.0.0",
         "id": "liftover_intervals",

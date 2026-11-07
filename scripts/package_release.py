@@ -12,7 +12,7 @@ import zipfile
 import urllib.request
 
 from audit_portability import audit_files
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 
 
 def main():
@@ -24,7 +24,7 @@ def main():
     parser.add_argument('--webview-bootstrapper', type=Path, help='Optional cached official Microsoft WebView2 bootstrapper; signature is verified')
     parser.add_argument('--lite', action='store_true', help='Smaller package requiring an existing Python environment')
     args = parser.parse_args()
-    if not args.lite and (not args.runtime or not (args.runtime / 'biopipe-runtime.json').is_file()):
+    if not args.lite and (not args.runtime or not (args.runtime / 'operon-runtime.json').is_file()):
         parser.error('Full releases require --runtime from build_runtime.py; use --lite only for an environment-free package')
     version = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']['version']
     name = f'Operon-Studio-v{version}-Windows-x64' + ('-Lite' if args.lite else '')
@@ -58,7 +58,7 @@ def main():
         (destination / 'runtime/webview2.json').write_text(json.dumps({'source': url,
             'sha256': hashlib.sha256(bootstrapper.read_bytes()).hexdigest()}), encoding='utf-8')
     shutil.copytree(root / 'frontend/dist', destination / 'frontend')
-    for directory in ('src', 'biopipe', 'biopipe_sdk', 'library/seed'):
+    for directory in ('src', 'operon', 'operon_sdk', 'library/seed'):
         for source in (root / directory).rglob('*'):
             if source.is_file() and source.suffix.lower() in {'.py', '.json', '.md', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'}:
                 copy(source, source.relative_to(root))
@@ -87,7 +87,7 @@ def main():
         # Use the shipped interpreter, never the packaging host's Python tag.
         subprocess.run([python, '-I', '-m', 'compileall', '-q', '-f',
                         '--invalidation-mode', 'unchecked-hash', '-s', str(destination),
-                        *[str(destination / p) for p in ('src', 'biopipe', 'biopipe_sdk', 'scripts', 'library/seed',
+                        *[str(destination / p) for p in ('src', 'operon', 'operon_sdk', 'scripts', 'library/seed',
                                                        'runtime/python/Lib/operon_import_paths.py')]], check=True)
     shutil.copytree(root / 'docs', destination / 'docs')
     # Ship the small SDK examples referenced by the extension guides.
@@ -107,22 +107,22 @@ def main():
         notices.append(f'\n{"=" * 72}\n{directory} {meta["version"]}\n')
         notices.extend(p.read_text(encoding='utf-8-sig') for p in sorted(licenses))
     (destination / 'THIRD_PARTY_NOTICES/frontend-licenses.txt').write_text('\n'.join(notices), encoding='utf-8')
-    (destination / 'biopipe-desktop.json').write_text(json.dumps({
+    (destination / 'operon-desktop.json').write_text(json.dumps({
         'backendRoot': '.', 'python': 'auto', 'entryPoint': 'scripts/desktop_server.py', 'frontend': 'frontend',
         'bundledRuntime': not args.lite,
     }, indent=2) + '\n', encoding='utf-8')
-    command = 'python -m biopipe' if args.lite else '"%~dp0runtime\\python\\python.exe" -I -m biopipe'
+    command = 'python -m operon' if args.lite else '"%~dp0runtime\\python\\python.exe" -I -m operon'
     (destination / 'operon.cmd').write_text('@echo off\n' + command + ' %*\n', encoding='ascii')
     (destination / 'START_HERE.txt').write_text(f"""Operon Studio {version} - Windows x64
 
 Use Operon_Setup.exe for installation. It owns its management Python and creates a
-new isolated profile; previous BioPipe installations and profiles are retained.
+new isolated profile; previous Operon installations and profiles are retained.
 Double-click the installed Operon Studio shortcut. First-time WebView2 setup
 may need an internet connection. Do not move individual installed files.
 
 The operator library remains independently versioned. Existing v3/v3.5 packages,
-.biopipe workflow bundles, Python imports and MCP identifiers stay compatible.
-Use operon.cmd for the bundled CLI or runtime/python/python.exe -I -m biopipe.
+.operon workflow bundles, Python imports and MCP identifiers stay compatible.
+Use operon.cmd for the bundled CLI or runtime/python/python.exe -I -m operon.
 Registration and startup read metadata; scientific dependencies are checked for
 the selected execution target at Validate/Run. Missing environments or packages
 require explicit Prepare environment; conflict isolation uses the same Python
@@ -155,7 +155,7 @@ The release page records the validation completed for this exact build.
     if audit['findings']:
         raise RuntimeError('Developer paths in release: ' + json.dumps(audit['findings']))
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
-    runtime_mode = 'external' if args.lite else json.loads((args.runtime / 'biopipe-runtime.json').read_text(encoding='utf-8')).get('mode', 'bundled')
+    runtime_mode = 'external' if args.lite else json.loads((args.runtime / 'operon-runtime.json').read_text(encoding='utf-8')).get('mode', 'bundled')
     manifest = {'product': 'operon', 'version': version, 'runtime_mode': runtime_mode, 'source_commit': commit,
                 'source_dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True).strip()), 'python_bundled': not args.lite, 'files': []}
     for file in sorted(destination.rglob('*')):

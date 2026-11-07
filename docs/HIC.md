@@ -1,6 +1,6 @@
 # Hi-C workflows
 
-BioPipe Studio v0.6.1 adds three operators and four file Readers. It reuses
+Operon Studio v0.6.1 adds three operators and four file Readers. It reuses
 `sequence_stats` for FASTQ quality summaries, `select` for bounded contact-map
 windows, and the existing plotting, filtering and annotation operators for their
 outputs. Both full and Lite desktop archives include these additions. The full
@@ -64,7 +64,7 @@ trimming, biological replicate merging, differential Hi-C and GPU algorithms are
 not implemented by this initial route.
 
 Balancing is ICE through cooler, with convergence failure reported as a failed
-step. This is separate from BioPipe's generic numeric `normalize` operator.
+step. This is separate from Operon's generic numeric `normalize` operator.
 Optional mcool output currently contains raw aggregated resolutions; the primary
 base-resolution cool retains the requested balancing weights. Balance other
 resolutions before weighted downstream analysis.
@@ -86,7 +86,7 @@ The raw-read tool chain is a Linux workload. The Windows bundled Python remains
 usable for editing, FASTQ QC and local Cooler region previews, but does not bundle
 BWA, samtools, pairtools or cooltools. They are external executables, not ordinary
 operator Python dependencies; each run performs tool/version preflight before
-calling them. BioPipe does not install WSL, change the host OS or run pip during
+calling them. Operon does not install WSL, change the host OS or run pip during
 registry discovery.
 
 Create an isolated environment, then install this checkout:
@@ -96,8 +96,8 @@ conda create -y -p ./hic-env --override-channels -c conda-forge -c bioconda \
   python=3.11 bwa=0.7.19 samtools=1.22.1 pip
 conda activate ./hic-env
 python -m pip install -e . pytest -r requirements-hic-linux.txt
-python -m biopipe registry check
-BIOPIPE_HIC_REAL=1 python -m pytest tests/test_hic_real.py -v
+python -m operon registry check
+OPERON_HIC_REAL=1 python -m pytest tests/test_hic_real.py -v
 ```
 
 For a real CLI job, copy one route directory, set the source paths in `task.yaml`
@@ -126,7 +126,7 @@ for the process-group relay. A missing environment/tool produces an actionable
 error and retained logs. WSL's adapter must be tested on the user's installed
 distribution; Linux acceptance does not certify WSL itself.
 
-File parameters marked `x-biopipe-path: workflow` resolve relative to the
+File parameters marked `x-operon-path: workflow` resolve relative to the
 workflow directory. Reader parameters marked `source` resolve beside the main
 input (R2 beside R1). Studio resolves and freezes those paths when preparing a
 job, and exports relative paths again. The Studio project boundary still applies;

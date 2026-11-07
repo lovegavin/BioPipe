@@ -1,30 +1,30 @@
-# BioPipe → IGV genome-track handoff
+# Operon → IGV genome-track handoff
 
 This optional SDK package demonstrates the boundary between automated analysis
-and a specialist interactive viewer. BioPipe performs the interval computation;
+and a specialist interactive viewer. Operon performs the interval computation;
 IGV opens the resulting BED and bedGraph files for inspection. It is not an
 embedded IGV browser, a universal visualization adapter, or a Hi-C heatmap tool.
 
 ## Install and use the example operator
 
-From the repository root, in the same Python environment as BioPipe:
+From the repository root, in the same Python environment as Operon:
 
 ```text
-python -m biopipe plugin check examples/igv_handoff
-python -m biopipe plugin build examples/igv_handoff
-python -m biopipe --workspace /path/to/project plugin install examples/igv_handoff/dist/biopipe_igv_example-0.1.0-py3-none-any.whl
+python -m operon plugin check examples/igv_handoff
+python -m operon plugin build examples/igv_handoff
+python -m operon --workspace /path/to/project plugin install examples/igv_handoff/dist/operon_igv_example-0.1.0-py3-none-any.whl
 ```
 
 Connect `BedReader` → `interval_merge` → `example.genome_tracks`. Supply an
 explicit reference `assembly`; retain the final `tracks` output. The operator's
-[Markdown guide](biopipe_igv_example/tracks.GenomeTracks.md) and independent
-[parameter schema](biopipe_igv_example/tracks.parameters.json) describe the input
+[Markdown guide](operon_igv_example/tracks.GenomeTracks.md) and independent
+[parameter schema](operon_igv_example/tracks.parameters.json) describe the input
 contract and the meaning of the quantitative track.
 
 This export uses chromosome metadata from the actual Form and named columns;
 it does not assume all rows belong to one chromosome. The writer preserves
 large exact integer coordinates, validates sorted non-overlapping intervals,
-and uses bounded write buffers. BioPipe still admits the full input and can
+and uses bounded write buffers. Operon still admits the full input and can
 spill other cached artifacts. It does not turn `interval_merge` into a
 streaming algorithm. No new scientific or GUI dependency is needed by the exporter.
 
@@ -50,7 +50,7 @@ arbitrary genome coordinates. This example therefore exports from the Form
 **inside the worker** and registers ordinary `FileArtifact` roles.
 
 IGV can load accessible files, URLs, and session XML. It does not automatically
-inherit BioPipe's authenticated API token. This example explicitly copies the
+inherit Operon's authenticated API token. This example explicitly copies the
 selected generated files into a local handoff directory; for a remote job,
 network access and secure transfer must be handled by the integrating client.
 There is no automatic “Open in IGV” desktop button or remote-IGV controller in

@@ -8,13 +8,13 @@ import zipfile
 import pytest
 
 from extension_fixtures import write_extension
-from biopipe.dropins import single_file_wheel
-from biopipe.install_targets import execution_digest, wheel_entries
-from biopipe.operator_docs import OperatorDocs
-from biopipe.plugins import PluginManager
-from biopipe_sdk.declarations import compile_declaration, source_declarations
+from operon.dropins import single_file_wheel
+from operon.install_targets import execution_digest, wheel_entries
+from operon.operator_docs import OperatorDocs
+from operon.plugins import PluginManager
+from operon_sdk.declarations import compile_declaration, source_declarations
 
-SOURCE = '''from biopipe_sdk import Step
+SOURCE = '''from operon_sdk import Step
 class Answer(Step):
     name = "lab.documented"
     description = "Return a configured answer for reproducible tests."
@@ -36,7 +36,7 @@ def extension(tmp_path, *, unsafe=False):
 
 @pytest.mark.parametrize('nested_library', [False, True])
 def test_release_history_verifies_the_actual_library_root(tmp_path, nested_library):
-    from biopipe.registry import maintain
+    from operon.registry import maintain
     from scripts.record_bundled_history import record
 
     release = tmp_path / 'verified-release'
@@ -75,7 +75,7 @@ def test_static_docs_search_lazy_sections_and_validation(tmp_path, monkeypatch):
         directory = tmp_path / 'profile'
         def state(self): return state
     docs = OperatorDocs(Manager())
-    monkeypatch.setattr('biopipe.operator_docs.document_bytes', lambda *args: pytest.fail('search read Markdown'))
+    monkeypatch.setattr('operon.operator_docs.document_bytes', lambda *args: pytest.fail('search read Markdown'))
     assert docs.search('configured')['items'][0]['id'] == 'lab.documented'
     assert 'content' not in docs.describe(['lab.documented'])['items'][0]['documentation']
     generated = docs.describe(['lab.documented'], sections=['parameters'])
@@ -102,8 +102,8 @@ def test_static_docs_search_lazy_sections_and_validation(tmp_path, monkeypatch):
 
 
 def test_documentation_loads_from_deep_install_without_importing_operator(tmp_path, monkeypatch):
-    from biopipe.bytecode import io_path
-    from biopipe.operator_docs import document_bytes
+    from operon.bytecode import io_path
+    from operon.operator_docs import document_bytes
     from types import SimpleNamespace
     source, markdown = extension(tmp_path, unsafe=True)
     descriptor = compile_declaration(source_declarations(source, 'answer')[0], tmp_path)
@@ -113,7 +113,7 @@ def test_documentation_loads_from_deep_install_without_importing_operator(tmp_pa
     io_path(deep).mkdir(parents=True)
     io_path(deep / source.name).write_bytes(source.read_bytes())
     io_path(deep / markdown.name).write_bytes(markdown.read_bytes())
-    monkeypatch.setattr('biopipe.library_location.source_root', lambda: deep)
+    monkeypatch.setattr('operon.library_location.source_root', lambda: deep)
     manager = SimpleNamespace(directory=tmp_path / 'new-profile')
     assert document_bytes(manager, {}, descriptor) == markdown.read_bytes()
 
@@ -148,8 +148,8 @@ def test_documented_wheel_checks_integrity_and_only_docs_are_nonexecuting(tmp_pa
 
 def test_markdown_identity_is_newline_independent_and_old_raw_cache_stays_valid(tmp_path):
     import hashlib
-    from biopipe.operator_docs import cache_document, document_bytes
-    from biopipe_sdk.documentation import verify_content
+    from operon.operator_docs import cache_document, document_bytes
+    from operon_sdk.documentation import verify_content
     path, markdown = extension(tmp_path)
     lf = markdown.read_text(encoding='utf-8').encode('utf-8')
     variants = [lf, lf.replace(b'\n', b'\r\n'), lf.replace(b'\n', b'\r')]
@@ -195,7 +195,7 @@ def test_generator_writes_lf_and_does_not_rewrite_authored_pages(tmp_path):
 
 
 def test_static_compiler_reuses_one_source_identity_and_detects_midbuild_edits(tmp_path, monkeypatch):
-    import biopipe_sdk.declarations as declarations
+    import operon_sdk.declarations as declarations
     package = tmp_path / 'example'
     package.mkdir()
     path, _ = extension(package, unsafe=True)
@@ -226,9 +226,9 @@ def test_doc_only_update_reuses_environment_and_fresh_profile_runs_frozen_values
     manager = PluginManager(tmp_path / 'profile', source_root=None, manifest_only=True)
     # Installing an extension must honor metadata-first discovery too, not scan
     # every bundled source repeatedly through the global discovery function.
-    monkeypatch.setattr('biopipe.packages.bundled_state',
+    monkeypatch.setattr('operon.packages.bundled_state',
         lambda **kwargs: pytest.fail('install bypassed manager discovery policy'))
-    from biopipe import install_targets
+    from operon import install_targets
     original_install = install_targets.install
     def observed_install(active, *args, **kwargs):
         calls = []
@@ -258,7 +258,7 @@ def test_doc_only_update_reuses_environment_and_fresh_profile_runs_frozen_values
     parameter.write_text(json.dumps(parameters))
     second_wheel = single_file_wheel(path, tmp_path / 'v2')
     with monkeypatch.context() as guard:
-        guard.setattr('biopipe.install_targets.install', lambda *args, **kwargs: pytest.fail('doc update reinstalled environment'))
+        guard.setattr('operon.install_targets.install', lambda *args, **kwargs: pytest.fail('doc update reinstalled environment'))
         second = manager.install(second_wheel)
     assert second['code_paths'] == old_paths
     assert next(d for d in second['descriptors'] if d['id'] == 'lab.documented')['parameters_schema']['properties']['answer']['default'] == 99
@@ -273,13 +273,13 @@ def test_doc_only_update_reuses_environment_and_fresh_profile_runs_frozen_values
     assert state['generation'] == fresh.state()['generation']
     _, summary = run_worker(fresh, state, tmp_path / 'run', {},
                             [{'name': 'lab.documented', 'inputs': [], 'params': pinned.nodes[0].params}])
-    from biopipe.bytecode import io_path
+    from operon.bytecode import io_path
     output = json.loads(io_path(tmp_path / 'run/output' / summary['steps'][0]['export_path']).read_text())
     assert output == {'answer': 42}
 
 
 def test_sdk_scaffold_ships_markdown_and_testable_example(tmp_path):
-    from biopipe.developer import scaffold, check_source
+    from operon.developer import scaffold, check_source
     project = tmp_path / 'scale_example'
     scaffold(project)
     descriptor = check_source(project)['descriptors'][0]
@@ -300,8 +300,8 @@ def test_cold_profile_search_and_docs_import_no_implementations(tmp_path):
     root = Path(__file__).resolve().parents[1]
     code = '''import json,sys
 from pathlib import Path
-from biopipe.plugins import PluginManager
-from biopipe.operator_docs import OperatorDocs
+from operon.plugins import PluginManager
+from operon.operator_docs import OperatorDocs
 docs=OperatorDocs(PluginManager(Path(sys.argv[1])))
 found=docs.search("pca")
 assert any(item["id"]=="pca" for item in found["items"])
@@ -319,9 +319,9 @@ print(json.dumps({"ok":True,"generation":found["generation"]}))
 
 def test_long_profile_paths_keep_docs_cache_and_source_snapshots_usable(tmp_path):
     import hashlib
-    from biopipe.bytecode import filesystem_path
-    from biopipe.dropins import snapshot
-    from biopipe.operator_docs import cache_document, document_bytes
+    from operon.bytecode import filesystem_path
+    from operon.dropins import snapshot
+    from operon.operator_docs import cache_document, document_bytes
     deep = tmp_path / ('profile-' + 'a' * 70) / ('revision-' + 'b' * 70)
     def io_path(path):
         return Path(filesystem_path(path, resolve=False))
@@ -347,13 +347,13 @@ def test_long_profile_paths_keep_docs_cache_and_source_snapshots_usable(tmp_path
 
     # Library transport must also handle deep destination paths, including its
     # temporary extraction/rebuild tree, without shortening authored filenames.
-    from biopipe.library_bundle import build_bundle, unpack_bundle
+    from operon.library_bundle import build_bundle, unpack_bundle
     seed = tmp_path / 'library-seed'
     operators = seed / 'src/task/step/steps'
     operators.mkdir(parents=True)
     (seed / 'src/reader/readers').mkdir(parents=True)
-    (seed / 'biopipe').mkdir()
-    (seed / 'biopipe/builtin_packages.json').write_text('{"packages":[]}', encoding='utf-8')
+    (seed / 'operon').mkdir()
+    (seed / 'operon/builtin_packages.json').write_text('{"packages":[]}', encoding='utf-8')
     implementation, _ = extension(operators)
     implementation.write_text(implementation.read_text().replace('class Answer(Step):',
         'class Answer(Step):\n    provider = "lab-docs"'), encoding='utf-8')

@@ -21,8 +21,8 @@ Already-bundled CPU analyses do not require downloads. New extensions may need
 internet access; package availability, OS support and GPU drivers still matter.
 Windows x64, macOS, Linux and Windows ARM need separate tested distributions.
 
-The 3.0.0 release integrates BioPipe Operator Library v3.0.0 (717 operators and 101
-Readers). The runtime receipt lists Python dependency coverage, not a claim that
+The 3.0.2 application line integrates Operon Operator Library v5.0.0 (867 operators
+and 108 Readers). Published installers retain the library seed they were built with. The runtime receipt lists Python dependency coverage, not a claim that
 every model or external executable is preinstalled. Large model weights,
 databases, Linux tools and declared dedicated environments remain separate.
 AntiFold, ESM-3 and Boltz retain their own environment requirements and dependency
@@ -64,8 +64,8 @@ Resource locations are relative to the user's home directory, or explicitly
 configured with each resource's environment variable. No author-machine paths
 are required. Inspect with `python scripts/check_resources.py --json` and use
 `python scripts/provision_resources.py --help` for opt-in model downloads.
-For an existing dedicated interpreter, set `BIOPIPE_ENV_<NAME>` to its Python
-executable, then inspect with `python -m biopipe.environments <name> --json`.
+For an existing dedicated interpreter, set `OPERON_ENV_<NAME>` to its Python
+executable, then inspect with `python -m operon.environments <name> --json`.
 The bridge recognizes Windows Conda and venv layouts as well as Linux layouts.
 It keeps full-mode memory accounting; it does not advertise streaming for those
 operators. Input arrays are mapped from disk and metadata survives the boundary.
@@ -132,7 +132,7 @@ python scripts/record_bundled_history.py --source <verified-release-folder> --re
 
 This reads code/declaration bytes and checks the source against its index and
 package manifest. It does not import the historical operators. The generated
-`biopipe/bundled_history.json` contains only compact identity receipts, not old
+`operon/bundled_history.json` contains only compact identity receipts, not old
 implementations, profiles or datasets. Commit it and include it in both the SDK
 wheel and desktop packages. Never generate trusted receipts from an unverified
 user extension or from an edited release folder.
@@ -166,7 +166,7 @@ and [Microsoft WebView2 distribution](https://learn.microsoft.com/en-us/microsof
 
 ## Source and existing environments
 
-BioPipe publishes supported dependency ranges in `pyproject.toml` and the
+Operon publishes supported dependency ranges in `pyproject.toml` and the
 `requirements*.txt` files. Release users can select one tested combination with a
 constraints file. Both direct and transitive dependencies are pinned with `==`.
 The files contain package versions only: no local paths, copied environment,

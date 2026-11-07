@@ -72,9 +72,12 @@ def gnm_msf(matrix: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
 
 
 class StructureGnmFlexibilityStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_gnm_flexibility.StructureGnmFlexibilityStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_gnm_flexibility",
         "version": "1.0.0",

@@ -47,7 +47,7 @@ def test_run_duplex_validation():
 
 def test_operator_round_trip():
     form = encode_sequences([MIR, TARGET], "sequence", "position", "rna")
-    ctx = Context("/tmp/biopipe_test_rnaduplex", {"params": {}})
+    ctx = Context("/tmp/operon_test_rnaduplex", {"params": {}})
     ctx["rna"] = form
     run(ctx, [{"name": "sequence_rna_duplex", "inputs": ["rna"], "params": {"output": "duplexes"}}])
     table = ctx["duplexes"]

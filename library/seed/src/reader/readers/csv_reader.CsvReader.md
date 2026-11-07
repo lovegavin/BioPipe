@@ -31,7 +31,7 @@ or whether categorical columns are scientifically meaningful as numeric inputs.
 ## Limitations
 
 This Reader currently declares full-memory loading. Compression reduces storage
-size but does not guarantee a small dense matrix. BioPipe's runtime budgets and
+size but does not guarantee a small dense matrix. Operon's runtime budgets and
 spill mechanisms remain active; downstream full-memory algorithms still need
 their working set. Duplicate labels are disambiguated with positional suffixes.
 

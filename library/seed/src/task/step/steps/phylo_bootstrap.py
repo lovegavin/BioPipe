@@ -12,9 +12,12 @@ from src.task.step.steps._phylo_support_utils import bootstrap
 class PhyloBootstrapStep(Step):
     """Resample alignment columns and report split support on the NJ tree."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "phylo_bootstrap.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "phylo_bootstrap",
         "version": "1.0.0",

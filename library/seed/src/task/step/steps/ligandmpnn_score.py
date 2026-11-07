@@ -26,11 +26,11 @@ _STATISTICS = ("mean_log_prob", "std_log_prob")
 
 
 def _repo_path(value: str) -> Path:
-    text = value or os.environ.get("BIOPIPE_LIGANDMPNN_PATH", "")
+    text = value or os.environ.get("OPERON_LIGANDMPNN_PATH", "")
     if not text:
         raise StepError(
             "ligandmpnn_score: ligandmpnn_path is required; point it at a LigandMPNN checkout "
-            "or set BIOPIPE_LIGANDMPNN_PATH"
+            "or set OPERON_LIGANDMPNN_PATH"
         )
     return Path(text).expanduser()
 
@@ -92,9 +92,12 @@ def score_statistics(payload: dict) -> tuple[np.ndarray, list[str]]:
 
 
 class LigandMpnnScoreStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "ligandmpnn_score.LigandMpnnScoreStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "ligandmpnn_score",
         "kind": "operator",
@@ -177,7 +180,7 @@ class LigandMpnnScoreStep(Step):
         chains = str(params.get("chains_to_design", "")).replace(" ", "")
         output = str(params.get("output", "output"))
 
-        out_dir = Path(tempfile.mkdtemp(prefix="biopipe-ligandmpnn-score-"))
+        out_dir = Path(tempfile.mkdtemp(prefix="operon-ligandmpnn-score-"))
         environment = dict(os.environ)
         if device == "cpu":
             environment["CUDA_VISIBLE_DEVICES"] = ""

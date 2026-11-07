@@ -7,15 +7,15 @@ from types import SimpleNamespace
 
 import pytest
 
-from biopipe.remote.client import RemoteError, SSHConnection
-from biopipe.remote.handshake import CAPABILITIES
-from biopipe.remote.installation import validate
-from biopipe.remote import provision
+from operon.remote.client import RemoteError, SSHConnection
+from operon.remote.handshake import CAPABILITIES
+from operon.remote.installation import validate
+from operon.remote import provision
 
 
 def receipt():
     return {'schema_version': 1, 'server_id': 'server-identity', 'version': '0.7.1',
-            'app_dir': '/srv/shared/biopipe', 'python': '/srv/shared/python/bin/python',
+            'app_dir': '/srv/shared/operon', 'python': '/srv/shared/python/bin/python',
             'workspace': '/srv/jobs'}
 
 
@@ -38,12 +38,12 @@ def test_discovery_reads_receipt_without_archiving_uploading_or_installing(monke
     monkeypatch.setattr(provision, 'source_archive', lambda *a: pytest.fail('Routine discovery scanned local code'))
     for desktop in ('desktop-A', 'desktop-B'):
         result = provision.locate(None, {'name': desktop}, lambda m: None, threading.Event())
-        assert result['app_dir'] == '/srv/shared/biopipe'
+        assert result['app_dir'] == '/srv/shared/operon'
         assert result['python'] == '/srv/shared/python/bin/python'
         assert result['workspace'] == '/srv/jobs'
     assert len(commands) == 4
     assert not any(word in ' '.join(commands) for word in ('find ', 'pip ', 'mkdir ', 'tar ', 'source-'))
-    assert '/home/researcher/.local/share/biopipe/server.json' in commands[-1]
+    assert '/home/researcher/.local/share/operon/server.json' in commands[-1]
 
 
 def test_discovery_preserves_explicit_workspace_and_reports_missing_registration(monkeypatch):
@@ -110,7 +110,7 @@ def test_managed_transport_invokes_only_requested_install_action(monkeypatch, in
         return run
     monkeypatch.setattr(provision, 'locate', action('locate'))
     monkeypatch.setattr(provision, 'provision', action('install'))
-    monkeypatch.setattr(SSHConnection, '_line', lambda *a: 'BIOPIPE_REMOTE_READY 1')
+    monkeypatch.setattr(SSHConnection, '_line', lambda *a: 'OPERON_REMOTE_READY 1')
     monkeypatch.setattr(SSHConnection, 'handshake', lambda *a: info())
     profile = {'host': 'example.org', 'port': 22, 'username': 'researcher', 'auth': 'password',
                'environment': 'managed', 'mode': 'exec'}
@@ -120,23 +120,23 @@ def test_managed_transport_invokes_only_requested_install_action(monkeypatch, in
     connection.close()
 
 def test_conda_extras_install_pysam_after_pip(monkeypatch, tmp_path):
-    from biopipe.remote import install_linux
+    from operon.remote import install_linux
 
     calls = []
     monkeypatch.setattr(install_linux.subprocess, 'run', lambda command, **kwargs: calls.append(command) or type('R', (), {'returncode': 0})())
     monkeypatch.setattr(install_linux.sys, 'prefix', str(tmp_path / 'env-test'))
     mamba = tmp_path / 'micromamba'
     mamba.write_text('#!/bin/sh\n')
-    monkeypatch.setenv('BIOPIPE_MAMBA', str(mamba))
+    monkeypatch.setenv('OPERON_MAMBA', str(mamba))
     monkeypatch.setitem(sys.modules, 'pysam', type(sys)('pysam'))
     assert install_linux._ensure_conda_extras() is True
     assert not calls
-    monkeypatch.delitem(sys.modules, 'pysam')
+    monkeypatch.setitem(sys.modules, 'pysam', None)
     assert install_linux._ensure_conda_extras() is True
     assert calls and 'pysam=0.22.1' in calls[0]
 
 def test_python_extras_install_light_operator_packages(monkeypatch, tmp_path):
-    from biopipe.remote import install_linux
+    from operon.remote import install_linux
 
     calls = []
     monkeypatch.setattr(install_linux.subprocess, 'run', lambda command, **kwargs: calls.append(command) or type('R', (), {'returncode': 0})())

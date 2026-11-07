@@ -1,4 +1,4 @@
-"""Provisioning helpers for BioPipe large resources.
+"""Provisioning helpers for Operon large resources.
 
 Design goals: downloads must survive slow or unstable links (resume, retries,
 read timeouts), must never leave a half-written file in place (atomic rename),
@@ -235,7 +235,7 @@ def provision(
     root = Path(root)
     root.mkdir(parents=True, exist_ok=True)
     source = Path(source_dir) if source_dir else None
-    lock = root / ".biopipe-provision.lock"
+    lock = root / ".operon-provision.lock"
     deadline = time.monotonic() + lock_timeout
     while True:
         try:
@@ -304,5 +304,5 @@ def load_manifest(path: str | Path | None = None) -> dict:
     """Load the resource manifest from the package."""
 
     if path is None:
-        path = Path(__file__).resolve().parents[2] / "biopipe" / "resources.json"
+        path = Path(__file__).resolve().parents[2] / "operon" / "resources.json"
     return json.loads(Path(path).read_text())

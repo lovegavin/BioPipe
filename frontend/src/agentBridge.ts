@@ -101,7 +101,7 @@ export class CanvasBridge {
       const remote = await api.agent<AgentState>(`/sessions/${this.state.id}`);
       const local = structuredClone(this.capture());
       // Preserve a recoverable local copy even if tab capacity prevents merge.
-      localStorage.setItem("biopipe-agent-conflict-backup", JSON.stringify(local));
+      localStorage.setItem("operon-agent-conflict-backup", JSON.stringify(local));
       const recovered = recoverWorkspace(this.acknowledged, local, remote.workspace);
       const state = await api.agent<AgentState>(`/sessions/${remote.id}/sync`, {workspace: recovered, expected_revision: remote.revision});
       this.state = state;

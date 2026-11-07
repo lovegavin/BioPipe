@@ -14,9 +14,13 @@ from src.task.step.steps._phylo_compare_utils import (
 class PhyloLambdaStep(Step):
     """Estimate Pagel's lambda by maximum likelihood under Brownian motion."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "phylo_lambda.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "phylo_lambda",
         "version": "1.0.0",

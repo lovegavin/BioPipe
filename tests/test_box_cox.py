@@ -117,7 +117,7 @@ def test_box_cox_axis_order_is_preserved():
     )
     form.validate()
     ctx = Ctx({"lambdas": 0.5, "sample_dim": "sample", "feature_dim": "feature"})
-    from biopipe_sdk.declarations import bind_class, for_class
+    from operon_sdk.declarations import bind_class, for_class
     bind_class(BoxCoxStep, for_class(BoxCoxStep))().run(ctx, [form])
     out = ctx["box_cox"]
     assert out.dims == ["feature", "sample"]

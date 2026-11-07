@@ -1,4 +1,4 @@
-# Route verification for BioPipe 4.x
+# Route verification for Operon 4.x
 
 This page records incremental, three-platform verification of operator library
 routes added after the 4.0.3 release. Every row is produced from a real,
@@ -1718,7 +1718,7 @@ difference is 5.6e-17 (srv) and 1.0e-17 (Windows) at most.
 - The route initially referenced a stale parameter set; the registry rejected
   `max_variants`/`min_maf` for operators that no longer take them. The route was
   rebuilt around `genotype_filter` and re-checked.
-- `ld_decay` and `ld_prune` already exist in the bundled `biopipe-genetics`
+- `ld_decay` and `ld_prune` already exist in the bundled `operon-genetics`
   package. Overwrites were reverted with `git checkout` and the route reuses the
   bundled operators instead of shadowing them.
 
@@ -1748,7 +1748,7 @@ present, so the scores are a chr22 subset of the published score.
 
 `genotypes` (VcfReader), `genotypes_file` (VcfFileReader) and `weights`
 (TsvFileReader) feed `prs_harmonize`; its output goes to `prs_af_filter`,
-`prs_ld_clump` and the bundled `biopipe-genetics` operator `prs`, with one CSV
+`prs_ld_clump` and the bundled `operon-genetics` operator `prs`, with one CSV
 export per branch (8 steps).
 
 ### Results
@@ -1800,7 +1800,7 @@ Nearly all of the wall time is the first decode of 291,205 variants by
 - `export()` was defined without `ctx`; the runner passes the context, so all
   three operators now use `export(self, ctx)`.
 - The first registry build failed because the new operators reused ids
-  `ld_decay` / `ld_prune` that already belong to `biopipe-genetics`. The
+  `ld_decay` / `ld_prune` that already belong to `operon-genetics`. The
   overwritten files were restored and the route now reuses the bundled
   operators.
 - `prs` expects weights already aligned to the effect allele; this batch adds
@@ -1959,7 +1959,7 @@ trans 23,112). Chromosome sizes were extracted from the companion
 2. Input port rules only accept a list or a parameter reference for `labels`;
    `labels: {}` on the decay input was replaced by `labels: []`.
 3. The runtime catalog is served from the profile's *editable source root*
-   (`~/.biopipe/studio/workspace/.studio/plugins/library/sources/editable`),
+   (`~/.operon/studio/workspace/.studio/plugins/library/sources/editable`),
    and `seed_sources()` never overwrites an existing authoring tree; operator
    changes must be copied there (or the plugin refreshed) before `--check`.
 4. A new `PairsFileReader` with the same `.pairs` extension shadowed the
@@ -2113,7 +2113,7 @@ Exports: `protein_digest.csv` 4,681,593 B, `peptide_mass.csv` 4,041,263 B,
 
 | Oracle | Scope | Result |
 | --- | --- | --- |
-| pyteomics `parser.xcleave(seq, "[KR](?!P)")` + `mass.calculate_mass` | peptide set and masses | 72,399 vs 72,399, no one-sided peptide, max abs mass difference **3.64e-12** |
+| pyteomics `parser.xcleave(seq, "[KR] 后接非 P")` + `mass.calculate_mass` | peptide set and masses | 72,399 vs 72,399, no one-sided peptide, max abs mass difference **3.64e-12** |
 | EMBOSS `pepdigest` 6.6.0, `-menu 1 -mono Y -unfavoured Y` | cut sites and masses | 135,636 fragments; every fragment missing from the operator set is explained by a `K/R|P` cut (0 unexplained), 0 unexplained merges, max abs mass difference **6.22e-4** (EMBOSS prints three decimals) |
 | EMBOSS `pepdigest` default mode | self-consistency | 88,397 fragments tile the unfavoured fragments with 0 violations |
 
@@ -2322,7 +2322,7 @@ Input `workdir/b29_route/input/lalonde.csv`, sha256
 `std.caliper = TRUE`, `method = "nearest"`, plus coefficients from `glm()` and
 SMDs recomputed in base R (cobalt 5.0.0 and Matching 4.10.15 installed).
 
-| quantity | BioPipe | R | difference |
+| quantity | Operon | R | difference |
 |---|---|---|---|
 | pairs | 113 | 113 | 0 |
 | propensity score | — | `predict(glm)` | max abs 3.14e-9 |
@@ -2339,7 +2339,7 @@ byte-identical on all three; `propensity.csv` and `matched.csv` differ only in
 float text (srv max abs 6.39e-13, Windows 2.50e-13 vs WSL).
 
 **Fixes.** The route manifest needed the canonical
-`biopipe.task-parameters` format (`format`, `schema_version`, `params`,
+`operon.task-parameters` format (`format`, `schema_version`, `params`,
 `sources`, `steps[].params`); the operator IRLS accepts non-separated data and
 only rejects a divergent/oversized coefficient vector.
 

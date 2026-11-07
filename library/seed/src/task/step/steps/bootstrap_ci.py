@@ -10,9 +10,13 @@ from ._matrix_common import matrix
 
 
 class BootstrapCiStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'bootstrap_ci.BootstrapCiStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'bootstrap_ci',
      'version': '1.0.0',
      'kind': 'operator',

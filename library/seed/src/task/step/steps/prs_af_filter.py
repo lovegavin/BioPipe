@@ -33,9 +33,15 @@ def _weight_rows(form, variant_dim, stat_dim, weight_label, operator):
 
 
 class PrsAfFilterStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "prs_af_filter.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "prs_af_filter",
         "version": "1.0.0",

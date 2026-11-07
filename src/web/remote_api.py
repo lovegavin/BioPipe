@@ -5,7 +5,7 @@ import json
 
 from fastapi import Request
 from fastapi.responses import JSONResponse, StreamingResponse
-from biopipe.remote.client import RemoteError, HostKeyRequired
+from operon.remote.client import RemoteError, HostKeyRequired
 from .remote_service import RemoteManager
 
 

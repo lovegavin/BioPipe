@@ -27,9 +27,19 @@ def vcf_path(artifact, operator):
 
 
 class LiftoverVariantsStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         "protocol_version": 3,
         "version": "1.0.0",
         "id": "liftover_variants",

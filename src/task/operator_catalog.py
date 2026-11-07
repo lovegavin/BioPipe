@@ -1,5 +1,5 @@
 """Derived UI catalog; implementations own all executable declarations."""
-from biopipe_sdk.protocol import PROTOCOL_VERSION, catalog_entry, describe_operator, describe_reader
+from operon_sdk.protocol import PROTOCOL_VERSION, catalog_entry, describe_operator, describe_reader
 from src.core.contracts import VERSION
 
 

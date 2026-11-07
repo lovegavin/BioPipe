@@ -293,8 +293,8 @@ REAL_REPO = Path("/home/gavin/tools/ProteinMPNN")
 @pytest.mark.skipif(
     not (REAL_REPO / "protein_mpnn_run.py").is_file()
     or not (REAL_REPO / "vanilla_model_weights" / "v_48_020.pt").is_file()
-    or not __import__("os").environ.get("BIOPIPE_RUN_PROTEINMPNN"),
-    reason="official ProteinMPNN checkout or BIOPIPE_RUN_PROTEINMPNN is absent",
+    or not __import__("os").environ.get("OPERON_RUN_PROTEINMPNN"),
+    reason="official ProteinMPNN checkout or OPERON_RUN_PROTEINMPNN is absent",
 )
 def test_official_runner_minimal(tmp_path):
     """Oracle: the official runner must accept our command line."""

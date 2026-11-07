@@ -1,6 +1,6 @@
-# BioPipe Operator Library v3.0.1
+# Operon Operator Library v3.0.1
 
-Patch release on top of **BioPipe Operator Library v3.0.0**. No new
+Patch release on top of **Operon Operator Library v3.0.0**. No new
 operators, no protocol change, no `export_results` contract change. This
 release ships the fixes and evidence from the full 3.x verification campaign.
 

@@ -86,13 +86,16 @@ def consensus_sequence(frequencies: np.ndarray) -> str:
 
 
 class ProteinmpnnMultiModelConsensusStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = (
         "proteinmpnn_multi_model_consensus"
         ".ProteinmpnnMultiModelConsensusStep.parameters.json"
     )
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_multi_model_consensus",
         "version": "1.0.0",
@@ -138,7 +141,7 @@ class ProteinmpnnMultiModelConsensusStep(Step):
             )
         repo = str(params.get("proteinmpnn_path", "")).strip()
         if not repo:
-            repo = os.environ.get("BIOPIPE_PROTEINMPNN_PATH", "").strip()
+            repo = os.environ.get("OPERON_PROTEINMPNN_PATH", "").strip()
         if not repo:
             raise StepError(
                 "proteinmpnn_multi_model_consensus: proteinmpnn_path is required; "
@@ -195,7 +198,7 @@ class ProteinmpnnMultiModelConsensusStep(Step):
         per_model: dict[str, list[str]] = {}
         started = time.monotonic()
         for model_name in models:
-            out_dir = Path(tempfile.mkdtemp(prefix="biopipe-consensus-"))
+            out_dir = Path(tempfile.mkdtemp(prefix="operon-consensus-"))
             try:
                 command = [
                     _python(params),

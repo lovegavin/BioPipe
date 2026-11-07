@@ -1,7 +1,12 @@
-# BioPipe SDK reference
+# Operon SDK reference
 
-The supported import surface is `biopipe_sdk`. SDK version is `3.0.0`; descriptor/package protocol
-version is `3`. The SDK currently ships with the `biopipe-studio` distribution.
+The supported import surface is `operon_sdk`. SDK version is `3.7.0`; descriptor/package protocol
+version is `3`. The SDK currently ships with the `operon-studio` distribution.
+
+New declarations set `protocol_revision: "3.7"` and provide explicit
+`data_formats.inputs` and `data_formats.outputs`. Existing revision-3 providers
+retain compatibility; use [static inspection/migration](format_migration_v37.md)
+to publish upgraded declarations deliberately.
 
 | Export | Use |
 | --- | --- |
@@ -9,6 +14,7 @@ version is `3`. The SDK currently ships with the `biopipe-studio` distribution.
 | `Step` | Advanced execution API: `run(ctx, inputs)`, `export(ctx)` and fixed outputs |
 | `Reader` | Implement `read(path, dims, labels, **args) -> Form` |
 | `Form` | Numeric tensor with named dimensions, labels, `info` and `axis_info` |
+| `NativeArray` | Explicit ndarray plus dims/labels/info/axis_info for the no-copy Reader-to-Form bridge |
 | `Context` | Current step parameters, Form registry, outputs and logging |
 | `port`, `param`, `MISSING` | Input contract constructors and parameter references |
 | `reader_contract` | Standard output declaration for a reader |
@@ -61,7 +67,7 @@ Set `definition.extensions` to suffixes such as `[".npy"]`. Optional `requires_s
 `matches()` logic is outside the static desktop contract: make routing describable
 with these fields. Exactly one reader must match; ambiguity is an error. For
 overlapping formats use distinct suffixes or mutually exclusive sibling requirements.
-A complete replacement for `biopipe-readers` replaces that provider's entries,
+A complete replacement for `operon-readers` replaces that provider's entries,
 rather than appending a second set of readers for the same formats.
 
 When `handles_compression` is false, the framework decompresses supported compressed
@@ -99,7 +105,7 @@ conflicting aligned metadata, encoders or missing markers. It does not align ten
 ## Testing
 
 ```python
-from biopipe_sdk.testing import run_operator
+from operon_sdk.testing import run_operator
 output = run_operator(MyOperator, [small_form], {"factor": 3})
 ```
 
@@ -134,13 +140,13 @@ packages with SDK 3.1 before installing them into this version. Existing v3
 packages without optional Markdown metadata remain supported; see
 [operator documentation](operator_documentation.md).
 
-Use `biopipe registry check` to validate local extension declarations and generated
+Use `operon registry check` to validate local extension declarations and generated
 indexes without starting Studio. New source files with missing schemas/contracts
 are reported, not silently converted into permissive plugins.
 
 ## File-backed datasets
 
-`from biopipe_sdk import FileArtifact` provides a distinct descriptor for datasets
+`from operon_sdk import FileArtifact` provides a distinct descriptor for datasets
 that stay on disk. Construct it with `format`, a `files` mapping of role to path,
 and optional `info`. It has no `.data` tensor. Its `validate()` checks required
 files and captured stat fingerprints; cache and IPC transport only its metadata.
@@ -151,8 +157,8 @@ Generated files belong under `ctx.artifact_path(...)`; never delete user inputs
 when a cached descriptor is evicted. See [Hi-C](HIC.md) for working Readers and
 operators, their independent parameter JSON files and resource estimates.
 
-Optional parameter-schema annotation `x-biopipe-path: workflow` marks an input
-file relative to the workflow directory. Reader-only `x-biopipe-path: source`
+Optional parameter-schema annotation `x-operon-path: workflow` marks an input
+file relative to the workflow directory. Reader-only `x-operon-path: source`
 marks a companion relative to the primary input. Studio resolves these paths at
 job preparation and makes them relative during manifest export. This annotation
 does not create a file or override the project containment boundary.

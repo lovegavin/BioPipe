@@ -15,7 +15,7 @@ from src.resources.provision import (
 
 def _manifest(tmp_path, *, sha=None, size=None):
     source = tmp_path / "source.bin"
-    source.write_bytes(b"biopipe-provision-test")
+    source.write_bytes(b"operon-provision-test")
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
     entry = {
         "id": "demo",
@@ -75,7 +75,7 @@ def test_only_and_files_filters(tmp_path):
 def test_lock_timeout(tmp_path):
     root = tmp_path / "root"
     root.mkdir()
-    (root / ".biopipe-provision.lock").write_text("12345")
+    (root / ".operon-provision.lock").write_text("12345")
     manifest, _ = _manifest(tmp_path)
     with pytest.raises(ProvisionError, match="holds"):
         provision(manifest, root, lock_timeout=0.1)

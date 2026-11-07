@@ -15,10 +15,14 @@ _ORDER = ("PSM", "PEP", "PRT", "SML")
 
 
 class MztabReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """One section of an mzTab file as a record x feature table."""
     parameters_file = 'mztab_reader.MztabReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'MztabReader',
      'version': '1.0.0',
      'kind': 'reader',

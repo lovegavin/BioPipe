@@ -24,10 +24,10 @@ def main():
     unrelated = test / "unrelated cwd 中文"
     unrelated.mkdir(parents=True)
     profile = test / "shared data 中文"
-    exe = ROOT / "dist/BioPipe Studio/BioPipe Studio.exe"
-    env = {key: value for key, value in os.environ.items() if key not in ("BIOPIPE_STUDIO_HOME", "BIOPIPE_STUDIO_DATA")}
+    exe = ROOT / "dist/Operon Studio/Operon Studio.exe"
+    env = {key: value for key, value in os.environ.items() if key not in ("OPERON_STUDIO_HOME", "OPERON_STUDIO_DATA")}
     env.update(PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
-    env["BIOPIPE_RUNTIME_CONFIG"] = str(test / "runtime.json")
+    env["OPERON_RUNTIME_CONFIG"] = str(test / "runtime.json")
     startup = subprocess.STARTUPINFO()
     startup.dwFlags = subprocess.STARTF_USESHOWWINDOW
     startup.wShowWindow = 0
@@ -49,7 +49,7 @@ def main():
         return desktop
 
     defaults = paths()
-    env["BIOPIPE_STUDIO_HOME"] = str(profile)
+    env["OPERON_STUDIO_HOME"] = str(profile)
     custom = paths()
     assert Path(custom["ProfileDir"]) == profile
     print("All three launchers resolved identical default and overridden profiles", flush=True)
@@ -76,8 +76,8 @@ def main():
             except queue.Empty:
                 assert backend.poll() is None
                 continue
-            if line.startswith("BIOPIPE_READY "):
-                desktop_url = json.loads(line[14:])["url"]
+            if line.startswith("OPERON_READY "):
+                desktop_url = json.loads(line.split(" ", 1)[1])["url"]
                 break
         assert desktop_url
         with socket.socket() as port:

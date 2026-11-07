@@ -11,9 +11,14 @@ _FIELDS = ["growth_rate", "growth_ratio", "is_essential"]
 
 
 class FbaGeneKnockoutStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "fba_gene_knockout.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "fba_gene_knockout",
         "version": "1.0.0",

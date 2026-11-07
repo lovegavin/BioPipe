@@ -4,7 +4,7 @@
 
 # 1000 Genomes chr22 群体结构示例
 
-本示例用 BioPipe 的 `VcfReader` 读取一段真实的 1000 Genomes Phase 3 VCF，组合变异质控、PCA、Hudson FST 与基因组亲缘关系矩阵（GRM），演示“专用 Reader + 多个算子”的可复现群体遗传学分析。示例只使用已有 Reader 与算子，不新增注册项。
+本示例用 Operon 的 `VcfReader` 读取一段真实的 1000 Genomes Phase 3 VCF，组合变异质控、PCA、Hudson FST 与基因组亲缘关系矩阵（GRM），演示“专用 Reader + 多个算子”的可复现群体遗传学分析。示例只使用已有 Reader 与算子，不新增注册项。
 
 ## 数据来源
 

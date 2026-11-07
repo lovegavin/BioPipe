@@ -37,7 +37,7 @@ def test_validation_errors():
 
 def test_operator_round_trip():
     form = encode_sequences([A, B], "sequence", "position", "rna")
-    ctx = Context("/tmp/biopipe_test_rnacofold", {"params": {}})
+    ctx = Context("/tmp/operon_test_rnacofold", {"params": {}})
     ctx["rna"] = form
     run(ctx, [{"name": "sequence_rna_cofold", "inputs": ["rna"], "params": {"output": "cofold", "concentration_a": 1.0, "concentration_b": 1.0}}])
     table = ctx["cofold"]

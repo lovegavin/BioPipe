@@ -16,7 +16,7 @@
       "type": "string",
       "default": "",
       "title": "ProteinMPNN 目录",
-      "description": "官方 ProteinMPNN 仓库路径，留空时读取 BIOPIPE_PROTEINMPNN_PATH。",
+      "description": "官方 ProteinMPNN 仓库路径，留空时读取 OPERON_PROTEINMPNN_PATH。",
       "x-ui-group": "basic",
       "x-ui-order": 10
     },

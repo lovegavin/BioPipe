@@ -7,7 +7,7 @@ import time
 import psutil
 import pytest
 
-from biopipe.plugins import process_context, run_process
+from operon.plugins import process_context, run_process
 
 
 @pytest.mark.parametrize('trigger', ['cancel', 'timeout'])

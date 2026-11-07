@@ -13,9 +13,12 @@ from src.task.step.steps._phylo_common import load_tree, tip_distances
 class PatristicDistanceStep(Step):
     """Sum of branch lengths along the path between every pair of tips."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'patristic_distance.PatristicDistanceStep.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'patristic_distance',
         'version': '1.0.0',

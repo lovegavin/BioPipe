@@ -1,4 +1,4 @@
-# BioPipe Operator Library v3.0.1 — Full Verification Report
+# Operon Operator Library v3.0.1 — Full Verification Report
 
 Verification date: 2026-11-05. Baseline tree: the `release/3.0.0` worktree, branch
 `release/3.0.0`, commit `df081f71`. Application/backend **3.0.0**; Operator
@@ -17,8 +17,8 @@ covered.
 | --- | --- |
 | OS | WSL Ubuntu-24.04 (Linux 6.6 x86_64) |
 | GPU | NVIDIA RTX 3090, 24 GB |
-| Python | 3.12.14 (`biopipe` conda environment) |
-| Application | BioPipe 3.0.0 (editable install in the same env) |
+| Python | 3.12.14 (`operon` conda environment) |
+| Application | Operon 3.0.0 (editable install in the same env) |
 | Library | 3.0.0 (this tree), released as 3.0.1 |
 | Minimum application | 2.4.1 |
 | Registry | 717 operators / 101 Readers / 7 packages / 24 routes, `errors []` |
@@ -371,7 +371,7 @@ dense matrix of this size, not an operator bug.
 ## 12. Release 3.0.1
 
 The `library-v3.0.0` tag and its assets are immutable, so this verification
-batch ships as **BioPipe Operator Library v3.0.1**:
+batch ships as **Operon Operator Library v3.0.1**:
 
 - `library/release.json`: `version 3.0.1`, `minimum_application 2.4.1`,
   `build_application 2.4.1`.
@@ -384,8 +384,8 @@ batch ships as **BioPipe Operator Library v3.0.1**:
   tests/test_library_release.py` → build native bundle → independent verify
   (`verify_library_release.py`, frozen routes + worker execution) → seed wheel
   → publish.
-- Assets: `BioPipe-Library-v3.0.1-{Linux,Windows}.biopipe-library.zip`,
-  `biopipe_builtin_library-3.0.1-py3-none-any.whl`, `SHA256SUMS.txt`,
+- Assets: `Operon-Library-v3.0.1-{Linux,Windows}.operon-library.zip`,
+  `operon_builtin_library-3.0.1-py3-none-any.whl`, `SHA256SUMS.txt`,
   `verification-{ubuntu,windows}-latest.json`.
 - `gh release create --latest=false`; the application release channel is not
   touched.
@@ -397,7 +397,7 @@ The application/backend stays at **3.0.0**; no frontend, protocol v3 or
 
 ```bash
 cd <repository root>
-python -m biopipe registry check
+python -m operon registry check
 python scripts/build_operator_docs.py --check
 pytest -q tests/test_extension357.py tests/test_extension358.py \
           tests/test_extension11.py tests/test_extension280.py
@@ -440,7 +440,7 @@ Run on the release tree (library 3.0.1) on 2026-11-05.
 
 | Gate | Command | Result |
 | --- | --- | --- |
-| Static registry | `python -m biopipe registry check` | 717 operators / 101 Readers / 7 packages / 24 routes; `errors []`; 108 pre-existing parameter-read warnings |
+| Static registry | `python -m operon registry check` | 717 operators / 101 Readers / 7 packages / 24 routes; `errors []`; 108 pre-existing parameter-read warnings |
 | Operator docs | `python scripts/build_operator_docs.py --check` | `changed []`, `errors []` |
 | Packaging group | `pytest -q tests/test_packages.py tests/test_release_build.py tests/test_release_agent_harness.py tests/test_library_release.py` | 26 passed in 93.64s (0:01:33) |
 | Full suite | `pytest -q -rs` | 2873 passed, 220 skipped, 48 warnings in 1721.03s (0:28:41) |
@@ -465,16 +465,16 @@ GPU/weights. Nothing is skipped because of a failure, and no test failed.
 | 4 | could not import 'allel': No module named 'allel' |
 | 4 | could not import 'hictkpy': No module named 'hictkpy' |
 | 4 | fair-esm is shadowed by the ESM-3 package |
-| 3 | set BIOPIPE_ESM3_REAL=1 to run the real ESM-3 check |
+| 3 | set OPERON_ESM3_REAL=1 to run the real ESM-3 check |
 | 2 | Rscript is required |
-| 2 | Set BIOPIPE_HIC_REAL=1 in the Linux Hi-C environment |
+| 2 | Set OPERON_HIC_REAL=1 in the Linux Hi-C environment |
 | 2 | could not import 'linearmodels': No module named 'linearmodels' |
 | 2 | could not import 'pysam': No module named 'pysam' |
-| 2 | set BIOPIPE_LIGANDMPNN_PATH and BIOPIPE_LIGANDMPNN_WEIGHTS for the official oracle |
-| 2 | set BIOPIPE_REAL_ASSEMBLY=1 |
-| 1 | BIOPIPE_ANTIFOLD_WEIGHTS is not set |
-| 1 | BIOPIPE_ESM_CHECKPOINT is not set |
-| 1 | BIOPIPE_PFAM_HMM or hmmscan is not available |
+| 2 | set OPERON_LIGANDMPNN_PATH and OPERON_LIGANDMPNN_WEIGHTS for the official oracle |
+| 2 | set OPERON_REAL_ASSEMBLY=1 |
+| 1 | OPERON_ANTIFOLD_WEIGHTS is not set |
+| 1 | OPERON_ESM_CHECKPOINT is not set |
+| 1 | OPERON_PFAM_HMM or hmmscan is not available |
 | 1 | ESM-IF checkpoint or deps missing |
 | 1 | Rscript is not installed |
 | 1 | Windows Job Object lifecycle |
@@ -487,7 +487,7 @@ GPU/weights. Nothing is skipped because of a failure, and no test failed.
 | 1 | local ProteinMPNN checkout is not configured |
 | 1 | official DockQ binary was built against NumPy 1.x |
 | 1 | official LigandMPNN checkout or weights missing |
-| 1 | official ProteinMPNN checkout or BIOPIPE_RUN_PROTEINMPNN is absent |
+| 1 | official ProteinMPNN checkout or OPERON_RUN_PROTEINMPNN is absent |
 | 1 | official ProteinMPNN checkout or weights missing |
 | 1 | official ProteinMPNN checkout/weights or fixture unavailable |
 | 1 | plink is not available |
@@ -504,22 +504,22 @@ GPU/weights. Nothing is skipped because of a failure, and no test failed.
 | 1 | real SOP fixture is not present: tasks/plink2_demo/input/genotype.pgen |
 | 1 | real SOP fixture is not present: tasks/plink_demo/input/genotype.bed |
 | 1 | real SOP fixture is not present: tasks/vcf_demo/input/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz |
-| 1 | set BIOPIPE_AMRFINDER_REAL=1 to run the real AMRFinderPlus check |
-| 1 | set BIOPIPE_ANTIFOLD_REAL=1 to run AntiFold |
-| 1 | set BIOPIPE_ANTISMASH_REAL=1 to run the real antiSMASH check |
-| 1 | set BIOPIPE_ESM3_REAL=1 |
-| 1 | set BIOPIPE_ESM3_REAL=1 to run the ESM-3 SASA track |
-| 1 | set BIOPIPE_ESM3_REAL=1 to run the ESM-3 track |
-| 1 | set BIOPIPE_ESMFOLD_REAL=1 to run ESMFold 3B |
-| 1 | set BIOPIPE_ESM_CHECKPOINT to a local esm2_t6_8M_UR50D.pt |
-| 1 | set BIOPIPE_FOLDSEEK_BIN and BIOPIPE_FOLDSEEK_DB to run the real search |
-| 1 | set BIOPIPE_OPENFOLD_REAL=1 for a real OpenFold run |
-| 1 | set BIOPIPE_OPENMM_REAL=1 for a real trajectory |
-| 1 | set BIOPIPE_PRODIGAL_REAL=1 to run the real Prodigal check |
-| 1 | set BIOPIPE_REAL_CRISPR=1 |
-| 1 | set BIOPIPE_RFAM_REAL=1 to run the real Rfam scan |
-| 1 | set BIOPIPE_RUN_PROTEINMPNN=1 with a local ProteinMPNN checkout |
-| 1 | set BIOPIPE_TRNA_REAL=1 to run the real tRNAscan-SE check |
+| 1 | set OPERON_AMRFINDER_REAL=1 to run the real AMRFinderPlus check |
+| 1 | set OPERON_ANTIFOLD_REAL=1 to run AntiFold |
+| 1 | set OPERON_ANTISMASH_REAL=1 to run the real antiSMASH check |
+| 1 | set OPERON_ESM3_REAL=1 |
+| 1 | set OPERON_ESM3_REAL=1 to run the ESM-3 SASA track |
+| 1 | set OPERON_ESM3_REAL=1 to run the ESM-3 track |
+| 1 | set OPERON_ESMFOLD_REAL=1 to run ESMFold 3B |
+| 1 | set OPERON_ESM_CHECKPOINT to a local esm2_t6_8M_UR50D.pt |
+| 1 | set OPERON_FOLDSEEK_BIN and OPERON_FOLDSEEK_DB to run the real search |
+| 1 | set OPERON_OPENFOLD_REAL=1 for a real OpenFold run |
+| 1 | set OPERON_OPENMM_REAL=1 for a real trajectory |
+| 1 | set OPERON_PRODIGAL_REAL=1 to run the real Prodigal check |
+| 1 | set OPERON_REAL_CRISPR=1 |
+| 1 | set OPERON_RFAM_REAL=1 to run the real Rfam scan |
+| 1 | set OPERON_RUN_PROTEINMPNN=1 with a local ProteinMPNN checkout |
+| 1 | set OPERON_TRNA_REAL=1 to run the real tRNAscan-SE check |
 | 1 | torch_scatter is ABI-incompatible: Could not load this library: <env>/lib/python3.12/site-packages/torch_scatter/_scatter_cpu.so |
 
 The Windows run reproduced the CI failure (`tests/test_extension355.py::test_run_with_fake_quast`, `WinError 193`) before the launcher fix and passes after it. The frozen-route set exercised by `scripts/verify_library_release.py` is the same 350–356 set. The tag CI rerun (run `42039684667`) passed on both platforms and published the release, so the platform gate is closed.

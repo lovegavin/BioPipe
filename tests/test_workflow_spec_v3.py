@@ -5,11 +5,11 @@ import sys
 
 import pytest
 
-from biopipe.workflow_spec import compile_spec, export_workflow, init_workflow, load_workflow, parse, format_workflow
+from operon.workflow_spec import compile_spec, export_workflow, init_workflow, load_workflow, parse, format_workflow
 
 
 def spec():
-    return {'format': 'biopipe.workflow', 'schema_version': 1, 'name': 'Branches',
+    return {'format': 'operon.workflow', 'schema_version': 1, 'name': 'Branches',
             'sources': {'matrix': {'path': 'data.csv'}},
             'steps': {'pca.a': {'operator': 'pca', 'inputs': {'in0': 'sources.matrix'}},
                       'pca_b': {'operator': 'pca', 'inputs': {'in0': 'steps.pca.a.out'}}},
@@ -77,7 +77,7 @@ def test_init_format_and_cli_do_not_start_service(tmp_path):
     assert format_workflow(document)['changed']
     assert not format_workflow(document, check=True)['changed']
     assert (project / 'parameters.json').read_bytes() == before
-    result = subprocess.run([sys.executable, '-m', 'biopipe', '--profile-dir', str(tmp_path / 'profile'), 'workflow', 'lint', str(document)], capture_output=True, text=True)
+    result = subprocess.run([sys.executable, '-m', 'operon', '--profile-dir', str(tmp_path / 'profile'), 'workflow', 'lint', str(document)], capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout)['valid']
     assert not (tmp_path / 'profile').exists()
@@ -97,8 +97,8 @@ def test_export_preserves_existing_directory(tmp_path):
     assert marker.read_text() == 'keep'
 @pytest.mark.parametrize('field', ['parameters_file', 'execution_file', 'lock_file', 'ui_file'])
 def test_metadata_resources_cannot_escape_project(tmp_path, field):
-    from biopipe.workflow_spec import compile_spec, WorkflowError
-    spec = {'format': 'biopipe.workflow', 'schema_version': 1, 'sources': {}, 'steps': {}, field: '../outside.json'}
+    from operon.workflow_spec import compile_spec, WorkflowError
+    spec = {'format': 'operon.workflow', 'schema_version': 1, 'sources': {}, 'steps': {}, field: '../outside.json'}
     with pytest.raises(WorkflowError, match='escapes'):
         compile_spec(spec, tmp_path)
 
@@ -108,8 +108,8 @@ def test_archive_input_base_and_metadata_containment(tmp_path):
     from zipfile import ZipFile, ZIP_DEFLATED
     import yaml
     from src.web.models import Graph
-    from biopipe.workflow_archive import export_archive, import_archive
-    from biopipe.workflow_spec import WorkflowError
+    from operon.workflow_archive import export_archive, import_archive
+    from operon.workflow_spec import WorkflowError
     original = tmp_path / 'original-project'
     original.mkdir()
     staging = tmp_path / 'staging'

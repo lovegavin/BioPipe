@@ -5,9 +5,14 @@ from ._ml_common import _ClassificationBase
 
 
 class ExtraTreesClassifierStep(_ClassificationBase):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'extra_trees_classifier.ExtraTreesClassifierStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'extra_trees_classifier',
      'version': '1.0.0',
      'kind': 'operator',

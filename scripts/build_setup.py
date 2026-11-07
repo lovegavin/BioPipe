@@ -9,7 +9,7 @@ import subprocess
 import zipfile
 
 
-MAGIC = b'BIOPIPE-SETUP-V1'
+MAGIC = b'OPERON-SETUP-V1'
 
 
 def payload_spec(path):
@@ -70,7 +70,7 @@ def main():
     spec = payload_spec(payload)
     manifest = build / 'payload.json'
     manifest.write_text(json.dumps(spec, indent=2) + '\n', encoding='utf-8')
-    subprocess.run(['dotnet', 'publish', str(root / 'installer/BioPipeSetup.csproj'), '-c', 'Release',
+    subprocess.run(['dotnet', 'publish', str(root / 'installer/OperonSetup.csproj'), '-c', 'Release',
                     '-p:PayloadManifest=' + str(manifest), '-p:Version=' + spec['version'],
                     '-o', str(build / 'host'), *(['--no-restore'] if args.no_restore else [])], check=True, cwd=root)
     append_payload(build / 'host/Operon_Setup.exe', payload, output)

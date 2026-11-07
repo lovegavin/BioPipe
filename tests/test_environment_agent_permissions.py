@@ -9,8 +9,8 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
-from biopipe.client import Client, ClientError
-from biopipe.headless import create_headless_app
+from operon.client import Client, ClientError
+from operon.headless import create_headless_app
 from src.web.service import Settings
 from test_headless_application import auth, environment, graph
 
@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_prepare_environment_requires_plugins_not_edit_or_run_and_never_submits(environment, monkeypatch):
-    from biopipe.mcp_server import create_server
+    from operon.mcp_server import create_server
     app = create_headless_app(Settings(environment, environment / '.studio', environment / 'no-ui', testing=True, code_root=ROOT))
     calls = []
     def validate(value, **options):
@@ -39,10 +39,10 @@ def test_prepare_environment_requires_plugins_not_edit_or_run_and_never_submits(
             assert denied.status_code == 403 and 'plugins' in denied.text
         async def check_mcp():
             with pytest.raises(Exception, match='plugins'):
-                await server.call_tool('biopipe_workflow_prepare_environment', {'graph': body})
+                await server.call_tool('operon_workflow_prepare_environment', {'graph': body})
             assert not calls
             http.headers.update(auth(http, app, ['context', 'plugins']))
-            await server.call_tool('biopipe_workflow_prepare_environment', {'graph': body})
+            await server.call_tool('operon_workflow_prepare_environment', {'graph': body})
         asyncio.run(check_mcp())
         assert calls == [(body, {'require_files': False, 'repair': True})]
         # Installer capability does not grant either workflow-edit or job-run capability.
@@ -53,7 +53,7 @@ def test_prepare_environment_requires_plugins_not_edit_or_run_and_never_submits(
 
 @pytest.mark.parametrize('action,plugins', [('prepare-environment', True), ('validate', False), ('prepare', False)])
 def test_cli_only_explicit_preparation_requests_install_scope(tmp_path, monkeypatch, action, plugins):
-    from biopipe import cli
+    from operon import cli
     body = {'nodes': [], 'edges': []}
     path = tmp_path / 'route.json'; path.write_text(json.dumps(body), encoding='utf-8')
     calls, connected, closed = [], [], []
@@ -78,7 +78,7 @@ def test_cli_only_explicit_preparation_requests_install_scope(tmp_path, monkeypa
 
 @pytest.mark.parametrize('flags,plugins,run', [([], False, False), (['--allow-run'], False, True), (['--allow-plugins'], True, False)])
 def test_mcp_server_never_adds_install_scope_without_explicit_flag(tmp_path, monkeypatch, flags, plugins, run):
-    from biopipe import cli, mcp_server
+    from operon import cli, mcp_server
     connected = []
     class FakeClient:
         def __init__(self, *args, **options):
@@ -113,7 +113,7 @@ def test_explicit_preparation_waits_longer_but_never_retries_or_upgrades_permiss
 
 
 def test_ssh_dependency_repair_allows_a_quiet_install_but_other_rpc_stays_bounded(monkeypatch):
-    from biopipe.remote import client as module
+    from operon.remote import client as module
     connection = module.SSHConnection.__new__(module.SSHConnection)
     connection.lock = threading.RLock()
     connection.channel = SimpleNamespace(closed=False, sendall=lambda value: None)
@@ -144,7 +144,7 @@ def test_ssh_dependency_repair_allows_a_quiet_install_but_other_rpc_stays_bounde
 
 
 def test_cli_diff_and_targeted_undo_are_bounded_and_do_not_request_run_or_install(tmp_path, monkeypatch):
-    from biopipe import cli
+    from operon import cli
     calls, scopes = [], []
     class FakeClient:
         def __init__(self, *args, **kwargs): scopes.extend(kwargs['scopes'])

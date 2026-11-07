@@ -38,9 +38,15 @@ def annotation_features(form, feature_type: str, id_attribute: str, operator: st
 
 class BamGeneCountsStep(Step):
     """Count primary alignments overlapping each annotated gene."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'bam_gene_counts.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'bam_gene_counts',
         'version': '1.0.0',

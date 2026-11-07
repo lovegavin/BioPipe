@@ -35,9 +35,9 @@ def main():
     scratch.mkdir()
     env = dict(os.environ, PYTHONPATH=str(ROOT), PYTHONNOUSERSITE='1',
                PYTHONUTF8='1', PYTHONIOENCODING='utf-8', PYTHONDONTWRITEBYTECODE='1',
-               BIOPIPE_REGISTRY_MAINTENANCE='1', BIOPIPE_ADMISSION_DIR=str(work / 'admission'),
-               BIOPIPE_RUNTIME_CONFIG=str(work / 'runtime.json'), TEMP=str(scratch), TMP=str(scratch), TMPDIR=str(scratch))
-    for name in ('BIOPIPE_PROFILE_DIR', 'BIOPIPE_WORKSPACE', 'BIOPIPE_DATA_DIR', 'BIOPIPE_INSTALL_ROOT'):
+               OPERON_REGISTRY_MAINTENANCE='1', OPERON_ADMISSION_DIR=str(work / 'admission'),
+               OPERON_RUNTIME_CONFIG=str(work / 'runtime.json'), TEMP=str(scratch), TMP=str(scratch), TMPDIR=str(scratch))
+    for name in ('OPERON_PROFILE_DIR', 'OPERON_WORKSPACE', 'OPERON_DATA_DIR', 'OPERON_INSTALL_ROOT'):
         env.pop(name, None)
     report = {'status': 'failed', 'python': sys.executable, 'platform': sys.platform,
               'started': datetime.now(timezone.utc).isoformat(), 'checks': [], 'commands': []}
@@ -47,7 +47,7 @@ def main():
         nonlocal serial
         serial += 1
         start = time.monotonic()
-        result = subprocess.run([sys.executable, '-m', 'biopipe', '--workspace', '.', *parts],
+        result = subprocess.run([sys.executable, '-m', 'operon', '--workspace', '.', *parts],
                                 cwd=project, env=env, capture_output=True, text=True,
                                 encoding='utf-8', timeout=timeout)
         prefix = work / f'{serial:02d}-{"-".join(parts[:2]).replace("/", "_")}'
@@ -72,8 +72,8 @@ def main():
         assert not (project / '.studio').exists()
         check('Offline status and malformed YAML do not start a service', version=version)
         sys.path.insert(0, str(ROOT))
-        from biopipe.script_operators import inspect_script, extract_parameters
-        from biopipe.workflow_spec import compile_spec, export_workflow, parse as parse_yaml
+        from operon.script_operators import inspect_script, extract_parameters
+        from operon.workflow_spec import compile_spec, export_workflow, parse as parse_yaml
         example = ROOT / 'examples/workflows/script_pipeline'
         spec = parse_yaml((example / 'workflow.yaml').read_text(encoding='utf-8'))
         graph = compile_spec(spec, example)

@@ -46,10 +46,13 @@ def repeat_rows(sequence: str, *, min_period: int = 2, max_period: int = 6, min_
 
 
 class SequenceRepeatFinderStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "sequence_repeat_finder.SequenceRepeatFinderStep.parameters.json"
 
     definition: dict[str, Any] = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "sequence_repeat_finder",
         "version": "1.0.0",

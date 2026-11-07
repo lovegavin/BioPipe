@@ -19,9 +19,12 @@ from ._tree_ops_utils import (
 
 
 class TreeRootMidpointStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "tree_root_midpoint.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "tree_root_midpoint",
         "version": "1.0.0",

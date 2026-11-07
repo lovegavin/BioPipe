@@ -177,7 +177,7 @@ def test_runner_failure(tmp_path: Path) -> None:
 
 
 @pytest.mark.skipif(
-    os.environ.get("BIOPIPE_RUN_LIGANDMPNN") != "1"
+    os.environ.get("OPERON_RUN_LIGANDMPNN") != "1"
     or not (REAL_REPO / "run.py").is_file()
     or not (REAL_REPO / "model_params" / "ligandmpnn_v_32_010_25.pt").is_file(),
     reason="official LigandMPNN checkout or weights missing",

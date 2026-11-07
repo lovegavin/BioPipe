@@ -1,6 +1,6 @@
 """SOP reader verification against independent parsers.
 
-Each test reads real repository data through BioPipe and through a
+Each test reads real repository data through Operon and through a
 different implementation (pandas, scipy, h5py, pysam, ...), then compares
 the parts that define format semantics: shape, labels, coordinates,
 missing values, and values. These tests are intentionally independent of

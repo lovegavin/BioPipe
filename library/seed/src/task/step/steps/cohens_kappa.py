@@ -14,9 +14,13 @@ _NAMES = ["kappa", "std_kappa", "z", "p", "ci_low", "ci_high"]
 
 
 class CohensKappaStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'cohens_kappa.CohensKappaStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'cohens_kappa',
      'version': '1.0.0',
      'kind': 'operator',

@@ -1,5 +1,5 @@
 {
-  "format": "biopipe.workflow-parameters",
+  "format": "operon.workflow-parameters",
   "schema_version": 1,
   "steps": {
     "generate": {"params": {}},

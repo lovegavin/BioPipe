@@ -12,9 +12,13 @@ from ._ext_common import make_form
 
 
 class McnemarStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'mcnemar.McnemarStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'mcnemar',
      'version': '1.0.0',
      'kind': 'operator',

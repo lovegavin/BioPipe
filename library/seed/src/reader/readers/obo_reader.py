@@ -11,10 +11,14 @@ from ._table_common import table_form
 
 
 class OboReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for [Term] stanzas in OBO files; output is term x field."""
     parameters_file = 'obo_reader.OboReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'OboReader',
      'version': '1.0.0',
      'kind': 'reader',

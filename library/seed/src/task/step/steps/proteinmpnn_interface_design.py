@@ -115,10 +115,14 @@ def parse_tied_positions(text: str, chains: set[str], residues: dict[str, list[i
 
 
 class ProteinmpnnInterfaceDesignStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Design one chain of a complex while holding the partner fixed."""
     parameters_file = 'proteinmpnn_interface_design.ProteinmpnnInterfaceDesignStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'proteinmpnn_interface_design',
      'version': '1.0.0',
      'kind': 'operator',
@@ -148,7 +152,7 @@ class ProteinmpnnInterfaceDesignStep(Step):
         structure_path = Path(str(params.get("structure_path", "") or "").strip()).expanduser()
         proteinmpnn_path = Path(
             str(params.get("proteinmpnn_path", "") or "").strip()
-            or os.environ.get("BIOPIPE_PROTEINMPNN_PATH", "")
+            or os.environ.get("OPERON_PROTEINMPNN_PATH", "")
         ).expanduser()
         weights_text = str(params.get("weights_path", "") or "").strip()
         python_executable = str(params.get("python_executable", "") or "").strip()
@@ -180,7 +184,7 @@ class ProteinmpnnInterfaceDesignStep(Step):
             raise StepError(
                 f"proteinmpnn_interface_design: proteinmpnn_path "
                 f"'{proteinmpnn_path}' is not a directory (set "
-                "BIOPIPE_PROTEINMPNN_PATH or the proteinmpnn_path parameter)"
+                "OPERON_PROTEINMPNN_PATH or the proteinmpnn_path parameter)"
             )
         runner = proteinmpnn_path / "protein_mpnn_run.py"
         if not runner.is_file():
@@ -283,7 +287,7 @@ class ProteinmpnnInterfaceDesignStep(Step):
         fixed = {chain: sorted(set(fixed.get(chain, []))) for chain in chains}
         tied = parse_tied_positions(tied_text, set(chains), chains) if tied_text else {}
 
-        out_dir = Path(tempfile.mkdtemp(prefix="biopipe-mpnn-interface-"))
+        out_dir = Path(tempfile.mkdtemp(prefix="operon-mpnn-interface-"))
         pdb_key = structure_path.stem
         started = time.monotonic()
         try:

@@ -12,6 +12,11 @@ from . import _genotype_matrix_utils as geno
 
 class GenotypeGrmStep(Step):
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'genotype_grm',
         'version': '1.0.0',

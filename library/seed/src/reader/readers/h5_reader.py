@@ -12,10 +12,14 @@ from src.reader.base import Reader
 
 
 class H5Reader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Read a 2D numeric dataset from an .hdf5 file."""
     parameters_file = 'h5_reader.H5Reader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'H5Reader',
      'version': '1.0.0',
      'kind': 'reader',

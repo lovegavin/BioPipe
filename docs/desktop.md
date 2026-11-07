@@ -1,8 +1,8 @@
-# BioPipe Studio desktop client
+# Operon Studio desktop client
 
 The Windows x64 host uses WinForms and WebView2. It bundles compiled frontend
 resources and startup management. Full release archives also contain a relocatable
-Python runtime and the built-in CPU dependencies. Double-click `BioPipe Studio.exe` to launch;
+Python runtime and the built-in CPU dependencies. Double-click `Operon Studio.exe` to launch;
 the host starts a local backend, waits for health checks and opens the workspace.
 Launching it again activates the existing window for that profile.
 
@@ -32,7 +32,7 @@ execution assignments remain in each workflow's execution settings.
 
 ## Runtime configuration
 
-The adjacent `biopipe-desktop.json` uses relative defaults:
+The adjacent `operon-desktop.json` uses relative defaults:
 
 ```json
 {"backendRoot":"../..","python":"auto","entryPoint":"scripts/desktop_server.py","frontend":"frontend"}
@@ -43,7 +43,7 @@ to the backend root. Auto-discovery checks the remembered interpreter, project
 `.venv`/`venv`, active venv/Conda, PATH Python commands, the Windows Python Launcher,
 Conda's `~/.conda/environments.txt` and Windows Python registrations (PEP 514).
 Full packages set `bundledRuntime: true` and exclusively use their adjacent
-`runtime/python/python.exe`; a remembered interpreter or `BIOPIPE_PYTHON` cannot
+`runtime/python/python.exe`; a remembered interpreter or `OPERON_PYTHON` cannot
 silently replace it. `--select-runtime` is an explicit maintenance override for
 one launch. See
 [bundled runtime](installation.md#bundled-windows-runtime) for the full build recipe
@@ -53,19 +53,19 @@ Each candidate is checked for Python 3.11+ and core dependencies. Invalid
 environments and Windows Store aliases are skipped; no whole-disk scan is used.
 
 Successful development/desktop startup remembers its interpreter in
-`~/.biopipe/runtime.json`. This machine-local bootstrap hint is shared across
+`~/.operon/runtime.json`. This machine-local bootstrap hint is shared across
 release folders and is independent of canvas profiles, because the host needs
 Python before it can resolve the full profile. It is never bundled into releases.
-`BIOPIPE_RUNTIME_CONFIG` can select a separate file (relative paths are relative
+`OPERON_RUNTIME_CONFIG` can select a separate file (relative paths are relative
 to the user home). Missing, stale or corrupt hints do not prevent other discovery.
 
 If automatic discovery fails, the desktop offers a file picker for an existing
 environment's `python.exe`. Validation runs before it is remembered. Use
-`BioPipe Studio.exe --select-runtime` to choose again. Explicit config/environment
+`Operon Studio.exe --select-runtime` to choose again. Explicit config/environment
 overrides still take priority over remembered hints on subsequent launches.
 
 For lite/source builds, `python` can also be a path relative to the backend, an absolute path or a PATH
-command. `BIOPIPE_PYTHON` and `BIOPIPE_BACKEND_ROOT` override config fields; environment
+command. `OPERON_PYTHON` and `OPERON_BACKEND_ROOT` override config fields; environment
 variables in paths are expanded. An explicitly selected invalid runtime fails with
 a diagnostic instead of silently choosing another interpreter.
 
@@ -79,11 +79,11 @@ modified. This distribution has no automatic application-update service.
 ## Shared profile
 
 The exe, `scripts/studio.py`, CLI, MCP and default `create_app()` share
-`~/.biopipe/studio`. Only `src/web/profile.py` defines this policy; the host asks
+`~/.operon/studio`. Only `src/web/profile.py` defines this policy; the host asks
 Python to resolve it. The default does not use AppData or depend on cwd.
 
 ```text
-~/.biopipe/studio/
+~/.operon/studio/
   browser/                     WebView2 browser state
   logs/desktop-YYYYMMDD.log     startup/backend/shutdown logs
   port.txt                     last preferred loopback port
@@ -103,7 +103,7 @@ Python to resolve it. The default does not use AppData or depend on cwd.
     migrations/v2/<batch-id>/  original bytes, hashes and explicit migration receipt
 ```
 
-BioPipe registries are ordinary JSON files; discovery reads, but never modifies,
+Operon registries are ordinary JSON files; discovery reads, but never modifies,
 the Windows registry.
 First launch installs GWAS, RNA-seq DE, Proteomics DE, survival and 16S microbiome templates. Saving
 a graph does not register it: the library plus button opens **Add operators**,
@@ -114,11 +114,11 @@ Startup reads the selected profile without searching or importing other director
 For v0.4.1 data, close Studio and use [explicit migration](migration_v2.md).
 The migration previews changes, keeps original bytes and leaves job history intact.
 
-Both entry points accept `--profile-dir` or `BIOPIPE_STUDIO_HOME`; explicit argument
+Both entry points accept `--profile-dir` or `OPERON_STUDIO_HOME`; explicit argument
 wins over environment, then default. Relative profile paths are home-relative.
 The EXE uses `--profile-dir`. Python `--workspace`
 selects an isolated workspace with `.studio` by default; its `--data-dir` is a
-workspace-relative override. `BIOPIPE_STUDIO_DATA` is supported only with explicit workspace mode.
+workspace-relative override. `OPERON_STUDIO_DATA` is supported only with explicit workspace mode.
 
 Cross-process locks and atomic files protect registries. Libraries refresh on focus
 and periodically; hot-installed wheels require no backend restart. Use **Refresh
@@ -165,7 +165,7 @@ on the user's computer; none of these paths refer to the developer's computer.
    the allocated socket until service startup to avoid a port allocation race.
 3. Start backend work only after the host attaches its process tree to a Windows
    Job Object. The host manages only processes it created.
-   Explicit specialist-viewer launches break away from that job so closing BioPipe
+   Explicit specialist-viewer launches break away from that job so closing Operon
    does not close the user's external viewer. Analysis and installer workers remain
    owned by the host and are cleaned up as before.
 4. The frontend reports ready after loading catalog/drafts. Closing flushes the

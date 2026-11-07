@@ -1,5 +1,12 @@
 # Application and operator library
 
+Application releases and the library use their existing independent branches.
+The current application maintenance branch is `fix/3.0.1-installation`; the
+library branch is `library/main`. A combined `main` is not a maintenance target.
+Application patches retain their tested factory seed. Compatibility is defined
+by SDK protocol revisions and validated declarations, not by merging both source
+trees. Published releases remain immutable.
+
 Operon has two versioned products in one repository. Application releases use
 `vX.Y.Z`; operator releases use `library-v<library-version>`. Their version numbers
 do not need to match. Adding or correcting an
@@ -7,9 +14,9 @@ operator does not require an EXE release or an application version change.
 
 | Owner | Source | Published artifact |
 | --- | --- | --- |
-| Application, engine, CLI, HTTP, MCP, desktop | `biopipe/`, `biopipe_sdk/`, `src/core/`, `src/task/`, `src/web/`, `frontend/`, `desktop/` | `biopipe_studio` wheel, Windows Setup, Linux server bundle |
-| Reference operators and Readers | `library/seed/src/task/step/steps/`, `library/seed/src/reader/readers/` | Independent native `.biopipe-library.zip` bundles |
-| Factory metadata and templates | `library/seed/biopipe/`, `library/seed/src/web/`, `library/seed/routes/` | `biopipe_builtin_library` seed wheel |
+| Application, engine, CLI, HTTP, MCP, desktop | `operon/`, `operon_sdk/`, `src/core/`, `src/task/`, `src/web/`, `frontend/`, `desktop/` | `operon_studio` wheel, Windows Setup, Linux server bundle |
+| Reference operators and Readers | `library/seed/src/task/step/steps/`, `library/seed/src/reader/readers/` | Independent native `.operon-library.zip` bundles |
+| Factory metadata and templates | `library/seed/operon/`, `library/seed/src/web/`, `library/seed/routes/` | `operon_builtin_library` seed wheel |
 
 The application wheel contains no analysis implementations, parameter sidecars,
 operator index or factory route graphs. Without a seed it starts with an empty
@@ -23,7 +30,7 @@ For source development:
 
 ```sh
 python -m pip install -e '.[agent,dev]' -e ./library
-python -m biopipe registry check
+python -m operon registry check
 ```
 
 For a standalone installation, install the application wheel and optionally the
@@ -35,7 +42,7 @@ disabled states and editable copies; an application update does not overwrite
 an explicitly installed library.
 
 To publish operator changes, edit the library sources, adjacent parameter JSON
-and Markdown, run `biopipe registry build` and `scripts/build_operator_docs.py`,
+and Markdown, run `operon registry build` and `scripts/build_operator_docs.py`,
 then update `library/release.json` and `library/pyproject.toml`. Use the existing
 library build/verification commands in [Library releases](library_releases.md).
 The native bundle can be installed through Studio's library manager or the CLI.

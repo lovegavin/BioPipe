@@ -10,7 +10,7 @@ import numpy as np
 from src.core import FileArtifact, Form, StepError
 from src.task.step.base import Step
 from src.task.step.steps._native_results import output_directory, result_file
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 
 
 def canonical_format(value):
@@ -112,7 +112,7 @@ def write_fasta(path, form):
 
 
 class ExportResultsStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'export_results.parameters.json'
     definition = {
         'protocol_version': 3, 'id': 'export_results', 'version': '1.0.0',

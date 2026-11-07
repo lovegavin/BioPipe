@@ -9,10 +9,14 @@ from ._stats20_common import scalar_form
 
 
 class KendallWStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Kendall's W with column-wise ranks and no tie correction."""
     parameters_file = 'kendall_w.KendallWStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'kendall_w',
      'version': '1.0.0',
      'kind': 'operator',

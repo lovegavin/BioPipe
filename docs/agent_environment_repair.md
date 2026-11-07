@@ -28,20 +28,20 @@ ssh -o ConnectTimeout=15 <user>@<host> 'echo SSH_OK'
 ```
 
 看到 `SSH_OK` 说明 22 端口可用。若使用密钥，确保私钥 ACL 只允许当前用户读取。
-BioPipe 只在这台服务器上写 `~/.local/share/biopipe/managed-v1/`（可用
+Operon 只在这台服务器上写 `~/.local/share/operon/managed-v1/`（可用
 `--base` 覆盖），不要求 root、Conda 或预装编译器。
 
 安装完成后检查：
 
 ```bash
-ls ~/.local/share/biopipe/managed-v1/                 # micromamba-2.10.0, env-*, setup-*.log
-ls ~/.local/share/biopipe/managed-v1/env-*/biopipe-ready.json
-tail -40 ~/.local/share/biopipe/managed-v1/setup-*.log
-~/.local/share/biopipe/managed-v1/env-*/bin/python -m pip check
+ls ~/.local/share/operon/managed-v1/                 # micromamba-2.10.0, env-*, setup-*.log
+ls ~/.local/share/operon/managed-v1/env-*/operon-ready.json
+tail -40 ~/.local/share/operon/managed-v1/setup-*.log
+~/.local/share/operon/managed-v1/env-*/bin/python -m pip check
 ```
 
-`biopipe-ready.json` 存在且 `pip check` 无输出即安装成功；日志里应出现
-`BioPipe and Hi-C environment ready`。探测阶段若提示
+`operon-ready.json` 存在且 `pip check` 无输出即安装成功；日志里应出现
+`Operon and Hi-C environment ready`。探测阶段若提示
 `Optional OpenMM extras are not installed`，安装依然成功，只是 MD/能量算子需要
 额外安装 conda-forge 的 `openmm`、`pdbfixer`（命令见下文）。
 
@@ -77,8 +77,8 @@ python -m venv ~/antifold-env
 
 ## Decision tree
 
-1. **Is the Python package installed?** `python -c "import biopipe"` and
-   `python -m biopipe registry check`. A missing operator module is a package
+1. **Is the Python package installed?** `python -c "import operon"` and
+   `python -m operon registry check`. A missing operator module is a package
    install, a missing third-party library is a pip install, and a missing
    binary (foldseek, mkdssp, prodigal, vina, pdb2pqr, fpocket) is an apt or
    build install. Never install NVIDIA drivers inside WSL; the driver comes
@@ -102,17 +102,17 @@ Provisioning is a **host-level, one-time** action, not part of a job.
 python scripts/check_resources.py --json
 
 # plan only (no network)
-python scripts/provision_resources.py --root /data/biopipe-resources --plan
+python scripts/provision_resources.py --root /data/operon-resources --plan
 
 # fetch with a mirror, parallel downloads and resume
 python scripts/provision_resources.py \
-  --root /data/biopipe-resources \
+  --root /data/operon-resources \
   --only boltz --only esm3 \
   --mirror https://hf-mirror.com \
   --jobs 4 --retries 3 --timeout 60
 
 # verify without touching the network
-python scripts/provision_resources.py --root /data/biopipe-resources --offline
+python scripts/provision_resources.py --root /data/operon-resources --offline
 ```
 
 Rules the provisioner enforces:
@@ -122,7 +122,7 @@ Rules the provisioner enforces:
 - an existing file is verified by size and SHA-256 (when the manifest declares
   one) and skipped when valid;
 - a failed checksum is deleted, never accepted;
-- one provisioning process holds `.biopipe-provision.lock` in the root, so two
+- one provisioning process holds `.operon-provision.lock` in the root, so two
   agents cannot download the same file twice;
 - `--jobs N` parallelises files, `--retries` bounds attempts, `--timeout` is a
   read timeout so a stalled socket fails instead of hanging forever.
@@ -134,11 +134,11 @@ most common source of "the agent hung". Prefer moving the bytes once:
 
 1. On a machine with good bandwidth (or with an already provisioned cache),
    provision into a staging directory:
-   `python scripts/provision_resources.py --root ~/biopipe-staging --only boltz`.
+   `python scripts/provision_resources.py --root ~/operon-staging --only boltz`.
 2. Transfer the staging directory with a resumable transfer
    (`rsync -avP --partial`, or `scp -C`), which survives disconnects.
 3. On the server, copy from the staged tree and verify:
-   `python scripts/provision_resources.py --root /data/biopipe-resources --from-dir ~/biopipe-staging --offline`.
+   `python scripts/provision_resources.py --root /data/operon-resources --from-dir ~/operon-staging --offline`.
    `--from-dir` re-checks size and SHA-256 before renaming each file.
 
 If a mirror is acceptable, `--mirror https://hf-mirror.com` rewrites
@@ -150,7 +150,7 @@ If a mirror is acceptable, `--mirror https://hf-mirror.com` rewrites
 python -m pip install -e . --no-deps --no-build-isolation   # editable install
 python -m pip install <library>                              # missing import
 apt-get install -y dssp prodigal vienna-rna                  # missing binary
-python -m biopipe registry build && python -m biopipe registry check
+python -m operon registry build && python -m operon registry check
 ```
 
 Do not rebuild the registry by hand; run the two commands above and require
@@ -166,7 +166,7 @@ After provisioning, record in the task report:
   (already valid);
 - remaining `missing` / `failed` entries and the exact remedy command;
 - the environment variables that point to the roots (for example
-  `BIOPIPE_BOLTZ_CACHE=/data/biopipe-resources`), so a later agent finds the
+  `OPERON_BOLTZ_CACHE=/data/operon-resources`), so a later agent finds the
   same files instead of downloading them again.
 
 ## Do not

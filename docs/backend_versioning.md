@@ -7,7 +7,7 @@ numbers below remain unchanged; they do not prescribe future software versions.
 
 | Axis | Source of truth | Published tag | When it changes |
 | --- | --- | --- | --- |
-| Application | `pyproject.toml`, `biopipe/__init__.py` | `vX.Y.Z` | Engine, service, frontend/host integration or application fixes |
+| Application | `pyproject.toml`, `operon/__init__.py` | `vX.Y.Z` | Engine, service, frontend/host integration or application fixes |
 | Operator library | `library/release.json` | `library-v<library-version>` | Operators, Readers, guides, defaults, helpers or resource declarations |
 | Provider/operator | v3 provider and literal declaration | Inside the library/wheel | Executable or contract version changes |
 | Protocol/SDK | protocol schemas and SDK | Explicit SDK release | Authoring/runtime contract changes |
@@ -66,7 +66,7 @@ a library bundle does not silently replace saved routes.
 - Additional Python dependencies use the existing shared/conflict-isolated
   dependency manager. Large resource metadata travels inside the provider;
   external binaries, weights and databases retain explicit requirements.
-- Generated indexes are outputs of `biopipe registry build` and
+- Generated indexes are outputs of `operon registry build` and
   `scripts/build_operator_docs.py`; do not hand-edit them.
 
 ## Historical application labels under the former expansion policy
@@ -241,7 +241,7 @@ a library bundle does not silently replace saved routes.
 1.117.12  docs: DeepSeek Harness first for MCP, plus the clean-environment acceptance checklist
 1.117.13  patch: install pdb2pqr and ViennaRNA after pip and treat boltz/foldseek as optional binaries
 1.118.0  batch: ESM-3 masked-prompt sequence generation (709 operators)
-1.118.1  patch: resolve routes from the managed code dir when BioPipe is installed into site-packages
+1.118.1  patch: resolve routes from the managed code dir when Operon is installed into site-packages
 1.118.2  patch: pair env-<digest> with code-<digest> for route discovery, grant MCP run permission by default, and document every remote-connection field
 1.118.3  patch: register BatteryFull, File and CirclesThree so no operator or reader falls back to the placeholder icon
 1.118.4  docs: specify the DeepSeek Harness workspace, permission level and a minimal example prompt

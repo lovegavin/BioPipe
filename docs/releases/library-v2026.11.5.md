@@ -1,4 +1,4 @@
-# BioPipe Operator Library 2026.11.5
+# Operon Operator Library 2026.11.5
 
 This is an independent library release, not an application/EXE update.
 It contains 716 operators and 101 Readers across seven provider packages.
@@ -10,13 +10,13 @@ Added upstream genome adapters: `amrfinder_plus`, `antismash_bgc`,
 External binaries, databases and optional model downloads are not embedded in
 the library archive; check each operator's dependency/resource status before use.
 
-Choose the Windows or Linux `.biopipe-library.zip` matching the application host
+Choose the Windows or Linux `.operon-library.zip` matching the application host
 and install it through Library Management or the CLI. Updating the library does
 not require reinstalling Studio. Disabled providers and frozen workflow values
 are preserved. See [Library release instructions](../library_releases.md).
 
-Administrators preparing a BioPipe 2.3.0 or later installation may instead install
-the separate, platform-independent `biopipe_builtin_library` seed wheel. It
+Administrators preparing a Operon 2.3.0 or later installation may instead install
+the separate, platform-independent `operon_builtin_library` seed wheel. It
 contains the factory sources, declarations, environment recipes and routes; it
 does not replace profile-owned provider versions.
 

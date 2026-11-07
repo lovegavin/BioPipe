@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 def main():
-    from biopipe.packages import bundled_state
+    from operon.packages import bundled_state
     from src.web.profile import resolve_profile
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--profile-dir', type=Path)

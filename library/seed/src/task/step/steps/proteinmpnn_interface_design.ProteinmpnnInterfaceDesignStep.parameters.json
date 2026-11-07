@@ -30,7 +30,7 @@
       "type": "string",
       "default": "",
       "title": "ProteinMPNN 仓库路径",
-      "description": "Checkout containing protein_mpnn_run.py. Empty falls back to BIOPIPE_PROTEINMPNN_PATH.",
+      "description": "Checkout containing protein_mpnn_run.py. Empty falls back to OPERON_PROTEINMPNN_PATH.",
       "x-ui-group": "basic",
       "x-ui-order": 30
     },

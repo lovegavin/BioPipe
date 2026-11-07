@@ -21,9 +21,17 @@ from src.task.step.steps._native_results import output_directory, remember_nativ
 
 class VcfFilterStep(Step):
     """Quality/type/region filtering with a native filtered VCF output."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'vcf_filter.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'vcf_filter',
      'version': '1.0.0',
      'kind': 'operator',

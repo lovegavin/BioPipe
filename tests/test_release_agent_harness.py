@@ -23,4 +23,4 @@ def test_real_session_list_transport_shapes(tmp_path, sessions, structured, as_a
             structuredContent={'result': sessions} if structured else None)
     run = Acceptance.__new__(Acceptance)
     run.evidence = tmp_path
-    assert asyncio.run(run.call(SimpleNamespace(call_tool=call_tool), 'biopipe_sessions')) == sessions
+    assert asyncio.run(run.call(SimpleNamespace(call_tool=call_tool), 'operon_sessions')) == sessions

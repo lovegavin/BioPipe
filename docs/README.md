@@ -1,6 +1,6 @@
 # Documentation
 
-Operon, formerly BioPipe, prepares reproducible analysis results from raw data and hands artifacts
+Operon, formerly Operon, prepares reproducible analysis results from raw data and hands artifacts
 to specialist tools for interactive interpretation and figure refinement. It
 supports visual editing, human-agent collaboration and unattended execution.
 Operon does not supply an AI model or require a desktop for computation.
@@ -19,6 +19,8 @@ trace it. See [Why Operon](../README.md#why-operon) for the five supports.
 
 - [Quick start: install, import the operator library, run the example](../QUICKSTART.md)
   ([中文](../QUICKSTART.zh.md))
+- [SDK 3.7 mandatory port formats and native Reader bridge](data_formats.md)
+- [Static format inspection and explicit legacy migration](format_migration_v37.md)
 - [Windows and Linux command-line installation](command_line_installation.md)
 - [Linux server and terminal quickstart](server_cli.md)
 - [3.0 implementation scope and validation](V3_IMPLEMENTATION.md)
@@ -74,7 +76,7 @@ trace it. See [Why Operon](../README.md#why-operon) for the five supports.
 - [Independent software and operator-library releases](library_releases.md)
 - [Operator library release standard](library_release_standard.md)
 - [Library 3.x full verification](verification/library-3.0.0-full.md)
-- [BioPipe 4.0.0 release](releases/v4.0.0.md)
+- [Operon 4.0.0 release](releases/v4.0.0.md)
 - [Biological evidence for 4.0.0](verification/biological-evidence-4.0.0.md)
 - [Known biological discrepancies](verification/biological-issues-4.0.0.md)
 - [Static registry maintenance](registry_maintenance.md)

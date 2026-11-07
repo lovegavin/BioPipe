@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from biopipe.plugins import PluginManager
+from operon.plugins import PluginManager
 from src.web.models import Graph
 
 
@@ -16,7 +16,7 @@ def write_operator(root, name='example'):
                   'resources': {'memory_modes': ['full'], 'supports_cuda': False},
                   'inputs_arity': 0, 'outputs': [], 'output_parameter': None}
     source = root / 'src/task/step/steps' / (name + '.py')
-    source.write_text('from biopipe_sdk import Step\nclass Example(Step):\n'
+    source.write_text('from operon_sdk import Step\nclass Example(Step):\n'
                       f'    definition = {definition!r}\n'
                       '    provider = "lab-example"\n'
                       '    def run(self, ctx, inputs): pass\n'
@@ -26,31 +26,31 @@ def write_operator(root, name='example'):
 
 
 def publish_manifest(root):
-    from biopipe.registry import package_manifest, scan_sources
+    from operon.registry import package_manifest, scan_sources
     records, errors = scan_sources(root)
     assert not errors
     manifest = package_manifest(records, {'packages': []})
-    (root / 'biopipe/builtin_packages.json').write_text(json.dumps(manifest), encoding='utf-8')
+    (root / 'operon/builtin_packages.json').write_text(json.dumps(manifest), encoding='utf-8')
     return manifest
 
 
 @pytest.fixture
 def source_tree(tmp_path, monkeypatch):
-    import biopipe.packages as packages
+    import operon.packages as packages
     root = tmp_path / 'source'
-    for folder in ('biopipe', 'src/task/step/steps', 'src/reader/readers'):
+    for folder in ('operon', 'src/task/step/steps', 'src/reader/readers'):
         (root / folder).mkdir(parents=True)
     write_operator(root)
     publish_manifest(root)
-    monkeypatch.setattr('biopipe.library_location.source_root', lambda candidate=None: root if candidate is None else Path(candidate))
+    monkeypatch.setattr('operon.library_location.source_root', lambda candidate=None: root if candidate is None else Path(candidate))
     return root
 
 
 def forbid_provider_access(guard, source, manager):
     """Allow registry/manifests, never provider paths or declaration rebuilding."""
-    import biopipe.dropins
-    import biopipe.registry
-    import biopipe_sdk.declarations
+    import operon.dropins
+    import operon.registry
+    import operon_sdk.declarations
     roots = [source / 'src', manager.directory / 'packages', manager.directory / 'inbox']
     environments = manager.directory / 'environments'
 
@@ -70,9 +70,9 @@ def forbid_provider_access(guard, source, manager):
     guard.setattr(Path, 'rglob', forbidden)
     for name in ('code_hash', 'verify_code', 'verify_archive', 'source_declarations',
                  'compile_declaration', 'load_class'):
-        guard.setattr(biopipe_sdk.declarations, name, forbidden)
-    guard.setattr(biopipe.registry, 'scan_sources', forbidden)
-    guard.setattr(biopipe.dropins, 'source_files', forbidden)
+        guard.setattr(operon_sdk.declarations, name, forbidden)
+    guard.setattr(operon.registry, 'scan_sources', forbidden)
+    guard.setattr(operon.dropins, 'source_files', forbidden)
 
 
 def graph():
@@ -134,8 +134,8 @@ def test_source_edits_are_deferred_only_in_manifest_mode(source_tree, tmp_path):
 
 @pytest.mark.parametrize('enabled', [True, False])
 def test_existing_profile_keeps_overlays_and_pins_on_manifest_only_transition(source_tree, tmp_path, monkeypatch, enabled):
-    from biopipe_sdk.declarations import declaration_hash
-    monkeypatch.setattr('biopipe_sdk.declarations.implementation_root', lambda entry: source_tree)
+    from operon_sdk.declarations import declaration_hash
+    monkeypatch.setattr('operon_sdk.declarations.implementation_root', lambda entry: source_tree)
     ordinary = PluginManager(tmp_path / 'profile', source_root=source_tree)
     descriptor = ordinary.state()['descriptors'][0]
     overlay = deepcopy(descriptor)
@@ -162,7 +162,7 @@ def test_existing_profile_keeps_overlays_and_pins_on_manifest_only_transition(so
         assert restarted.state() == migrated
         assert restarted.snapshot(pinned)['descriptors'][0]['code_sha'] == saved['code_sha']
     # Subsequent canonical manifest changes still replace compiled declarations.
-    index = source_tree / 'biopipe/builtin_packages.json'
+    index = source_tree / 'operon/builtin_packages.json'
     manifest = json.loads(index.read_text(encoding='utf-8'))
     shipped = manifest['packages'][0]['descriptors'][0]
     shipped['title'] = 'Updated shipped title'
@@ -196,7 +196,7 @@ def test_republished_manifest_updates_generation_and_code_identity(source_tree, 
 def test_manifest_only_refresh_discovers_added_source_and_publishes_generation(source_tree, tmp_path, monkeypatch):
     manager = PluginManager(tmp_path / 'profile', source_root=source_tree, manifest_only=True)
     before = manager.state()
-    shipped = (source_tree / 'biopipe/builtin_packages.json').read_bytes()
+    shipped = (source_tree / 'operon/builtin_packages.json').read_bytes()
     write_operator(source_tree, 'added')
     assert manager.state() == before
     result = manager.refresh()
@@ -205,7 +205,7 @@ def test_manifest_only_refresh_discovers_added_source_and_publishes_generation(s
     assert result['updated'] == ['lab-example']
     assert {d['id'] for d in after['descriptors']} == {'lab.example', 'lab.added'}
     assert after['packages'][0]['origin'] == 'wheel'
-    assert (source_tree / 'biopipe/builtin_packages.json').read_bytes() == shipped
+    assert (source_tree / 'operon/builtin_packages.json').read_bytes() == shipped
     with monkeypatch.context() as guard:
         forbid_provider_access(guard, source_tree, manager)
         assert manager.state()['generation'] == after['generation']
@@ -213,12 +213,12 @@ def test_manifest_only_refresh_discovers_added_source_and_publishes_generation(s
 
 
 def test_manifest_only_registry_does_not_relax_runtime_code_validation(source_tree, tmp_path, monkeypatch):
-    from biopipe_sdk.declarations import load_class
+    from operon_sdk.declarations import load_class
     manager = PluginManager(tmp_path / 'profile', source_root=source_tree, manifest_only=True)
     descriptor = manager.state()['descriptors'][0]
     source = source_tree / 'src/task/step/steps/example.py'
     source.write_text(source.read_text(encoding='utf-8') + '\n# stale compiled manifest\n', encoding='utf-8')
-    monkeypatch.setattr('biopipe_sdk.declarations.implementation_root', lambda entry: source_tree)
+    monkeypatch.setattr('operon_sdk.declarations.implementation_root', lambda entry: source_tree)
     with pytest.raises(ValueError, match='Implementation code hash mismatch'):
         load_class(descriptor)
 

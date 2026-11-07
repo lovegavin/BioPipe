@@ -89,7 +89,7 @@ def main(argv=None):
             manifest = json.loads((ROOT / 'package-manifest.json').read_text(encoding='utf-8'))
             assert manifest['version'] == args.version and manifest['python_bundled'] is True
         check('Selected packaged interpreter', {'bundled': not args.allow_development, 'python': sys.executable})
-        runtime_manifest = Path(sys.executable).parent / 'biopipe-runtime.json'
+        runtime_manifest = Path(sys.executable).parent / 'operon-runtime.json'
         runtime_mode = json.loads(runtime_manifest.read_text(encoding='utf-8')).get('mode') if runtime_manifest.is_file() else None
         def analysis_packages():
             import importlib.util
@@ -102,22 +102,22 @@ def main(argv=None):
         for relative in ('home', 'temp', 'appdata/local', 'appdata/roaming', 'config'):
             (work / relative).mkdir(parents=True, exist_ok=True)
         for key in list(os.environ):
-            if key.upper().startswith(('BIOPIPE_', 'OPERON_', 'PYTHON', 'CONDA')) or key.upper() in {'VIRTUAL_ENV', 'PIP_TARGET', 'PIP_PREFIX'}:
+            if key.upper().startswith(('OPERON_', 'OPERON_', 'PYTHON', 'CONDA')) or key.upper() in {'VIRTUAL_ENV', 'PIP_TARGET', 'PIP_PREFIX'}:
                 del os.environ[key]
         os.environ.update(HOME=str(home), USERPROFILE=str(home),
                           LOCALAPPDATA=str(work / 'appdata/local'), APPDATA=str(work / 'appdata/roaming'),
                           XDG_CONFIG_HOME=str(work / 'config'), XDG_CACHE_HOME=str(work / 'cache'),
                           TEMP=str(work / 'temp'), TMP=str(work / 'temp'), TMPDIR=str(work / 'temp'),
-                          BIOPIPE_RUNTIME_CONFIG=str(work / 'runtime.json'), BIOPIPE_ADMISSION_DIR=str(work / 'admission'),
+                          OPERON_RUNTIME_CONFIG=str(work / 'runtime.json'), OPERON_ADMISSION_DIR=str(work / 'admission'),
                           PYTHONDONTWRITEBYTECODE='1', PYTHONUTF8='1', PYTHONIOENCODING='utf-8')
-        import biopipe
-        assert biopipe.__version__ == args.version
-        assert Path(biopipe.__file__).resolve().is_relative_to(ROOT)
+        import operon
+        assert operon.__version__ == args.version
+        assert Path(operon.__file__).resolve().is_relative_to(ROOT)
         from src.web.profile import resolve_profile
         dummy = work / 'identity-probe'
         dummy.mkdir()
         identity = uuid.uuid4().hex
-        (dummy / 'biopipe-install.json').write_text(json.dumps({'schema_version': 1, 'isolated': True,
+        (dummy / 'operon-install.json').write_text(json.dumps({'schema_version': 1, 'isolated': True,
                                                               'profile_id': identity, 'product': 'operon'}), encoding='utf-8')
         probe = resolve_profile(dummy, home=home, environ={})
         assert probe.profile_dir == home / '.operon/profiles' / identity
@@ -129,14 +129,14 @@ def main(argv=None):
         assert (frontend / 'index.html').is_file(), 'Packaged frontend missing'
         assert 'Operon' in (frontend / 'index.html').read_text(encoding='utf-8'), 'Frontend title is not branded Operon'
         check('Frontend product title')
-        isolated = (ROOT / 'biopipe-install.json').is_file()
+        isolated = (ROOT / 'operon-install.json').is_file()
         profile = resolve_profile(ROOT) if isolated else resolve_profile(ROOT, profile_dir=home / '.operon/candidate')
         assert profile.profile_dir.is_relative_to(home)
         command = [sys.executable, '-I', '-X', 'utf8', '-B', str(ROOT / 'scripts/desktop_server.py'),
                    '--frontend', str(frontend), '--wait-for-host']
         if not isolated:
             command += ['--profile-dir', str(profile.profile_dir)]
-        from biopipe.processes import owned_process
+        from operon.processes import owned_process
         ready = queue.Queue()
         with (work / 'backend.log').open('w', encoding='utf-8') as log:
             with owned_process(command, cwd=ROOT, env=dict(os.environ), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -145,8 +145,8 @@ def main(argv=None):
                     for line in child.stdout:
                         log.write(line)
                         log.flush()
-                        if line.startswith('BIOPIPE_READY '):
-                            ready.put(json.loads(line[len('BIOPIPE_READY '):]))
+                        if line.startswith('OPERON_READY '):
+                            ready.put(json.loads(line[len('OPERON_READY '):]))
                 reader = threading.Thread(target=drain, daemon=True)
                 reader.start()
                 try:
@@ -239,7 +239,7 @@ def main(argv=None):
                     if args.prepare_analysis:
                         # The flag is an explicit installation permission. The
                         # six-phase helper still requires a separate run scope.
-                        from biopipe.client import instances
+                        from operon.client import instances
                         selected = [item for item in instances(profile.data_dir) if item['pid'] == child.pid]
                         assert len(selected) == 1, 'Cannot identify the owned acceptance backend'
                         command = [sys.executable, '-I', str(ROOT / 'scripts/verify_release_agent.py'), 'backend',
@@ -257,7 +257,7 @@ def main(argv=None):
                         # as source CI. A fresh profile has no historical registry.
                         from src.web.models import Graph
                         from src.web.parameters import export_bundle, split_graph
-                        history = json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))
+                        history = json.loads((ROOT / 'operon/bundled_history.json').read_text(encoding='utf-8'))
                         old_pins = {key: entry['implementation'] for entry in history['packages']
                                     if any(release['tag'] == 'v2.6.0' for release in entry['releases'])
                                     for key in entry['operators']}

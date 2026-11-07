@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 from src.core.errors import StepError
 from src.reader import read_source
 from src.task.step.base import Step
@@ -62,11 +62,14 @@ def _apply_recycles(model, num_recycles: int) -> None:
 class EsmfoldPredictStep(Step):
     """Predict one structure with ESMFold and report its confidence."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "esmfold_predict.EsmfoldPredictStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "esmfold_predict",
         "version": "1.0.0",
@@ -75,7 +78,7 @@ class EsmfoldPredictStep(Step):
         "description": (
             "Fold one amino-acid sequence with the official ESMFold implementation shipped in "
             "fair-esm (esm.pretrained.esmfold_v1) and return the predicted PDB together with its "
-            "mean pLDDT. The 3B checkpoint is downloaded on first use; set BIOPIPE_ESMFOLD_WEIGHTS "
+            "mean pLDDT. The 3B checkpoint is downloaded on first use; set OPERON_ESMFOLD_WEIGHTS "
             "or pre-populate the torch hub cache to run offline."
         ),
         "category": "Machine Learning",

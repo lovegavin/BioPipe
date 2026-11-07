@@ -121,4 +121,4 @@ python scripts/run.py examples/route_combinations/leukemia_all_aml_expression --
 python scripts/run.py examples/route_combinations/leukemia_all_aml_expression
 ```
 
-只读校验不写 `output/`；完整运行写入该示例的 `output/figures/`、`output/steps/`、`output/run_summary.{txt,json}`。运行环境需要 `scikit-learn`、`scipy`、`numpy`、`pandas`、`matplotlib`（BioPipe 的常规依赖）。
+只读校验不写 `output/`；完整运行写入该示例的 `output/figures/`、`output/steps/`、`output/run_summary.{txt,json}`。运行环境需要 `scikit-learn`、`scipy`、`numpy`、`pandas`、`matplotlib`（Operon 的常规依赖）。

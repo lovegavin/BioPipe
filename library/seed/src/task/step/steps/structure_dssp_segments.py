@@ -115,10 +115,13 @@ def run_dssp(binary: str, structure: Path, workdir: Path, *, timeout: int = 300)
 
 
 class StructureDsspSegmentsStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_dssp_segments.StructureDsspSegmentsStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_dssp_segments",
         "version": "1.0.0",

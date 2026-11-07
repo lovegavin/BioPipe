@@ -12,7 +12,7 @@ from ._matrix_common import grouped
 
 
 class NemenyiTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """All-pairwise Nemenyi comparisons using mean ranks.
 
     The two-sided p-values use the studentized range distribution with
@@ -20,7 +20,12 @@ class NemenyiTestStep(Step):
     ``DescTools::NemenyiTest(x, g, dist = "tukey")``.
     """
     parameters_file = 'nemenyi_test.NemenyiTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'nemenyi_test',
      'version': '1.0.0',
      'kind': 'operator',

@@ -1,7 +1,7 @@
 """R oracle checks for Moran's I and indicator species.
 
 ``ape::Moran.I`` and ``labdsv::indval`` are evaluated on the same fixed
-fixtures as the BioPipe operators.
+fixtures as the Operon operators.
 """
 from __future__ import annotations
 

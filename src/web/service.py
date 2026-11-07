@@ -13,7 +13,7 @@ import traceback
 import uuid
 
 import yaml
-from biopipe.run_log import append_event
+from operon.run_log import append_event
 
 from .graph import GraphError, compile_graph, relative_manifest
 from .models import Graph
@@ -79,9 +79,9 @@ class JobService:
         if settings.input_roots is None:
             settings.input_roots = list(dict.fromkeys([self.root, (settings.code_root or self.root).resolve()]))
         self.directory = settings.data_dir.resolve()
-        from biopipe.plugins import PluginManager
+        from operon.plugins import PluginManager
         self.plugins = PluginManager(self.directory, manifest_only=settings.manifest_only_registry)
-        from biopipe.dependencies import DependencySession
+        from operon.dependencies import DependencySession
         self.dependencies = DependencySession(self.plugins)
         self.dependencies.sync(self.plugins.state())
         self.catalog = self.plugins.extend_catalog(catalog)
@@ -109,7 +109,7 @@ class JobService:
                                    self.graph_catalog, input_roots=settings.input_roots)
         if settings.builtin_routes:
             self.routes.install_builtins()
-        self.scheduler = threading.Thread(target=self._schedule, name='biopipe-admission', daemon=True)
+        self.scheduler = threading.Thread(target=self._schedule, name='operon-admission', daemon=True)
         self.scheduler.start()
 
     def graph_catalog(self, graph):
@@ -241,7 +241,7 @@ class JobService:
         graph = self.plugins.pin(graph, snapshot=plugin_snapshot)
         catalog = self.plugins._catalog(plugin_snapshot, self.base_catalog)
         from .parameters import freeze_graph
-        from biopipe.parameter_values import split_task
+        from operon.parameter_values import split_task
         graph = freeze_graph(graph, catalog, self.root, input_roots=self.settings.input_roots)
         manifest, order = compile_graph(graph, catalog, self.root, require_files=True, input_roots=self.settings.input_roots)
         try:
@@ -331,20 +331,20 @@ class JobService:
                        TEMP=str(io_path(temporary)), TMP=str(io_path(temporary)), MPLCONFIGDIR=str(io_path(self.directory / 'matplotlib')))
             threads = str(job['allocation']['cpu_threads'])
             for name in ('OMP_NUM_THREADS', 'OPENBLAS_NUM_THREADS', 'MKL_NUM_THREADS',
-                         'NUMEXPR_NUM_THREADS', 'VECLIB_MAXIMUM_THREADS', 'BLIS_NUM_THREADS', 'BIOPIPE_CPU_LIMIT'):
+                         'NUMEXPR_NUM_THREADS', 'VECLIB_MAXIMUM_THREADS', 'BLIS_NUM_THREADS', 'OPERON_CPU_LIMIT'):
                 env[name] = threads
-            env['BIOPIPE_AVAILABLE_AT_START_BYTES'] = str(job['allocation']['available_at_start_bytes'])
+            env['OPERON_AVAILABLE_AT_START_BYTES'] = str(job['allocation']['available_at_start_bytes'])
             code_root = self.settings.code_root or self.root
             python = self.plugins.python_for(read_json(directory / 'plugins.lock.json'))
-            if io_path(code_root / 'biopipe/worker.py').is_file():
+            if io_path(code_root / 'operon/worker.py').is_file():
                 # Wheels have no scripts/ tree. Preserve code selection when
                 # dependency resolution chooses a different Python runtime.
                 env['PYTHONPATH'] = os.pathsep.join(part for part in (str(code_root), env.get('PYTHONPATH')) if part)
-                command = [python, '-P', '-m', 'biopipe.worker', str(directory)]
+                command = [python, '-P', '-m', 'operon.worker', str(directory)]
             else:
                 # Older server distributions and explicit custom worker roots.
                 command = [python, str(code_root / 'scripts/run.py'), str(directory)]
-            console.write(f'[BioPipe launcher] Job {key}\nPython: {python}\nTask: {directory}\n')
+            console.write(f'[Operon launcher] Job {key}\nPython: {python}\nTask: {directory}\n')
             console.flush()
             self._launcher_event(job, 'worker_launching', python=python, allocation=job['allocation'], message='Starting analysis worker')
             process = subprocess.Popen(command,
@@ -365,7 +365,7 @@ class JobService:
         except Exception as exc:
             self.threads.pop(key, None)
             if key in self.processes:
-                from biopipe.processes import stop_tree
+                from operon.processes import stop_tree
                 stop_tree(self.processes.pop(key))
             job['status'], job['error'] = 'failed', f'{type(exc).__name__}: {exc}'
             if console is not None:
@@ -419,7 +419,7 @@ class JobService:
                     over_since = over_since or time.monotonic()
                     if time.monotonic() - over_since >= 2:
                         pressure_error = f'Worker tree RSS {rss} exceeds its host reservation {limit}; emergency spill could not recover enough memory'
-                        from biopipe.processes import stop_tree
+                        from operon.processes import stop_tree
                         stop_tree(process)
                 else:
                     over_since = None
@@ -433,7 +433,7 @@ class JobService:
                     + ("without producing a run summary." if not summary else "without completing the run."))
             job["exit_code"] = code
             try:
-                console.write(f"\n[BioPipe launcher] Worker exit code {code} (0x{code & 0xffffffff:08X}); status={job['status']}\n")
+                console.write(f"\n[Operon launcher] Worker exit code {code} (0x{code & 0xffffffff:08X}); status={job['status']}\n")
                 if job.get("error"):
                     console.write(job["error"] + "\n")
             except OSError as exc:
@@ -624,7 +624,7 @@ class JobService:
                 self._wake.set()
             if job["status"] == "running":
                 if key not in self.processes:
-                    raise GraphError("任务由另一个 BioPipe 窗口运行，请在启动它的窗口停止。")
+                    raise GraphError("任务由另一个 Operon 窗口运行，请在启动它的窗口停止。")
                 job["status"] = "cancelled"
                 # Isolated calls poll this request and can flush their failure
                 # log and clean exchange files before the fallback tree kill.
@@ -633,7 +633,7 @@ class JobService:
                 try:
                     process.wait(timeout=1)
                 except subprocess.TimeoutExpired:
-                    from biopipe.processes import stop_tree
+                    from operon.processes import stop_tree
                     stop_tree(process)
                 write_json(self.jobs_dir / key / "job.json", job)
             return self.details(key)
@@ -667,7 +667,7 @@ class JobService:
         # Validate containment before using Windows' extended I/O path. A cache
         # directory can be renamed successfully past MAX_PATH while ordinary
         # stat/open subsequently report that the existing payload is absent.
-        from biopipe.bytecode import filesystem_path
+        from operon.bytecode import filesystem_path
         path = Path(filesystem_path(path))
         if not path.is_file():
             raise KeyError("产物文件不可用。")

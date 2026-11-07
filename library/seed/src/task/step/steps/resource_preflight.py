@@ -20,11 +20,14 @@ _STATISTICS = ("present", "size_mb")
 class ResourcePreflightStep(Step):
     """Check the files of one or all large resources and report remedies."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "resource_preflight.ResourcePreflightStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "resource_preflight",
         "version": "1.0.0",

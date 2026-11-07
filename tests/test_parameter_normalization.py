@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import pytest
 
-from biopipe_sdk.protocol import validate_parameters
+from operon_sdk.protocol import validate_parameters
 
 
 SCHEMA = {

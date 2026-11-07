@@ -1,4 +1,4 @@
-# BioPipe core + MCP + development constraints; CPython 3.11 / Windows x64.
+# Operon core + MCP + development constraints; CPython 3.11 / Windows x64.
 # Use with pip -c, not -r. Optional analyses/readers are resolved separately.
 # No machine-specific paths or package-index URLs.
 annotated-doc==0.0.5

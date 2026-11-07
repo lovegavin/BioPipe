@@ -86,7 +86,7 @@ def test_route_combination_executes_in_tmp(name: str, tmp_path: Path) -> None:
 @pytest.mark.parametrize('task_path', sorted((ROOT / 'routes').glob('*/task.yaml')), ids=lambda path: path.parent.name)
 def test_route_template_contracts_and_parameter_snapshots(task_path: Path) -> None:
     import yaml
-    from biopipe.packages import bundled_state
+    from operon.packages import bundled_state
     from src.task.manifest import load_manifest
     from src.web.graph import compile_graph, import_manifest
     from src.web.operator_catalog import catalog_from_descriptors

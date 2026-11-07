@@ -17,9 +17,12 @@ from src.task.step.steps import _ld_utils as ld
 
 class LdMatrixStep(Step):
     """Square r^2 matrix over a deterministic subset of variants."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'ld_matrix.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'ld_matrix',
         'version': '1.0.0',

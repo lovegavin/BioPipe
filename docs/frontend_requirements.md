@@ -1,4 +1,4 @@
-# BioPipe Studio interaction and design
+# Operon Studio interaction and design
 
 Studio turns YAML authoring into a local visual workflow: choose inputs, add nodes,
 connect branches, set parameters, validate, run and inspect real outputs. The UI
@@ -119,7 +119,7 @@ Execution signatures ignore object key order, display titles and node positions.
 Changing inputs, parameters, connections, plugin pins or memory settings marks old
 results as stale. Measured UI dimensions are never stored as analysis configuration.
 
-Built-ins use generated package and route indexes maintained with `biopipe registry`;
+Built-ins use generated package and route indexes maintained with `operon registry`;
 plugins add validated descriptors after successful installation. Parameter forms use schemas with JSON
 fallbacks. The browser never scans Python. The API is loopback-only, with authenticated
 writes and origin restrictions; each job runs in a separate directory/process.
@@ -182,7 +182,7 @@ invalid-graph diagnostics, actual worker results, contract popovers, CLI/MCP edi
 shared undo and Windows WebView2 startup/shutdown. Run `npm test`, `npm run build`,
 the Python suite, and desktop verification for the relevant platform.
 
-Default persistence is `~/.biopipe/studio/workspace/.studio`: `operators.json`,
+Default persistence is `~/.operon/studio/workspace/.studio`: `operators.json`,
 `workflows/`, `assets/`, `plugins/`, `agent/` and isolated `jobs/<id>/` containing
 `job.json`, `task.yaml`, `plugins.lock.json`, `console.log` and runtime outputs.
 Drafts do not contain data and do not rewrite source task YAML automatically.

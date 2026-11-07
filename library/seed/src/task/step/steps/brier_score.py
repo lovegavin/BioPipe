@@ -11,10 +11,14 @@ from ._survival21_common import cox_brier, fit_cox, survival_columns
 
 
 class BrierScoreStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Cox PH Brier score with inverse-probability-of-censoring weights."""
     parameters_file = 'brier_score.BrierScoreStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'brier_score',
      'version': '1.0.0',
      'kind': 'operator',

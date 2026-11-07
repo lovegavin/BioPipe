@@ -23,9 +23,14 @@ from ._popgen_group_common import group_indices
 
 
 class PattersonFstStep(Step):
-    provider = 'biopipe-genetics'
+    provider = 'operon-genetics'
     parameters_file = 'patterson_fst.PattersonFstStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
                   'id': 'patterson_fst',
                   'version': '1.0.0',
                   'kind': 'operator',

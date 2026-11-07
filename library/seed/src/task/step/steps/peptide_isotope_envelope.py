@@ -3,16 +3,19 @@
 from __future__ import annotations
 
 import numpy as np
-from biopipe_sdk import Form, Step, StepError
+from operon_sdk import Form, Step, StepError
 
 from ._ms_utils import isotope_envelope
 
 
 class PeptideIsotopeEnvelopeStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "peptide_isotope_envelope.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "peptide_isotope_envelope",
         "version": "1.0.0",

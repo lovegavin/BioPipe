@@ -62,10 +62,13 @@ def position_rows(counts: np.ndarray, native: str) -> list[list[float]]:
 class EsmIfPositionEntropyStep(Step):
     """Estimate per-position sequence entropy by sampling ESM-IF1 designs."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "esm_if_position_entropy.EsmIfPositionEntropyStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "esm_if_position_entropy",
         "version": "1.0.0",

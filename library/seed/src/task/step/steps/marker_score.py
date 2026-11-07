@@ -19,9 +19,14 @@ from ._ext_common import axis_labels, labels_in_order, make_form, reorder, requi
 
 
 class MarkerScoreStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'marker_score.MarkerScoreStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'marker_score',
      'version': '1.0.0',
      'kind': 'operator',

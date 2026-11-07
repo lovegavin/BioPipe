@@ -1,0 +1,690 @@
+{
+  "schema_version": 1,
+  "viewers": [
+    {
+      "id": "juicebox",
+      "name": "Juicebox",
+      "domain": "Hi-C",
+      "kind": "desktop",
+      "extensions": [
+        ".hic"
+      ],
+      "commands": [
+        "Juicebox.exe",
+        "juicebox"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "Launch the GUI, then File > Open the prepared .hic. Some releases ignore command-line file arguments. Requires GUI JAR, not juicer_tools.",
+      "source": "https://github.com/aidenlab/JuiceboxGUI",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "igv",
+      "name": "IGV",
+      "domain": "Genome tracks",
+      "kind": "desktop",
+      "extensions": [
+        ".bam",
+        ".cram",
+        ".vcf",
+        ".vcf.gz",
+        ".bed",
+        ".bed.gz",
+        ".bedgraph",
+        ".bw",
+        ".bigwig",
+        ".gff",
+        ".gff3",
+        ".gtf"
+      ],
+      "commands": [
+        "igv.exe",
+        "igv"
+      ],
+      "mode": "file",
+      "args": [],
+      "notes": "Select the matching reference assembly in IGV. Indexed formats need retained index siblings; CRAM also needs its reference.",
+      "source": "https://igv.org/doc/desktop/UserGuide/advanced/command_line/",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "snapgene",
+      "name": "SnapGene",
+      "domain": "Plasmids",
+      "kind": "desktop",
+      "extensions": [
+        ".gb",
+        ".gbk",
+        ".gbff",
+        ".dna",
+        ".fasta",
+        ".fa"
+      ],
+      "commands": [
+        "SnapGene.exe",
+        "snapgene"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "Open the prepared GenBank file in SnapGene. GenBank carries sequence, annotations and circular topology; no public editing API is assumed.",
+      "source": "https://www.snapgene.com/features/convert-file-formats",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "ugene",
+      "name": "UGENE",
+      "domain": "Sequences",
+      "kind": "desktop",
+      "extensions": [
+        ".gb",
+        ".gbk",
+        ".gbff",
+        ".fasta",
+        ".fa",
+        ".aln",
+        ".stockholm",
+        ".gff"
+      ],
+      "commands": [
+        "ugene.exe",
+        "ugene"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "",
+      "source": "https://ugene.net/",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "ape",
+      "name": "ApE",
+      "domain": "Plasmids",
+      "kind": "desktop",
+      "extensions": [
+        ".gb",
+        ".gbk",
+        ".fasta",
+        ".fa"
+      ],
+      "commands": [
+        "ApE.exe",
+        "ape"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "",
+      "source": "https://jorgensen.biology.utah.edu/wayned/ape/",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "chimerax",
+      "name": "ChimeraX",
+      "domain": "Structures",
+      "kind": "desktop",
+      "extensions": [
+        ".pdb",
+        ".cif",
+        ".mmcif",
+        ".sdf",
+        ".mol2",
+        ".mrc",
+        ".map"
+      ],
+      "commands": [
+        "ChimeraX.exe",
+        "chimerax"
+      ],
+      "mode": "file",
+      "args": [],
+      "notes": "",
+      "source": "https://www.cgl.ucsf.edu/chimerax/docs/user/options.html",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "pymol",
+      "name": "PyMOL",
+      "domain": "Structures",
+      "kind": "desktop",
+      "extensions": [
+        ".pdb",
+        ".cif",
+        ".mmcif",
+        ".sdf",
+        ".mol",
+        ".mol2",
+        ".ccp4"
+      ],
+      "commands": [
+        "PyMOLWin.exe",
+        "pymol.exe",
+        "pymol"
+      ],
+      "mode": "file",
+      "args": [],
+      "notes": "",
+      "source": "https://pymol.sourceforge.net/newman/user/S0200start.html",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "jalview",
+      "name": "Jalview",
+      "domain": "Alignments",
+      "kind": "desktop",
+      "extensions": [
+        ".fasta",
+        ".fa",
+        ".aln",
+        ".sto",
+        ".stockholm",
+        ".msf"
+      ],
+      "commands": [
+        "Jalview.exe",
+        "jalview"
+      ],
+      "mode": "file",
+      "args": [
+        "--open"
+      ],
+      "notes": "",
+      "source": "https://www.jalview.org/help/html/features/clarguments-basic.html",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "figtree",
+      "name": "FigTree",
+      "domain": "Trees",
+      "kind": "desktop",
+      "extensions": [
+        ".nwk",
+        ".newick",
+        ".new",
+        ".tree",
+        ".tre",
+        ".nex",
+        ".nexus"
+      ],
+      "commands": [
+        "FigTree.exe",
+        "figtree"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "Existing installations are supported. FigTree is deprecated upstream; PearTree is a browser alternative.",
+      "source": "https://beast.community/figtree",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "cytoscape",
+      "name": "Cytoscape",
+      "domain": "Networks",
+      "kind": "desktop",
+      "extensions": [
+        ".sif",
+        ".gml",
+        ".xgmml"
+      ],
+      "commands": [
+        "Cytoscape.exe",
+        "cytoscape"
+      ],
+      "mode": "file",
+      "args": [
+        "-N"
+      ],
+      "notes": "",
+      "source": "https://manual.cytoscape.org/en/latest/Command_Line_Arguments.html",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "gephi",
+      "name": "Gephi",
+      "domain": "Networks",
+      "kind": "desktop",
+      "extensions": [
+        ".graphml",
+        ".gexf",
+        ".gml"
+      ],
+      "commands": [
+        "gephi64.exe",
+        "gephi.exe",
+        "gephi"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "",
+      "source": "https://docs.gephi.org/desktop/User_Manual/Import/",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "fiji",
+      "name": "Fiji / ImageJ",
+      "domain": "Microscopy",
+      "kind": "desktop",
+      "extensions": [
+        ".tif",
+        ".tiff",
+        ".ome.tif",
+        ".ome.tiff",
+        ".png",
+        ".jpg",
+        ".jpeg"
+      ],
+      "commands": [
+        "ImageJ-win64.exe",
+        "ImageJ.exe",
+        "ImageJ-linux64",
+        "fiji",
+        "imagej"
+      ],
+      "mode": "file",
+      "args": [],
+      "notes": "",
+      "source": "https://imagej.net/ij/docs/guide/146-18.html",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "napari",
+      "name": "napari",
+      "domain": "Microscopy",
+      "kind": "desktop",
+      "extensions": [
+        ".tif",
+        ".tiff",
+        ".ome.tif",
+        ".ome.tiff",
+        ".png",
+        ".jpg",
+        ".npy"
+      ],
+      "commands": [
+        "napari.exe",
+        "napari"
+      ],
+      "mode": "file",
+      "args": [],
+      "notes": "Some formats need a napari reader plugin; large data should remain multiscale.",
+      "source": "https://napari.org/stable/tutorials/fundamentals/getting_started.html",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "qupath",
+      "name": "QuPath",
+      "domain": "Pathology",
+      "kind": "desktop",
+      "extensions": [
+        ".tif",
+        ".tiff",
+        ".ome.tif",
+        ".ome.tiff",
+        ".svs",
+        ".ndpi"
+      ],
+      "commands": [
+        "QuPath.exe",
+        "QuPath"
+      ],
+      "mode": "file",
+      "args": [
+        "--image"
+      ],
+      "notes": "",
+      "source": "https://qupath.readthedocs.io/en/stable/docs/advanced/command_line.html",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "bandage",
+      "name": "Bandage",
+      "domain": "Assembly graphs",
+      "kind": "desktop",
+      "extensions": [
+        ".gfa",
+        ".fastg"
+      ],
+      "commands": [
+        "Bandage.exe",
+        "Bandage"
+      ],
+      "mode": "file",
+      "args": [
+        "load"
+      ],
+      "notes": "",
+      "source": "https://github.com/rrwick/Bandage/wiki/Command-line",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "cellxgene",
+      "name": "CELLxGENE",
+      "domain": "Single cell",
+      "kind": "desktop",
+      "extensions": [
+        ".h5ad"
+      ],
+      "commands": [
+        "cellxgene.exe",
+        "cellxgene"
+      ],
+      "mode": "file",
+      "args": [
+        "launch"
+      ],
+      "notes": "Starts a local browser application; needs processed AnnData with embeddings. Windows may require a Linux/WSL installation.",
+      "source": "https://github.com/chanzuckerberg/cellxgene-documentation/blob/main/desktop/launch.md",
+      "platforms": [
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "loupe",
+      "name": "Loupe Browser",
+      "domain": "Single cell",
+      "kind": "desktop",
+      "extensions": [
+        ".cloupe"
+      ],
+      "commands": [
+        "Loupe Browser.exe",
+        "LoupeBrowser"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "Native 10x .cloupe only. A generic matrix cannot be renamed to .cloupe.",
+      "source": "https://www.10xgenomics.com/support/software/loupe-browser/latest",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "flowjo",
+      "name": "FlowJo",
+      "domain": "Flow cytometry",
+      "kind": "desktop",
+      "extensions": [
+        ".fcs"
+      ],
+      "commands": [
+        "FlowJo.exe",
+        "flowjo"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "Requires a licensed installation. Use original FCS with channel/acquisition metadata.",
+      "source": "https://docs.flowjo.com/flowjo/workspaces-and-samples/samples-and-file-types/ws-fcsfiles/",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "seems",
+      "name": "SeeMS",
+      "domain": "Mass spectrometry",
+      "kind": "desktop",
+      "extensions": [
+        ".mzml",
+        ".mzxml"
+      ],
+      "commands": [
+        "SeeMS.exe"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "Native spectra only, not an abundance table.",
+      "source": "https://proteowizard.sourceforge.io/tools/tools_base.html",
+      "platforms": [
+        "windows"
+      ]
+    },
+    {
+      "id": "skyline",
+      "name": "Skyline",
+      "domain": "Proteomics",
+      "kind": "desktop",
+      "extensions": [
+        ".sky",
+        ".sky.zip"
+      ],
+      "commands": [
+        "Skyline.exe"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "Opens a native Skyline document. Raw mzML requires import into a configured Skyline document.",
+      "source": "https://skyline.ms/",
+      "platforms": [
+        "windows"
+      ]
+    },
+    {
+      "id": "mesquite",
+      "name": "Mesquite",
+      "domain": "Phylogeny",
+      "kind": "desktop",
+      "extensions": [
+        ".nex",
+        ".nexus"
+      ],
+      "commands": [
+        "Mesquite.exe",
+        "mesquite"
+      ],
+      "mode": "manual",
+      "args": [],
+      "notes": "",
+      "source": "https://www.mesquiteproject.org/",
+      "platforms": [
+        "windows",
+        "linux",
+        "macos"
+      ]
+    },
+    {
+      "id": "juicebox-web",
+      "name": "Juicebox Web",
+      "domain": "Hi-C",
+      "kind": "web",
+      "extensions": [
+        ".hic"
+      ],
+      "url": "https://aidenlab.github.io/juicebox-web/",
+      "mode": "manual",
+      "notes": "Local files must be selected manually; Operon never uploads data automatically.",
+      "source": "https://aidenlab.github.io/juicebox-web/"
+    },
+    {
+      "id": "igv-web",
+      "name": "IGV Web",
+      "domain": "Genome tracks",
+      "kind": "web",
+      "extensions": [
+        ".bam",
+        ".cram",
+        ".vcf",
+        ".vcf.gz",
+        ".bed",
+        ".bedgraph",
+        ".bw",
+        ".bigwig",
+        ".gff",
+        ".gff3",
+        ".gtf"
+      ],
+      "url": "https://igv.org/app/",
+      "mode": "manual",
+      "notes": "Local files must be selected manually; Operon never uploads data automatically.",
+      "source": "https://igv.org/app/"
+    },
+    {
+      "id": "jbrowse",
+      "name": "JBrowse 2",
+      "domain": "Genome tracks",
+      "kind": "web",
+      "extensions": [
+        ".bam",
+        ".cram",
+        ".vcf",
+        ".vcf.gz",
+        ".bed",
+        ".bw",
+        ".bigwig",
+        ".gff",
+        ".gff3",
+        ".gtf"
+      ],
+      "url": "https://jbrowse.org/code/jb2/latest/",
+      "mode": "manual",
+      "notes": "Requires a reference assembly and track/session configuration; manually select local files.",
+      "source": "https://jbrowse.org/code/jb2/latest/"
+    },
+    {
+      "id": "higlass",
+      "name": "HiGlass",
+      "domain": "Hi-C",
+      "kind": "web",
+      "extensions": [
+        ".cool",
+        ".mcool"
+      ],
+      "url": "https://higlass.io/",
+      "mode": "manual",
+      "notes": "Requires a tile server and view configuration; this link is setup guidance, not an automatic local Cooler loader.",
+      "source": "https://higlass.io/"
+    },
+    {
+      "id": "molstar",
+      "name": "Mol*",
+      "domain": "Structures",
+      "kind": "web",
+      "extensions": [
+        ".pdb",
+        ".cif",
+        ".mmcif",
+        ".bcif"
+      ],
+      "url": "https://molstar.org/viewer/",
+      "mode": "manual",
+      "notes": "Local files must be selected manually; Operon never uploads data automatically.",
+      "source": "https://molstar.org/viewer/"
+    },
+    {
+      "id": "itol",
+      "name": "iTOL",
+      "domain": "Trees",
+      "kind": "web",
+      "extensions": [
+        ".nwk",
+        ".newick",
+        ".tree",
+        ".tre",
+        ".nex",
+        ".nexus",
+        ".phyloxml"
+      ],
+      "url": "https://itol.embl.de/",
+      "mode": "manual",
+      "notes": "Manual upload to a third-party service. Review data sharing before importing.",
+      "source": "https://itol.embl.de/"
+    },
+    {
+      "id": "peartree",
+      "name": "PearTree",
+      "domain": "Trees",
+      "kind": "web",
+      "extensions": [
+        ".nwk",
+        ".newick",
+        ".tree",
+        ".tre",
+        ".nex",
+        ".nexus"
+      ],
+      "url": "https://peartree.live/",
+      "mode": "manual",
+      "notes": "Local files must be selected manually; Operon never uploads data automatically.",
+      "source": "https://beast.community/peartree"
+    },
+    {
+      "id": "vitessce",
+      "name": "Vitessce",
+      "domain": "Spatial / single cell",
+      "kind": "web",
+      "extensions": [
+        ".h5ad",
+        ".zarr",
+        ".ome.tif",
+        ".ome.tiff"
+      ],
+      "url": "https://vitessce.io/",
+      "mode": "manual",
+      "notes": "Requires compatible data stores and a view configuration; not a generic h5ad file opener.",
+      "source": "https://vitessce.io/"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-<!-- biopipe:generated -->
+<!-- operon:generated -->
 # AntiFold 抗体逆折叠设计
 
 ## Purpose
@@ -31,7 +31,7 @@ This operator executes in the dedicated `antifold` interpreter; see docs/large_r
 
 ## Limitations
 
-Declared memory modes: full. BioPipe retains the existing planner, disk-backed
+Declared memory modes: full. Operon retains the existing planner, disk-backed
 inputs and emergency spill behavior; full-mode operators still require their
 declared working set. This generated reference has not been independently
 scientifically reviewed.

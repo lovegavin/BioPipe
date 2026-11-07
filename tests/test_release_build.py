@@ -21,7 +21,7 @@ def test_management_runtime_does_not_expand_with_operator_library():
 
 def test_seed_declares_analysis_requirements_previously_supplied_by_full_runtime():
     root = Path(__file__).resolve().parents[1]
-    index = json.loads((root / 'library/seed/biopipe/builtin_packages.json').read_text(encoding='utf-8'))
+    index = json.loads((root / 'library/seed/operon/builtin_packages.json').read_text(encoding='utf-8'))
     descriptors = {d['id']: d for p in index['packages'] for d in p['descriptors']}
     assert 'pandas>=2.0' in descriptors['CsvReader']['dependencies']
     assert 'matplotlib>=3.8' in descriptors['scatter']['dependencies']

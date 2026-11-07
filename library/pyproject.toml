@@ -3,15 +3,15 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "biopipe-builtin-library"
-version = "4.0.5"
-description = "Independent BioPipe reference operators, Readers and route templates"
+name = "operon-builtin-library"
+version = "5.0.0"
+description = "Independent Operon reference operators, Readers and route templates"
 requires-python = ">=3.11"
 
 [tool.setuptools]
-packages = ["biopipe_builtin_library"]
-package-dir = {biopipe_builtin_library = "seed"}
+packages = ["operon_builtin_library"]
+package-dir = {operon_builtin_library = "seed"}
 include-package-data = false
 
 [tool.setuptools.package-data]
-biopipe_builtin_library = ["operator_index.json", "reader_index.json", "src/**/*.py", "src/**/*.json", "src/**/*.md", "src/**/*.png", "src/**/*.jpg", "src/**/*.jpeg", "src/**/*.svg", "src/**/*.webp", "src/**/*.gif", "biopipe/*.json", "routes/**/*.json", "routes/**/*.yaml", "routes/**/*.yml"]
+operon_builtin_library = ["operator_index.json", "reader_index.json", "src/**/*.py", "src/**/*.json", "src/**/*.md", "src/**/*.png", "src/**/*.jpg", "src/**/*.jpeg", "src/**/*.svg", "src/**/*.webp", "src/**/*.gif", "operon/*.json", "routes/**/*.json", "routes/**/*.yaml", "routes/**/*.yml"]

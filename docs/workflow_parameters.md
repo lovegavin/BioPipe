@@ -69,7 +69,7 @@ their current inline values and do not create route versions.
 
 ## Portable route files
 
-**File → Export route bundle** downloads one `.biopipe.zip`, so the user chooses one
+**File → Export route bundle** downloads one `.operon.zip`, so the user chooses one
 destination while keeping three independently inspectable JSON files:
 
 ```text
@@ -79,17 +79,17 @@ execution.json
 ```
 
 Import the whole bundle through File, the saved-route picker, or
-`biopipe graph open route.biopipe.zip --expected-revision <revision>`.
-`biopipe graph validate route.biopipe.zip` also accepts the bundle. No archive file
+`operon graph open route.operon.zip --expected-revision <revision>`.
+`operon graph validate route.operon.zip` also accepts the bundle. No archive file
 is extracted or executed. Old self-contained graph JSON imports remain supported.
 Input datasets, environments and implementation packages are not inside this bundle.
 Older two-file bundles remain importable. `execution.json` uses
-`format: "biopipe.graph-execution"`, `schema_version: 1`, and `memory`, `execution`
+`format: "operon.graph-execution"`, `schema_version: 1`, and `memory`, `execution`
 and `routes` objects. Nested-route keys must match the topology. See
 [execution settings](EXECUTION_ENVIRONMENTS.md#workflow-settings-and-frozen-json-values)
 for target assignment, per-workflow configuration and compatibility behavior.
 
-Graph values use `format: "biopipe.graph-parameters"`, `schema_version: 1`, a global
+Graph values use `format: "operon.graph-parameters"`, `schema_version: 1`, a global
 `params` object and a `nodes` object keyed by node ID. Each node records `kind`,
 `operator`, `params`, `context_params`, optional Reader `args`, and optional nested
 `route_id`, `route_version`, `route` values. Import checks complete node coverage,
@@ -109,7 +109,7 @@ jobs/<job-id>/
 ```
 
 `task.yaml` references `parameters_file: parameters.json` and holds the flattened
-execution topology. The JSON has `format: "biopipe.task-parameters"`,
+execution topology. The JSON has `format: "operon.task-parameters"`,
 `schema_version: 1`, global `params`, a `sources` map of Reader arguments, and an
 ordered `steps` list containing `name`, `inputs`, `params` and `context_params`.
 Step identity/order and source coverage must match the task. The worker loads and
@@ -147,7 +147,7 @@ random seeds, external tools or numerical environments change.
 ## Importing routes from a previous release
 
 As of v0.6.1, a new profile can recognize the exact official v0.5.0/v0.5.1 bundled
-implementation identities through the shipped `biopipe/bundled_history.json`.
+implementation identities through the shipped `operon/bundled_history.json`.
 This is a compact compatibility receipt, not a copy of the old registry or code.
 The artifact hash, code hash, package identity, package version and operator
 version must match the trusted receipt and current version rules before rebinding.

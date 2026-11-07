@@ -68,10 +68,10 @@ def test_real_run_when_installed(tmp_path):
     import os
     import shutil
 
-    binary = os.environ.get("BIOPIPE_FOLDSEEK_BIN") or shutil.which("foldseek")
-    database = os.environ.get("BIOPIPE_FOLDSEEK_DB", "")
+    binary = os.environ.get("OPERON_FOLDSEEK_BIN") or shutil.which("foldseek")
+    database = os.environ.get("OPERON_FOLDSEEK_DB", "")
     if not binary or not database or not Path(database).exists():
-        pytest.skip("set BIOPIPE_FOLDSEEK_BIN and BIOPIPE_FOLDSEEK_DB to run the real search")
+        pytest.skip("set OPERON_FOLDSEEK_BIN and OPERON_FOLDSEEK_DB to run the real search")
     fixture = Path(__file__).parent / "fixtures" / "vhh_1mel.pdb"
     from src.reader import read_source
 

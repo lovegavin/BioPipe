@@ -6,9 +6,9 @@ import importlib.util
 import numpy as np
 import pytest
 
-from biopipe_sdk import Form
+from operon_sdk import Form
 
-SOURCE = Path(__file__).resolve().parents[1] / 'examples/igv_handoff/biopipe_igv_example/tracks.py'
+SOURCE = Path(__file__).resolve().parents[1] / 'examples/igv_handoff/operon_igv_example/tracks.py'
 spec = importlib.util.spec_from_file_location('igv_example_under_test', SOURCE)
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)

@@ -40,10 +40,14 @@ def _overlaps_any(starts, ends, query_starts, query_ends):
 class IntervalJaccardStep(Step):
     """Compare two interval sets with Jaccard and reciprocal coverage."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "interval_jaccard.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "interval_jaccard",
         "version": "1.0.0",

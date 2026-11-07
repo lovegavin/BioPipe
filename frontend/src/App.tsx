@@ -555,7 +555,7 @@ function Studio() {
     try {
       let fragment = duplicate ? copyFragment(graphRef.current, selection) : clipboard.current;
       if (!duplicate) {
-        try {const text = await navigator.clipboard.readText(); if(text.includes('"biopipe/graph-fragment-v1"')) fragment = parseFragment(text);} catch { /* use internal clipboard */ }
+        try {const text = await navigator.clipboard.readText(); if(text.includes('"operon/graph-fragment-v1"')) fragment = parseFragment(text);} catch { /* use internal clipboard */ }
       }
       if (!fragment?.nodes.length) return notify(t("剪贴板中没有 Operon 节点。"));
       if (page !== activeIdRef.current) return;
@@ -1130,7 +1130,7 @@ function Studio() {
     function nativePaste(event: ClipboardEvent) {
       if (editable(event.target) || busy) return;
       const text = event.clipboardData?.getData("text/plain");
-      if (!text?.includes('"biopipe/graph-fragment-v1"')) return;
+      if (!text?.includes('"operon/graph-fragment-v1"')) return;
       event.preventDefault();
       try {
         const fragment = parseFragment(text), value = pasteFragment(graphRef.current, fragment);
@@ -1281,7 +1281,7 @@ function Studio() {
                   <button
                     onClick={() => {
                       const graph = graphRef.current;
-                      void api.exportWorkflow(graph).then(blob => downloadBlob(`${graph.name.replace(/[\\/:*?"<>|]/g, "_")}.biopipe.zip`, blob)).catch(failure);
+                      void api.exportWorkflow(graph).then(blob => downloadBlob(`${graph.name.replace(/[\\/:*?"<>|]/g, "_")}.operon.zip`, blob)).catch(failure);
                       setExportOpen(false);
                     }}
                   >
@@ -1402,7 +1402,7 @@ function Studio() {
             disabled={busy}
             draggable={!busy}
             onDragStart={(e) => {
-              e.dataTransfer.setData("application/biopipe", "source");
+              e.dataTransfer.setData("application/operon", "source");
               e.dataTransfer.effectAllowed = "move";
             }}
             onClick={() => add()}
@@ -1418,7 +1418,7 @@ function Studio() {
               {filteredReaders.map(reader => <button key={reader.id} className="operator-item reader-item"
                 title={[reader.description, reader.extensions.join(' · '), targetPlatformWarning(reader.supported_systems, graph, servers, bootstrap.system)].filter(Boolean).join('\n')}
                 disabled={busy} draggable={!busy} onClick={() => add(`reader:${reader.id}`)}
-                onDragStart={event => {event.dataTransfer.setData('application/biopipe', `reader:${reader.id}`); event.dataTransfer.effectAllowed = 'move';}}>
+                onDragStart={event => {event.dataTransfer.setData('application/operon', `reader:${reader.id}`); event.dataTransfer.effectAllowed = 'move';}}>
                 <span className="operator-icon"><OperatorArtwork spec={{...reader, icon: reader.icon || 'Database'}} size={18}/></span>
                 <span><strong>{reader.title || reader.id}</strong>
                   {supportedPlatformLabel(reader.supported_systems) && <span className="platform-badge" title={t("支持的运行环境")}>{supportedPlatformLabel(reader.supported_systems)}</span>}
@@ -1431,7 +1431,7 @@ function Studio() {
               </button>}
               {routes.filter(route => route.name.toLowerCase().includes(search.toLowerCase())).map(route => <button key={route.id} className={`operator-item route-item ${libraryState.disabled.includes(route.id) ? "is-library-disabled" : ""}`} title={t("{v0} · 右键管理", {v0: routeSpec(route).description})} disabled={busy} aria-disabled={libraryState.disabled.includes(route.id)} draggable={!busy && !libraryState.disabled.includes(route.id)}
                 onClick={() => add(route.id)} onContextMenu={event => {event.preventDefault(); setContextMenu({x: event.clientX, y: event.clientY, route, libraryKey: route.id});}}
-                onDragStart={event => {event.dataTransfer.setData("application/biopipe", route.id); event.dataTransfer.effectAllowed = "move";}}>
+                onDragStart={event => {event.dataTransfer.setData("application/operon", route.id); event.dataTransfer.effectAllowed = "move";}}>
                 <span className="operator-icon"><Stack size={18}/></span><span><strong>{route.name}</strong><small>{libraryState.disabled.includes(route.id) ? t("已禁用 · ") : ""}{route.graph.interface?.inputs.length} → {route.graph.interface?.outputs.length} · v{route.version}</small></span><Plus className="add-hint" size={14}/>
               </button>)}
             </LibrarySection>}
@@ -1450,7 +1450,7 @@ function Studio() {
                       onContextMenu={event => {event.preventDefault(); setContextMenu({x: event.clientX, y: event.clientY, libraryKey: spec.id});}}
                       onDragStart={(e) => {
                         e.dataTransfer.setData(
-                          "application/biopipe",
+                          "application/operon",
                           spec.id,
                         );
                         e.dataTransfer.effectAllowed = "move";
@@ -1490,7 +1490,7 @@ function Studio() {
             }}
             onDrop={(event) => {
               event.preventDefault();
-              const type = event.dataTransfer.getData("application/biopipe");
+              const type = event.dataTransfer.getData("application/operon");
               const position = flow.screenToFlowPosition({x: event.clientX, y: event.clientY});
               if (type) add(type === "source" ? undefined : type, position);
               else if (event.dataTransfer.files.length) void dropFiles(Array.from(event.dataTransfer.files), position);
@@ -1658,7 +1658,7 @@ function Studio() {
               }}
             >
               <Background
-                id="biopipe-grid-fine"
+                id="operon-grid-fine"
                 bgColor="transparent"
                 variant={BackgroundVariant.Lines}
                 gap={24}
@@ -1666,7 +1666,7 @@ function Studio() {
                 color="var(--grid-fine)"
               />
               <Background
-                id="biopipe-grid-major"
+                id="operon-grid-major"
                 bgColor="transparent"
                 variant={BackgroundVariant.Lines}
                 gap={120}

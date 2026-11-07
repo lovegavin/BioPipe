@@ -1,6 +1,6 @@
 """SDK-only example of equivalent full/stream and full/disk execution."""
 import numpy as np
-from biopipe_sdk import Form, Reader, Step, port, reader_contract
+from operon_sdk import Form, Reader, Step, port, reader_contract
 
 
 class Sum(Step):

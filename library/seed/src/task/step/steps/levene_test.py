@@ -12,7 +12,7 @@ from ._tests50_common import grouped_expression
 
 
 class LeveneTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Levene test for each feature.
 
     ``center="mean"`` is Levene's test; ``center="median"`` is the
@@ -20,7 +20,12 @@ class LeveneTestStep(Step):
     exposes the median version with its own name.
     """
     parameters_file = 'levene_test.LeveneTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'levene_test',
      'version': '1.0.0',
      'kind': 'operator',

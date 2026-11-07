@@ -24,7 +24,7 @@ Refresh checks dependencies but does not automatically install missing packages.
 
 ## Installation and workspace ownership
 
-The default registry is `$HOME/.local/share/biopipe/server.json`, with HOME resolved
+The default registry is `$HOME/.local/share/operon/server.json`, with HOME resolved
 on the server. A configured installation directory overrides that location.
 This compact document contains schema version 1, a stable installation identity,
 absolute Linux application/Python paths, a default workspace and an audit version.
@@ -44,10 +44,10 @@ connection mode. An administrator can register existing compatible code without
 uploading it from a desktop:
 
 ```sh
-/srv/env/bin/python -m biopipe.remote.installation register \
-  --base /srv/biopipe-service \
-  --app-dir /srv/biopipe \
-  --workspace /srv/biopipe-work
+/srv/env/bin/python -m operon.remote.installation register \
+  --base /srv/operon-service \
+  --app-dir /srv/operon \
+  --workspace /srv/operon-work
 ```
 
 These are example paths, not built-in locations. Registration does not create a
@@ -87,7 +87,7 @@ can execute. Frozen parameter JSON and execution JSON remain per workflow.
 
 ## Document-first discovery and readiness
 
-Server startup uses compiled `library/seed/biopipe/builtin_packages.json` and the workspace's
+Server startup uses compiled `library/seed/operon/builtin_packages.json` and the workspace's
 plugin registry. It does not enumerate/stat/hash each provider's Python source.
 Explicit refresh remains the operation that detects new or changed source.
 Switching an existing workspace into this mode preserves its registered metadata

@@ -9,8 +9,8 @@
     <script>
       // Apply the saved appearance before first paint, including the loading screen.
       try {
-        const preference = JSON.parse(localStorage.getItem("biopipe-studio-config-v1") || '{}').theme
-          ?? localStorage.getItem("biopipe-studio-theme-v1");
+        const preference = JSON.parse(localStorage.getItem("operon-studio-config-v1") || '{}').theme
+          ?? localStorage.getItem("operon-studio-theme-v1");
         const theme =
           preference === "light" || preference === "dark"
             ? preference

@@ -14,11 +14,14 @@ _STATISTICS = ("mean_pae", "max_pae", "fraction_below")
 class StructurePaeSummaryStep(Step):
     """Per-residue mean/max PAE and the fraction of residues below a threshold."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "structure_pae_summary.StructurePaeSummaryStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_pae_summary",
         "version": "1.0.0",

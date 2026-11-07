@@ -1,5 +1,5 @@
 # Portable CPU environment. No machine-specific prefix or CUDA toolchain.
-name: biopipe
+name: operon
 channels:
   - conda-forge
 dependencies:

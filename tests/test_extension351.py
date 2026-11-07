@@ -74,8 +74,8 @@ def test_real_rfam_trna(tmp_path):
     import shutil
     from pathlib import Path
 
-    if os.environ.get("BIOPIPE_RFAM_REAL") != "1":
-        pytest.skip("set BIOPIPE_RFAM_REAL=1 to run the real Rfam scan")
+    if os.environ.get("OPERON_RFAM_REAL") != "1":
+        pytest.skip("set OPERON_RFAM_REAL=1 to run the real Rfam scan")
     cm = Path("/home/gavin/tools/rfam/Rfam.cm")
     if shutil.which("cmscan") is None or not cm.is_file():
         pytest.skip("cmscan or the Rfam covariance models are not installed")

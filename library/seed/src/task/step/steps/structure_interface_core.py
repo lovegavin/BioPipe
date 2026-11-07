@@ -122,11 +122,14 @@ def _chain_index(chains: list[str], chain: str) -> int:
 class StructureInterfaceCoreStep(Step):
     """Classify interface residues into rim and core from buried surface area."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "structure_interface_core.StructureInterfaceCoreStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_interface_core",
         "version": "1.0.0",

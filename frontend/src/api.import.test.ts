@@ -11,10 +11,10 @@ it.each([['zh-CN', '文件不存在'], ['en', 'File not found']] as const)(
       code: 'workflow_resource_error', message: 'not a generic service error',
       details: {reason: 'missing', resource: 'parameters.json', directory: '/workspace/project'},
     })}));
-    await expect(api.import('format: biopipe.workflow', '.')).rejects.toMatchObject({
+    await expect(api.import('format: operon.workflow', '.')).rejects.toMatchObject({
       code: 'workflow_resource_error', status: 422,
       message: expect.stringContaining(reason),
     });
-    await expect(api.import('format: biopipe.workflow', '.')).rejects.toThrow('parameters.json');
-    await expect(api.import('format: biopipe.workflow', '.')).rejects.toThrow('/workspace/project');
+    await expect(api.import('format: operon.workflow', '.')).rejects.toThrow('parameters.json');
+    await expect(api.import('format: operon.workflow', '.')).rejects.toThrow('/workspace/project');
   });

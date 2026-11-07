@@ -22,10 +22,15 @@ STATISTICS = (
 
 
 class VcfSampleStatsStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     """One row per sample with call-rate, heterozygosity and Ti/Tv ratios."""
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "version": "1.0.0",
         "id": "vcf_sample_stats",
         "title": "Per-sample VCF genotype statistics",

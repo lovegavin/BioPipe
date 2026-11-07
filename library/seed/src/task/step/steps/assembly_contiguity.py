@@ -11,9 +11,12 @@ from ._assembly_utils import contiguity
 
 
 class AssemblyContiguityStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "assembly_contiguity.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "assembly_contiguity",
         "version": "1.0.0",

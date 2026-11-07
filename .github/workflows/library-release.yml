@@ -30,15 +30,23 @@ jobs:
         shell: bash
         run: |
           version=$(python -c 'import json; print(json.load(open("library/release.json"))["build_application"])')
-          wheel_url="https://github.com/lovegavin/BioPipe/releases/download/v${version}/biopipe_studio-${version}-py3-none-any.whl"
-          if curl -fsIL "$wheel_url" >/dev/null 2>&1; then
-            python -m pip install "$wheel_url"
-          else
-            echo "No released wheel for BioPipe ${version}; building it from the v${version} tag."
+          installed=0
+          for candidate in "operon_studio-${version}-py3-none-any.whl" "biopipe_studio-${version}-py3-none-any.whl"; do
+            for owner in lovegavin/Operon lovegavin/BioPipe; do
+              wheel_url="https://github.com/${owner}/releases/download/v${version}/${candidate}"
+              if curl -fsIL "$wheel_url" >/dev/null 2>&1; then
+                echo "Installing released application wheel ${wheel_url}"
+                python -m pip install "$wheel_url"
+                installed=1
+                break 2
+              fi
+            done
+          done
+          if [ "$installed" = "0" ]; then
+            echo "No released wheel for application ${version}; building it from this checkout."
             python -m pip install build
-            git clone --depth 1 --branch "v${version}" https://github.com/lovegavin/BioPipe.git .release-application
-            python -m build --wheel --outdir .release-wheel .release-application
-            python -m pip install .release-wheel/biopipe_studio-${version}-py3-none-any.whl
+            python -m build --wheel --outdir .release-wheel .
+            python -m pip install .release-wheel/operon_studio-${version}-py3-none-any.whl
           fi
           python -m pip install pytest h5py scikit-learn biopython rdkit
           python -m pip install "torch>=2.0" --index-url https://download.pytorch.org/whl/cpu
@@ -63,7 +71,7 @@ jobs:
           python -m pip install build
           python -m build --wheel --outdir build/library library
           cd build/library
-          sha256sum biopipe_builtin_library-*.whl > SHA256SUMS-seed.txt
+          sha256sum operon_builtin_library-*.whl > SHA256SUMS-seed.txt
       - name: Package builtin route bundles
         if: runner.os == 'Linux'
         shell: bash
@@ -74,11 +82,12 @@ jobs:
         with:
           name: library-${{ matrix.os }}
           path: |
-            build/library/*.biopipe-library.zip
+            build/library/*.operon-library.zip
             build/library/*.whl
             build/library/SHA256SUMS-*.txt
             build/library/verification-*.json
-            build/library/BioPipe-Routes-*.zip
+            build/library/Operon-Routes-*.zip
+            build/library/Operon-Quickstart-*.zip
           if-no-files-found: error
   publish:
     if: startsWith(github.ref, 'refs/tags/library-v')
@@ -105,6 +114,6 @@ jobs:
           cp install_dependencies.py install-dependencies.sh install-dependencies.ps1 artifacts/
           sha256sum install_dependencies.py install-dependencies.sh install-dependencies.ps1 >> artifacts/SHA256SUMS.txt
           gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
-            --title "BioPipe Operator Library v${GITHUB_REF_NAME#library-v}" \
+            --title "Operon Operator Library v${GITHUB_REF_NAME#library-v}" \
             --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
-            artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/*Routes*.zip QUICKSTART.md QUICKSTART.zh.md install_dependencies.py install-dependencies.sh install-dependencies.ps1 artifacts/SHA256SUMS.txt artifacts/verification-*.json
+            artifacts/*.operon-library.zip artifacts/*.whl artifacts/*Routes*.zip artifacts/*Quickstart*.zip QUICKSTART.md QUICKSTART.zh.md install_dependencies.py install-dependencies.sh install-dependencies.ps1 artifacts/SHA256SUMS.txt artifacts/verification-*.json

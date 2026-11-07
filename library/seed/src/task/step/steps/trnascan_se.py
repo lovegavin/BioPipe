@@ -117,9 +117,12 @@ def _export_summary(form) -> dict:
 
 
 class TrnascanSeStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "trnascan_se.TrnascanSeStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "trnascan_se",
         "version": "1.0.0",

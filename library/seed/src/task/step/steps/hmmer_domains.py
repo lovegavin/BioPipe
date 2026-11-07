@@ -157,9 +157,12 @@ def _export_summary(form) -> dict:
     }
 
 class HmmerDomainsStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "hmmer_domains.HmmerDomainsStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "hmmer_domains",
         "version": "1.0.0",
@@ -216,7 +219,7 @@ class HmmerDomainsStep(Step):
         if not sequences:
             raise StepError("hmmer_domains: the input carries no sequence")
         hmm_text = str(params.get("hmm_path", "") or "").strip() or os.environ.get(
-            "BIOPIPE_PFAM_HMM", ""
+            "OPERON_PFAM_HMM", ""
         )
         if not hmm_text:
             raise StepError(

@@ -12,10 +12,14 @@ from ._stats21_common import ordered_labels
 
 
 class CorrespondenceAnalysisStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Row and column principal coordinates from a contingency table."""
     parameters_file = 'correspondence_analysis.CorrespondenceAnalysisStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'correspondence_analysis',
      'version': '1.0.0',
      'kind': 'operator',

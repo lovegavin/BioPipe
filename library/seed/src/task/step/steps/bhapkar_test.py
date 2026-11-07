@@ -12,10 +12,14 @@ from ._stats20_common import scalar_form
 
 
 class BhapkarTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Bhapkar test, the Stuart-Maxwell statistic with a finite-sample correction."""
     parameters_file = 'bhapkar_test.BhapkarTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'bhapkar_test',
      'version': '1.0.0',
      'kind': 'operator',

@@ -1,13 +1,13 @@
 using System.Diagnostics;
 
-namespace BioPipe.Desktop;
+namespace Operon.Desktop;
 
 internal static class IsolatedEnvironment
 {
     internal static void Configure(ProcessStartInfo start, string install)
     {
         foreach (var key in start.Environment.Keys.ToArray())
-            if (key.StartsWith("BIOPIPE_", StringComparison.OrdinalIgnoreCase) ||
+            if (key.StartsWith("OPERON_", StringComparison.OrdinalIgnoreCase) ||
                 key.StartsWith("OPERON_", StringComparison.OrdinalIgnoreCase) ||
                 key.StartsWith("PYTHON", StringComparison.OrdinalIgnoreCase) ||
                 key.StartsWith("CONDA", StringComparison.OrdinalIgnoreCase) ||

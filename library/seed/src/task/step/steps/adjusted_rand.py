@@ -11,10 +11,14 @@ from ._metric_common import label_series
 
 
 class AdjustedRandStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Adjusted Rand index between two label columns on the same samples."""
     parameters_file = 'adjusted_rand.AdjustedRandStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'adjusted_rand',
      'version': '1.0.0',
      'kind': 'operator',

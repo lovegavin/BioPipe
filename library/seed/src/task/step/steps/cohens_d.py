@@ -10,10 +10,15 @@ from ._matrix_common import grouped
 
 
 class CohensDStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Per-feature standardized mean difference between two groups."""
     parameters_file = 'cohens_d.CohensDStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'cohens_d',
      'version': '1.0.0',
      'kind': 'operator',

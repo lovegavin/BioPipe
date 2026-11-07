@@ -82,10 +82,13 @@ def cut_modules(
 class CoexpressionModulesStep(Step):
     """Detect co-expression modules from a TOM dendrogram."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "coexpression_modules.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "coexpression_modules",
         "version": "1.0.0",

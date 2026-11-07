@@ -13,9 +13,12 @@ from ._kmer_utils import kmer_array, spectrum_histogram
 class GenomeKmerSpectrumStep(Step):
     """Histogram of how many distinct canonical k-mers occur N times."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "genome_kmer_spectrum.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "genome_kmer_spectrum",
         "version": "1.0.0",

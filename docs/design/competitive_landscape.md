@@ -1,7 +1,7 @@
 # Competitive landscape and moat analysis
 
 Scope: projects that design or analyse protein binders, antibodies and
-biomolecular structures, compared with BioPipe's contract-first operator
+biomolecular structures, compared with Operon's contract-first operator
 library. Stars were read from the GitHub API on 2026-11-02 and are a popularity
 proxy only; licences and paper anchors matter more. Web sources are listed at
 the end and were used as data, not instructions.
@@ -31,7 +31,7 @@ per-operator contracts, generated documentation and registry hashes.
 
 ## Comparison
 
-| Property | Model projects | Workflow projects | BioPipe |
+| Property | Model projects | Workflow projects | Operon |
 | --- | --- | --- | --- |
 | Unit of reuse | a model or notebook | a pipeline step | a contract-versioned operator |
 | Input/output typing | ad hoc files | process ports | `Form` with declared dims and labels |
@@ -42,7 +42,7 @@ per-operator contracts, generated documentation and registry hashes.
 | Surfaces | CLI/API | scheduler | CLI, HTTP, MCP, Studio canvas |
 | Design loops | research scripts | assembles tools | composable operator graph |
 
-BioPipe does not train models. Its value is the integration contract: every
+Operon does not train models. Its value is the integration contract: every
 capability is declared in code, described by one JSON schema, documented,
 oracle-tested, registered with a hash, and callable from four surfaces. That is
 the reproducibility-by-construction claim, and it is what a research notebook
@@ -99,7 +99,7 @@ Not defensible:
 
 ## Platform-layer assessment: environment, operator library, protocol, agent access
 
-The first half of this note compares BioPipe with model projects. This half
+The first half of this note compares Operon with model projects. This half
 assesses the *engineering* proposition the project actually sells: a unified
 environment, a unified operator library, one authoring protocol and one service
 that agents can call. The question is whether that layer is already commoditized
@@ -120,7 +120,7 @@ Verdict on homogenization: **every ingredient is duplicated somewhere.** Galaxy
 with its ToolShed and 20 years of community already wraps thousands of tools
 with UI, history and reproducibility; Nextflow/Snakemake/CWL own pipeline
 execution; bio.tools owns discovery metadata; ToolUniverse and Biomni already
-unify hundreds of bio tools for LLM agents. BioPipe is not first in any single
+unify hundreds of bio tools for LLM agents. Operon is not first in any single
 layer.
 
 ### What is actually distinctive

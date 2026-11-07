@@ -24,8 +24,8 @@ def check_manifest(task_dir, manifest):
     if not errors:
         try:
             import json
-            from biopipe.packages import bundled_state
-            from biopipe.plugins import active_descriptors
+            from operon.packages import bundled_state
+            from operon.plugins import active_descriptors
             lock_path = task_dir / 'plugins.lock.json'
             state = json.loads(lock_path.read_text(encoding='utf-8')) if lock_path.is_file() else bundled_state(manifest_only=True)
             catalog = catalog_from_descriptors(active_descriptors(state))
@@ -33,11 +33,11 @@ def check_manifest(task_dir, manifest):
             # including another drive. This allowance belongs to this CLI call;
             # the HTTP/Studio compiler keeps its default workspace policy.
             input_roots = {task_dir, *(Path(source['path']).parent for source in sources.values())}
-            from biopipe.reader_selection import candidates
+            from operon.reader_selection import candidates
             def include_paths(spec, params, base):
                 for key, field in spec.get('parameters_schema', {}).get('properties', {}).items():
                     path = params.get(key)
-                    if field.get('x-biopipe-path') and isinstance(path, str) and path:
+                    if field.get('x-operon-path') and isinstance(path, str) and path:
                         input_roots.add((base / path).resolve().parent)
             for source in value['sources'].values():
                 for reader in candidates(catalog['readers'], source['path'], source.get('reader')):

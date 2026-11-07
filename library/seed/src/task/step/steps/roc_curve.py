@@ -11,10 +11,15 @@ from ._metric_common import binary_truth, label_series, score_series
 
 
 class RocCurveStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """ROC curve points (FPR, TPR, threshold) for a binary target."""
     parameters_file = 'roc_curve.RocCurveStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'roc_curve',
      'version': '1.0.0',
      'kind': 'operator',

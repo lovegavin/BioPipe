@@ -40,10 +40,14 @@ def correlation_matrix(ME: np.ndarray, traits: np.ndarray) -> np.ndarray:
 class ModuleTraitCorrelationStep(Step):
     """Correlate module eigengenes with sample traits."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "module_trait_correlation.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "module_trait_correlation",
         "version": "1.0.0",

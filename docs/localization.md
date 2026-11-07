@@ -50,10 +50,10 @@ The existing footer entry opens **Manage library**. It contains package status,
 refresh, dependency repair and enable/disable/remove controls. The large **+**
 opens **Add operators** in the same window:
 
-* Import an individual `.whl` or a complete `.biopipe-library.zip`.
+* Import an individual `.whl` or a complete `.operon-library.zip`.
 * Open operator/Reader source directories and scan for added or edited files.
 * Select one or more saved workflows and register them as workflow operators.
-* Import workflow JSON or a `.biopipe.zip` bundle, save it and register it.
+* Import workflow JSON or a `.operon.zip` bundle, save it and register it.
 
 Changing pages preserves selection and search. Importing here does not replace
 the active canvas or submit a run. Successfully saved imports remain available
@@ -139,7 +139,7 @@ original text. Custom user node titles and saved route names remain unchanged.
 ## Packaging, refresh and identity
 
 Include `*.json` in setuptools package data (nested sidecars need matching patterns).
-The standard `biopipe plugin init` templates already include a language pack and
+The standard `operon plugin init` templates already include a language pack and
 package-data rules. The source-folder scanner also copies declared language files.
 No translation service or additional Python environment is needed.
 
@@ -154,7 +154,7 @@ metadata updates reuse installed dependency targets and existing workflow pins.
 Frozen workflow parameter JSON remains authoritative. A first-time code edit to add
 `localization_file` legitimately changes code identity; subsequent sidecar edits do not.
 
-Use `biopipe_sdk.localization.project(descriptor, locale)` for a display-only Python
+Use `operon_sdk.localization.project(descriptor, locale)` for a display-only Python
 projection. Never write that projection over the canonical descriptor or job lock.
 CLI/MCP compact discovery stays in the declaration's original language to avoid
 inflating agent responses with every translation.

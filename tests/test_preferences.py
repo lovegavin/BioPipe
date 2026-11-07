@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from src.web.api import create_app
 from src.web.service import Settings
 from src.web.preferences import Preferences, load, save
-from biopipe.user_config import UserConfig
+from operon.user_config import UserConfig
 from src.web.storage import atomic_json
 
 ROOT = Path(__file__).resolve().parents[1]

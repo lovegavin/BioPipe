@@ -1,4 +1,4 @@
-# Historical BioPipe backend 3.0 milestone
+# Historical Operon backend 3.0 milestone
 
 These original notes describe the earlier backend/library development milestone.
 They do not describe the Operon Studio v3.0.0 installer. See [application notes](v3.0.0.md)
@@ -6,15 +6,15 @@ and [current versioning rules](../backend_versioning.md).
 
 ---
 
-# BioPipe 3.0.0
+# Operon 3.0.0
 
 Backend version: 3.0.0 (operators 717, Readers 101).
 
-Coordinated release with **BioPipe Operator Library v3.0.0**. The application and
+Coordinated release with **Operon Operator Library v3.0.0**. The application and
 the reference operator library are separate products, but this milestone aligns
 both on version `3.0.0` (`v3.0.0` and `library-v3.0.0`).
 
-This release is based on BioPipe Studio 2.4.1 and operator library 2026.11.5.2.
+This release is based on Operon Studio 2.4.1 and operator library 2026.11.5.2.
 It retains the unified Settings page, desktop-first result viewers and domain
 exports (HIC/Cooler, GenBank, BED/bedGraph, GraphML, Newick) shipped there.
 
@@ -43,7 +43,7 @@ exports (HIC/Cooler, GenBank, BED/bedGraph, GraphML, Newick) shipped there.
   sites (previously a `KeyError` during export).
 - `nmds` filters scikit-learn `MDS` keywords against the installed signature, so
   versions that removed `init` no longer raise `TypeError`.
-- The example plugin used by package tests accepts BioPipe 3.x (`<4`).
+- The example plugin used by package tests accepts Operon 3.x (`<4`).
 
 ## Compatibility
 

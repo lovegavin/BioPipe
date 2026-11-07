@@ -1,6 +1,6 @@
 # Domain exports and specialist viewers
 
-BioPipe prepares reproducible analysis artifacts, then hands them to specialist
+Operon prepares reproducible analysis artifacts, then hands them to specialist
 software for interactive inspection and figure refinement. One `export_results`
 operator serves every supported output format. Further computations branch from
 its upstream data; exporting does not consume or replace that Form.
@@ -16,7 +16,7 @@ its upstream data; exporting does not consume or replace that Form.
    imports a scientific package or scans entire disks to find installed viewers.
 3. **Specialist software:** the installed desktop app loads a file or the user
    opens it manually. Browser tools are secondary links. No data is automatically
-   uploaded to a third-party site; no BioPipe credential is embedded in a URL.
+   uploaded to a third-party site; no Operon credential is embedded in a URL.
 
 A library update supplies converters but cannot add a menu to an older application.
 The viewer service/UI requires the updated application. This feature does not
@@ -47,8 +47,8 @@ profile settings, never workflow fields. Use the actual EXE, or a GUI JAR plus
 Java on PATH, rather than a shortcut/batch file. On macOS configure the executable
 inside the `.app` bundle. A headless Linux host without a display cannot launch a
 GUI; run this handoff on the desktop/client service instead.
-External desktop viewers have their own lifetime: closing BioPipe does not close
-them. Scientific workers and dependency installers retain BioPipe's normal cleanup.
+External desktop viewers have their own lifetime: closing Operon does not close
+them. Scientific workers and dependency installers retain Operon's normal cleanup.
 
 Defaults apply only when the user requests opening a result, not automatically
 after every run. The longest matching saved suffix wins (for example `.vcf.gz`
@@ -134,28 +134,28 @@ and returns the HIC path rather than reporting a false automatic load. SnapGene'
 adapter likewise uses manual opening instead of inventing a public editing API.
 FigTree is retained for existing users but is deprecated upstream; PearTree is
 listed as a browser alternative. IGV needs the correct assembly, BAM/CRAM/VCF
-indexes as appropriate, and the CRAM reference. BioPipe cannot invent these files.
+indexes as appropriate, and the CRAM reference. Operon cannot invent these files.
 
 ## CLI and MCP
 
 First discover real job/artifact/role identifiers:
 
 ```text
-biopipe artifacts list JOB
-biopipe artifacts preview JOB ARTIFACT
-biopipe artifacts viewers JOB ARTIFACT --role data
-biopipe viewers list --refresh
-biopipe viewers configure igv --executable "ABSOLUTE_APPLICATION_PATH"
-biopipe viewers default .bed --viewer igv
-biopipe artifacts open JOB ARTIFACT --role data
-biopipe artifacts open JOB ARTIFACT --role data --viewer igv
-biopipe artifacts prepare-viewer JOB ARTIFACT --role data
+operon artifacts list JOB
+operon artifacts preview JOB ARTIFACT
+operon artifacts viewers JOB ARTIFACT --role data
+operon viewers list --refresh
+operon viewers configure igv --executable "ABSOLUTE_APPLICATION_PATH"
+operon viewers default .bed --viewer igv
+operon artifacts open JOB ARTIFACT --role data
+operon artifacts open JOB ARTIFACT --role data --viewer igv
+operon artifacts prepare-viewer JOB ARTIFACT --role data
 ```
 
 Omit `--executable` when configuring to clear that profile override. Omit `--viewer`
 from `viewers default .bed` to clear the saved preference; omit it from `artifacts
 open` to use the current default. MCP uses
-`biopipe_viewer(job_id, artifact_id, role)` to discover choices and the same call
+`operon_viewer(job_id, artifact_id, role)` to discover choices and the same call
 with `viewer="igv"` to launch. Launch needs `--allow-run`. Obtain only the required
 artifact's preview; do not retrieve every operator schema or the entire matrix.
 Discovery returns `default_viewer` and `default_source`; MCP discovery still never
@@ -180,7 +180,7 @@ on the server. Preference writes require execution scope, just like program-path
 configuration; unprivileged clients can read compatible choices only.
 
 ```python
-from biopipe.client import Client, data_directory
+from operon.client import Client, data_directory
 
 # Use the normal profile or an explicitly chosen application instance.
 client = Client(data_directory(), scopes=["context", "run"])
@@ -200,11 +200,11 @@ configuration is a separate run-authorized operation. Launch uses an argument li
 with `shell=False`, never interpolated commands. Scripts, shortcuts and executable
 artifact formats are not accepted as generic viewer data. App output goes to
 `viewers/launch.log` under the selected application data directory. The app owns
-its GUI process after launch; BioPipe does not kill it on exit.
+its GUI process after launch; Operon does not kill it on exit.
 
 ## Add a viewer without adding an operator
 
-The shipped catalog is `biopipe/viewers.json`. A profile can add/override entries
+The shipped catalog is `operon/viewers.json`. A profile can add/override entries
 in `<application-data-dir>/viewers/catalog.json` using `schema_version: 1` and a
 `viewers` array with the same fields. The catalog is read on demand; restart/rebuild
 is unnecessary. This is trusted application configuration, not workflow data.

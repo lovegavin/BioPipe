@@ -16,7 +16,7 @@ from src.task.step.steps._variant_utils import (
 )
 
 _INFO_LINES = (
-    '##INFO=<ID=CSQ,Number=1,Type=String,Description="Most severe consequence across transcripts (BioPipe)">',
+    '##INFO=<ID=CSQ,Number=1,Type=String,Description="Most severe consequence across transcripts (Operon)">',
     '##INFO=<ID=GENE,Number=1,Type=String,Description="Gene name for the most severe consequence">',
     '##INFO=<ID=TX,Number=1,Type=String,Description="Transcript id for the most severe consequence">',
     '##INFO=<ID=AA,Number=1,Type=String,Description="Amino acid change for coding SNVs">',
@@ -34,9 +34,22 @@ def _file_path(artifact, operator, formats):
 
 
 class VariantConsequenceStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "variant_consequence.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         "protocol_version": 3,
         "id": "variant_consequence",
         "version": "1.0.0",

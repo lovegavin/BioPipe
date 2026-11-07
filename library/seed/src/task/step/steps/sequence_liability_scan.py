@@ -83,12 +83,15 @@ def liability_rows(
 class SequenceLiabilityScanStep(Step):
     """Report deamidation, isomerisation, oxidation and glycosylation sites."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = (
         "sequence_liability_scan.SequenceLiabilityScanStep.parameters.json"
     )
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "sequence_liability_scan",
         "version": "1.0.0",

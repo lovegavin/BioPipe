@@ -2,9 +2,9 @@
 from copy import deepcopy
 import json
 
-from biopipe.packages import bundled_state
-from biopipe.registry import build_routes
-from biopipe_sdk.protocol import catalog_entry
+from operon.packages import bundled_state
+from operon.registry import build_routes
+from operon_sdk.protocol import catalog_entry
 
 
 def route_fixture(tmp_path):

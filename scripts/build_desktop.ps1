@@ -15,14 +15,14 @@ if (-not $SkipFrontend) {
     } finally { Pop-Location }
 }
 [string[]]$restoreOptions = if ($NoRestore) { @('--no-restore') } else { @() }
-& dotnet publish (Join-Path $repo 'desktop\BioPipeStudio.csproj') -c Release -o $output @restoreOptions
+& dotnet publish (Join-Path $repo 'desktop\OperonStudio.csproj') -c Release -o $output @restoreOptions
 if ($LASTEXITCODE -ne 0) { throw 'Desktop build failed' }
 $frontendOutput = Join-Path $output 'frontend'
 New-Item -ItemType Directory -Path $frontendOutput -Force | Out-Null
 Get-ChildItem -LiteralPath (Join-Path $repo 'frontend\dist') | Copy-Item -Destination $frontendOutput -Recurse -Force
 # Preserve a locally configured Python/backend path on subsequent rebuilds.
-$config = Join-Path $output 'biopipe-desktop.json'
+$config = Join-Path $output 'operon-desktop.json'
 if (-not (Test-Path -LiteralPath $config)) {
-    Copy-Item -LiteralPath (Join-Path $repo 'desktop\biopipe-desktop.json') -Destination $config
+    Copy-Item -LiteralPath (Join-Path $repo 'desktop\operon-desktop.json') -Destination $config
 }
 Write-Output (Join-Path $output 'Operon Studio.exe')

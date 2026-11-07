@@ -67,10 +67,13 @@ def contact_matrix(ligand_coords, ligand_labels, protein_coords, protein_labels,
 
 
 class StructureLigandResidueMapStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_ligand_residue_map.StructureLigandResidueMapStep.parameters.json"
 
     definition: dict[str, Any] = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_ligand_residue_map",
         "version": "1.0.0",

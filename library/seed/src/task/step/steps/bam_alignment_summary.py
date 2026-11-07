@@ -29,10 +29,15 @@ _LABELS = [
 
 
 class BamAlignmentSummaryStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "bam_alignment_summary.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "bam_alignment_summary",
         "version": "1.0.0",

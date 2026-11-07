@@ -4,13 +4,13 @@ import json
 from pathlib import Path
 
 import numpy as np
-from biopipe_sdk import Context, Form
-from biopipe_sdk.declarations import bind_class, for_class
-from biopipe_sdk.protocol import validate_parameters
-from biopipe.parameter_values import split_task
+from operon_sdk import Context, Form
+from operon_sdk.declarations import bind_class, for_class
+from operon_sdk.protocol import validate_parameters
+from operon.parameter_values import split_task
 from src.task import STEPS, run
-from biopipe_plot_examples.volcano import Volcano
-from biopipe_plot_examples.complex_heatmap import ComplexHeatmap
+from operon_plot_examples.volcano import Volcano
+from operon_plot_examples.complex_heatmap import ComplexHeatmap
 
 
 def main():

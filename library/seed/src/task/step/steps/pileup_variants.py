@@ -22,9 +22,19 @@ _BASES = "ACGT"
 
 class PileupVariantsStep(Step):
     """Call simple majority-allele variants from a BAM + reference FASTA."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'pileup_variants.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         'protocol_version': 3,
         'id': 'pileup_variants',
         'version': '1.0.0',
@@ -97,7 +107,7 @@ class PileupVariantsStep(Step):
         except ValueError as exc:
             raise StepError(f'pileup_variants: {exc}') from exc
 
-        header = ['##fileformat=VCFv4.2', '##source=biopipe:pileup_variants']
+        header = ['##fileformat=VCFv4.2', '##source=operon:pileup_variants']
         for name, length in references:
             header.append(f'##contig=<ID={name},length={length}>')
         header.append('#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO')

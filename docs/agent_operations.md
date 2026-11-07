@@ -1,6 +1,6 @@
-# Operating BioPipe with an agent
+# Operating Operon with an agent
 
-BioPipe exposes one engine through MCP, CLI and HTTP. These operating guides are
+Operon exposes one engine through MCP, CLI and HTTP. These operating guides are
 for **using** the software; SDK/protocol documentation is for writing extensions.
 No model, desktop window or source checkout is required to retrieve a guide.
 
@@ -8,16 +8,16 @@ No model, desktop window or source checkout is required to retrieve a guide.
 
 | Layer | MCP | CLI | Contents |
 | --- | --- | --- | --- |
-| Entry | Server initialization instructions; `biopipe_guide()` | `biopipe help` | Short rules, permissions, task routing |
-| Task | `biopipe_guide(topic="workflow")` | `biopipe help workflow` | One executable scenario at a time |
-| Operator | `biopipe_operator_search`, then `biopipe_operator_describe` | `biopipe operators search`, then `describe` | Installed schemas/contracts and selected Markdown |
+| Entry | Server initialization instructions; `operon_guide()` | `operon help` | Short rules, permissions, task routing |
+| Task | `operon_guide(topic="workflow")` | `operon help workflow` | One executable scenario at a time |
+| Operator | `operon_operator_search`, then `operon_operator_describe` | `operon operators search`, then `describe` | Installed schemas/contracts and selected Markdown |
 
-`biopipe help index` lists topics: start, operators, canvas, workflow, jobs,
+`operon help index` lists topics: start, operators, canvas, workflow, jobs,
 results and api. `guide` is an alias of `help`. Guides are package resources under
-`biopipe/guides/`, included in wheels. MCP also exposes `biopipe://guide` and
-`biopipe://guide/{topic}`. Clients that do not display server instructions or
+`operon/guides/`, included in wheels. MCP also exposes `operon://guide` and
+`operon://guide/{topic}`. Clients that do not display server instructions or
 resources can call the guide tool explicitly. A client controls what reaches its
-model; BioPipe cannot force it to inject or obey instructions.
+model; Operon cannot force it to inject or obey instructions.
 
 The same English text is available through authenticated GET `/api/v1/guides`
 and `/api/v1/guides/{topic}`. Responses include software version and a content
@@ -35,7 +35,7 @@ there is no arbitrary-file reading endpoint. Reading CLI help starts no service.
   `view=docs` retrieves only the requested documentation plus identity. `view=full`
   restores complete descriptor metadata. `sections=['*']` explicitly reads all MD.
 - MCP job status and CLI `jobs get` default to brief. Use `view=full` / `--view full`
-  for runtime internals. `biopipe_job(wait_seconds=30)` waits inside the tool;
+  for runtime internals. `operon_job(wait_seconds=30)` waits inside the tool;
   CLI `jobs wait <id> --timeout 30 --brief` does the same. Timeout never cancels.
 - Logs default to 4 KiB of text. Choose base64 for exact byte reconstruction or
   both for compatibility. Offsets remain bytes, with the same reset/done semantics.

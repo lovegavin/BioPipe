@@ -24,9 +24,14 @@ _CORRECTIONS = ("fdr", "bonferroni", "holm", "hommel", "fdr_by")
 
 
 class AncomBcStep(Step):
-    provider = 'biopipe-microbiome'
+    provider = 'operon-microbiome'
     parameters_file = 'ancom_bc.AncomBcStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'ancom_bc',
      'version': '1.0.0',
      'kind': 'operator',

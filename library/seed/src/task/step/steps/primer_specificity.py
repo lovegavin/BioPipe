@@ -17,9 +17,13 @@ _COLUMNS = (
 
 
 class PrimerSpecificityStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "primer_specificity.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "primer_specificity",
         "version": "1.0.0",

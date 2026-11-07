@@ -99,12 +99,15 @@ def disorder_rows(records: list[dict], *, z_clip: float = 3.0) -> list[dict]:
 class StructureDisorderProfileStep(Step):
     """Flag flexible residues from B-factors and unmodelled chain gaps."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = (
         "structure_disorder_profile.StructureDisorderProfileStep.parameters.json"
     )
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_disorder_profile",
         "version": "1.0.0",

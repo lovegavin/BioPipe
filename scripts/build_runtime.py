@@ -16,7 +16,7 @@ import zipfile
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from biopipe.platforms import supported_systems
+from operon.platforms import supported_systems
 
 
 def windows_descriptors(manifest):
@@ -52,7 +52,7 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
         'import importlib.metadata as m,json; print(json.dumps([d.metadata["Name"].lower() for d in m.distributions()]))'], text=True))
     if set(installed) - allowed:
         raise ValueError('The source interpreter must be clean: ' + ', '.join(sorted(set(installed) - allowed)))
-    # This copy is now managed by BioPipe's release builder, not the uv store.
+    # This copy is now managed by Operon's release builder, not the uv store.
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', 'EXTERNALLY-MANAGED'))
     shutil.copy2(root / 'scripts/bundled_paths.pth', destination / 'Lib/site-packages/00_operon_paths.pth')
     shutil.copy2(root / 'scripts/bundled_imports.py', destination / 'Lib/operon_import_paths.py')
@@ -72,9 +72,9 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     python = destination / 'python.exe'
     subprocess.run([python, '-I', '-m', 'ensurepip', '--upgrade'], check=True)
     project = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']
-    manifest = json.loads((root / 'library/seed/biopipe/builtin_packages.json').read_text(encoding='utf-8'))
+    manifest = json.loads((root / 'library/seed/operon/builtin_packages.json').read_text(encoding='utf-8'))
     specs, descriptors = runtime_requirements(project, manifest, mode)
-    requested = destination / 'biopipe-requirements.txt'
+    requested = destination / 'operon-requirements.txt'
     requested.write_text('\n'.join(specs) + '\n', encoding='utf-8')
     wheel_options = ['--find-links', str(Path(wheelhouse).resolve())] if wheelhouse else []
     if offline:
@@ -84,8 +84,8 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
     subprocess.run([python, '-I', '-m', 'pip', 'install', '--disable-pip-version-check', *wheel_options,
                     '-c', root / 'constraints-py311-windows.txt', '-r', requested], check=True)
     # Install SDK metadata/code from a wheel without a local direct_url.json or
-    # path-bearing console launcher. Operators can then require biopipe-studio.
-    with tempfile.TemporaryDirectory(prefix='biopipe-wheel-') as temporary:
+    # path-bearing console launcher. Operators can then require operon-studio.
+    with tempfile.TemporaryDirectory(prefix='operon-wheel-') as temporary:
         # The default build creates an sdist, then builds the wheel from its
         # fresh extraction. A wheel built directly in the checkout can retain
         # deleted modules from an older setuptools build/lib directory.
@@ -107,14 +107,14 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
             shutil.rmtree(cache)
         subprocess.run([python, '-I', '-m', 'build', '--wheel', '--no-isolation',
                         '--outdir', temporary, library], check=True)
-        seed = next(Path(temporary).glob('biopipe_builtin_library-*.whl'))
+        seed = next(Path(temporary).glob('operon_builtin_library-*.whl'))
         with zipfile.ZipFile(seed) as archive:
             archive.extractall(destination / 'Lib/site-packages')
     subprocess.run([python, '-I', '-m', 'pip', 'check'], check=True)
     versions = json.loads(subprocess.check_output([python, '-I', '-c',
         'import importlib.metadata as m,json; print(json.dumps({d.metadata["Name"]:d.version for d in m.distributions()}))'], text=True))
-    (destination / 'biopipe-lock.txt').write_text('\n'.join(f'{k}=={v}' for k, v in sorted(versions.items()))+'\n', encoding='utf-8')
-    from biopipe.runtime import CORE_MODULES
+    (destination / 'operon-lock.txt').write_text('\n'.join(f'{k}=={v}' for k, v in sorted(versions.items()))+'\n', encoding='utf-8')
+    from operon.runtime import CORE_MODULES
     imports = sorted(set(CORE_MODULES) | {'mcp'} | {i for d in descriptors for i in d.get('dependency_imports', [])})
     subprocess.run([python, '-I', '-c', 'import importlib; ' + '; '.join(f'importlib.import_module({name!r})' for name in imports)], check=True)
     # Entry-point launchers contain absolute build paths. Studio and the SDK use
@@ -148,7 +148,7 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
             'external_extensions': sorted(d['id'] for p in manifest['packages'] for d in p['descriptors']
                                           if d['id'] not in {item['id'] for item in descriptors}),
             'requirements_sha256': hashlib.sha256(requested.read_bytes()).hexdigest(), 'distributions': versions}
-    (destination / 'biopipe-runtime.json').write_text(json.dumps(info, indent=2)+'\n', encoding='utf-8')
+    (destination / 'operon-runtime.json').write_text(json.dumps(info, indent=2)+'\n', encoding='utf-8')
     return info
 
 

@@ -11,10 +11,15 @@ STATISTICS = ("n_called", "obs_het", "exp_het", "alt_freq", "hwe_p")
 
 
 class VcfHardyWeinbergStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     """Wigginton exact HWE test plus observed/expected heterozygote counts."""
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "version": "1.0.0",
         "id": "vcf_hardy_weinberg",
         "title": "Hardy-Weinberg exact test",

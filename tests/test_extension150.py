@@ -13,7 +13,7 @@ from src.task.step.steps.esm_if_redesign import _fixed_partial, designed_recover
 
 STEP = pytest.importorskip("src.task.step.steps.esm_if_redesign").EsmIfRedesignStep
 FIXTURE = Path(__file__).parent / "fixtures" / "backbone_1bc8_c60_75.pdb"
-CHECKPOINT = os.environ.get("BIOPIPE_ESM_IF_CHECKPOINT", "/home/gavin/models/esm_if1_gvp4_t16_142M_UR50.pt")
+CHECKPOINT = os.environ.get("OPERON_ESM_IF_CHECKPOINT", "/home/gavin/models/esm_if1_gvp4_t16_142M_UR50.pt")
 
 
 class Ctx(dict):

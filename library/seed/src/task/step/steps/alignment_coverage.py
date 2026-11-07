@@ -31,9 +31,14 @@ _LABELS = (
 
 class AlignmentCoverageStep(Step):
     """Summarise depth of coverage like ``samtools coverage``."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'alignment_coverage.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'alignment_coverage',
         'version': '1.0.0',

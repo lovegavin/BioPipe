@@ -28,10 +28,14 @@ def _text(value):
 
 
 class BiomReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for .biom tables (JSON or HDF5)."""
     parameters_file = 'biom_reader.BiomReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'BiomReader',
      'version': '1.0.0',
      'kind': 'reader',

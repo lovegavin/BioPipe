@@ -10,9 +10,12 @@ from src.task.step.base import Step
 class PhyloSupportSummaryStep(Step):
     """Summarise the distribution of bootstrap support values."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "phylo_support_summary.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "phylo_support_summary",
         "version": "1.0.0",

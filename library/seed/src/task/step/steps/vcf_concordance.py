@@ -81,9 +81,17 @@ def _load_truth(artifact, sample, region, min_qual, require_pass):
 class VcfConcordanceStep(Step):
     """Compare one sample's genotypes between a query and a truth VCF."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "vcf_concordance.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "vcf_concordance",
         "version": "1.0.1",

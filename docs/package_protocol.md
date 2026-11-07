@@ -7,31 +7,42 @@ Package code owns calculations and format decoding. Routes remain graph-based
 operators using their existing snapshot protocol; this change covers Python
 operators and readers, not a new route packaging format.
 
+## SDK 3.7 port declarations
+
+New operator and Reader definitions use `protocol_revision: "3.7"` and explicitly
+declare `data_formats.inputs` and `data_formats.outputs`. Package protocol stays
+integer `3`; parameter JSON, stable IDs, source pins and memory capabilities
+retain their existing meaning. The package validator rejects missing or
+arity-mismatched arrays for the new revision. Existing v3/v3.5/v3.6 packages
+remain supported rather than being silently rewritten during installation.
+See [operator protocol](operator_protocol.md), [format contracts](data_formats.md)
+and the [static migration tool](format_migration_v37.md).
+
 ## Preinstalled providers
 
 | Package | Entries | Purpose |
 | --- | ---: | --- |
-| `biopipe-core` | 394 | Data transformations, statistics, machine learning and domain analyses |
-| `biopipe-genetics` | 21 | QC, PCA, regression and correction |
-| `biopipe-expression` | 13 | Expression transformations and statistical analysis |
-| `biopipe-plots` | 12 | Plots, including survival curves |
-| `biopipe-microbiome` | 26 | Abundance diversity, distances, ordination, joins, PERMANOVA, correlation and composition |
-| `biopipe-readers` | 97 | File readers, including H5AD and MTX disk preparation |
-| `biopipe-hic` | 7 | Sequencing/contact file Readers and Hi-C processing |
+| `operon-core` | 789 | Data transformations, statistics, machine learning and domain analyses |
+| `operon-genetics` | 21 | QC, PCA, regression and correction |
+| `operon-expression` | 13 | Expression transformations and statistical analysis |
+| `operon-plots` | 12 | Plots, including survival curves |
+| `operon-microbiome` | 26 | Abundance diversity, distances, ordination, joins, PERMANOVA, correlation and composition |
+| `operon-readers` | 107 | File readers, including H5AD and MTX disk preparation |
+| `operon-hic` | 7 | Sequencing/contact file Readers and Hi-C processing |
 
-Counts describe the 3.0.0 factory library: 717 operators and 101 Readers. Installed
-profiles may add, replace or disable providers; use `biopipe plugin list` for the
+Counts describe the 5.0.0 factory library: 867 operators and 108 Readers. Installed
+profiles may add, replace or disable providers; use `operon plugin list` for the
 active library rather than assuming these counts at runtime.
 
-The startup index is `library/seed/biopipe/builtin_packages.json`. It enumerates each package's
+The startup index is `library/seed/operon/builtin_packages.json`. It enumerates each package's
 name, version, title and descriptors. Paths are Python import entry points, never
-machine-specific filesystem locations. Use `biopipe registry discover/check/build`
+machine-specific filesystem locations. Use `operon registry discover/check/build`
 to maintain it together with the route index. `build_builtin_packages.py` builds distributable provider wheels after index maintenance. New modules must declare the complete protocol;
 `provider` selects their provider, and existing ownership is preserved.
 See [registry maintenance](registry_maintenance.md). Existing operator IDs remain unchanged.
 
-The public package schema is `biopipe_sdk/schemas/package.json`, also available via
-`biopipe schema package`. A wheel's embedded `biopipe.json` contains `name`,
+The public package schema is `operon_sdk/schemas/package.json`, also available via
+`operon schema package`. A wheel's embedded `operon.json` contains `name`,
 `version`, `protocol_version`, `origin`, `dependencies` and `descriptors`. Protocol version is exactly 3; no `package` alias is accepted. Standard wheel metadata remains the
 authority for pip dependencies, and manifest identity must match wheel metadata.
 
@@ -39,7 +50,7 @@ authority for pip dependencies, and manifest identity must match wheel metadata.
 
 Studio's **算子库管理** lists both bundled and wheel providers, their entries and
 resource modes. Installation/update accepts a local wheel or a complete
-`.biopipe-library.zip` source-library release. See [independent library releases](plugins.md#independent-library-releases).
+`.operon-library.zip` source-library release. See [independent library releases](plugins.md#independent-library-releases).
 Application installations retain a factory seed; editable sources and installed
 provider revisions belong to the selected persistent profile. Enable, disable, remove
 and restore publish a new registry generation without restarting the application.
@@ -49,11 +60,11 @@ protocol validation and immutable provider packaging happen internally. See
 [whole-library refresh](plugins.md#drop-refresh-use).
 
 ```bash
-biopipe plugin list
-biopipe plugin disable biopipe-genetics
-biopipe plugin enable biopipe-genetics
-biopipe plugin remove biopipe-genetics
-biopipe plugin restore biopipe-genetics
+operon plugin list
+operon plugin disable operon-genetics
+operon plugin enable operon-genetics
+operon plugin remove operon-genetics
+operon plugin restore operon-genetics
 ```
 
 Disable/remove applies to new unpinned graphs. Prepared, saved or launched graphs
@@ -68,8 +79,8 @@ To produce an independently installable version of a bundled provider:
 
 ```bash
 python scripts/build_builtin_packages.py --refresh
-python scripts/build_builtin_packages.py --package biopipe-readers --output build/packages
-biopipe plugin install build/packages/biopipe-readers/dist/biopipe_readers-1.0.0-py3-none-any.whl
+python scripts/build_builtin_packages.py --package operon-readers --output build/packages
+operon plugin install build/packages/operon-readers/dist/operon_readers-1.0.0-py3-none-any.whl
 ```
 
 Choose a fresh build output directory each time. Bump the package version in the
@@ -162,9 +173,9 @@ implementations under this public protocol.
 using SDK-only imports. Build/install it with the ordinary developer commands:
 
 ```bash
-biopipe plugin check examples/resource_plugin
-biopipe plugin build examples/resource_plugin
-biopipe plugin install examples/resource_plugin/dist/biopipe_resource_example-0.1.0-py3-none-any.whl
+operon plugin check examples/resource_plugin
+operon plugin build examples/resource_plugin
+operon plugin install examples/resource_plugin/dist/operon_resource_example-0.1.0-py3-none-any.whl
 ```
 
 The integration tests build real wheels, install them into new generations and run

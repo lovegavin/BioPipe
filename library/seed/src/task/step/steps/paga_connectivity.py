@@ -81,9 +81,13 @@ def paga_connectivity(embedding, cluster_ids, n_neighbors: int = 15) -> np.ndarr
 class PagaConnectivityStep(Step):
     """Cluster connectivity graph for a cell embedding."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "paga_connectivity.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "paga_connectivity",
         "version": "1.0.0",

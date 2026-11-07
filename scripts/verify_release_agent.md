@@ -14,13 +14,13 @@ by launching a second analysis with the same submission identity.
 It never creates a canvas session, publishes a selection, or changes an existing
 user document. Backend results and actual EXE observations are separate evidence.
 
-Use the package root containing `biopipe`, `src` and `scripts` as `--code-root`, its Python runtime
+Use the package root containing `operon`, `src` and `scripts` as `--code-root`, its Python runtime
 as `--python`, and the profile's
 `workspace` directory as `--workspace`. Obtain the non-secret instance ID from
-`biopipe --workspace <workspace> service status` or its discovery file. Do not copy
+`operon --workspace <workspace> service status` or its discovery file. Do not copy
 the discovery secret into the report. All phases require `--instance`.
-The `biopipe` module, CLI and MCP identifiers are retained compatibility names;
-they do not mean that an old BioPipe installation should be selected. Older
+The `operon` module, CLI and MCP identifiers are retained compatibility names;
+they do not mean that an old Operon installation should be selected. Older
 Lite/Full release reports remain historical; current Setup includes its runtime.
 
 ```text

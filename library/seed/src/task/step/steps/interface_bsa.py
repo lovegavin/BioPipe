@@ -106,9 +106,12 @@ def _pick_sides(
 class InterfaceBsaStep(Step):
     """Buried surface area and interface residues for two chain groups."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'interface_bsa.InterfaceBsaStep.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'interface_bsa',
         'version': '1.0.0',

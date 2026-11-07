@@ -148,11 +148,14 @@ def segment_rows(states: list[str], residues: list[str]) -> list[dict]:
 class StructureSecondaryStructureStep(Step):
     """Approximate three-state secondary structure from phi/psi angles."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "structure_secondary_structure.StructureSecondaryStructureStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_secondary_structure",
         "version": "1.0.0",

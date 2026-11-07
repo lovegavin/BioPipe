@@ -14,10 +14,14 @@ from src.reader.readers._alignment_common import alignment_form, read_nexus
 
 
 class NexusReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for .nex / .nexus alignments."""
     parameters_file = 'nexus_reader.NexusReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'NexusReader',
      'version': '1.0.0',
      'kind': 'reader',

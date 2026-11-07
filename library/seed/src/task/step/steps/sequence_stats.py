@@ -35,7 +35,7 @@ _STAT_LABELS = ("length", "gc", "n_ratio", "valid_ratio")
 
 class SequenceStatsStep(Step):
     """Per-sequence length, GC and N content for any sequence-codes Form."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'sequence_stats.parameters.json'
     definition = {'protocol_version': 3,
      'id': 'sequence_stats',

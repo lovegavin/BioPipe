@@ -13,7 +13,7 @@ from ._stats20_common import scalar_form
 
 
 class MardiaTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Mardia's multivariate normality tests.
 
     Matches ``psych::mardia``: with centered data ``X`` and covariance
@@ -24,7 +24,11 @@ class MardiaTestStep(Step):
     ``sqrt(n/(8*p*(p+2)))``.
     """
     parameters_file = 'mardia_test.MardiaTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'mardia_test',
      'version': '1.0.0',
      'kind': 'operator',

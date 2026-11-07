@@ -156,7 +156,7 @@ def run_designer(params: dict, structure: Path, weights: Path | None) -> tuple[s
     if not runner.is_file():
         raise StepError("proteinmpnn_perplexity: the repository has no protein_mpnn_run.py at '{}'".format(repo))
     timeout = int(params.get("timeout", 1800))
-    out_dir = Path(tempfile.mkdtemp(prefix="biopipe-mpnn-perplexity-"))
+    out_dir = Path(tempfile.mkdtemp(prefix="operon-mpnn-perplexity-"))
     try:
         fasta = out_dir / "native.fa"
         command = designer_command(params, structure, out_dir, weights, fasta)
@@ -207,10 +207,13 @@ def run_designer(params: dict, structure: Path, weights: Path | None) -> tuple[s
 class ProteinmpnnPerplexityStep(Step):
     """Per-position ProteinMPNN perplexity from conditional amino-acid probabilities."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "proteinmpnn_perplexity.ProteinmpnnPerplexityStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_perplexity",
         "version": "1.0.0",

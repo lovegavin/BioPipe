@@ -1,16 +1,16 @@
 # Write an operator in 30 minutes
 
-SDK 3.5 / protocol 3 (optional v3.5 language packs) uses **one implementation, its own parameter JSON and Markdown**.
+SDK 3.7 / protocol 3 uses **one implementation, its own parameter JSON and Markdown**.
 The Python class owns a literal `definition`; its JSON owns parameter types,
 defaults, constraints and form hints. The registry is a generated index.
 
 ## 0–5 minutes: scaffold
 
-Use the same Python environment as BioPipe:
+Use the same Python environment as Operon:
 
 ```text
 python -m pip install -e ".[agent,dev]"
-python -m biopipe plugin init ./lab_scale
+python -m operon plugin init ./lab_scale
 ```
 
 The project contains:
@@ -27,7 +27,7 @@ lab_scale/
   README.md
 ```
 
-`biopipe` and `python -m biopipe` are equivalent. No fixed machine path is needed.
+`operon` and `python -m operon` are equivalent. No fixed machine path is needed.
 For a Reader use `plugin init ./lab_array --template reader`.
 
 ## 5–15 minutes: implement and declare
@@ -36,6 +36,13 @@ Edit `definition` in `lab_scale/__init__.py`: stable namespaced ID, version, tit
 category, input/output contracts, resource capabilities and dependencies. Keep
 it literal: the maintenance tool reads the AST without importing your module.
 Keep the ID stable when changing the display title.
+
+The scaffold sets `protocol_revision: "3.7"` and explicit `data_formats` for every
+port. Its numeric example uses `logical_type: "form"` with
+`representations: ["form"]`. Keep both `inputs` and `outputs` arrays; use `[]`
+for a Reader's inputs or a report-only terminal's outputs. Declare additional
+representations only when the implementation actually supports them. See
+[format contracts and the native-array Reader bridge](data_formats.md).
 
 Edit `parameters.json` for calculation parameters. For example:
 
@@ -74,13 +81,13 @@ same Python. See [dependency isolation](dependency_isolation.md).
 ## 15–20 minutes: check and test
 
 ```text
-biopipe plugin check ./lab_scale
-biopipe plugin test ./lab_scale
+operon plugin check ./lab_scale
+operon plugin test ./lab_scale
 ```
 
 Checking reads source and JSON without executing imports. It rejects invalid
 contracts, schema errors, missing parameters and duplicate/invalid identities.
-Tests execute the real runner through `biopipe_sdk.testing.run_operator`.
+Tests execute the real runner through `operon_sdk.testing.run_operator`.
 Add fixtures for missing data, invalid inputs and metadata propagation.
 Streaming/disk capability claims must be backed by real implementations; see
 [resource protocols](resource_runtime.md).
@@ -88,9 +95,9 @@ Streaming/disk capability claims must be backed by real implementations; see
 ## 20–25 minutes: build and install
 
 ```text
-biopipe plugin build ./lab_scale
-biopipe plugin install ./lab_scale/dist/lab_scale-0.1.0-py3-none-any.whl
-biopipe operators describe example.lab_scale
+operon plugin build ./lab_scale
+operon plugin install ./lab_scale/dist/lab_scale-0.1.0-py3-none-any.whl
+operon operators describe example.lab_scale
 ```
 
 Build returns the exact wheel path. It embeds a generated descriptor, checks

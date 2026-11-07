@@ -21,9 +21,13 @@ from ._popgen_common import prepare_genotypes
 
 
 class HeterozygosityStep(Step):
-    provider = 'biopipe-genetics'
+    provider = 'operon-genetics'
     parameters_file = 'heterozygosity.HeterozygosityStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
                   'id': 'heterozygosity',
                   'version': '1.0.0',
                   'kind': 'operator',

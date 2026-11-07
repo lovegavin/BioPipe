@@ -10,10 +10,15 @@ from ._matrix_common import grouped
 
 
 class WelchAnovaStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Per-feature Welch one-way ANOVA."""
     parameters_file = 'welch_anova.WelchAnovaStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'welch_anova',
      'version': '1.0.0',
      'kind': 'operator',

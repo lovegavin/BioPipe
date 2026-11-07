@@ -12,9 +12,14 @@ from ._tests39_common import select_groups, yuen_columns
 
 
 class YuenTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'yuen_test.YuenTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'yuen_test',
      'version': '1.0.0',
      'kind': 'operator',

@@ -23,9 +23,13 @@ def _merge(intervals):
 class PeptideCoverageStep(Step):
     """Report how much of each protein is covered by observed peptides."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "peptide_coverage.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "peptide_coverage",
         "version": "1.0.0",

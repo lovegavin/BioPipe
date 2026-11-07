@@ -43,7 +43,7 @@ def test_run_with_stubbed_model(monkeypatch):
             return type("R", (), {"sequence": protein.sequence.replace("_", "L")})()
 
     monkeypatch.setattr(module, "load_model", lambda name, device: Fake())
-    ctx = Context("/tmp/biopipe_esm3_generation", {"params": {}})
+    ctx = Context("/tmp/operon_esm3_generation", {"params": {}})
     params = {"output": "generation", "prompt": "MKTAY___", "num_steps": 3, "temperature": 0.5, "seed": 7}
     ctx.step_params = params
     result = Esm3SequenceGenerationStep().run(ctx, [])
@@ -56,7 +56,7 @@ def test_run_with_stubbed_model(monkeypatch):
 
 
 def test_validation_errors():
-    ctx = Context("/tmp/biopipe_esm3_generation_err", {"params": {}})
+    ctx = Context("/tmp/operon_esm3_generation_err", {"params": {}})
     with pytest.raises(StepError, match="device must be"):
         ctx.step_params = {"prompt": "MK_", "device": "tpu"}
         Esm3SequenceGenerationStep().run(ctx, [])
@@ -65,7 +65,7 @@ def test_validation_errors():
         Esm3SequenceGenerationStep().run(ctx, [])
 
 
-@pytest.mark.skipif(os.environ.get("BIOPIPE_ESM3_REAL") != "1", reason="set BIOPIPE_ESM3_REAL=1")
+@pytest.mark.skipif(os.environ.get("OPERON_ESM3_REAL") != "1", reason="set OPERON_ESM3_REAL=1")
 def test_real_generation_matches_direct_api():
     import torch
     from esm.models.esm3 import ESM3

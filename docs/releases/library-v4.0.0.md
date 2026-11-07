@@ -1,7 +1,7 @@
-# BioPipe Operator Library v4.0.0
+# Operon Operator Library v4.0.0
 
-BioPipe Operator Library 4.0.0 is the operator/Reader release bundled with
-BioPipe 4.0.0. It keeps protocol v3 and the `export_results` contract unchanged,
+Operon Operator Library 4.0.0 is the operator/Reader release bundled with
+Operon 4.0.0. It keeps protocol v3 and the `export_results` contract unchanged,
 and it can be installed on any host application at or above 2.4.1.
 
 ## Contents
@@ -43,11 +43,11 @@ and it can be installed on any host application at or above 2.4.1.
 
 ## Assets
 
-- `BioPipe-Library-v4.0.0-Linux.biopipe-library.zip`
-- `BioPipe-Library-v4.0.0-Windows.biopipe-library.zip`
-- `biopipe_builtin_library-4.0.0-py3-none-any.whl`
+- `Operon-Library-v4.0.0-Linux.operon-library.zip`
+- `Operon-Library-v4.0.0-Windows.operon-library.zip`
+- `operon_builtin_library-4.0.0-py3-none-any.whl`
 - `SHA256SUMS.txt`
 - `verification-ubuntu-latest.json`, `verification-windows-latest.json`
 
-This release is marked `--latest=false` so it never replaces the BioPipe
+This release is marked `--latest=false` so it never replaces the Operon
 application release.

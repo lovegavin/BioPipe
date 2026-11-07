@@ -19,9 +19,13 @@ from src.task.step.steps._phylo_common import (
 class WeightedUnifracStep(Step):
     """Weighted UniFrac: branch-length distance weighted by abundance proportions."""
 
-    provider = 'biopipe-microbiome'
+    provider = 'operon-microbiome'
     parameters_file = 'weighted_unifrac.WeightedUnifracStep.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'weighted_unifrac',
         'version': '1.0.0',

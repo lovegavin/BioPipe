@@ -45,9 +45,14 @@ def _single_column(form, sample_dim, feature_dim, value_label):
 class MoranStep(Step):
     """Moran's I for one value column and one distance matrix."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'moran.MoranStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'moran',
      'version': '1.0.0',
      'kind': 'operator',

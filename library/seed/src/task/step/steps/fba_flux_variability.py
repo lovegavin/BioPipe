@@ -11,9 +11,14 @@ _FIELDS = ["minimum_flux", "maximum_flux", "span"]
 
 
 class FbaFluxVariabilityStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "fba_flux_variability.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "fba_flux_variability",
         "version": "1.0.0",

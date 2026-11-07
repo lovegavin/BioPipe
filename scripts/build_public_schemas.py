@@ -5,13 +5,13 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from biopipe_sdk.protocol import Descriptor, PackageDescriptor
-from biopipe_sdk.localization import LanguagePack
+from operon_sdk.protocol import Descriptor, PackageDescriptor
+from operon_sdk.localization import LanguagePack
 from src.web.models import Graph, Workspace
 
 
 def main():
-    directory = ROOT / "biopipe_sdk/schemas"
+    directory = ROOT / "operon_sdk/schemas"
     directory.mkdir(parents=True, exist_ok=True)
     for name, cls in {"operator": Descriptor, "package": PackageDescriptor, "graph": Graph, "workspace": Workspace, "language-pack": LanguagePack}.items():
         (directory / f"{name}.json").write_text(

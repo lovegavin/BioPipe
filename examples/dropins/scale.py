@@ -1,8 +1,8 @@
 """Copy this file and icons/ into the operator directory, then click Refresh."""
 import numpy as np
-from biopipe_sdk import Operator, Form, port, project_metadata
+from operon_sdk import Operator, Form, port, project_metadata
 
-BIOPIPE_PLUGIN = {"name": "example-dropin-scale", "version": "0.1.0", "dependencies": ["numpy>=1.26"]}
+OPERON_PLUGIN = {"name": "example-dropin-scale", "version": "0.1.0", "dependencies": ["numpy>=1.26"]}
 
 
 class Scale(Operator):

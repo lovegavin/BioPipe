@@ -10,10 +10,14 @@ from src.task.step.base import Step
 
 
 class MannKendallStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Per-feature Mann-Kendall S, Kendall tau, z and two-sided p."""
     parameters_file = 'mann_kendall.MannKendallStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'mann_kendall',
      'version': '1.0.0',
      'kind': 'operator',

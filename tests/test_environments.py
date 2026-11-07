@@ -6,11 +6,11 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from biopipe import environments
+from operon import environments
 
 
 def _descriptor(name="structure_interface_core", environment="fake"):
-    registry = json.loads((Path(__file__).resolve().parents[1] / "library/seed/biopipe/builtin_packages.json").read_text(encoding="utf-8"))
+    registry = json.loads((Path(__file__).resolve().parents[1] / "library/seed/operon/builtin_packages.json").read_text(encoding="utf-8"))
     descriptor = next(e for p in registry["packages"] for e in p["descriptors"] if e["id"] == name)
     return {**descriptor, "resources": {**descriptor["resources"], "environment": environment}}
 
@@ -108,7 +108,7 @@ def test_bridge_uses_portable_interpreter_and_process_environment(monkeypatch, t
     executable.parent.mkdir()
     executable.touch()
     executable.chmod(0o755)
-    monkeypatch.setenv('BIOPIPE_ENVIRONMENTS_ROOT', str(tmp_path))
+    monkeypatch.setenv('OPERON_ENVIRONMENTS_ROOT', str(tmp_path))
     monkeypatch.setenv('SystemRoot', 'windows-system-location')
     monkeypatch.setenv('PYTHONHOME', 'unrelated-python')
     monkeypatch.setenv('PYTHONPATH', 'unrelated-modules')

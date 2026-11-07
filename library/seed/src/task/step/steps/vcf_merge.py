@@ -86,9 +86,19 @@ def _recount_info(info_text, cells):
 
 
 class VcfMergeStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'vcf_merge.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         'protocol_version': 3,
         'id': 'vcf_merge',
         'version': '1.0.0',

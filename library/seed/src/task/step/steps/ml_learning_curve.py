@@ -10,9 +10,13 @@ from src.task.step.steps._ml_validation import learning_curve
 
 
 class MlLearningCurveStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'ml_learning_curve.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'ml_learning_curve',
         'version': '1.0.0',

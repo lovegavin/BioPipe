@@ -83,10 +83,13 @@ def parse_regions(text: str) -> list[str]:
 class AntibodyCdrMotifsStep(Step):
     """Scan CDR regions for N-glycosylation, deamidation and oxidation motifs."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "antibody_cdr_motifs.AntibodyCdrMotifsStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "antibody_cdr_motifs",
         "version": "1.0.0",

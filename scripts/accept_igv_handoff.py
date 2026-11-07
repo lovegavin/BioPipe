@@ -64,7 +64,7 @@ def main():
     root.mkdir(parents=True, exist_ok=False)
     scratch = root / 'tmp'; scratch.mkdir()
     os.environ.update(PYTHONUTF8='1', PYTHONIOENCODING='utf-8', TEMP=str(scratch), TMP=str(scratch),
-                      BIOPIPE_ADMISSION_DIR=str(root / 'admission'))
+                      OPERON_ADMISSION_DIR=str(root / 'admission'))
     project = root / 'plugin'
     shutil.copytree(ROOT / 'examples/igv_handoff', project,
                     ignore=shutil.ignore_patterns('dist', 'build', '*.egg-info', '__pycache__'))
@@ -74,7 +74,7 @@ def main():
     (workspace / 'input.bed').write_text(''.join(f'{c}\t{s}\t{e}\n' for c, s, e in INTERVALS),
                                          encoding='ascii', newline='\n')
     def cli(*arguments):
-        value = subprocess.run([sys.executable, '-m', 'biopipe', '--workspace', str(workspace),
+        value = subprocess.run([sys.executable, '-m', 'operon', '--workspace', str(workspace),
                                 '--data-dir', str(data), *map(str, arguments)], cwd=ROOT,
                                capture_output=True, text=True, encoding='utf-8', timeout=240)
         if value.returncode:
@@ -92,12 +92,12 @@ def main():
                        {'id': 'merge', 'kind': 'operator', 'operator': 'interval_merge',
                         'params': {'min_overlap': 0, 'output': 'merged'}},
                        {'id': 'tracks', 'kind': 'operator', 'operator': 'example.genome_tracks',
-                        'params': {'assembly': 'biopipe-synthetic-v1', 'output': 'tracks'}}],
+                        'params': {'assembly': 'operon-synthetic-v1', 'output': 'tracks'}}],
              'edges': [{'id': 'e1', 'source': 'input', 'target': 'merge'},
                        {'id': 'e2', 'source': 'merge', 'target': 'tracks'}]}
     dump(root / 'workflow.json', graph)
-    from biopipe.client import Client, instances
-    from biopipe.application import ACTIVE
+    from operon.client import Client, instances
+    from operon.application import ACTIVE
     existed = bool(instances(data))
     client = Client(data, name='igv-acceptance', scopes=['context', 'edit', 'run'],
                     auto_start=True, workspace=workspace, require_api=1)
@@ -149,7 +149,7 @@ def main():
         # Relative resource paths make the complete handoff directory relocatable.
         session = ET.Element('Session', genome='synthetic.fa', locus='chrTest1:1-3000', version='3')
         resources = ET.SubElement(session, 'Resources')
-        ET.SubElement(resources, 'Resource', path='merged.bed', name='BioPipe merged intervals')
+        ET.SubElement(resources, 'Resource', path='merged.bed', name='Operon merged intervals')
         ET.SubElement(resources, 'Resource', path='values.bedgraph', name='Source intervals per merged region')
         ET.indent(session)
         ET.ElementTree(session).write(handoff / 'session.xml', encoding='UTF-8', xml_declaration=True)

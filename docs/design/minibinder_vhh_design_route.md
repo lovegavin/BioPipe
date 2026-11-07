@@ -1,6 +1,6 @@
 # Minibinder and VHH design route
 
-This note records what BioPipe can do today for minibinder and VHH
+This note records what Operon can do today for minibinder and VHH
 (nanobody) design, which operators implement each step, and what is still a
 roadmap item. It is written against the v1.53.1 operator library and is meant
 to be revised as the library grows.
@@ -50,13 +50,13 @@ to be revised as the library grows.
 
 ## Modality: neutral, antagonist, agonist
 
-BioPipe can represent a binder *class* only through the target conformation
+Operon can represent a binder *class* only through the target conformation
 that the user supplies. Neutral blockers are the straightforward case: mask the
 receptor-binding site, design the interface, and filter on interface shape
 complementarity and developability. Antagonists are modelled as binders to the
 inactive-state structure with the orthosteric or allosteric surface masked.
 Agonists require the active-state conformation and, in practice, an explicit
-check that binding does not clash with the activation pathway, which BioPipe
+check that binding does not clash with the activation pathway, which Operon
 cannot model today. There is no built-in state library, no functional assay and
 no efficacy predictor; the class label is a workflow convention, not a property
 the library can verify. `structure_paratope_predict` and the interface

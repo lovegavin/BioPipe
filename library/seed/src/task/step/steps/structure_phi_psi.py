@@ -115,10 +115,13 @@ def _finite_range(values: np.ndarray) -> list[float] | None:
 class StructurePhiPsiStep(Step):
     """Per-residue backbone dihedrals and coarse Ramachandran classes."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_phi_psi.StructurePhiPsiStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_phi_psi",
         "version": "1.0.0",

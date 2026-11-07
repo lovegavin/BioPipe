@@ -14,12 +14,15 @@ from src.task.step.steps._structure_common import atom_coords, field_columns, pi
 class InterfaceDistanceHistogramStep(Step):
     """Histogram binder-target heavy-atom pair distances."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "interface_distance_histogram.InterfaceDistanceHistogramStep.parameters.json"
 
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "interface_distance_histogram",
         "version": "1.0.0",

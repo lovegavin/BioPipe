@@ -7,7 +7,7 @@ import time
 from fastapi.testclient import TestClient
 import numpy as np
 
-from biopipe.remote.server import RemoteService
+from operon.remote.server import RemoteService
 from src.web.api import create_app
 from src.web.models import Graph
 from src.web.service import Settings
@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_remote_history_previews_reports_figures_downloads_and_reconnect(tmp_path, monkeypatch):
-    monkeypatch.setenv('BIOPIPE_ADMISSION_DIR', str(tmp_path/'remote-admission'))
+    monkeypatch.setenv('OPERON_ADMISSION_DIR', str(tmp_path/'remote-admission'))
     remote = RemoteService(tmp_path/'server', input_roots=[tmp_path/'server'])
     app = create_app(Settings(tmp_path/'desktop', tmp_path/'desktop'/'s', ROOT/'frontend/dist',
                               testing=True, code_root=ROOT, admission_dir=tmp_path/'local-admission'))

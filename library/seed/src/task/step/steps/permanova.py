@@ -67,9 +67,14 @@ _STAT_LABELS = {"F": 0, "R2": 1, "P": 2, "n_perm": 3}
 
 class PermanovaStep(Step):
     """PERMANOVA on a distance matrix with a grouping column."""
-    provider = 'biopipe-microbiome'
+    provider = 'operon-microbiome'
     parameters_file = 'permanova.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'permanova',
      'version': '1.0.0',
      'kind': 'operator',

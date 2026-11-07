@@ -29,7 +29,7 @@ def _header_lines(samples: list[str]) -> list[str]:
     lines = [
         "##fileformat=VCFv4.2",
         "##fileDate=20261008",
-        "##source=biopipe-demo-generator",
+        "##source=operon-demo-generator",
         "##reference=GRCh38",
         "##assembly=GRCh38",
         "##phasing=partial",

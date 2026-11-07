@@ -1,7 +1,7 @@
 """Presentation preferences belong to the profile, not a workflow or loopback port."""
 from typing import Literal
 from pydantic import BaseModel, ConfigDict
-from biopipe.user_config import UserConfig
+from operon.user_config import UserConfig
 
 
 class Preferences(BaseModel):

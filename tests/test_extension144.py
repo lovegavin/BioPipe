@@ -45,7 +45,7 @@ def _sequence_form() -> Form:
 
 
 def test_interface_hydrophobic_patch_through_runner(tmp_path) -> None:
-    work = Path(tempfile.mkdtemp(prefix="biopipe-patch-"))
+    work = Path(tempfile.mkdtemp(prefix="operon-patch-"))
     ctx = Context(work, {"params": {}})
     ctx["structure"] = _two_chain_form(tmp_path)
     run(
@@ -63,7 +63,7 @@ def test_interface_hydrophobic_patch_through_runner(tmp_path) -> None:
 
 
 def test_cdr_hydrophobicity_through_runner() -> None:
-    work = Path(tempfile.mkdtemp(prefix="biopipe-cdr-"))
+    work = Path(tempfile.mkdtemp(prefix="operon-cdr-"))
     ctx = Context(work, {"params": {}})
     ctx["vhh"] = _sequence_form()
     run(
@@ -80,7 +80,7 @@ def test_cdr_hydrophobicity_through_runner() -> None:
 
 
 def test_rdkit_operators_through_runner() -> None:
-    work = Path(tempfile.mkdtemp(prefix="biopipe-rdkit126-"))
+    work = Path(tempfile.mkdtemp(prefix="operon-rdkit126-"))
     ctx = Context(work, {"params": {}})
     run(
         ctx,
@@ -118,7 +118,7 @@ def test_esm_if_mutation_scan_through_runner() -> None:
     form = pick_reader(fixture).implementation().read(
         fixture, dims=["atom", "field"], labels={"atom": "auto", "field": "builtin"}
     )
-    work = Path(tempfile.mkdtemp(prefix="biopipe-mutscan-"))
+    work = Path(tempfile.mkdtemp(prefix="operon-mutscan-"))
     ctx = Context(work, {"params": {}})
     ctx["structure"] = form
     run(

@@ -1,15 +1,15 @@
 """Small third-party client: run/reconnect, inspect links, copy a selected native result.
 
-Install BioPipe in this Python environment. No desktop or MCP client is needed.
+Install Operon in this Python environment. No desktop or MCP client is needed.
 """
 import argparse
 import json
 from pathlib import Path
 from urllib.parse import urlencode
 
-from biopipe.agent_views import wait_job
-from biopipe.cli import read_graph_file
-from biopipe.client import Client, data_directory
+from operon.agent_views import wait_job
+from operon.cli import read_graph_file
+from operon.client import Client, data_directory
 
 
 def run_workflow(client, graph, request_id, *, timeout=60):

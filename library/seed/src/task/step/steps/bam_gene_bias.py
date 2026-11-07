@@ -20,9 +20,15 @@ _SKIP = 0x4 | 0x100 | 0x200 | 0x800
 
 class BamGeneBiasStep(Step):
     """Compare alignment density in the first and last segment of each gene."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'bam_gene_bias.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'bam_gene_bias',
         'version': '1.0.0',

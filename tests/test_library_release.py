@@ -25,10 +25,10 @@ def test_library_version_and_tag_are_independent_of_application(tmp_path):
 
 
 def test_checkout_cannot_impersonate_released_application(tmp_path, monkeypatch):
-    import biopipe
-    monkeypatch.setattr(biopipe, '__file__', str(tmp_path / 'biopipe/__init__.py'))
+    import operon
+    monkeypatch.setattr(operon, '__file__', str(tmp_path / 'operon/__init__.py'))
     with pytest.raises(ValueError, match='source checkout|python -I'):
-        HELPER['released_application'](tmp_path, {'build_application': biopipe.__version__})
+        HELPER['released_application'](tmp_path, {'build_application': operon.__version__})
 
 
 def test_wrong_released_application_is_rejected(tmp_path):

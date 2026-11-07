@@ -31,7 +31,7 @@ describe("copy and paste subgraphs",()=>{
     expect(runSignature(pasted.graph)).not.toBe(signature);
     expect(withRoute.nodes[3].route!.graph.nodes[1].params.dim).toBe("feature");
   });
-  it("rejects non-BioPipe clipboard data",()=>expect(()=>parseFragment('{"nodes":[]}')).toThrow());
+  it("rejects non-Operon clipboard data",()=>expect(()=>parseFragment('{"nodes":[]}')).toThrow());
   it("preserves the input file when copying across different relative base directories",()=>{
     const source=structuredClone(graph), target=structuredClone(graph);
     source.base_dir="experiments/one"; target.base_dir="experiments/two";

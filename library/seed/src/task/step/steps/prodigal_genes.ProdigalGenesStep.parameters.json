@@ -24,7 +24,7 @@
     "prodigal_path": {
       "type": "string",
       "title": "Prodigal 路径",
-      "description": "官方二进制路径；留空读 BIOPIPE_PRODIGAL_PATH 或 PATH 上的 prodigal",
+      "description": "官方二进制路径；留空读 OPERON_PRODIGAL_PATH 或 PATH 上的 prodigal",
       "default": "",
       "x-ui-group": "运行",
       "x-ui-order": 1

@@ -3,7 +3,7 @@ from src.task.step.base import Step
 
 
 class AnalyzeContactsStep(Step):
-    provider = 'biopipe-hic'
+    provider = 'operon-hic'
     parameters_file = 'analyze_contacts.parameters.json'
     definition = {'protocol_version': 3,
      'id': 'analyze_contacts',

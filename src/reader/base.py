@@ -9,7 +9,7 @@ from typing import ClassVar, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.core import Form
-from biopipe.file_formats import COMPRESSION_SUFFIXES, compression_extensions, uncompressed_path
+from operon.file_formats import COMPRESSION_SUFFIXES, compression_extensions, uncompressed_path
 
 
 class Reader(ABC):

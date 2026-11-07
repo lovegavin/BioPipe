@@ -11,9 +11,12 @@ from ._stats21_common import numeric_column, table_frame
 
 
 class PeriodogramStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'periodogram.PeriodogramStep.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'periodogram',
         'version': '1.0.0',

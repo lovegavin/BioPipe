@@ -29,7 +29,7 @@ See [public-data workflow validation](../../examples/route_combinations/VALIDATI
 for the five execution records, input checksums, memory observations and scientific
 interpretation limits. The old main archive preserves commit
 `9b6bbdd024fb4f59aa65b0850f72c36ec6df4538` and is available from
-[the legacy release](https://github.com/lovegavin/BioPipe/releases/tag/legacy-main-20261101).
+[the legacy release](https://github.com/lovegavin/Operon/releases/tag/legacy-main-20261101).
 
 ## Coverage
 

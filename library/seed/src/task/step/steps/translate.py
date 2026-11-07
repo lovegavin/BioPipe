@@ -11,9 +11,13 @@ from ._sequence_common import PROTEIN_MAP, decode_sequences, translate_sequence
 
 
 class TranslateStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'translate.TranslateStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'translate',
      'version': '1.0.0',
      'kind': 'operator',

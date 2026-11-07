@@ -76,9 +76,15 @@ def _approx_prefix_present(
 
 class FastqAdapterScanStep(Step):
     """Count reads containing Illumina, Nextera or custom adapter prefixes."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'fastq_adapter_scan.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'fastq_adapter_scan',
      'version': '1.0.1',
      'kind': 'operator',

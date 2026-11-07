@@ -14,9 +14,12 @@ from src.task.step.steps._restriction_utils import (
 class RestrictionDigestStep(Step):
     """Cut DNA with a panel of restriction enzymes."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "restriction_digest.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "restriction_digest",
         "version": "1.0.0",

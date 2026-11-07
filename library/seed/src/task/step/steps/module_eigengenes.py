@@ -36,10 +36,14 @@ def align_modules(module_form, feature_dim: str, features: list[str]) -> np.ndar
 class ModuleEigengenesStep(Step):
     """Compute one eigengene per co-expression module."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "module_eigengenes.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "module_eigengenes",
         "version": "1.0.0",

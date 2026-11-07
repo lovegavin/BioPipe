@@ -28,9 +28,14 @@ from ._ext_common import (
 
 
 class PseudobulkStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'pseudobulk.PseudobulkStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'pseudobulk',
      'version': '1.0.0',
      'kind': 'operator',

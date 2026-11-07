@@ -3,9 +3,14 @@ from src.reader.base import Reader
 
 
 class GffFileReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     parameters_file = 'gff_file.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         'protocol_version': 3,
         'id': 'GffFileReader',
         'version': '1.0.0',

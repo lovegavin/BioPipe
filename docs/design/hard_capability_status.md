@@ -9,7 +9,7 @@ nobody re-reports a blocked item as delivered.
 
 | Capability | Evidence |
 | --- | --- |
-| `foldseek_search` | Real run: Foldseek 10-941cd33 static binary + a local database built with `foldseek createdb` from two fixtures; 1MEL query returned 5 hits, top self-hit `alntmscore 1.008`. Real-run test activates with `BIOPIPE_FOLDSEEK_BIN`/`BIOPIPE_FOLDSEEK_DB`. |
+| `foldseek_search` | Real run: Foldseek 10-941cd33 static binary + a local database built with `foldseek createdb` from two fixtures; 1MEL query returned 5 hits, top self-hit `alntmscore 1.008`. Real-run test activates with `OPERON_FOLDSEEK_BIN`/`OPERON_FOLDSEEK_DB`. |
 | `proteinmpnn_*`, `ligandmpnn_*`, `esm_*`, `esmfold_predict`, `colabfold_predict` | Real weights and real runs from earlier batches. |
 
 ## Wrapper-aligned, weights unavailable here
@@ -248,7 +248,7 @@ nobody re-reports a blocked item as delivered.
    2.1 GB HMM and pressed with `hmmpress` (h3f 508 MB, h3i 2.9 MB, h3m 886 MB,
    h3p 1.1 GB). A 132-residue VHH scan completes in 0.42 s and returns four
    domains: `V-set`, `I-set`, `I-set`, `Ig_3` — the expected immunoglobulin
-   superfamily assignment. Test 253 now clears `BIOPIPE_PFAM_HMM` for the
+   superfamily assignment. Test 253 now clears `OPERON_PFAM_HMM` for the
    validation branch so the suite is environment-neutral.
 
 Until then these stay documented as gated; no easy substitute operator is added
@@ -310,31 +310,31 @@ to fill a batch.
 
 - apt-installed Prodigal 2.6.3; real run on phage lambda (48 502 bp):
   61 CDS, first CDS 191-736 (+), identical to the CLI GFF output.
-- Real test gated by BIOPIPE_PRODIGAL_REAL=1 in tests/test_extension252.py.
+- Real test gated by OPERON_PRODIGAL_REAL=1 in tests/test_extension252.py.
 
 ## hmmer_domains (verified, Pfam-A)
 
 - Pfam-A.hmm (418 MB gz, 2.2 GB unpacked) pressed with hmmpress; real scan
   of chicken lysozyme returned 3 domains, top hit 'Lys' with full score 166
-  in 0.7 s; real test gated by BIOPIPE_PFAM_HMM.
+  in 0.7 s; real test gated by OPERON_PFAM_HMM.
 
 ## esm3_embedding (verified)
 
 - ESM-3 open 1.40 B model loaded from the hf-mirror cache; per-residue
   embeddings (1, 14, 1536) in 6.0 s on CPU; real test gated by
-  BIOPIPE_ESM3_REAL; 685 operators / 101 Readers.
+  OPERON_ESM3_REAL; 685 operators / 101 Readers.
 
 ## esm3_inverse_folding (verified)
 
 - ESM-3 open model, coordinates-only generation on 1MEL chain A (132 res,
   10 steps, CPU): recovery 0.788 in 20.2 s; real test gated by
-  BIOPIPE_ESM3_REAL; 686 operators / 101 Readers.
+  OPERON_ESM3_REAL; 686 operators / 101 Readers.
 
 ## esm3_fold (verified)
 
 - ESM-3 structure track on 1MEL chain A (132 res, 10 steps, CPU): 527 atoms,
   pLDDT 0.900, pTM 0.836, CA RMSD 1.97 A vs crystal, 21 s; real test gated
-  by BIOPIPE_ESM3_REAL; 687 operators / 101 Readers.
+  by OPERON_ESM3_REAL; 687 operators / 101 Readers.
 
 ## Elastic network models (verified)
 
@@ -345,7 +345,7 @@ to fill a batch.
 ## Open incompatibility: ESM-3 on the managed server runtime
 
 ESM-3 now runs through the dedicated-environment bridge
-(`biopipe.env_worker` + `proxy_step`): the runner never imports the model in the
+(`operon.env_worker` + `proxy_step`): the runner never imports the model in the
 host interpreter, and `tests/test_environments.py` covers the bridge. A real
 generation was verified locally through the bridge
 (`MKTAYIAKQR________` + 2 steps -> `MKTAYIAKQRLLLIALTL`, 18 residues).
@@ -357,6 +357,6 @@ pin is not satisfiable on that OS.
 The managed server environment is Python 3.11 with torch 2.6, so the operator
 cannot share it. AntiFold had the same class of conflict and is now solved with
 a dedicated interpreter (`resources.environment = "antifold"`, resolved by
-`biopipe.environments`). ESM-3 needs the same mechanism plus a subprocess
+`operon.environments`). ESM-3 needs the same mechanism plus a subprocess
 execution bridge for in-process operators; until that ships the dependency probe
 correctly reports it as unavailable instead of hiding it behind a warning.

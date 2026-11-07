@@ -22,7 +22,7 @@ from pathlib import Path
 
 
 def descriptors() -> list[dict]:
-    from biopipe.packages import bundled_manifest
+    from operon.packages import bundled_manifest
 
     data = bundled_manifest()
     return [descriptor for package in data.get("packages", []) for descriptor in package.get("descriptors", [])]
@@ -54,7 +54,7 @@ def main() -> int:
     parser.add_argument("--only", default="", help="comma-separated descriptor ids")
     args = parser.parse_args()
 
-    from biopipe.environments import resolve
+    from operon.environments import resolve
 
     log_path = args.log.expanduser().resolve()
     log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -70,7 +70,7 @@ def main() -> int:
             record["host_python"] = sys.executable
             environment = record["environment"]
             if record["external_tools"]:
-                from biopipe.dependencies import find_tool
+                from operon.dependencies import find_tool
                 missing = [name for name in record["external_tools"] if find_tool(name) is None]
                 record.update(status="failed" if missing else "passed",
                               error=", ".join(f"{name}: not on PATH" for name in missing),

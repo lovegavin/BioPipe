@@ -6,8 +6,8 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from biopipe.run_log import RunLog
-from biopipe.bytecode import io_path
+from operon.run_log import RunLog
+from operon.bytecode import io_path
 
 from src.core import ContextError, Form
 from src.task.memory.config import MemoryConfig
@@ -52,7 +52,7 @@ class Context:
     def register_source(self, name: str, spec: dict) -> None:
         """Managed sources are read on first use; legacy mode stays eager."""
         if name in self.manifest.get("runtime", {}).get("exchange_inputs", []):
-            from biopipe.exchange import register_source
+            from operon.exchange import register_source
             register_source(self, name, self.task_dir / spec["path"])
             return
         from src.reader import read_source, pick_reader
@@ -70,7 +70,7 @@ class Context:
             reader = selected_reader
             args = dict(spec.get("args", {}))
             if reader.parameters_schema is not None:
-                from biopipe_sdk.protocol import validate_parameters
+                from operon_sdk.protocol import validate_parameters
                 args = validate_parameters(reader.parameters_schema, args)
             from contextlib import nullcontext
             from src.reader import _decompressed, Reader
@@ -86,7 +86,7 @@ class Context:
             probe["file_bytes"] = io_path(path).stat().st_size
             disk_loader = None
             if reader.supports_disk_read:
-                from biopipe_sdk.resources import validate_probe
+                from operon_sdk.resources import validate_probe
                 validate_probe(probe)
                 def disk_loader(writer, chunk):
                     import numpy as np

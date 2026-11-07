@@ -74,10 +74,13 @@ def graft_sequence(
 
 
 class AntibodyCdrGraftStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "antibody_cdr_graft.AntibodyCdrGraftStep.parameters.json"
 
     definition: dict[str, Any] = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "antibody_cdr_graft",
         "version": "1.0.0",

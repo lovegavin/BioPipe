@@ -26,7 +26,7 @@ from src.core.files import FileArtifact
 from .config import MemoryBudgetError, DiskBudgetError
 from .planner import NEVER
 from src.core.contracts import VERSION
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 
 
 def footprint(value) -> dict[int, int]:

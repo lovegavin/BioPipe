@@ -4,7 +4,7 @@ from io import BytesIO
 import json
 from zipfile import BadZipFile, ZIP_DEFLATED, ZipFile
 
-from biopipe.file_formats import primary_ext
+from operon.file_formats import primary_ext
 from .models import Graph
 
 
@@ -26,7 +26,7 @@ def freeze_graph(graph, catalog, root, *, bound=False, depth=0, input_roots=None
     operators = {item["id"]: item for item in catalog["operators"]}
     for node in result.nodes:
         if node.kind == 'script':
-            from biopipe.script_operators import validate_script
+            from operon.script_operators import validate_script
             node.script = validate_script(node.script)
             node.params = _defaults(node.script, node.params)
         elif node.kind == "operator":
@@ -55,7 +55,7 @@ def freeze_graph(graph, catalog, root, *, bound=False, depth=0, input_roots=None
 def split_graph(graph):
     """The sidecar owns values; graph.json owns structure and execution pins."""
     topology = graph.model_dump(mode="json") if isinstance(graph, Graph) else deepcopy(graph)
-    values = {"format": "biopipe.graph-parameters", "schema_version": 1,
+    values = {"format": "operon.graph-parameters", "schema_version": 1,
               "params": topology.pop("params", {}), "nodes": {}}
     for node in topology["nodes"]:
         if node["id"] in values["nodes"]:
@@ -76,7 +76,7 @@ def restore_graph(topology, values):
     """Hydrate a strict pair, without consulting the current operator catalog."""
     graph = Graph.model_validate(topology)
     if (not isinstance(values, dict) or set(values) != {"format", "schema_version", "params", "nodes"}
-            or values["format"] != "biopipe.graph-parameters" or values["schema_version"] != 1
+            or values["format"] != "operon.graph-parameters" or values["schema_version"] != 1
             or not isinstance(values["params"], dict) or not isinstance(values["nodes"], dict)
             or set(values["nodes"]) != {node.id for node in graph.nodes}
             or len(graph.nodes) != len(values["nodes"]) or graph.params):
@@ -136,7 +136,7 @@ def import_bundle(content):
 def split_execution(topology):
     """Keep immutable execution settings alongside each saved parameter snapshot."""
     topology = deepcopy(topology)
-    config = {"format": "biopipe.graph-execution", "schema_version": 1,
+    config = {"format": "operon.graph-execution", "schema_version": 1,
               "memory": topology.pop("memory", {}), "execution": topology.get("runtime", {}).pop("execution", {}),
               "routes": {}}
     for node in topology["nodes"]:
@@ -149,7 +149,7 @@ def restore_execution(topology, config):
     topology = deepcopy(topology)
     routes = {node["id"]: node for node in topology["nodes"] if node.get("route")}
     if (not isinstance(config, dict) or set(config) != {"format", "schema_version", "memory", "execution", "routes"}
-            or config["format"] != "biopipe.graph-execution" or config["schema_version"] != 1
+            or config["format"] != "operon.graph-execution" or config["schema_version"] != 1
             or not all(isinstance(config[k], dict) for k in ("memory", "execution", "routes"))
             or set(routes) != set(config["routes"])):
         raise ValueError("Execution settings do not match the saved graph")

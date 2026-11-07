@@ -79,9 +79,13 @@ _FAM_COLUMNS = ["FID", "IID", "PID", "MID", "SEX", "PHENO"]
 
 class Plink1Reader(Reader):
     """Reader for PLINK 1.x .bed / .bim / .fam triplets."""
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     parameters_file = 'plink1_reader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'Plink1Reader',
      'version': '1.0.0',
      'kind': 'reader',
@@ -185,9 +189,13 @@ class Plink1Reader(Reader):
 
 class Plink2Reader(Reader):
     """Reader for PLINK 2.x .pgen / .pvar / .psam triplets."""
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     parameters_file = 'plink2_reader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'Plink2Reader',
      'version': '1.0.0',
      'kind': 'reader',

@@ -130,11 +130,14 @@ def predict(
 class ColabfoldPredictStep(Step):
     """Predict one structure with the official ColabFold batch runner."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "colabfold_predict.ColabfoldPredictStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "colabfold_predict",
         "version": "1.0.0",
@@ -210,7 +213,7 @@ class ColabfoldPredictStep(Step):
                 f"colabfold_predict: msa_mode must be one of {', '.join(_MSA_MODES)}, got '{msa_mode}'"
             )
 
-        workdir = Path(tempfile.mkdtemp(prefix="biopipe_colabfold_"))
+        workdir = Path(tempfile.mkdtemp(prefix="operon_colabfold_"))
         try:
             structure_path, scores_path = predict(
                 sequence,

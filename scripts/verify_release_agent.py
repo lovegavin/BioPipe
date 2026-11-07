@@ -39,13 +39,13 @@ class Acceptance:
                        'ui_observation': 'Not performed by this script; separate EXE visual verification required.'}
         self.env = dict(os.environ, PYTHONPATH=str(self.code), PYTHONUTF8='1', PYTHONIOENCODING='utf-8')
         sys.path.insert(0, str(self.code))
-        from biopipe.client import Client
+        from operon.client import Client
         self.control = Client(self.workspace / '.studio', instance=args.instance,
                               name='Release acceptance', scopes=['context', 'edit', 'run'])
         record = self.control.instance
         self.instance = record['instance_id']
         self.report['instance'] = {key: value for key, value in record.items() if key != 'secret'}
-        self.command = [str(args.python), '-m', 'biopipe', '--workspace', str(self.workspace), '--instance', self.instance]
+        self.command = [str(args.python), '-m', 'operon', '--workspace', str(self.workspace), '--instance', self.instance]
         import psutil
         command = psutil.Process(record['pid']).cmdline()
         self.report['backend_process'] = {'pid': record['pid'], 'executable': command[0],
@@ -56,7 +56,7 @@ class Acceptance:
             assert entry and Path(entry).resolve().is_relative_to(self.code), 'Backend is not from the selected packaged code root'
             self.report['backend_process']['entry'] = str(Path(entry).resolve())
         probe = json.loads(self.process([str(args.python), '-c',
-            'import json,biopipe,biopipe.worker; print(json.dumps({"package":biopipe.__file__,"worker":biopipe.worker.__file__,"version":biopipe.__version__}))']))
+            'import json,operon,operon.worker; print(json.dumps({"package":operon.__file__,"worker":operon.worker.__file__,"version":operon.__version__}))']))
         assert Path(probe['package']).resolve().is_relative_to(self.code)
         assert Path(probe['worker']).resolve().is_relative_to(self.code)
         assert probe['version'] == args.version
@@ -98,7 +98,7 @@ class Acceptance:
             self.check(tool + ' rejected', denied)
             return None
         assert not result.isError, text
-        if tool == 'biopipe_sessions':
+        if tool == 'operon_sessions':
             # FastMCP represents a list as structured result and may emit each
             # item in its own text block (one item is not a JSON array).
             structured = getattr(result, 'structuredContent', None)
@@ -133,35 +133,35 @@ class Acceptance:
         graph = self.fixture()
         async with self.mcp('--read-only') as session:
             names = {tool.name for tool in (await session.list_tools()).tools}
-            assert {'biopipe_context', 'biopipe_apply', 'biopipe_submit', 'biopipe_artifacts'} <= names
+            assert {'operon_context', 'operon_apply', 'operon_submit', 'operon_artifacts'} <= names
             self.check('MCP tool discovery', sorted(names))
-            guide = await self.call(session, 'biopipe_guide')
+            guide = await self.call(session, 'operon_guide')
             assert guide['topic'] == 'start' and guide['content']
-            cached = await self.call(session, 'biopipe_guide', {'if_sha256': guide['sha256']})
+            cached = await self.call(session, 'operon_guide', {'if_sha256': guide['sha256']})
             assert not cached.get('content')
             resources = await session.list_resources()
-            assert 'biopipe://guide' in {str(item.uri) for item in resources.resources}
-            search_page = await self.call(session, 'biopipe_operator_search', {'query': ''})
+            assert 'operon://guide' in {str(item.uri) for item in resources.resources}
+            search_page = await self.call(session, 'operon_operator_search', {'query': ''})
             assert len(search_page['items']) <= 5
             assert all('parameters_schema' not in item for item in search_page['items'])
-            schema = await self.call(session, 'biopipe_operator_describe', {'ids': ['pca']})
+            schema = await self.call(session, 'operon_operator_describe', {'ids': ['pca']})
             assert 'parameters_schema' in schema['items'][0]['descriptor']
             self.check('Layered guides, conditional reuse and bounded default schemas')
-            searched = await self.call(session, 'biopipe_operator_search', {'query': 'pca', 'limit': 3})
+            searched = await self.call(session, 'operon_operator_search', {'query': 'pca', 'limit': 3})
             assert len(searched['items']) <= 3
-            described = await self.call(session, 'biopipe_operator_describe', {'ids': ['pca'], 'sections': ['parameters']})
+            described = await self.call(session, 'operon_operator_describe', {'ids': ['pca'], 'sections': ['parameters']})
             assert 'parameters' in described['items'][0]['documentation']['content']
-            await self.call(session, 'biopipe_submit', {'request_id': 'release-denied', 'graph': graph}, denied='capability')
-            await self.call(session, 'biopipe_workflow_save', {'graph': graph}, denied='capability')
+            await self.call(session, 'operon_submit', {'request_id': 'release-denied', 'graph': graph}, denied='capability')
+            await self.call(session, 'operon_workflow_save', {'graph': graph}, denied='capability')
         async with self.mcp() as session:
-            prepared = await self.call(session, 'biopipe_workflow_prepare', {'graph': graph})
-            saved = await self.call(session, 'biopipe_workflow_save', {'graph': prepared['graph']})
+            prepared = await self.call(session, 'operon_workflow_prepare', {'graph': graph})
+            saved = await self.call(session, 'operon_workflow_save', {'graph': prepared['graph']})
             edited = deepcopy(saved['graph']); edited['name'] += ' — saved edit'
-            changed = await self.call(session, 'biopipe_workflow_save', {'graph': edited, 'workflow_id': saved['id'], 'expected_version': 1})
+            changed = await self.call(session, 'operon_workflow_save', {'graph': edited, 'workflow_id': saved['id'], 'expected_version': 1})
             assert changed['version'] == 2
-            await self.call(session, 'biopipe_workflow_save', {'graph': edited, 'workflow_id': saved['id'], 'expected_version': 1}, denied='changed')
-            await self.call(session, 'biopipe_submit', {'request_id': 'default-agent-denied', 'graph': graph}, denied='capability')
-            fetched = await self.call(session, 'biopipe_workflows', {'workflow_id': saved['id']})
+            await self.call(session, 'operon_workflow_save', {'graph': edited, 'workflow_id': saved['id'], 'expected_version': 1}, denied='changed')
+            await self.call(session, 'operon_submit', {'request_id': 'default-agent-denied', 'graph': graph}, denied='capability')
+            fetched = await self.call(session, 'operon_workflows', {'workflow_id': saved['id']})
             assert fetched['graph'] == changed['graph']
         path = self.evidence / 'prepared-graph.json'; write(path, changed['graph'])
         self.state.update(workflow_id=saved['id'], expected_version=2, graph=changed['graph'],
@@ -170,11 +170,11 @@ class Acceptance:
         if self.args.prepare_environment:
             # Explicit acceptance flag grants installation, separately from run.
             async with self.mcp('--allow-plugins') as session:
-                prepared = await self.call(session, 'biopipe_workflow_prepare_environment', {'graph': changed['graph']})
+                prepared = await self.call(session, 'operon_workflow_prepare_environment', {'graph': changed['graph']})
                 assert prepared['readiness']['status'] == 'ready', prepared
                 self.check('Explicit route dependency preparation', prepared['readiness'])
         async with self.mcp('--allow-run') as session:
-            job = await self.call(session, 'biopipe_submit', self.request())
+            job = await self.call(session, 'operon_submit', self.request())
             assert job['status'] in {'queued', 'preparing', 'running', 'uploading'}
             self.state['job_id'] = job['id']; write(self.state_path, self.state)
         self.check('MCP process exits while accepted task remains active', job['status'])
@@ -196,18 +196,18 @@ class Acceptance:
         assert (self.workspace / '.studio/jobs' / job['id'] / 'parameters.json').is_file()
         self.check('Managed memory and independent parameter JSON retained')
         async with self.mcp('--allow-run') as session:
-            again = await self.call(session, 'biopipe_submit', self.request())
+            again = await self.call(session, 'operon_submit', self.request())
             assert again['id'] == job['id'] and again['reused']
-            index = await self.call(session, 'biopipe_artifacts', {'job_id': job['id']})
-            brief = await self.call(session, 'biopipe_job', {'job_id': job['id'], 'wait_seconds': 1})
+            index = await self.call(session, 'operon_artifacts', {'job_id': job['id']})
+            brief = await self.call(session, 'operon_job', {'job_id': job['id'], 'wait_seconds': 1})
             assert brief['status'] == 'complete' and 'graph' not in brief and 'report' not in brief
-            log_text = await self.call(session, 'biopipe_logs', {'job_id': job['id']})
+            log_text = await self.call(session, 'operon_logs', {'job_id': job['id']})
             assert isinstance(log_text['text'], str) and 'base64' not in log_text
             write(self.evidence / 'artifacts.json', index)
             cursor, log = 0, bytearray()
             import base64
             while True:
-                chunk = await self.call(session, 'biopipe_logs', {'job_id': job['id'], 'offset': cursor, 'limit': 127, 'encoding': 'base64'})
+                chunk = await self.call(session, 'operon_logs', {'job_id': job['id'], 'offset': cursor, 'limit': 127, 'encoding': 'base64'})
                 block = base64.b64decode(chunk['base64']); assert len(block) <= 127
                 log.extend(block); cursor = chunk['offset']
                 if chunk['done']: break
@@ -250,19 +250,19 @@ class Acceptance:
         assert self.state['backend_instance'] != self.instance, 'Restart the tested backend before the restart acceptance phase'
         before = {item['id'] for item in self.cli('jobs', 'list')}
         async with self.mcp('--allow-run') as session:
-            result = await self.call(session, 'biopipe_submit', self.request())
+            result = await self.call(session, 'operon_submit', self.request())
         assert result['id'] == self.state['job_id'] and result['reused']
         assert before == {item['id'] for item in self.cli('jobs', 'list')}
         self.check('Persisted retry across client/backend restart', {'job_id': result['id'], 'reused': result['reused']})
 
     async def canvas(self):
         async with self.mcp() as session:
-            sessions = await self.call(session, 'biopipe_sessions')
+            sessions = await self.call(session, 'operon_sessions')
             selected = self.args.session or (sessions[0]['id'] if len(sessions) == 1 else None)
             assert selected, 'Choose a real open desktop session using --session; this script never creates sessions'
-            snapshot = await self.call(session, 'biopipe_graph', {'session_id': selected})
+            snapshot = await self.call(session, 'operon_graph', {'session_id': selected})
             if self.args.phase == 'open':
-                opened = await self.call(session, 'biopipe_open', {'session_id': selected, 'expected_revision': snapshot['revision'],
+                opened = await self.call(session, 'operon_open', {'session_id': selected, 'expected_revision': snapshot['revision'],
                                                                  'mode': 'append', 'graph': self.state.get('graph') or self.fixture()})
                 self.state['canvas'] = {'session_id': selected, 'document_id': opened['workspace']['active_id']}
                 self.check('New synthetic tab opened; select PCA in the actual EXE', self.state['canvas'])
@@ -271,9 +271,9 @@ class Acceptance:
             assert canvas['session_id'] == selected
             document = next(doc for doc in snapshot['workspace']['documents'] if doc['id'] == canvas['document_id'])
             if self.args.phase in ('capture', 'apply'):
-                context = await self.call(session, 'biopipe_context', {'session_id': selected, 'scope': 'selection'})
+                context = await self.call(session, 'operon_context', {'session_id': selected, 'scope': 'selection'})
                 assert context['document_id'] == canvas['document_id'] and context['selection']['nodes'] == ['pca'], context
-                resource = await session.read_resource(f'biopipe://sessions/{selected}/selection')
+                resource = await session.read_resource(f'operon://sessions/{selected}/selection')
                 assert json.loads(resource.contents[0].text)['selection']['nodes'] == ['pca']
                 self.report['selection'] = context
                 self.check('Real UI-published PCA selection visible through MCP tool and resource')
@@ -286,7 +286,7 @@ class Acceptance:
                             {'op': 'connect', 'edge': {'id': 'agent-branch', 'source': 'pca', 'target': 'agent_diagnostic'}},
                             {'op': 'configure', 'patch': {'name': 'Operon release — Agent batch'}}]
                 before_jobs = {job['id'] for job in self.cli('jobs', 'list')}
-                applied = await self.call(session, 'biopipe_apply', {'session_id': selected, 'document_id': canvas['document_id'],
+                applied = await self.call(session, 'operon_apply', {'session_id': selected, 'document_id': canvas['document_id'],
                     'expected_revision': snapshot['revision'], 'commands': commands, 'request_id': 'release-batch-' + str(snapshot['revision'])})
                 assert applied['history'][canvas['document_id']]['undo'] == snapshot.get('history', {}).get(canvas['document_id'], {}).get('undo', 0) + 1
                 assert before_jobs == {job['id'] for job in self.cli('jobs', 'list')}
@@ -294,7 +294,7 @@ class Acceptance:
                 self.check('Four graph edits form one undo entry and launch no job', {'revision': applied['revision']})
             elif self.args.phase == 'undo':
                 assert snapshot['revision'] == canvas['applied_revision'], 'Canvas changed after agent batch; inspect it before undo'
-                undone = await self.call(session, 'biopipe_undo', {'session_id': selected, 'document_id': canvas['document_id'],
+                undone = await self.call(session, 'operon_undo', {'session_id': selected, 'document_id': canvas['document_id'],
                                                                   'expected_revision': snapshot['revision']})
                 restored = next(doc['graph'] for doc in undone['workspace']['documents'] if doc['id'] == canvas['document_id'])
                 assert restored == canvas['baseline']

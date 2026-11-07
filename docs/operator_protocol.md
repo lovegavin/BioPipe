@@ -1,11 +1,14 @@
-# Operator protocol v3, v3.5 and v3.6
+# Operator protocol v3 with SDK 3.7
 
-The current SDK is 3.6.0. The wire major remains protocol 3. Operator IDs, numerical kernels,
+The current SDK is 3.7.0. The wire major remains protocol 3. Operator IDs, numerical kernels,
 Form contracts and resource protocols retain their existing meaning.
 
-SDK 3.6 adds optional `data_formats` declarations for logical types and physical
-representations. Existing v3 and v3.5 declarations keep their previous contract
-behavior; they do not silently opt into conversions. See [data formats](data_formats.md).
+New declarations use `protocol_revision: "3.7"` and must declare both
+`data_formats.inputs` and `data_formats.outputs`, including explicit empty arrays
+for Readers' inputs and report-only operators' outputs. Logical types and physical
+representations remain separate. Existing v3/v3.5/v3.6 declarations keep their
+previous contract behavior; they do not silently opt into conversions. See
+[data formats](data_formats.md) and [static migration](format_migration_v37.md).
 Workflow-local scripts can start without sidecar files and be promoted into this
 ordinary package protocol; see [script authoring](script_operators_v3.md).
 
@@ -43,13 +46,14 @@ validates parameters and supplies defaults before dispatch. A default is not a
 required parameter; add a name to the schema's `required` array to require input.
 
 See the complete [Step](step_extensions.md) and [Reader](reader_extensions.md)
-examples. `biopipe plugin init` creates these files and an executable test.
+examples. `operon plugin init` creates these files and an executable test.
 
 ## Optional v3.5 language pack
 
 Add a literal `localization_file = "localization.json"` to the class. The SDK validates
 and embeds its display translations in the static registry, with
-`protocol_revision: "3.5"` and `minimum_sdk: "3.5.0"`. Existing v3 declarations
+`minimum_sdk: "3.5.0"`. New declarations retain `protocol_revision: "3.7"`;
+adding a language pack does not downgrade the format contract. Existing v3 declarations
 without this field remain valid and display their original language. Do not set
 `protocol_version` to a float or a string: it remains the integer `3`.
 
@@ -76,7 +80,7 @@ Maintenance reads the Python AST and JSON; it never executes module top-level co
 | `documentation` | Optional SDK-generated Markdown metadata: relative path, content hash, summary and section index; requires SDK 3.1 |
 
 Use namespaced IDs for external providers, such as `lab.scale`. A bundled provider
-can retain its existing IDs. `provider = "biopipe-core"` chooses ownership for a
+can retain its existing IDs. `provider = "operon-core"` chooses ownership for a
 source-library implementation; updates cannot steal another provider's IDs.
 Entry points and hashes are generated, not written by authors.
 
@@ -99,7 +103,7 @@ private directories and subprocesses. See [dependency isolation](dependency_isol
 
 ## One generated index, several consumers
 
-`library/seed/biopipe/builtin_packages.json` and profile `plugins/registry.json` are generated
+`library/seed/operon/builtin_packages.json` and profile `plugins/registry.json` are generated
 indexes. They combine each class definition and its parameter JSON into a
 snapshot descriptor. The frontend, graph compiler, contract checker, memory
 planner, CLI and MCP consume that descriptor. Do not edit the generated index to
@@ -166,7 +170,7 @@ Full desktop packaging compiles sources with its bundled Python 3.11; Lite does
 not ship interpreter-specific application bytecode. Development source remains
 normal checked source; never precompile mutable development folders unchecked.
 
-`biopipe registry check` validates schemas/contracts, checks literal parameter reads
+`operon registry check` validates schemas/contracts, checks literal parameter reads
 against JSON properties, and compares the generated index. Unknown literal keys
 are errors; dynamic keys and parameters forwarded to helpers generate warnings.
 This is conservative static checking, not proof about arbitrary Python execution.

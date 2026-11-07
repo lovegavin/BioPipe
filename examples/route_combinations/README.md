@@ -17,7 +17,7 @@ upstream author's `ANALYSIS.md`.
 ## Run or validate
 
 Copy an example directory into a writable workspace. Keep its topology, parameter
-JSON and inputs together. From a BioPipe checkout, run:
+JSON and inputs together. From a Operon checkout, run:
 
 ```text
 python scripts/run.py <example-directory> --check

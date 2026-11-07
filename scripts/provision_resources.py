@@ -1,4 +1,4 @@
-"""Provision BioPipe large resources (weights and databases)."""
+"""Provision Operon large resources (weights and databases)."""
 
 from __future__ import annotations
 
@@ -25,7 +25,7 @@ def _pairs(values: list[str]) -> list[tuple[str, str]]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Provision BioPipe large resources")
+    parser = argparse.ArgumentParser(description="Provision Operon large resources")
     parser.add_argument("--root", required=True, help="resource root directory")
     parser.add_argument("--only", action="append", default=[], help="resource id (repeatable)")
     parser.add_argument("--file", action="append", default=[], dest="files", help="file name (repeatable)")

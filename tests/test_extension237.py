@@ -55,7 +55,7 @@ out.write_text("".join(records), encoding="utf-8")
 payload = {}
 if args.tied_positions_jsonl:
     payload = json.loads(Path(args.tied_positions_jsonl).read_text(encoding="utf-8"))
-capture = os.environ.get("BIOPIPE_TEST_CAPTURE")
+capture = os.environ.get("OPERON_TEST_CAPTURE")
 if capture:
     Path(capture).write_text(
         json.dumps(
@@ -143,7 +143,7 @@ def test_runner_round_trip(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> N
     repo = _repo(tmp_path)
     structure = _structure(tmp_path)
     capture = tmp_path / "captured.json"
-    monkeypatch.setenv("BIOPIPE_TEST_CAPTURE", str(capture))
+    monkeypatch.setenv("OPERON_TEST_CAPTURE", str(capture))
     ctx = _run(tmp_path, repo, structure, num_seq_per_target=2, device="cpu")
 
     form = ctx["designs"]

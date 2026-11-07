@@ -1,7 +1,7 @@
 from pathlib import Path
 import pytest
 
-from biopipe.script_operators import inspect_script, extract_parameters, execute_script, parameter_candidates, inspect_script_environment
+from operon.script_operators import inspect_script, extract_parameters, execute_script, parameter_candidates, inspect_script_environment
 
 CODE = '''# input: data file.txt
 # output: result file.txt
@@ -67,7 +67,7 @@ def test_hash_tampering_and_missing_dependency(tmp_path):
     path = tmp_path / 'script.py'
     path.write_text('# output: result file.txt\n')
     snapshot = inspect_script(path)
-    snapshot['dependencies'] = ['biopipe-impossible-missing-package-test==999']
+    snapshot['dependencies'] = ['operon-impossible-missing-package-test==999']
     assert inspect_script_environment(snapshot)['status'] == 'failed'
     snapshot['code'] += 'pass\n'
     with pytest.raises(ValueError, match='hash'):
@@ -112,10 +112,10 @@ def test_promoted_provider_static_package_and_real_worker(tmp_path, monkeypatch)
     import json
     import subprocess
     import sys
-    from biopipe.script_operators import export_script_package
-    from biopipe.developer import check_source, embed_manifest
-    from biopipe.dropins import write_wheel
-    from biopipe.plugins import PluginManager
+    from operon.script_operators import export_script_package
+    from operon.developer import check_source, embed_manifest
+    from operon.dropins import write_wheel
+    from operon.plugins import PluginManager
     monkeypatch.setenv('TEMP', str(tmp_path))
     monkeypatch.setenv('TMP', str(tmp_path))
     source = tmp_path / 'repeat.py'
@@ -126,6 +126,11 @@ def test_promoted_provider_static_package_and_real_worker(tmp_path, monkeypatch)
     manifest = check_source(project)
     descriptor = manifest['descriptors'][0]
     assert descriptor['id'] == 'lab.repeat_text'
+    assert descriptor['protocol_revision'] == '3.7'
+    assert descriptor['data_formats'] == {
+        'inputs': [{'logical_type': 'file_artifact', 'representations': ['file_artifact']}],
+        'outputs': [{'logical_type': 'file_artifact', 'representations': ['file_artifact']}],
+    }
     assert descriptor['parameters_schema']['properties']['threshold']['default'] == 3
     assert descriptor['documentation']
     assert exported['module'] not in sys.modules
@@ -148,8 +153,8 @@ def test_promoted_provider_static_package_and_real_worker(tmp_path, monkeypatch)
     data.write_text('x')
     code = '''import sys,json
 from pathlib import Path
-from biopipe.targets import activate
-from biopipe.plugins import load_runtime
+from operon.targets import activate
+from operon.plugins import load_runtime
 state=json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))
 state['_runtime_root']=str(Path(sys.argv[1]).parent)
 activate(state); load_runtime(state)

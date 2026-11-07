@@ -9,10 +9,14 @@ from src.task.step.base import Step
 
 
 class StoreyQvalueStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Storey's q-value procedure for a column of p-values."""
     parameters_file = 'storey_qvalue.StoreyQvalueStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'storey_qvalue',
      'version': '1.0.0',
      'kind': 'operator',

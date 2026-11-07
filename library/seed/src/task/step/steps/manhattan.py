@@ -42,9 +42,13 @@ class ManhattanStep(Step):
         point_size  : marker size (default 6)
         alpha       : marker transparency (default 0.85)
     """
-    provider = 'biopipe-plots'
+    provider = 'operon-plots'
     parameters_file = 'manhattan.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': []},
+        'protocol_version': 3,
      'id': 'manhattan',
      'version': '1.0.0',
      'kind': 'operator',

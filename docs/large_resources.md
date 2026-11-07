@@ -1,6 +1,6 @@
 # Large resources
 
-BioPipe does not ship model weights, sequence databases or third-party
+Operon does not ship model weights, sequence databases or third-party
 checkouts. Operators that need them read the shipped manifest
 `src/task/step/steps/resources.json`, which records where each resource may live, which
 environment variable overrides the search path, and exactly which files a
@@ -28,7 +28,7 @@ the released checkpoint, all applied in site-packages:
    `.linear` into `ipa.linear_q_points.*` and `ipa.linear_kv_points.*`.
 4. OpenFold must be importable (ESMFold imports `openfold.np`); add a `.pth`
    that points at a directory containing only the `openfold` package (not the
-   checkout root, whose `scripts/` would shadow BioPipe's).
+   checkout root, whose `scripts/` would shadow Operon's).
 
 ## OpenFold
 
@@ -119,7 +119,7 @@ per expected file with its presence and size and records the remedy in
 
 ### proteinmpnn — ProteinMPNN official checkout
 
-* root: `BIOPIPE_PROTEINMPNN_PATH` (default `~/.local/share/biopipe/resources/proteinmpnn`)
+* root: `OPERON_PROTEINMPNN_PATH` (default `~/.local/share/operon/resources/proteinmpnn`)
 * files: `protein_mpnn_run.py`, `vanilla_model_weights/v_48_020.pt`
 
 ```bash
@@ -130,12 +130,12 @@ cd ProteinMPNN && curl -L -o vanilla_model_weights/v_48_020.pt \
 
 ### ligandmpnn — LigandMPNN official checkout
 
-* root: `BIOPIPE_LIGANDMPNN_PATH`
+* root: `OPERON_LIGANDMPNN_PATH`
 * files: `run.py`, `model_params/ligandmpnn_v_32_010_25.pt`
 
 ### esm2 / esm_if1 — Meta ESM checkpoints
 
-* root: `BIOPIPE_ESM_MODEL_DIR` (defaults to the respective `esm2` or `esm_if1` directory below `~/.local/share/biopipe/resources`)
+* root: `OPERON_ESM_MODEL_DIR` (defaults to the respective `esm2` or `esm_if1` directory below `~/.local/share/operon/resources`)
 * files: `esm2_t6_8M_UR50D.pt`, `esm_if1_gvp4_t16_142M_UR50.pt`
 
 ```bash
@@ -145,7 +145,7 @@ curl -L https://dl.fbaipublicfiles.com/fair-esm/models/esm_if1_gvp4_t16_142M_UR5
 
 ### esmfold — ESMFold 3B checkpoint
 
-* root: `BIOPIPE_ESMFOLD_WEIGHTS` or the torch hub cache
+* root: `OPERON_ESMFOLD_WEIGHTS` or the torch hub cache
   (`~/.cache/torch/hub/checkpoints`)
 * file: `esmfold_3B_v1.pt` (~2.5 GB)
 
@@ -154,7 +154,7 @@ on first use. Pre-populate the cache to run offline.
 
 ### colabfold — ColabFold local installation
 
-* root: `BIOPIPE_COLABFOLD_PATH` (directory holding the `colabfold_batch` binary)
+* root: `OPERON_COLABFOLD_PATH` (directory holding the `colabfold_batch` binary)
 * file: `colabfold_batch`
 
 ```bash
@@ -164,12 +164,12 @@ pip install "colabfold[alphafold]"
 
 ### alphafold2 — AlphaFold2 parameters
 
-* root: `BIOPIPE_ALPHAFOLD_DATA`
+* root: `OPERON_ALPHAFOLD_DATA`
 * file: `params/params_model_1_ptm.npz`
 
 ### rfdiffusion — RFdiffusion official checkout
 
-* root: `BIOPIPE_RFDIFFUSION_PATH`
+* root: `OPERON_RFDIFFUSION_PATH`
 * files: `scripts/run_inference.py`, `models/Complex_beta_ckpt.pt`
 
 ## Policy
@@ -197,7 +197,7 @@ mkdir -p db && cp *.pdb db/
 
 Then set `foldseek_path=/absolute/path/foldseek/bin/foldseek` and
 `database_path=/absolute/path/mydb`. To run the real integration test set
-`BIOPIPE_FOLDSEEK_BIN` and `BIOPIPE_FOLDSEEK_DB`; otherwise the test skips.
+`OPERON_FOLDSEEK_BIN` and `OPERON_FOLDSEEK_DB`; otherwise the test skips.
 
 ## Prodigal
 
@@ -210,7 +210,7 @@ prodigal -v
 ```
 
 The default path is `prodigal` on `PATH`; override it with the operator's
-`prodigal_path` parameter. `BIOPIPE_PRODIGAL_REAL=1` enables the real genome
+`prodigal_path` parameter. `OPERON_PRODIGAL_REAL=1` enables the real genome
 check in `tests/test_extension252.py`.
 
 ## Pfam
@@ -223,11 +223,11 @@ mkdir -p ~/db && cd ~/db
 curl -LO https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz
 gunzip Pfam-A.hmm.gz
 hmmpress Pfam-A.hmm
-export BIOPIPE_PFAM_HMM=~/db/Pfam-A.hmm
+export OPERON_PFAM_HMM=~/db/Pfam-A.hmm
 ```
 
 The real check in `tests/test_extension253.py` runs only when
-`BIOPIPE_PFAM_HMM` points at the pressed database.
+`OPERON_PFAM_HMM` points at the pressed database.
 
 ## ESM-3
 
@@ -241,7 +241,7 @@ python -c "import torch; from esm.models.esm3 import ESM3; ESM3.from_pretrained(
 ```
 
 The cache lands under `~/.cache/huggingface/hub/models--EvolutionaryScale--esm3-sm-open-v1`.
-`BIOPIPE_ESM3_REAL=1` enables the real check in `tests/test_extension325.py`.
+`OPERON_ESM3_REAL=1` enables the real check in `tests/test_extension325.py`.
 
 ## Provisioning
 
@@ -253,42 +253,42 @@ Operators whose upstream pins conflict with the shared scientific runtime use a
 dedicated interpreter instead of downgrading NumPy/Torch:
 
 ```bash
-python -m biopipe.environments            # status of every declared environment
-python -m biopipe.environments --json
+python -m operon.environments            # status of every declared environment
+python -m operon.environments --json
 ```
 
 AntiFold (`antifold_design`) lives in `<prefix>/external/antifold`; the managed
 installer creates it, installs `antifold==0.3.1` with `--no-deps` plus its
 runtime pins, and the operator resolves that interpreter automatically. Override
-with `BIOPIPE_ENV_ANTIFOLD=/path/to/python` or the `python_executable` parameter.
+with `OPERON_ENV_ANTIFOLD=/path/to/python` or the `python_executable` parameter.
 Place the 541 MB weights at
 `<prefix>/external/antifold/lib/python3.11/site-packages/antifold/trained_models/model.pt`
-(download URL in `library/seed/biopipe/environments.json`).
+(download URL in `library/seed/operon/environments.json`).
 
 ## Multi-environment operators (resolution and overrides)
 
 Operators whose upstream pins cannot coexist with the shared runtime declare
-`resources.environment = "<name>"`; the list lives in `library/seed/biopipe/environments.json`.
+`resources.environment = "<name>"`; the list lives in `library/seed/operon/environments.json`.
 
 Resolution order for `<name>`:
 
-1. `BIOPIPE_ENV_<NAME>` — absolute path to that interpreter.
-2. `BIOPIPE_ENVIRONMENTS_ROOT` / `<name>` (defaults to `<prefix>/external/<name>`),
+1. `OPERON_ENV_<NAME>` — absolute path to that interpreter.
+2. `OPERON_ENVIRONMENTS_ROOT` / `<name>` (defaults to `<prefix>/external/<name>`),
    using `bin/python` on POSIX and `Scripts/python.exe` on Windows.
 
 The runner resolves the environment before importing the operator, then executes
-it through `biopipe.env_worker` in that interpreter: input Forms are written as
+it through `operon.env_worker` in that interpreter: input Forms are written as
 `.npy` plus JSON metadata (label encoders as mappings), the worker returns the
 output Form the same way, and the host process never imports the conflicting
-modules. The child process receives `PYTHONPATH=<BIOPIPE_CODE_ROOT or detected
+modules. The child process receives `PYTHONPATH=<OPERON_CODE_ROOT or detected
 source tree>` and `HF_ENDPOINT` (default `https://hf-mirror.com`) so weight
 downloads work behind a blocked Hugging Face.
 
 Inspect and verify:
 
 ```bash
-python -m biopipe.environments --json
-python -m biopipe.environments            # OK/FAIL per environment
+python -m operon.environments --json
+python -m operon.environments            # OK/FAIL per environment
 ```
 
 Per-operator table (generated pages also print the environment):
@@ -301,16 +301,16 @@ Per-operator table (generated pages also print the environment):
 | `boltz_predict`, `boltz_complex_confidence`, `boltz_affinity_summary` | `boltz` (validated clone of the shared stack) | same versions as the shared runtime | `~/.boltz/{ccd.pkl,boltz1_conf.ckpt,boltz2_*.ckpt,mols.tar}` |
 
 `python scripts/check_resources.py` prints large-data status; `python -m
-biopipe.environments` prints interpreter status. A missing environment is a hard
+operon.environments` prints interpreter status. A missing environment is a hard
 failure for its operators, never a silent fallback.
 
 ## Genome annotation databases
 
 | Resource | Operator | Install | Environment / default |
 | --- | --- | --- | --- |
-| antiSMASH 8 module databases | `antismash_bgc` | `conda install -c conda-forge -c bioconda antismash=8.0.4`, then `download-antismash-databases --database-dir ~/tools/antismash_db` | `BIOPIPE_ANTISMASH_DB`, default `~/tools/antismash_db` |
-| Rfam covariance models | `rfam_scan` | download `Rfam.cm.gz`, `gunzip Rfam.cm.gz`, then `cmpress Rfam.cm` | `BIOPIPE_RFAM_DB`, default `~/tools/rfam` |
-| AMRFinderPlus database | `amrfinder_plus` | `amrfinder_update -d ~/tools/amrfinder_db` | `BIOPIPE_AMRFINDER_DB`, default `~/tools/amrfinder_db/<version>` |
+| antiSMASH 8 module databases | `antismash_bgc` | `conda install -c conda-forge -c bioconda antismash=8.0.4`, then `download-antismash-databases --database-dir ~/tools/antismash_db` | `OPERON_ANTISMASH_DB`, default `~/tools/antismash_db` |
+| Rfam covariance models | `rfam_scan` | download `Rfam.cm.gz`, `gunzip Rfam.cm.gz`, then `cmpress Rfam.cm` | `OPERON_RFAM_DB`, default `~/tools/rfam` |
+| AMRFinderPlus database | `amrfinder_plus` | `amrfinder_update -d ~/tools/amrfinder_db` | `OPERON_AMRFINDER_DB`, default `~/tools/amrfinder_db/<version>` |
 | tRNAscan-SE 2.x | `trnascan_se` | `apt install trnascan-se` (or a bioconda environment) | binary on `PATH` |
 
 The antiSMASH conda package deliberately ships **no** databases; run the official

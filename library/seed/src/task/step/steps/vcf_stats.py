@@ -39,9 +39,15 @@ _TRANSITIONS = {("A", "G"), ("G", "A"), ("C", "T"), ("T", "C")}
 
 class VcfStatsStep(Step):
     """Count variants, SNPs, indels, transitions and samples in a VCF."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'vcf_stats.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'vcf_stats',
      'version': '1.0.0',
      'kind': 'operator',

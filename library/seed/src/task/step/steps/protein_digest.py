@@ -22,9 +22,12 @@ _FIELDS = [
 class ProteinDigestStep(Step):
     """Digest proteins with trypsin/Lys-C/Arg-C and report peptide masses."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "protein_digest.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "protein_digest",
         "version": "1.0.0",

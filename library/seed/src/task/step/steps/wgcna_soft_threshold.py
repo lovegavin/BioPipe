@@ -76,10 +76,13 @@ def suggest_power(rows: list[dict], r2_cut: float, slope_cut: float) -> int:
 class WgcnaSoftThresholdStep(Step):
     """Fit scale-free topology statistics for candidate adjacency powers."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "wgcna_soft_threshold.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "wgcna_soft_threshold",
         "version": "1.0.0",

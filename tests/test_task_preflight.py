@@ -2,7 +2,7 @@
 from copy import deepcopy
 import json
 
-from biopipe.packages import bundled_state
+from operon.packages import bundled_state
 from src.task.check import check_manifest
 
 
@@ -14,10 +14,10 @@ def task():
 
 
 def test_preflight_uses_metadata_and_keeps_inputs_read_only(tmp_path, monkeypatch):
-    import biopipe_sdk.declarations
+    import operon_sdk.declarations
     def forbidden(*args, **kwargs):
         raise AssertionError('Preflight must not import scientific implementations')
-    monkeypatch.setattr(biopipe_sdk.declarations, 'load_class', forbidden)
+    monkeypatch.setattr(operon_sdk.declarations, 'load_class', forbidden)
     source = tmp_path / 'data.csv'
     source.write_bytes(b'invalid CSV bytes intentionally never parsed\x00')
     value = task()

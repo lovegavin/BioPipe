@@ -20,9 +20,12 @@ def _column(form, field_dim: str, name: str) -> list:
 
 
 class GoTermSimilarityStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "go_term_similarity.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "go_term_similarity",
         "version": "1.0.0",

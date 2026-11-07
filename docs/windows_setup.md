@@ -32,18 +32,18 @@ directory UI remain later work, not capabilities of this candidate.
 Each run creates a fresh software directory and a fresh profile identity. The
 installed application always selects its adjacent Python. It does not fall back
 to Conda, system Python, remembered interpreters or a previous installation.
-Startup does not create or update the shared `~/.biopipe/runtime.json` hint.
+Startup does not create or update the shared `~/.operon/runtime.json` hint.
 That file remains available to portable/development installations; uninstalling
 Setup cannot leave them pointing at the removed bundled Python.
-Inherited Python, Conda and BioPipe overrides are removed from child processes.
+Inherited Python, Conda and Operon overrides are removed from child processes.
 The tool search path contains the bundled runtime and Windows system directories.
 Optional dependencies use managed targets inside this installation's profile;
 conflicting requirements continue to use separate subprocesses.
 
 The new Operon profile is `%USERPROFILE%\.operon\profiles\<installation-id>`.
-The random ID is recorded in `biopipe-install.json` beside the installed EXE.
-New receipts include `product: "operon"`. Older BioPipe receipts without this
-marker retain their `.biopipe/profiles` behavior; the new installer does not
+The random ID is recorded in `operon-install.json` beside the installed EXE.
+New receipts include `product: "operon"`. Older Operon receipts without this
+marker retain their `.operon/profiles` behavior; the new installer does not
 rename or migrate those profiles. See [naming compatibility](rebranding.md).
 No machine-specific path is embedded in the distributed installer. Moving the
 software folder on the same account retains its profile identity.
@@ -100,7 +100,7 @@ independent of application releases; adding an operator does not require Setup.
 
 ## Building and acceptance
 
-The desktop and installer share the embedded icon in `assets/branding/biopipe.ico`.
+The desktop and installer share the embedded icon in `assets/branding/operon.ico`.
 Its editable SVG, generated PNG and rebuilding instructions are in that directory.
 Normal builds use the committed icon and need no extra graphics libraries.
 
@@ -117,7 +117,7 @@ to the self-contained native installer. Distribute the single EXE and checksum.
 Do not replace assets belonging to an already published release.
 
 Acceptance must include actual double-click installation, app startup and exit,
-an existing corrupt/legacy default profile, inherited Python/BioPipe overrides,
+an existing corrupt/legacy default profile, inherited Python/Operon overrides,
 reinstallation with old software leftovers, and uninstall with a saved workflow.
 Verify the interpreter and profile in desktop logs. Command-line smoke tests
 supplement actual desktop acceptance.

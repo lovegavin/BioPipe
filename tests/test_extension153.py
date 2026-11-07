@@ -13,7 +13,7 @@ from src.task.runner import run
 from src.task.step.steps._sequence_common import encode_sequences
 
 FIXTURE = Path(__file__).parent / "fixtures" / "backbone_1bc8_c60_75.pdb"
-CHECKPOINT = os.environ.get("BIOPIPE_ESM_IF_CHECKPOINT", "/home/gavin/models/esm_if1_gvp4_t16_142M_UR50.pt")
+CHECKPOINT = os.environ.get("OPERON_ESM_IF_CHECKPOINT", "/home/gavin/models/esm_if1_gvp4_t16_142M_UR50.pt")
 
 
 def _ctx(tmp_path):

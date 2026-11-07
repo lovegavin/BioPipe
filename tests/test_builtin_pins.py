@@ -7,8 +7,8 @@ import sys
 
 import pytest
 
-from biopipe.packages import bundled_state
-from biopipe.plugins import PluginManager
+from operon.packages import bundled_state
+from operon.plugins import PluginManager
 from src.web.models import Graph
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,18 +18,18 @@ def test_old_builtin_graph_runs_after_source_upgrade_without_repin(tmp_path, mon
     current = deepcopy(bundled_state())
     previous = deepcopy(current)
     for package in previous['packages']:
-        if package['name'] == 'biopipe-core':
+        if package['name'] == 'operon-core':
             package['sha256'] = '0' * 64
             package['code_sha'] = '0' * 64
     for descriptor in previous['descriptors']:
-        if descriptor['distribution'] == 'biopipe-core':
+        if descriptor['distribution'] == 'operon-core':
             descriptor['implementation']['sha256'] = '0' * 64
             descriptor['code_sha'] = descriptor['implementation']['code_sha'] = '0' * 64
     manager = PluginManager(tmp_path / 'profile')
     graph = Graph.model_validate({'nodes': [{'id': 'summary', 'kind': 'operator',
         'operator': 'describe', 'position': {'x': 0, 'y': 0}, 'params': {}}], 'edges': []})
     with monkeypatch.context() as old:
-        old.setattr('biopipe.plugins.bundled_state', lambda **kwargs: previous)
+        old.setattr('operon.plugins.bundled_state', lambda **kwargs: previous)
         graph = manager.pin(graph)
     original = graph.model_dump(mode='json')
     archive = {p: p.read_bytes() for p in (manager.directory / 'snapshots').glob('*.json')}
@@ -51,15 +51,15 @@ def test_launch_records_rebinding_and_preserves_history(tmp_path, monkeypatch):
     from src.web.service import JobService, Settings
     previous = deepcopy(bundled_state())
     for package in previous['packages']:
-        if package['name'] == 'biopipe-core':
+        if package['name'] == 'operon-core':
             package['sha256'] = '0' * 64
             package['code_sha'] = '0' * 64
     for d in previous['descriptors']:
-        if d['distribution'] == 'biopipe-core':
+        if d['distribution'] == 'operon-core':
             d['implementation']['sha256'] = '0' * 64
             d['code_sha'] = d['implementation']['code_sha'] = '0' * 64
     with monkeypatch.context() as old:
-        old.setattr('biopipe.plugins.bundled_state', lambda **kwargs: previous)
+        old.setattr('operon.plugins.bundled_state', lambda **kwargs: previous)
         service = JobService(Settings(tmp_path, tmp_path / '.studio', tmp_path, testing=True, code_root=ROOT), build_catalog(STEPS))
         graph = service.plugins.pin(Graph.model_validate(service.demo))
     history = service.jobs_dir / 'previous'
@@ -86,17 +86,17 @@ def test_launch_records_rebinding_and_preserves_history(tmp_path, monkeypatch):
 
 
 def test_builtin_cache_tracks_edits_and_manifest_without_restart(tmp_path, monkeypatch):
-    import biopipe.packages as packages
+    import operon.packages as packages
     root = tmp_path / 'checkout'
-    (root / 'biopipe').mkdir(parents=True)
+    (root / 'operon').mkdir(parents=True)
     source = root / 'src/task/step/steps/example.py'
     source.parent.mkdir(parents=True)
     source.write_bytes(b'value = 1\n')
-    index = root / 'biopipe/builtin_packages.json'
+    index = root / 'operon/builtin_packages.json'
     manifest = {'packages': [{'name': 'example', 'version': '1.0', 'origin': 'bundled',
         'descriptors': [{'id': 'example', 'entry_point': 'src.task.step.steps.example:Example', 'code_sha': '0' * 64, 'declaration_sha': '1' * 64}]}]}
     index.write_text(json.dumps(manifest), encoding='utf-8')
-    monkeypatch.setattr('biopipe.library_location.source_root', lambda candidate=None: root if candidate is None else Path(candidate))
+    monkeypatch.setattr('operon.library_location.source_root', lambda candidate=None: root if candidate is None else Path(candidate))
     first = packages.bundled_state()
     assert packages.bundled_state() is first
     # Newlines are not an implementation change, including Windows Git checkouts.
@@ -110,7 +110,7 @@ def test_builtin_cache_tracks_edits_and_manifest_without_restart(tmp_path, monke
 
 
 def test_nested_builtin_pins_normalize_but_wheel_pins_stay_strict(tmp_path):
-    from biopipe.pins import resolve
+    from operon.pins import resolve
     state = deepcopy(bundled_state())
     state['generation'] = 'current'
     old = deepcopy(state)
@@ -132,7 +132,7 @@ def test_unknown_pin_is_not_silently_updated(tmp_path):
     manager = PluginManager(tmp_path)
     state = manager.state()
     graph = Graph.model_validate({'nodes': [], 'edges': [], 'plugin_lock': {
-        'describe': {'package': 'biopipe-core', 'version': '1.0.0', 'sha256': 'f' * 64}}})
+        'describe': {'package': 'operon-core', 'version': '1.0.0', 'sha256': 'f' * 64}}})
     with pytest.raises(ValueError, match='Unknown or wheel pins'):
         manager.snapshot(graph)
 
@@ -141,7 +141,7 @@ def test_worker_still_rejects_a_stale_frozen_job_lock(tmp_path):
     # Once the job exists, it must not silently execute different source bytes.
     state = deepcopy(bundled_state())
     for descriptor in state['descriptors']:
-        if descriptor['distribution'] == 'biopipe-core':
+        if descriptor['distribution'] == 'operon-core':
             descriptor['implementation']['sha256'] = '0' * 64
             descriptor['code_sha'] = descriptor['implementation']['code_sha'] = '0' * 64
     state.update(package_protocol_version=3, bundled_seen=[p['name'] for p in state['packages']])
@@ -157,7 +157,7 @@ def test_worker_still_rejects_a_stale_frozen_job_lock(tmp_path):
 
 
 def test_retained_wheel_generation_refreshes_only_bundled_metadata(tmp_path, monkeypatch):
-    from biopipe.pins import resolve
+    from operon.pins import resolve
     state = deepcopy(bundled_state())
     state.update(package_protocol_version=3, generation='new', code_paths=['environments/new/code'], shared_paths=['targets/shared'])
     package = {'name': 'lab-tool', 'version': '2', 'sha256': 'new', 'origin': 'wheel', 'enabled': True}
@@ -171,9 +171,9 @@ def test_retained_wheel_generation_refreshes_only_bundled_metadata(tmp_path, mon
     old['packages'][-1].update(version='1', sha256='old')
     old['descriptors'][-1]['implementation'].update(version='1', sha256='old')
     for p in old['packages']:
-        if p['name'] == 'biopipe-core': p['sha256'] = p['code_sha'] = '0' * 64
+        if p['name'] == 'operon-core': p['sha256'] = p['code_sha'] = '0' * 64
     for d in old['descriptors']:
-        if d['distribution'] == 'biopipe-core': d['implementation']['sha256'] = d['implementation']['code_sha'] = d['code_sha'] = '0' * 64
+        if d['distribution'] == 'operon-core': d['implementation']['sha256'] = d['implementation']['code_sha'] = d['code_sha'] = '0' * 64
     graph = Graph.model_validate({'nodes': [], 'edges': [], 'plugin_lock': {'lab.tool': old['descriptors'][-1]['implementation']}})
     saved = deepcopy(old)
     chosen = resolve(graph, [state, old], bundled_state())
@@ -184,7 +184,7 @@ def test_retained_wheel_generation_refreshes_only_bundled_metadata(tmp_path, mon
     assert next(d for d in chosen['descriptors'] if d['id'] == 'compare_groups')['implementation']['sha256'] != '0' * 64
     # A job records the synthetic mixed generation. Its metadata and Markdown
     # must remain retrievable without mutating the current installed generation.
-    from biopipe.operator_docs import OperatorDocs
+    from operon.operator_docs import OperatorDocs
     from src.web.storage import atomic_json
     manager = PluginManager(tmp_path / 'profile')
     monkeypatch.setattr(manager, 'state', lambda: state)
@@ -214,7 +214,7 @@ def test_pin_diagnostic_is_read_only_and_respects_profile(tmp_path):
 
 
 def test_nested_declaration_pins_share_code_identity_without_old_snapshots(tmp_path):
-    from biopipe.pins import identity, matches, requirements
+    from operon.pins import identity, matches, requirements
     manager = PluginManager(tmp_path)
     current = next(d for d in manager.state()['descriptors'] if d['id'] == 'pca')['implementation']
     old = {**current, 'declaration_sha': '0' * 64, 'sha256': '0' * 64}
@@ -232,7 +232,7 @@ def test_nested_declaration_pins_share_code_identity_without_old_snapshots(tmp_p
 @pytest.mark.parametrize('release', ['v0.8.3', 'v2.6.0'])
 @pytest.mark.parametrize('variant', [0, 1])
 def test_known_release_receipts_resolve_in_a_fresh_profile(tmp_path, variant, release):
-    records = [p for p in json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))['packages']
+    records = [p for p in json.loads((ROOT / 'operon/bundled_history.json').read_text(encoding='utf-8'))['packages']
                if any(item['tag'] == release for item in p['releases'])]
     # Releases ship both source-sensitive desktop and manifest-only server
     # fingerprints. Both are exact known identities, not an ID-only fallback.
@@ -252,7 +252,7 @@ def test_known_release_receipts_resolve_in_a_fresh_profile(tmp_path, variant, re
 
 @pytest.mark.parametrize('field', ['version', 'package', 'sha256', 'code_sha'])
 def test_wheel_pin_keeps_each_execution_identity_field_strict(field):
-    from biopipe.pins import matches, resolve
+    from operon.pins import matches, resolve
     state = deepcopy(bundled_state())
     state['generation'] = 'wheel'
     descriptor = next(d for d in state['descriptors'] if d['id'] == 'pca')
@@ -269,7 +269,7 @@ def test_wheel_pin_keeps_each_execution_identity_field_strict(field):
 
 @pytest.mark.parametrize('version_field', ['operator', 'package'])
 def test_bundled_code_migration_cannot_cross_a_version_change(version_field):
-    from biopipe.pins import resolve
+    from operon.pins import resolve
     current = deepcopy(bundled_state())
     current['generation'] = 'current'
     previous = deepcopy(current)
@@ -291,8 +291,8 @@ def test_bundled_code_migration_cannot_cross_a_version_change(version_field):
 
 @pytest.mark.parametrize('alteration', ['sha256', 'code_sha', 'package', 'version', 'operator_version', 'wheel', 'disabled'])
 def test_release_receipts_do_not_weaken_execution_identity(alteration):
-    from biopipe.pins import resolve
-    receipt = next(p for p in json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))['packages']
+    from operon.pins import resolve
+    receipt = next(p for p in json.loads((ROOT / 'operon/bundled_history.json').read_text(encoding='utf-8'))['packages']
                    if 'pca' in p['operators'] and any(r['tag'] == 'v0.5.1' for r in p['releases']))
     pin = deepcopy(receipt['implementation'])
     current = deepcopy(bundled_state())

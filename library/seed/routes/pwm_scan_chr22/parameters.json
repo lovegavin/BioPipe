@@ -1,5 +1,5 @@
 {
-  "format": "biopipe.task-parameters",
+  "format": "operon.task-parameters",
   "schema_version": 1,
   "params": {},
   "sources": {"counts": {}, "genome": {}},

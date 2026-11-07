@@ -10,9 +10,12 @@ from ._network_utils import adjacency, greedy_communities, modularity, read_edge
 
 
 class NetworkCommunitiesStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "network_communities.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "network_communities",
         "version": "1.0.0",

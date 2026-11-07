@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace BioPipe.Setup;
+namespace Operon.Setup;
 
 internal static class Program
 {

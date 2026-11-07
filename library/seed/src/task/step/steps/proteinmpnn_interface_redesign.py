@@ -134,7 +134,7 @@ def fixed_payload(
 class ProteinmpnnInterfaceRedesignStep(Step):
     """Redesign the binder interface with the official ProteinMPNN runner."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "proteinmpnn_interface_redesign.ProteinmpnnInterfaceRedesignStep.parameters.json"
 
     @classmethod
@@ -142,6 +142,9 @@ class ProteinmpnnInterfaceRedesignStep(Step):
         return (200 * 1024 * 1024, 0)
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_interface_redesign",
         "version": "1.0.0",
@@ -178,7 +181,7 @@ class ProteinmpnnInterfaceRedesignStep(Step):
     def run(self, ctx: Context, inputs: list[Form]) -> None:
         params = ctx.step_params
         structure = Path(str(params.get("structure_path") or "")).expanduser()
-        repo = Path(str(params.get("proteinmpnn_path") or os.environ.get("BIOPIPE_PROTEINMPNN_PATH") or "")).expanduser()
+        repo = Path(str(params.get("proteinmpnn_path") or os.environ.get("OPERON_PROTEINMPNN_PATH") or "")).expanduser()
         model = str(params.get("model_name") or "v_48_020")
         binder = split_chains(params.get("binder_chains", "A"))
         target = split_chains(params.get("target_chains", ""))
@@ -240,7 +243,7 @@ class ProteinmpnnInterfaceRedesignStep(Step):
             raise StepError(f"proteinmpnn_interface_redesign: weights_path '{weights}' is not a directory")
 
         started = time.time()
-        work = Path(tempfile.mkdtemp(prefix="biopipe-interface-redesign-"))
+        work = Path(tempfile.mkdtemp(prefix="operon-interface-redesign-"))
         try:
             fixed_path = work / "fixed.jsonl"
             fixed_path.write_text(

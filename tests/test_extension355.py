@@ -14,7 +14,7 @@ from src.task.runner import run
 from src.task.step.steps._sequence_common import encode_sequences
 from src.task.step.steps.assembly_stats import parse_report, parse_value
 
-QUAST = os.environ.get("BIOPIPE_QUAST") or shutil.which("quast")
+QUAST = os.environ.get("OPERON_QUAST") or shutil.which("quast")
 
 REPORT = (
     "Assembly\tcontigs\n"
@@ -114,7 +114,7 @@ def test_run_errors(tmp_path) -> None:
 
 @pytest.mark.skipif(not QUAST, reason="QUAST is not available")
 @pytest.mark.skipif(
-    not os.environ.get("BIOPIPE_REAL_ASSEMBLY"), reason="set BIOPIPE_REAL_ASSEMBLY=1"
+    not os.environ.get("OPERON_REAL_ASSEMBLY"), reason="set OPERON_REAL_ASSEMBLY=1"
 )
 def test_real_quast_n50(tmp_path) -> None:
     contigs = ["ACGTACGTAC", "ACGT" * 5, "ACGT" * 7 + "AC", "ACGT" * 10]

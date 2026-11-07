@@ -9,7 +9,7 @@ import threading
 
 import pytest
 
-from biopipe.remote.transfers import TransferStore, signature
+from operon.remote.transfers import TransferStore, signature
 from src.web.transfers import TransferClient, TransferCancelled
 
 
@@ -151,7 +151,7 @@ def test_download_interruption_resume_and_prefix_corruption(tmp_path):
     assert offsets[0] == 39 and Path(result['path']).read_bytes() == path.read_bytes()
     count[0] = 0; client.rpc = broken
     with pytest.raises(ConnectionError): client.download(str(path), 'bad.gz')
-    (client.cache_dir/'bad.gz.biopipe-part').write_bytes(b'x'*39)
+    (client.cache_dir/'bad.gz.operon-part').write_bytes(b'x'*39)
     client.rpc = resumed
     with pytest.raises(ValueError, match='prefix checksum'): client.download(str(path), 'bad.gz')
     assert not (client.cache_dir/'bad.gz').exists()
@@ -236,7 +236,7 @@ def test_read_and_scan_work_are_bounded(tmp_path, monkeypatch):
 
 def test_deep_cache_copy_fallback_receipts_and_companions(tmp_path, monkeypatch):
     """Windows MAX_PATH must not break durable copy fallback or cache reuse."""
-    from biopipe.bytecode import filesystem_path
+    from operon.bytecode import filesystem_path
     root = tmp_path / 'remote-cache'
     while len(str(root)) < 300:
         root /= 'nested-cache-' + 'x' * 48
@@ -282,7 +282,7 @@ def test_deep_cache_copy_fallback_receipts_and_companions(tmp_path, monkeypatch)
 
 
 def test_deep_local_download_cache_resumes_and_reuses_receipt(tmp_path):
-    from biopipe.bytecode import filesystem_path
+    from operon.bytecode import filesystem_path
     cache = tmp_path / 'downloads'
     while len(str(cache)) < 300:
         cache /= 'nested-download-' + 'x' * 45
@@ -296,7 +296,7 @@ def test_deep_local_download_cache_resumes_and_reuses_receipt(tmp_path):
             cancel.set()
     with pytest.raises(TransferCancelled):
         client.download(str(path), 'downloaded.pairs.gz', cancel=cancel, progress=progress)
-    receipt = cache / 'downloaded.pairs.gz.biopipe-receipt.json'
+    receipt = cache / 'downloaded.pairs.gz.operon-receipt.json'
     assert json.loads(Path(filesystem_path(receipt, resolve=False)).read_text())['offset'] == 97
     restarted = TransferClient(store.dispatch, cache, chunk_bytes=97)
     events = []

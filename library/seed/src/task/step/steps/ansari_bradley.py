@@ -13,7 +13,7 @@ from ._tests39_common import select_groups
 
 
 class AnsariBradleyStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Ansari-Bradley rank test for a difference in scale.
 
     Uses the normal approximation implemented by base R
@@ -22,7 +22,12 @@ class AnsariBradleyStep(Step):
     slightly from R's default exact branch.
     """
     parameters_file = 'ansari_bradley.AnsariBradleyStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'ansari_bradley',
      'version': '1.0.0',
      'kind': 'operator',

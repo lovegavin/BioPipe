@@ -4,7 +4,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from biopipe.remote import install_linux as installer
+from operon.remote import install_linux as installer
 
 
 # Exact failures reported by the 2.2.2 server installer; no biological data.
@@ -57,8 +57,8 @@ def managed_install(tmp_path, monkeypatch):
     monkeypatch.setattr(installer, 'requirements', lambda code: ([], tool_descriptors()))
     monkeypatch.setattr(installer, 'ensure_requirements', lambda *args, **kwargs: None)
     monkeypatch.setattr(installer.metadata, 'distributions', lambda: [])
-    monkeypatch.setattr('biopipe.dependencies.scope', lambda: set())
-    monkeypatch.setattr('biopipe.dependencies.probe', lambda entries: tool_results())
+    monkeypatch.setattr('operon.dependencies.scope', lambda: set())
+    monkeypatch.setattr('operon.dependencies.probe', lambda entries: tool_results())
     commands = []
     def run(command, **kwargs):
         commands.append(command)
@@ -70,12 +70,12 @@ def managed_install(tmp_path, monkeypatch):
 def test_installer_finishes_and_records_unavailable_operators(managed_install, capsys):
     prefix, commands = managed_install
     installer.main()
-    receipt = json.loads((prefix / 'biopipe-ready.json').read_text())
+    receipt = json.loads((prefix / 'operon-ready.json').read_text())
     states = receipt['dependency_readiness']['entries']
     assert {key: {'status': value['status'], 'error': value['error']} for key, value in states.items()} == tool_results()
     assert {command[0] for command in commands if len(command) <= 2} == {'bwa', 'samtools', 'pairtools', 'cooler', 'cooltools'}
     output = capsys.readouterr().out
-    assert 'BioPipe and Hi-C environment ready' in output
+    assert 'Operon and Hi-C environment ready' in output
     assert all(key in output for key in TOOLS)
     assert 'Optional OpenMM extras' not in output
 
@@ -85,7 +85,7 @@ def test_core_tool_failure_still_prevents_ready_receipt(managed_install, monkeyp
     monkeypatch.setattr(installer.subprocess, 'run', lambda *a, **k: SimpleNamespace(returncode=99, stdout='', stderr='tool broken'))
     with pytest.raises(ValueError, match='bwa check failed'):
         installer.main()
-    assert not (prefix / 'biopipe-ready.json').exists()
+    assert not (prefix / 'operon-ready.json').exists()
 
 
 def test_empty_optional_requirements_never_invoke_pip(monkeypatch):
@@ -99,9 +99,9 @@ def test_partial_model_install_keeps_affected_operator_failed(managed_install, m
     descriptors = [{'id': 'example_model', 'resources': {'environment': 'model'}}]
     monkeypatch.setattr(installer, 'requirements', lambda code: ([], descriptors))
     monkeypatch.setattr(installer, 'ensure_requirements', lambda *a: {'model': 'package download failed'})
-    monkeypatch.setattr('biopipe.dependencies.probe', lambda entries: {'example_model': {'status': 'passed'}})
+    monkeypatch.setattr('operon.dependencies.probe', lambda entries: {'example_model': {'status': 'passed'}})
     installer.main()
-    receipt = json.loads((prefix / 'biopipe-ready.json').read_text())
+    receipt = json.loads((prefix / 'operon-ready.json').read_text())
     assert receipt['dependency_readiness']['entries']['example_model']['status'] == 'failed'
 
 
@@ -125,12 +125,12 @@ def test_nested_conda_install_is_portable_and_failure_is_not_reported_ready(tmp_
     mamba = tmp_path / 'tools' / 'micromamba'
     mamba.parent.mkdir()
     mamba.write_text('fixture')
-    monkeypatch.setenv('BIOPIPE_MAMBA', str(mamba))
+    monkeypatch.setenv('OPERON_MAMBA', str(mamba))
     monkeypatch.setenv('CONDA_PREFIX', '/unrelated/base')
     monkeypatch.setenv('MAMBA_EXE', '/unrelated/mamba')
-    monkeypatch.setattr('biopipe.environments.load', lambda: {'model': {'conda_packages': ['native-package']}})
-    monkeypatch.setattr('biopipe.environments.resolve', lambda name: None)
-    monkeypatch.setattr('biopipe.environments.probe', lambda name: (True, str(prefix / 'python'), ''))
+    monkeypatch.setattr('operon.environments.load', lambda: {'model': {'conda_packages': ['native-package']}})
+    monkeypatch.setattr('operon.environments.resolve', lambda name: None)
+    monkeypatch.setattr('operon.environments.probe', lambda name: (True, str(prefix / 'python'), ''))
     calls = []
     def run(command, **kwargs):
         calls.append((command, kwargs))

@@ -3,7 +3,7 @@ import pytest
 
 from src.core import Form, StepError
 from src.task.step.steps.peak_nearest_gene import PeakNearestGeneStep
-from biopipe_sdk.testing import run_operator
+from operon_sdk.testing import run_operator
 from src.reader.readers._encoder import get_encoder
 
 

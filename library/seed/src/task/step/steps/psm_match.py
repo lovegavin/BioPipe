@@ -11,9 +11,13 @@ from src.task.step.steps._causal_utils import column, treatment_vector
 class PsmMatchStep(Step):
     """Match treated units to controls on the estimated propensity score."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "psm_match.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "psm_match",
         "version": "1.0.0",

@@ -23,11 +23,14 @@ from src.task.step.steps._native_results import output_directory, remember_nativ
 class LigandmpnnSideChainPackingStep(Step):
     """Pack side chains of a fixed backbone with the LigandMPNN packer."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = (
         "ligandmpnn_side_chain_packing.LigandmpnnSideChainPackingStep.parameters.json"
     )
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "ligandmpnn_side_chain_packing",
         "version": "1.0.0",
@@ -123,7 +126,7 @@ class LigandmpnnSideChainPackingStep(Step):
             )
         python_executable = str(params.get("python_executable", "")).strip() or sys.executable
 
-        with tempfile.TemporaryDirectory(prefix="biopipe_pack_") as tmp:
+        with tempfile.TemporaryDirectory(prefix="operon_pack_") as tmp:
             out_dir = Path(tmp) / "packed_run"
             out_dir.mkdir()
             command = [

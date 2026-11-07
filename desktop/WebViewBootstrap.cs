@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 
-namespace BioPipe.Desktop;
+namespace Operon.Desktop;
 
 internal static class WebViewBootstrap
 {

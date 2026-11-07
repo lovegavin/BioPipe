@@ -38,8 +38,8 @@ def test_reader_guide(tmp_path, monkeypatch):
 
 
 def test_operator_guide(tmp_path, monkeypatch):
-    from biopipe_sdk import Form
-    from biopipe_sdk.testing import run_operator
+    from operon_sdk import Form
+    from operon_sdk.testing import run_operator
     cls = example('step_extensions.md', tmp_path, monkeypatch)['Scale']
     data = np.array([[1., -9.]])
     form = Form(data=data, dims=['sample', 'feature'],

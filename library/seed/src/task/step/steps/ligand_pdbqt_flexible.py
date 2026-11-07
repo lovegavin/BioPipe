@@ -154,9 +154,12 @@ def prepare_flexible(smiles: str, *, seed: int = 0, optimize: bool = True):
 
 
 class LigandPdbqtFlexibleStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "ligand_pdbqt_flexible.LigandPdbqtFlexibleStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "ligand_pdbqt_flexible",
         "version": "1.0.0",

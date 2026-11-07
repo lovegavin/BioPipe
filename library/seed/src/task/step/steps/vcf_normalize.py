@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from biopipe_sdk import FileArtifact, Step, StepError
+from operon_sdk import FileArtifact, Step, StepError
 
 from src.task.step.steps import _vcf_transform as tx
 from src.task.step.steps import _vcf_utils as vcf
@@ -47,9 +47,19 @@ def _recount(gts, info_fields):
 
 
 class VcfNormalizeStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'vcf_normalize.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         'protocol_version': 3,
         'version': '1.0.0',
         'kind': 'operator',

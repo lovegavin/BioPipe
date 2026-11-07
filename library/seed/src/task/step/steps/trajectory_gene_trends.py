@@ -54,9 +54,13 @@ def gene_trends(expression, pseudotime, n_bins: int = 10):
 class TrajectoryGeneTrendsStep(Step):
     """Mean gene expression in equal-width pseudotime bins."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "trajectory_gene_trends.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "trajectory_gene_trends",
         "version": "1.0.0",

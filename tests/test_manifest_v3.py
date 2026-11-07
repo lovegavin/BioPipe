@@ -30,7 +30,7 @@ assert not [k for k in sys.modules if k.startswith(('src.task.step.steps.','src.
 print(json.dumps({'operators':len(catalog['operators']),'readers':len(catalog['readers']), 'import_ms':elapsed,'rss_mib':psutil.Process().memory_info().rss/2**20}))
 app.state.service.shutdown()
 ''', tmp_path)
-    from biopipe.packages import bundled_entries
+    from operon.packages import bundled_entries
     assert (value['operators'], value['readers']) == (len(list(bundled_entries('operator'))), len(list(bundled_entries('reader'))))
 
 
@@ -52,9 +52,9 @@ print(json.dumps(names))
 
 
 def test_metadata_transaction_keeps_code_and_readiness(tmp_path):
-    from biopipe.plugins import PluginManager
-    from biopipe.dependencies import DependencySession
-    from biopipe_sdk.declarations import bind_class, declaration_hash, load_class
+    from operon.plugins import PluginManager
+    from operon.dependencies import DependencySession
+    from operon_sdk.declarations import bind_class, declaration_hash, load_class
     manager = PluginManager(tmp_path)
     before = manager.state()
     d = next(d for d in before['descriptors'] if d['id'] == 'pca')
@@ -88,9 +88,9 @@ def test_metadata_transaction_keeps_code_and_readiness(tmp_path):
 
 
 def test_static_parameter_drift_and_independent_hashes():
-    from biopipe.packages import bundled_manifest
-    from biopipe_sdk.drift import check_source
-    from biopipe_sdk.declarations import declaration_hash
+    from operon.packages import bundled_manifest
+    from operon_sdk.drift import check_source
+    from operon_sdk.declarations import declaration_hash
     d = next(d for p in bundled_manifest()['packages'] for d in p['descriptors'] if d['id'] == 'pca')
     text = (ROOT / 'library/seed/src/task/step/steps/pca.py').read_text(encoding='utf-8')
     assert not check_source(text, d)[0]
@@ -106,7 +106,7 @@ def test_static_parameter_drift_and_independent_hashes():
 
 
 def test_precompiled_cold_imports_never_attempt_bytecode_writes(tmp_path):
-    from biopipe.bytecode import precompile
+    from operon.bytecode import precompile
     source = tmp_path / 'example.py'
     source.write_text('VALUE = 42\n')
     assert precompile(tmp_path)['compiled'] == 1
@@ -126,8 +126,8 @@ print(json.dumps(example.VALUE))
 
 
 def test_scaffold_install_and_demo(tmp_path):
-    from biopipe.developer import scaffold, build
-    from biopipe.plugins import PluginManager
+    from operon.developer import scaffold, build
+    from operon.plugins import PluginManager
     project = tmp_path / 'demo_extension'
     scaffold(project)
     wheel = build(project)['wheels'][0]
@@ -139,14 +139,14 @@ def test_scaffold_install_and_demo(tmp_path):
     code = manager.directory / state['code_paths'][0]
     assert list(code.rglob('*.pyc'))
     value = child('''import sys,json,numpy as np
-from biopipe.targets import activate
-from biopipe.plugins import load_runtime
+from operon.targets import activate
+from operon.plugins import load_runtime
 from pathlib import Path
 state=json.loads(Path(sys.argv[1]).read_text(encoding='utf-8')); state['_runtime_root']=str(Path(sys.argv[1]).parent)
 activate(state); load_runtime(state)
 from src.task import STEPS
-from biopipe_sdk import Form
-from biopipe_sdk.testing import run_operator
+from operon_sdk import Form
+from operon_sdk.testing import run_operator
 form=Form(np.array([[1.,2.]]),['sample','feature'],{'sample':{'s':0},'feature':{'a':0,'b':1}},{'missing_code':float('nan')})
 out=run_operator(STEPS['example.demo_extension'],[form],{'factor':3})
 print(json.dumps(out.data.tolist()))
@@ -155,8 +155,8 @@ print(json.dumps(out.data.tolist()))
 
 
 def test_build_rejects_missing_parameter_asset(tmp_path):
-    from biopipe.developer import scaffold, check_source, embed_manifest
-    from biopipe.dropins import write_wheel
+    from operon.developer import scaffold, check_source, embed_manifest
+    from operon.dropins import write_wheel
     project = tmp_path / 'asset_example'
     scaffold(project)
     manifest = check_source(project)
@@ -167,8 +167,8 @@ def test_build_rejects_missing_parameter_asset(tmp_path):
 
 
 def test_folder_parameter_refresh_reuses_code_and_frozen_defaults(tmp_path, monkeypatch):
-    from biopipe.developer import scaffold
-    from biopipe.plugins import PluginManager
+    from operon.developer import scaffold
+    from operon.plugins import PluginManager
     manager = PluginManager(tmp_path / 'profile', source_root=None)
     manager.state()
     project = manager.inbox / 'fresh_scale'
@@ -181,7 +181,7 @@ def test_folder_parameter_refresh_reuses_code_and_frozen_defaults(tmp_path, monk
     data = json.loads(parameter.read_text(encoding='utf-8'))
     data['properties']['factor']['default'] = 7
     parameter.write_text(json.dumps(data), encoding='utf-8')
-    monkeypatch.setattr('biopipe.developer.build', lambda *a, **kw: pytest.fail('parameter edit must not build'))
+    monkeypatch.setattr('operon.developer.build', lambda *a, **kw: pytest.fail('parameter edit must not build'))
     monkeypatch.setattr(manager, '_install_many', lambda *a, **kw: pytest.fail('parameter edit must not install'))
     manager.refresh()
     after = manager.state()
@@ -189,14 +189,14 @@ def test_folder_parameter_refresh_reuses_code_and_frozen_defaults(tmp_path, monk
     assert after.get('shared_paths') == before.get('shared_paths')
     worker = '''import json,sys,numpy as np
 from pathlib import Path
-from biopipe.targets import activate
-from biopipe.plugins import load_runtime
+from operon.targets import activate
+from operon.plugins import load_runtime
 state=json.loads(Path(sys.argv[1]).read_text(encoding='utf-8'))
 state['_runtime_root']=str(Path(sys.argv[1]).parent)
 activate(state); load_runtime(state)
 from src.task import STEPS
-from biopipe_sdk import Form
-from biopipe_sdk.testing import run_operator
+from operon_sdk import Form
+from operon_sdk.testing import run_operator
 form=Form(np.array([[1.]]),['sample','feature'],{'sample':{'s':0},'feature':{'f':0}},{'missing_code':float('nan')})
 print(json.dumps(run_operator(STEPS['example.fresh_scale'],[form],{}).data.tolist()))
 '''
@@ -211,24 +211,24 @@ print(json.dumps(run_operator(STEPS['example.fresh_scale'],[form],{}).data.tolis
 
 
 def test_metadata_refresh_still_rejects_incompatible_host_sdk():
-    from biopipe.dropins import metadata_candidate
+    from operon.dropins import metadata_candidate
     old = {'id': 'example.scale', 'distribution': 'example', 'dependencies': []}
     state = {'packages': [{'name': 'example', 'version': '1.0.0'}], 'descriptors': [old]}
-    changed = {**old, 'dependencies': ['biopipe-studio>=99']}
-    with pytest.raises(ValueError, match='incompatible BioPipe SDK'):
+    changed = {**old, 'dependencies': ['operon-studio>=99']}
+    with pytest.raises(ValueError, match='incompatible Operon SDK'):
         metadata_candidate(state, 'example', [changed], version='1.0.0')
     assert old['dependencies'] == []
 
 
 def test_source_parameter_refresh_and_unrelated_install_preserve_metadata(tmp_path, monkeypatch):
     import shutil
-    from biopipe.plugins import PluginManager
-    from biopipe.developer import scaffold, build
+    from operon.plugins import PluginManager
+    from operon.developer import scaffold, build
     source = tmp_path / 'checkout'
     for folder in ('src/task/step/steps', 'src/reader/readers'):
         shutil.copytree(ROOT / 'library/seed' / folder, source / folder, ignore=shutil.ignore_patterns('__pycache__'))
-    (source / 'biopipe').mkdir()
-    shutil.copy2(ROOT / 'library/seed/biopipe/builtin_packages.json', source / 'biopipe/builtin_packages.json')
+    (source / 'operon').mkdir()
+    shutil.copy2(ROOT / 'library/seed/operon/builtin_packages.json', source / 'operon/builtin_packages.json')
     manager = PluginManager(tmp_path / 'profile', source_root=source)
     before = manager.state()
     parameter = source / 'src/task/step/steps/pca.parameters.json'
@@ -249,8 +249,8 @@ def test_source_parameter_refresh_and_unrelated_install_preserve_metadata(tmp_pa
 
 
 def test_metadata_removal_and_dual_hash_checks(tmp_path):
-    from biopipe.plugins import PluginManager
-    from biopipe_sdk.declarations import load_class, declaration_hash
+    from operon.plugins import PluginManager
+    from operon_sdk.declarations import load_class, declaration_hash
     manager = PluginManager(tmp_path, source_root=None)
     old = next(d for d in manager.state()['descriptors'] if d['id'] == 'pca')
     update = deepcopy(old)
@@ -283,8 +283,8 @@ def test_lazy_txt_reader_rejects_self_delegation():
 
 def test_wheel_refresh_rejects_stale_manifest_code_and_missing_parameters(tmp_path):
     import zipfile
-    from biopipe.developer import scaffold, build
-    from biopipe.install_targets import wheel_entries
+    from operon.developer import scaffold, build
+    from operon.install_targets import wheel_entries
     project = tmp_path / 'integrity'
     scaffold(project)
     original = Path(build(project)['wheels'][0])
@@ -302,8 +302,8 @@ def test_wheel_refresh_rejects_stale_manifest_code_and_missing_parameters(tmp_pa
 
 
 def test_migration_preserves_existing_v3_snapshot_and_missing_defaults(tmp_path):
-    from biopipe.migrate import convert_documents
-    from biopipe.packages import bundled_state
+    from operon.migrate import convert_documents
+    from operon.packages import bundled_state
     state = bundled_state()
     current = next(d for d in state['descriptors'] if d['id'] == 'pca')
     pin = {**current['implementation'], 'declaration_sha': '0' * 64}
@@ -315,7 +315,7 @@ def test_migration_preserves_existing_v3_snapshot_and_missing_defaults(tmp_path)
 
 
 def test_source_migration_uses_module_specific_sidecars_and_rejects_collision(tmp_path):
-    from biopipe.migrate import migrate
+    from operon.migrate import migrate
     source = 'class Scale:\n    name="lab.scale"\n    def run(self,ctx,inputs): pass\n'
     manifest = tmp_path / 'old.json'
     manifest.write_text(json.dumps({'id': 'lab.scale', 'entry_point': 'old:Scale',

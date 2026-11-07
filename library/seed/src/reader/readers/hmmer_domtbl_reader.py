@@ -24,10 +24,14 @@ _NUMERIC = {
 
 
 class HmmerDomtblReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """HMMER3 --domtblout reader, one row per domain."""
     parameters_file = 'hmmer_domtbl_reader.HmmerDomtblReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'HmmerDomtblReader',
      'version': '1.0.0',
      'kind': 'reader',

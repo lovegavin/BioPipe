@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
-namespace BioPipe.Setup;
+namespace Operon.Setup;
 
 internal sealed record PayloadSpec(string Version, string Sha256, long Bytes, long UnpackedBytes, int Files);
 internal sealed record ManifestFile(string Path, long Bytes, string Sha256);
@@ -16,7 +16,7 @@ internal static class InstallFiles
 {
     internal static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true, WriteIndented = true };
-    internal static readonly byte[] FooterMagic = Encoding.ASCII.GetBytes("BIOPIPE-SETUP-V1");
+    internal static readonly byte[] FooterMagic = Encoding.ASCII.GetBytes("OPERON-SETUP-V1");
     internal const string Owner = "Operon.Studio.Install.v1";
     internal const string PayloadRoot = "Operon Studio/";
 
@@ -34,7 +34,7 @@ internal static class InstallFiles
 
     internal static PayloadSpec EmbeddedSpec()
     {
-        using var input = Assembly.GetExecutingAssembly().GetManifestResourceStream("BioPipe.Payload.json")
+        using var input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Operon.Payload.json")
             ?? throw new InvalidDataException("安装包缺少版本信息。");
         var spec = JsonSerializer.Deserialize<PayloadSpec>(input, Json) ?? throw new InvalidDataException("安装包版本信息无效。");
         if (spec.Bytes <= 0 || spec.UnpackedBytes <= 0 || spec.Files <= 0 || spec.Sha256.Length != 64 ||
@@ -183,7 +183,7 @@ internal static class InstallFiles
         if (!string.Equals(Path.GetDirectoryName(candidate), root, StringComparison.OrdinalIgnoreCase))
             throw new InvalidDataException("拒绝清理目标目录之外的文件。");
         NoLinks(candidate);
-        var marker = Path.Combine(candidate, ".biopipe-install.json");
+        var marker = Path.Combine(candidate, ".operon-install.json");
         using var json = JsonDocument.Parse(File.ReadAllText(marker));
         if (json.RootElement.GetProperty("owner").GetString() != Owner) throw new InvalidDataException("目录不属于此安装程序。");
         // Never traverse a reparse point, even if it appeared after installation.

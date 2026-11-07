@@ -39,7 +39,7 @@
     },
     "reference_fasta": {
       "type": "string",
-      "x-biopipe-path": "workflow"
+      "x-operon-path": "workflow"
     },
     "assembly": {
       "type": "string",

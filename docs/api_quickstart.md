@@ -1,16 +1,16 @@
-# Connect an application to BioPipe: a practical API tutorial
+# Connect an application to Operon: a practical API tutorial
 
 Two integration directions use the same API:
 
-1. **An application drives BioPipe**: prepare/validate a workflow, submit a task,
+1. **An application drives Operon**: prepare/validate a workflow, submit a task,
    monitor it and retrieve results. No desktop or MCP/model is required.
-2. **BioPipe hands results to a specialist tool**: select a retained native output,
+2. **Operon hands results to a specialist tool**: select a retained native output,
    then open that format in the external tool. A domain exporter supplies correct
    coordinates, units and metadata. The API is not a universal format converter.
 
 For example, IGV uses native genome tracks; R/Python plotting can consume suitable
 tables; illustration tools can open retained PDF/SVG. Check the target tool's
-supported formats. BioPipe does not remotely control arbitrary applications.
+supported formats. Operon does not remotely control arbitrary applications.
 
 For an implemented desktop-first handoff, see [result viewers](result_viewers.md):
 discover compatible installed apps, configure their executable once, and open a
@@ -19,13 +19,13 @@ still applies to third-party clients that prefer to fetch files themselves.
 
 ## 1. Choose the workspace and start/discover the service
 
-Install BioPipe into the Python environment used by your integration. With a
+Install Operon into the Python environment used by your integration. With a
 source checkout: `python -m pip install -e .`. Choose an explicit project directory
 containing the inputs; use the same workspace/profile for every call.
 
 ```text
-biopipe --workspace project service start
-biopipe help api
+operon --workspace project service start
+operon help api
 ```
 
 `service start` is optional with Python's `auto_start=True`. It starts/reuses an
@@ -37,7 +37,7 @@ profile, omit workspace and use `data_directory()` so the integration sees its j
 
 ```python
 from pathlib import Path
-from biopipe.client import Client, data_directory
+from operon.client import Client, data_directory
 
 workspace = Path("project").resolve()
 client = Client(data_directory(workspace=workspace), workspace=workspace,
@@ -71,8 +71,8 @@ spec = client.request("/v1/operators/describe", {
 
 For an existing saved route use GET `/v1/workflows` and `/v1/workflows/{id}`.
 Prefer its frozen values over the library's current defaults. For a new route,
-the [installed workflow guide](../biopipe/guides/workflow.md) includes a minimal
-CSV-to-summary graph. `biopipe schema graph` returns the exact graph JSON schema.
+the [installed workflow guide](../operon/guides/workflow.md) includes a minimal
+CSV-to-summary graph. `operon schema graph` returns the exact graph JSON schema.
 
 For the runnable example, create `project/input.csv` containing:
 
@@ -117,7 +117,7 @@ Saved workflows may instead be submitted by workflow_id plus expected_version.
 ## 5. Wait, inspect results and preserve provenance
 
 ```python
-from biopipe.agent_views import wait_job
+from operon.agent_views import wait_job
 job = wait_job(client, receipt, timeout=60, view="brief")
 if job.get("wait_timed_out"):
     print("Still running:", job["id"])  # reconnect later; do not resubmit
@@ -135,7 +135,7 @@ An unavailable/deleted output is not silently recreated.
 
 ## 6. Open a native output in the other software
 
-The result is already saved in BioPipe. If the other program can authenticate, it
+The result is already saved in Operon. If the other program can authenticate, it
 can fetch the returned link with the same Bearer token. A normal browser or viewer
 does not inherit that token. For a viewer that expects a local file, copy only the
 chosen output through the streaming client:
@@ -156,7 +156,7 @@ tutorial's summary JSON demonstrates transport, not a genome-track conversion.
 
 ## Run the complete client example
 
-From the checkout, with BioPipe installed:
+From the checkout, with Operon installed:
 
 ```text
 python examples/api_client/run_workflow.py --workspace project --workflow project/route.json --request-id my-analysis-001
@@ -175,7 +175,7 @@ See [the example source](../examples/api_client/run_workflow.py).
 1. Resolve the same profile data directory. Read its local `agent/servers/*.json`
    discovery record. Validate the loopback URL and instance identity as the Python
    client does; do not copy a stale port into a permanent configuration.
-2. POST `/api/agent/connect`, header `X-BioPipe-Bridge: <local-discovery-secret>`,
+2. POST `/api/agent/connect`, header `X-Operon-Bridge: <local-discovery-secret>`,
    JSON `{"name":"my-tool","scopes":["context","run"]}`.
 3. Use `Authorization: Bearer <returned-token>` for every request, including
    GET `/api/v1/capabilities`, `/api/v1/openapi.json` and output-file links.
@@ -183,7 +183,7 @@ See [the example source](../examples/api_client/run_workflow.py).
 
 OpenAPI is authenticated and limited to application endpoints. `/openapi.json`
 remains disabled. Authentication/discovery is local: this is not a public,
-multi-user service. Use BioPipe's existing SSH execution instead of exposing the
+multi-user service. Use Operon's existing SSH execution instead of exposing the
 loopback API to the network. No global permission change is needed for the example.
 
 ## Errors to handle explicitly

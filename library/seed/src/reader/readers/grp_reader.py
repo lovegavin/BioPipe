@@ -9,7 +9,7 @@ from src.reader.readers._gsea_common import parse_phenotype, phenotype_form
 
 
 class GrpReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for GSEA .grp phenotype group files.
 
     The layout is the same as CLS: counts, a ``#`` class-name line, then
@@ -17,7 +17,11 @@ class GrpReader(Reader):
     encoded phenotype column.
     """
     parameters_file = 'grp_reader.GrpReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'GrpReader',
      'version': '1.0.0',
      'kind': 'reader',

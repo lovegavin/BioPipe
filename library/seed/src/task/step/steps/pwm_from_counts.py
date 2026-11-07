@@ -20,9 +20,12 @@ from src.task.step.steps._pwm_utils import (
 class PwmFromCountsStep(Step):
     """Convert a PFM (counts per position and base) into a log-odds PWM."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'pwm_from_counts.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'pwm_from_counts',
         'version': '1.0.0',

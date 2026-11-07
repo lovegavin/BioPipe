@@ -1,6 +1,6 @@
-# BioPipe Operator Library 2026.11.5.2
+# Operon Operator Library 2026.11.5.2
 
-An independent library update for released BioPipe 2.0.4 and newer compatible
+An independent library update for released Operon 2.0.4 and newer compatible
 applications. Updating these operators does not require a new EXE. The optional
 specialist-viewer UI is provided separately by Studio v2.4.0.
 

@@ -12,9 +12,12 @@ from ._proteomics_utils import peptide_mass, peptide_mz
 class PeptideMassStep(Step):
     """Compute monoisotopic masses and m/z values for a peptide table."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "peptide_mass.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "peptide_mass",
         "version": "1.0.0",

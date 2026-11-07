@@ -15,9 +15,14 @@ _FIELDS = ('start', 'end', 'length', 'summit', 'count', 'score', 'fold_enrichmen
 
 class AtacPeakCallStep(Step):
     """Call peaks from fragment pileup with a local Poisson model."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'atac_peak_call.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'atac_peak_call',
         'version': '1.0.0',

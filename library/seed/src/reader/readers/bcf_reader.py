@@ -15,10 +15,14 @@ from src.reader.readers._table_common import table_form
 
 
 class BcfReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """BCF variant reader; exposes position, quality and allele/sample counts."""
     parameters_file = 'bcf_reader.BcfReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'BcfReader',
      'version': '1.0.0',
      'kind': 'reader',

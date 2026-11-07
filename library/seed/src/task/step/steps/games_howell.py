@@ -12,14 +12,19 @@ from ._matrix_common import grouped
 
 
 class GamesHowellStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """All-pairwise Games-Howell comparisons for every feature.
 
     The studentized range statistic uses unequal variances and a Welch
     degrees-of-freedom approximation, matching ``PMCMRplus::gamesHowellTest``.
     """
     parameters_file = 'games_howell.GamesHowellStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'games_howell',
      'version': '1.0.0',
      'kind': 'operator',

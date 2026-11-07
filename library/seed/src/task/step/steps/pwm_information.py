@@ -13,9 +13,12 @@ from src.task.step.steps._pwm_utils import BASES, best_base, information_content
 class PwmInformationStep(Step):
     """Per-position information content and consensus of a PWM."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'pwm_information.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'pwm_information',
         'version': '1.0.0',

@@ -41,10 +41,10 @@ Algorithms are not implicitly advertised as streaming or CUDA capable.
 
 ## Application boundary
 
-`biopipe/application.py` composes workflow, task and artifact services over the
+`operon/application.py` composes workflow, task and artifact services over the
 existing worker, SSH coordinator, memory admission and spill implementation.
-`biopipe/control_api.py` exposes these through `/api/v1` in both Studio and a
-loopback headless host. `biopipe/headless.py` owns discovery, startup and shutdown
+`operon/control_api.py` exposes these through `/api/v1` in both Studio and a
+loopback headless host. `operon/headless.py` owns discovery, startup and shutdown
 without a canvas or frontend build.
 
 - **API:** structured software integration, workflow revisions, durable task

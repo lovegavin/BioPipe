@@ -22,10 +22,14 @@ from ._stats20_common import distance
 
 
 class NmdsStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Non-metric multidimensional scaling from a dissimilarity matrix."""
     parameters_file = 'nmds.NmdsStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'nmds',
      'version': '1.0.0',
      'kind': 'operator',

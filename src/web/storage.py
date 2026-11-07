@@ -6,7 +6,7 @@ import threading
 import time
 import uuid
 
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 
 _states = {}
 _states_lock = threading.Lock()

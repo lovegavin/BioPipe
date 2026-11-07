@@ -11,8 +11,8 @@ import threading
 import time
 
 from src.core import ManifestError
-from biopipe.run_log import RunLog
-from biopipe.bytecode import io_path
+from operon.run_log import RunLog
+from operon.bytecode import io_path
 from .config import DiskBudgetError, MemoryBudgetError
 from .planner import LifetimePlan, NEVER, block_elements, full_estimate
 from .store import ArtifactStore
@@ -98,7 +98,7 @@ class MemoryRuntime:
         self.status = "running"
         self._sample()
         if self.config.auto_spill:
-            self._thread = threading.Thread(target=self._monitor, name="biopipe-spill-monitor", daemon=True)
+            self._thread = threading.Thread(target=self._monitor, name="operon-spill-monitor", daemon=True)
             self._thread.start()
 
     def _output_registered(self, entry):

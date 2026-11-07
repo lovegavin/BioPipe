@@ -13,12 +13,17 @@ def remote_profile(graph):
 
 def source_candidates(graph, catalog, root, value, location=None, reader_id=None, *, input_roots=None):
     from .graph import input_path
-    from biopipe.reader_selection import candidates
+    from operon.reader_selection import candidates, prefer_typed
+
+    def select(value, **options):
+        found = candidates(catalog['readers'], value, reader_id, **options)
+        return found if reader_id else prefer_typed(found)
+
     if hasattr(location, 'model_dump'):
         location = location.model_dump()
     if (location and location.get('kind') == 'ssh') or (not location and remote_profile(graph)):
-        return candidates(catalog['readers'], value, reader_id)
+        return select(value)
     if not value:
-        return candidates(catalog['readers'], value, reader_id)
+        return select(value)
     path = input_path(root, value, graph.base_dir, input_roots)
-    return candidates(catalog['readers'], path, reader_id, check_siblings=path.is_file())
+    return select(path, check_siblings=path.is_file())

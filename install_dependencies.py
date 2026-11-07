@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install the dependencies declared by the installed BioPipe operator library.
+"""Install the dependencies declared by the installed Operon operator library.
 
 The Studio "Repair dependencies" button runs the same backend path; this script
 makes that path available on a headless server and on Windows.
@@ -13,10 +13,10 @@ declared separately and are only touched with ``--tools`` / ``--isolated``.
 
 Examples
 --------
-    ./install-dependencies.sh --profile-dir /srv/biopipe --dry-run
-    ./install-dependencies.sh --profile-dir /srv/biopipe
-    ./install-dependencies.sh --profile-dir /srv/biopipe --tools
-    .\\install-dependencies.ps1 -ProfileDir C:\\BioPipe -DryRun
+    ./install-dependencies.sh --profile-dir /srv/operon --dry-run
+    ./install-dependencies.sh --profile-dir /srv/operon
+    ./install-dependencies.sh --profile-dir /srv/operon --tools
+    .\\install-dependencies.ps1 -ProfileDir <profile-dir> -DryRun
 
 Nothing here downloads operator weights or databases. Those remain explicit
 ``resources`` steps so a run never surprises a server with multi-GB traffic.
@@ -54,23 +54,23 @@ def say(message: str) -> None:
 def find_profile(value: str | None) -> Path:
     if value:
         return Path(value).expanduser().resolve()
-    env = os.environ.get("BIOPIPE_PROFILE") or os.environ.get("BIOPIPE_STUDIO_HOME")
+    env = os.environ.get("OPERON_PROFILE") or os.environ.get("OPERON_STUDIO_HOME")
     if env:
         return Path(env).expanduser().resolve()
     cwd = Path.cwd()
     if (cwd / "server.json").is_file():
         return cwd
-    profiles = Path.home() / ".biopipe" / "profiles"
+    profiles = Path.home() / ".operon" / "profiles"
     if profiles.is_dir():
         candidates = sorted(p for p in profiles.iterdir() if (p / "server.json").is_file())
         if len(candidates) == 1:
             return candidates[0].resolve()
         if len(candidates) > 1:
             raise SystemExit(
-                "Multiple BioPipe profiles found; pass --profile-dir:\n  "
+                "Multiple Operon profiles found; pass --profile-dir:\n  "
                 + "\n  ".join(str(p) for p in candidates)
             )
-    raise SystemExit("No BioPipe profile found; pass --profile-dir <installation root>.")
+    raise SystemExit("No Operon profile found; pass --profile-dir <installation root>.")
 
 
 def read_server(profile: Path) -> dict:
@@ -90,12 +90,12 @@ def find_code_root(profile: Path, server: dict) -> Path:
         for candidate in sorted(managed.glob("code-*")):
             if (candidate / "src").is_dir():
                 return candidate.resolve()
-    if (profile / "src").is_dir() and (profile / "biopipe").is_dir():
+    if (profile / "src").is_dir() and (profile / "operon").is_dir():
         return profile.resolve()
     here = Path(__file__).resolve().parent
-    if (here / "src").is_dir() and (here / "biopipe").is_dir():
+    if (here / "src").is_dir() and (here / "operon").is_dir():
         return here
-    raise SystemExit("Could not locate the BioPipe code root; pass --code-root.")
+    raise SystemExit("Could not locate the Operon code root; pass --code-root.")
 
 
 def find_python(profile: Path, server: dict, explicit: str | None) -> str | None:
@@ -105,7 +105,7 @@ def find_python(profile: Path, server: dict, explicit: str | None) -> str | None
         value = server.get(key)
         if value and Path(value).is_file():
             return str(Path(value).resolve())
-    if (Path(sys.prefix) / "biopipe").is_dir():
+    if (Path(sys.prefix) / "operon").is_dir():
         return sys.executable
     managed = profile / "managed-v1"
     for pattern in ("env-*/bin/python", "env-*/Scripts/python.exe"):
@@ -143,7 +143,7 @@ def repair_python(code_root: Path, profile: Path, dry_run: bool) -> int:
     frontend.mkdir(parents=True, exist_ok=True)
     index = frontend / "index.html"
     if not index.is_file():
-        index.write_text("<!doctype html><title>BioPipe</title>\n", encoding="utf-8")
+        index.write_text("<!doctype html><title>Operon</title>\n", encoding="utf-8")
 
     settings = make_settings(code_root, frontend, profile_dir=str(profile))
     app = create_app(settings)
@@ -217,8 +217,8 @@ def install_tools(profile: Path, dry_run: bool, heavy: bool) -> int:
 
 def environment_manifest(code_root: Path) -> dict:
     for candidate in (
-        code_root / "library" / "seed" / "biopipe" / "environments.json",
-        code_root / "biopipe" / "environments.json",
+        code_root / "library" / "seed" / "operon" / "environments.json",
+        code_root / "operon" / "environments.json",
     ):
         if candidate.is_file():
             return json.loads(candidate.read_text(encoding="utf-8"))
@@ -290,7 +290,7 @@ def install_isolated(code_root: Path, profile: Path, dry_run: bool, only: list[s
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--profile-dir", help="BioPipe installation root (contains server.json).")
+    parser.add_argument("--profile-dir", help="Operon installation root (contains server.json).")
     parser.add_argument("--code-root", help="Application code directory; auto-detected.")
     parser.add_argument("--python", help="Python executable of the installation; auto-detected.")
     parser.add_argument("--dry-run", action="store_true", help="Probe and print, install nothing.")

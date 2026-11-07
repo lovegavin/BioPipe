@@ -8,10 +8,14 @@ from src.task.step.base import Step
 from ._matrix_common import matrix
 
 class GaussianMixtureStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Gaussian mixture model clustering."""
     parameters_file = 'gaussian_mixture.GaussianMixtureStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'gaussian_mixture',
      'version': '1.0.0',
      'kind': 'operator',

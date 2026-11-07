@@ -29,9 +29,14 @@ _LABELS = (
 class FastqDeduplicateStep(Step):
     """Remove duplicate sequences while preserving the original order."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'fastq_deduplicate.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'fastq_deduplicate',
         'version': '1.0.0',

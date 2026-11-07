@@ -13,10 +13,14 @@ _STATISTICS = ["coef", "se", "t", "p"]
 
 
 class GarchStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Fit a GARCH(p, q) model with a constant or zero mean."""
     parameters_file = 'garch.GarchStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'garch',
      'version': '1.0.0',
      'kind': 'operator',

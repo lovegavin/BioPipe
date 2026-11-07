@@ -58,11 +58,14 @@ def profile_matrix(rows: list[dict]) -> np.ndarray:
 
 
 class ProteinmpnnDesignProfileStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = (
         "proteinmpnn_design_profile.ProteinmpnnDesignProfileStep.parameters.json"
     )
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_design_profile",
         "version": "1.0.0",
@@ -137,7 +140,7 @@ class ProteinmpnnDesignProfileStep(Step):
                 "proteinmpnn_design_profile: position_dim and amino_acid_dim must differ"
             )
         out_name = params["output"]
-        with tempfile.TemporaryDirectory(prefix="biopipe-mpnn-profile-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="operon-mpnn-profile-") as tmp:
             out_dir = Path(tmp)
             run_designer(
                 repo,

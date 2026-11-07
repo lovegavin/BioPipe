@@ -9,7 +9,7 @@ import zipfile
 
 import pytest
 
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -32,7 +32,7 @@ def test_deep_native_extension_and_zip_import(tmp_path, worker):
         io_path(target / 'native_probe.py').write_text(probe)
         config = tmp_path / 'paths.json'
         config.write_text(json.dumps({'paths': [str(target), str(archive)]}))
-        args = [str(ROOT / 'biopipe/runtime_bootstrap.py'), str(config), 'native_probe']
+        args = [str(ROOT / 'operon/runtime_bootstrap.py'), str(config), 'native_probe']
     else:
         code = ('import sys; sys.path[:0] = sys.argv[1:3]; '
                 'exec(open(sys.argv[3],encoding="utf-8").read()); ' + probe)

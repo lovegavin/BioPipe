@@ -81,7 +81,7 @@ def report_stalled_shutdown(finished, delay=3):
     """Leave actionable thread evidence before the host's fallback deadline."""
     if not finished.wait(delay):
         import faulthandler
-        print('[BioPipe shutdown] Backend still closing; active Python threads:',
+        print('[Operon shutdown] Backend still closing; active Python threads:',
               file=sys.stderr, flush=True)
         faulthandler.dump_traceback(file=sys.stderr, all_threads=True)
 
@@ -111,15 +111,15 @@ def main():
     if not 0 <= args.port <= 65535:
         parser.error("port must be between 0 and 65535")
     os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
-    os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
-    from biopipe.desktop_upgrade import upgrade_profile
+    os.environ["OPERON_REGISTRY_MAINTENANCE"] = "1"
+    from operon.desktop_upgrade import upgrade_profile
     try:
         upgrade = upgrade_profile(profile)
         if upgrade:
-            print('BIOPIPE_STATUS ' + json.dumps({'message': '旧档案已备份并升级。',
+            print('OPERON_STATUS ' + json.dumps({'message': '旧档案已备份并升级。',
                   'backup': upgrade['backup']}, ensure_ascii=False), flush=True)
     except Exception as error:
-        print('BIOPIPE_STARTUP_ERROR ' + json.dumps({'message':
+        print('OPERON_STARTUP_ERROR ' + json.dumps({'message':
               '用户档案升级未完成，原始文件已保留。\n' + str(error)}, ensure_ascii=False), flush=True)
         raise
     from src.web.api import create_app
@@ -140,7 +140,7 @@ def main():
             while not server.started and not finished.wait(.05):
                 pass
             if server.started and not finished.is_set():
-                print("BIOPIPE_READY " + json.dumps({"url": f"http://127.0.0.1:{port}",
+                print("OPERON_READY " + json.dumps({"url": f"http://127.0.0.1:{port}",
                                                      "pid": os.getpid()}), flush=True)
 
         def watch_host():

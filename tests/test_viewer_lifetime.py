@@ -34,7 +34,7 @@ def test_viewer_survives_backend_job_close(tmp_path):
     script.write_text('''import json,sys,time
 from pathlib import Path
 from types import SimpleNamespace
-from biopipe.viewers import ViewerService
+from operon.viewers import ViewerService
 sys.stdin.readline()
 folder=Path(sys.argv[1]); data=folder/'input.bed'; data.write_text('chr1\\t0\\t1')
 app=SimpleNamespace(service=SimpleNamespace(directory=folder), artifacts=SimpleNamespace(preview=lambda *a,**kw:{'files':[{'role':'data','name':'input.bed','downloadable':True}]}, file=lambda *a:data))
@@ -60,7 +60,7 @@ time.sleep(60)
         kernel.CloseHandle(job); job = None
         worker.wait(timeout=5)
         time.sleep(.3)
-        assert viewer.is_running(), 'External viewer was terminated with BioPipe computation'
+        assert viewer.is_running(), 'External viewer was terminated with Operon computation'
     finally:
         if job: kernel.CloseHandle(job)
         if worker.poll() is None: worker.kill()

@@ -24,9 +24,9 @@ out = Path(sys.argv[sys.argv.index("--out_folder") + 1])
 pdb = Path(sys.argv[sys.argv.index("--pdb_path") + 1])
 packed = out / "packed"
 packed.mkdir(parents=True, exist_ok=True)
-(source, target) = os.environ["BIOPIPE_PACK_SOURCE"], packed / (pdb.stem + "_packed.pdb")
+(source, target) = os.environ["OPERON_PACK_SOURCE"], packed / (pdb.stem + "_packed.pdb")
 target.write_text(Path(source).read_text())
-Path(os.environ["BIOPIPE_PACK_CAPTURE"]).write_text(json.dumps({"argv": sys.argv[1:]}))
+Path(os.environ["OPERON_PACK_CAPTURE"]).write_text(json.dumps({"argv": sys.argv[1:]}))
 """
 
 
@@ -53,8 +53,8 @@ def _params(tmp_path, repo, structure, **extra):
 
 def _run(tmp_path, params, repo, source, monkeypatch):
     capture = tmp_path / "capture.json"
-    monkeypatch.setenv("BIOPIPE_PACK_SOURCE", str(source))
-    monkeypatch.setenv("BIOPIPE_PACK_CAPTURE", str(capture))
+    monkeypatch.setenv("OPERON_PACK_SOURCE", str(source))
+    monkeypatch.setenv("OPERON_PACK_CAPTURE", str(capture))
     ctx = Context(str(tmp_path / "task"), {"params": {}})
     ctx.step_params = params
     run(ctx, [{"name": "ligandmpnn_side_chain_packing", "inputs": [], "params": params}])

@@ -64,12 +64,15 @@ def recap_fragments(molecule) -> list[str]:
 class RdkitFragmentProfileStep(Step):
     """Count BRICS/RECAP fragments per molecule and build a fragment matrix."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "rdkit_fragment_profile.RdkitFragmentProfileStep.parameters.json"
 
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "rdkit_fragment_profile",
         "version": "1.0.0",

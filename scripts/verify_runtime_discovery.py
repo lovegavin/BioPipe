@@ -13,22 +13,22 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--executable", type=Path, default=ROOT / "dist/BioPipe Studio/BioPipe Studio.exe")
+    parser.add_argument("--executable", type=Path, default=ROOT / "dist/Operon Studio/Operon Studio.exe")
     args = parser.parse_args()
     directory = ROOT / ".verification" / ("runtime-" + datetime.now().strftime("%Y%m%d-%H%M%S"))
     install = directory / "release 中文"
     install.mkdir(parents=True)
-    executable = install / "BioPipe Studio.exe"
+    executable = install / "Operon Studio.exe"
     shutil.copy2(args.executable, executable)
     configuration = {"backendRoot": str(ROOT), "python": "auto", "entryPoint": "scripts/desktop_server.py",
                      "frontend": str(ROOT / "frontend/dist")}
-    (install / "biopipe-desktop.json").write_text(json.dumps(configuration), encoding="utf-8")
-    cache = directory / "user home/.biopipe/runtime.json"
+    (install / "operon-desktop.json").write_text(json.dumps(configuration), encoding="utf-8")
+    cache = directory / "user home/.operon/runtime.json"
     cache.parent.mkdir(parents=True)
     cache.write_text(json.dumps({"schema_version": 1, "python": sys.executable}), encoding="utf-8")
     environment = {k: v for k, v in os.environ.items() if k not in
-                   ("BIOPIPE_PYTHON", "BIOPIPE_BACKEND_ROOT", "VIRTUAL_ENV", "CONDA_PREFIX", "PYTHONPATH", "PYTHONHOME")}
-    environment.update(PATH="", BIOPIPE_RUNTIME_CONFIG=str(cache), PYTHONIOENCODING="utf-8")
+                   ("OPERON_PYTHON", "OPERON_BACKEND_ROOT", "VIRTUAL_ENV", "CONDA_PREFIX", "PYTHONPATH", "PYTHONHOME")}
+    environment.update(PATH="", OPERON_RUNTIME_CONFIG=str(cache), PYTHONIOENCODING="utf-8")
     checks = []
 
     def probe(env, success=True):
@@ -48,7 +48,7 @@ def main():
     probe(environment)
     assert cache.read_bytes() == before
     checks.append("Remembered environment works with empty PATH, no activated venv, and unrelated cwd")
-    error = probe(dict(environment, BIOPIPE_PYTHON=str(directory / "missing-python.exe")), success=False)
+    error = probe(dict(environment, OPERON_PYTHON=str(directory / "missing-python.exe")), success=False)
     assert "missing-python.exe" in error
     checks.append("An invalid explicit override never silently falls back to remembered Python")
     path_environment = dict(environment, PATH=str(Path(sys.executable).parent))
@@ -66,7 +66,7 @@ def main():
     probe(dict(environment, USERPROFILE=str(directory / "user home")))
     checks.append("Registered Conda/venv prefix is discovered with no PATH or activation")
     # Python startup and the exe share the same bootstrap record format.
-    child = subprocess.run([sys.executable, "-c", "from biopipe.runtime import remember_runtime; remember_runtime()"],
+    child = subprocess.run([sys.executable, "-c", "from operon.runtime import remember_runtime; remember_runtime()"],
                            cwd=ROOT, env=environment, capture_output=True, text=True, encoding="utf-8", timeout=15)
     assert child.returncode == 0, child.stderr
     probe(environment)

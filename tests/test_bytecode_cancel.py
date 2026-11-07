@@ -8,13 +8,13 @@ import threading
 
 import pytest
 
-from biopipe.plugins import process_context
-from biopipe.targets import TargetBuilder
+from operon.plugins import process_context
+from operon.targets import TargetBuilder
 
 
 @pytest.mark.parametrize('immutable, flags, mode', [(True, 1, 'unchecked_hash'), (False, 3, 'checked_hash')])
 def test_compiler_worker_preserves_hash_mode_and_relative_filenames(tmp_path, immutable, flags, mode):
-    from biopipe.bytecode import precompile
+    from operon.bytecode import precompile
     source = tmp_path/'Unicode 空间'/'fixture.py'
     source.parent.mkdir()
     source.write_text('raise RuntimeError("Compilation must not execute the source")\n', encoding='utf-8')
@@ -45,7 +45,7 @@ def test_cancel_during_install_prevents_compilation_and_target_receipt(tmp_path,
             (destination/'fixture.py').write_text('VALUE = 42\n', encoding='utf-8')
             cancel.set()
 
-    monkeypatch.setattr('biopipe.targets.invoke', pip)
+    monkeypatch.setattr('operon.targets.invoke', pip)
     previous = getattr(process_context, 'cancel', None)
     process_context.cancel = cancel
     try:
@@ -54,6 +54,6 @@ def test_cancel_during_install_prevents_compilation_and_target_receipt(tmp_path,
     finally:
         process_context.cancel = previous
     assert destination is not None
-    assert not (destination/'biopipe-target.json').exists()
+    assert not (destination/'operon-target.json').exists()
     assert not list(destination.rglob('*.pyc'))
     assert not builder.shared and not builder.prepared

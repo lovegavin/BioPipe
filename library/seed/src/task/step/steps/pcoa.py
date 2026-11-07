@@ -11,10 +11,14 @@ from ._stats20_common import distance
 
 
 class PcoaStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Principal coordinates from a symmetric distance matrix."""
     parameters_file = 'pcoa.PcoaStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'pcoa',
      'version': '1.0.0',
      'kind': 'operator',

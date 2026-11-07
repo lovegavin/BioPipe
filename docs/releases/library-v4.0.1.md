@@ -1,10 +1,10 @@
-# BioPipe Operator Library v4.0.1
+# Operon Operator Library v4.0.1
 
 **Minimum application:** 2.6.0 (frontend 2.6.0)
 
-This release keeps the operator set of BioPipe Operator Library v4.0.0
+This release keeps the operator set of Operon Operator Library v4.0.0
 (717 operators, 101 Readers, 7 packages, 24 built-in routes, protocol v3) and
-raises the declared minimum host to BioPipe 2.6.0. It is the library build
+raises the declared minimum host to Operon 2.6.0. It is the library build
 that accompanies the wave-6 closure verification.
 
 ## Coverage
@@ -28,7 +28,7 @@ See `docs/verification/library-3.0.1-remote.md` §19 and
 
 `minimum_application` and `build_application` are both `2.6.0`. Because the
 v2.6.0 GitHub release ships a desktop installer but no wheel, the library CI
-falls back to building `biopipe_studio-2.6.0-py3-none-any.whl` from the
+falls back to building `operon_studio-2.6.0-py3-none-any.whl` from the
 `v2.6.0` tag source when the release wheel is unavailable, and verifies the
 installed version before building the library. This exception is recorded in
 `docs/library_release_standard.md`; a future application release should attach
@@ -46,8 +46,8 @@ the wheel so the fallback is no longer used.
 
 ## Assets
 
-- `BioPipe-Library-v4.0.1-Linux.biopipe-library.zip`
-- `BioPipe-Library-v4.0.1-Windows.biopipe-library.zip`
-- `biopipe_builtin_library-4.0.1-py3-none-any.whl`
+- `Operon-Library-v4.0.1-Linux.operon-library.zip`
+- `Operon-Library-v4.0.1-Windows.operon-library.zip`
+- `operon_builtin_library-4.0.1-py3-none-any.whl`
 - `SHA256SUMS.txt`
 - `verification-ubuntu-latest.json`, `verification-windows-latest.json`

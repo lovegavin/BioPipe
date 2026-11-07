@@ -13,9 +13,13 @@ from src.task.step.steps._phylo_compare_utils import (
 class PhyloAncestralStep(Step):
     """GLS/REML estimates of internal-node trait values under Brownian motion."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "phylo_ancestral.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "phylo_ancestral",
         "version": "1.0.0",

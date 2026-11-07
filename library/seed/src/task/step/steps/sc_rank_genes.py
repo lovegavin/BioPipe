@@ -32,9 +32,13 @@ STATS = [
 class ScRankGenesStep(Step):
     """Rank genes per cluster with a Wilcoxon rank-sum test."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "sc_rank_genes.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "sc_rank_genes",
         "version": "1.0.0",

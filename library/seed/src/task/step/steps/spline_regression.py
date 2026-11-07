@@ -21,14 +21,18 @@ _STATISTICS = [
 
 
 class SplineRegressionStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Fit an ordinary least-squares model on a cubic B-spline basis.
 
     The basis is built with :func:`patsy.bs`, which uses the same quantile
     knots as R's ``splines::bs`` for a given number of degrees of freedom.
     """
     parameters_file = 'spline_regression.SplineRegressionStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'spline_regression',
      'version': '1.0.0',
      'kind': 'operator',

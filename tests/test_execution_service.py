@@ -14,8 +14,8 @@ from types import SimpleNamespace
 
 import pytest
 
-from biopipe.remote.client import RemoteError
-from biopipe.remote.server import RemoteService
+from operon.remote.client import RemoteError
+from operon.remote.server import RemoteService
 from src.web.execution import ExecutionService
 from src.web.execution_plan import ACTIVE
 from src.web.models import Graph, SaveWorkflow
@@ -38,7 +38,7 @@ def studio(tmp_path, monkeypatch):
     monkeypatch.setenv('PYTHONIOENCODING', 'utf-8')
     # Each synthetic host uses its own admission ledger, with no writes to the
     # actual desktop profile. The scientific processes are not mocked.
-    monkeypatch.setenv('BIOPIPE_ADMISSION_DIR', str(tmp_path/'remote-admission'))
+    monkeypatch.setenv('OPERON_ADMISSION_DIR', str(tmp_path/'remote-admission'))
     remote = RemoteService(tmp_path/'r', input_roots=[tmp_path/'r'])
     local = JobService(Settings(tmp_path/'l', tmp_path/'l'/'s', ROOT/'frontend/dist',
                                testing=True, code_root=ROOT, admission_dir=tmp_path/'local-admission'),
@@ -67,7 +67,7 @@ def studio(tmp_path, monkeypatch):
         def close(self): self.connected = False
     manager = local.remotes = RemoteManager(local, connection_factory=Connection)
     profile = manager.save({'name': 'Synthetic server', 'host': '127.0.0.1', 'username': 'test',
-                            'app_dir': '/synthetic/biopipe', 'workspace': '/synthetic/workspace'})
+                            'app_dir': '/synthetic/operon', 'workspace': '/synthetic/workspace'})
     manager.connect(profile['id'], {'password': 'synthetic-only'})
     executions = local.executions = ExecutionService(local)
     local.routes.catalog_for = executions.catalog
@@ -121,7 +121,7 @@ def completed(studio, graph):
     assert result['status'] == 'complete', result.get('error') or result.get('console')
     assert result['logs_complete'] and result['summary']['n_steps'] == 3
     assert result['progress']['percent'] == 100
-    assert '[BioPipe launcher]' in result['console']
+    assert '[Operon launcher]' in result['console']
     return result
 
 

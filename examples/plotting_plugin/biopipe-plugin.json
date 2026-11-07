@@ -1,10 +1,10 @@
 {
   "protocol_version": 3,
-  "name": "biopipe-plot-examples",
+  "name": "operon-plot-examples",
   "version": "0.1.0",
   "origin": "wheel",
   "dependencies": [
-    "biopipe-studio>=0.8.1,<2"
+    "operon-studio>=0.8.1,<2"
   ],
   "descriptors": [
     {
@@ -12,7 +12,7 @@
       "id": "example.volcano",
       "version": "0.1.0",
       "kind": "operator",
-      "entry_point": "biopipe_plot_examples.volcano:Volcano",
+      "entry_point": "operon_plot_examples.volcano:Volcano",
       "code_sha": "547ae0655c8146f71f4be48c105d0ec46c2a5782d8f5affd36a89ecc73d3a330",
       "declaration_sha": "1dd769dde85c4da657a1f1361e3e701e2f3af86c5157a11c7909f91716a00538",
       "title": "Volcano + significance distribution",
@@ -99,7 +99,7 @@
       "id": "example.complex_heatmap",
       "version": "0.1.0",
       "kind": "operator",
-      "entry_point": "biopipe_plot_examples.complex_heatmap:ComplexHeatmap",
+      "entry_point": "operon_plot_examples.complex_heatmap:ComplexHeatmap",
       "code_sha": "547ae0655c8146f71f4be48c105d0ec46c2a5782d8f5affd36a89ecc73d3a330",
       "declaration_sha": "7146aee2a6bbd4b09787197b06551d7f80bfae456ff1acd247060714569fc53b",
       "title": "ComplexHeatmap",

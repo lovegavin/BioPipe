@@ -12,14 +12,18 @@ from ._ext_common import labels_in_order, require_dims
 
 
 class BarnardTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Barnard's exact unconditional test of independence in a 2x2 table.
 
     The p-value is computed with SciPy's unconditional exact algorithm,
     which maximises over the nuisance success probability.
     """
     parameters_file = 'barnard_test.BarnardTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'barnard_test',
      'version': '1.0.0',
      'kind': 'operator',

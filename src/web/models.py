@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
-from biopipe_sdk.formats import Adaptation
+from operon_sdk.formats import Adaptation
 
 
 class StrictModel(BaseModel):

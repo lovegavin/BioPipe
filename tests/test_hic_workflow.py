@@ -12,7 +12,7 @@ from src.task.context import Context
 from src.reader.readers._sequencing import fastq_summary, read_file_source
 from src.task.step.steps._contact_window import select_window
 from src.task.step.steps._hic_tools import canonical_pairs
-from biopipe.tool_runner import ToolRunner
+from operon.tool_runner import ToolRunner
 
 
 def tiny_cool(path):
@@ -137,7 +137,7 @@ def test_hic_route_parameters_compile_and_export_relative_paths(tmp_path, mode):
         assert exported['sources']['reads']['args']['mate_path']=='mate.fastq'
         assert next(s for s in exported['steps'] if s['name']=='align_reads')['params']['reference_fasta']=='input/reference.fa'
     # Concrete values survive without consulting live schema defaults.
-    from biopipe.parameter_values import split_task, restore_task
+    from operon.parameter_values import split_task, restore_task
     topology,values=split_task(exported)
     assert restore_task(topology,json.loads(json.dumps(values)))==exported
 
@@ -178,7 +178,7 @@ def test_pileup_batches_weight_by_valid_pixels_not_batch_means(tmp_path):
 
 def test_hic_helper_edits_change_code_identity_without_importing_tools(tmp_path):
     import shutil
-    from biopipe_sdk.declarations import code_hash
+    from operon_sdk.declarations import code_hash
     root=Path(__file__).resolve().parents[1]
     entry='src.task.step.steps.align_reads:AlignReadsStep'
     for folder in ('src/task/step/steps','src/reader/readers'):

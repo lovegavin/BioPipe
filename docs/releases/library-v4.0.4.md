@@ -1,6 +1,6 @@
-# BioPipe Operator Library v4.0.4
+# Operon Operator Library v4.0.4
 
-Quick-start release for the **BioPipe 2.6.0** desktop application. This release
+Quick-start release for the **Operon 2.6.0** desktop application. This release
 adds the bilingual quick-start guides to the release assets; it does not change
 analysis code.
 
@@ -37,9 +37,9 @@ analysis code.
 
 ## Assets
 
-- `BioPipe-Library-v4.0.4-Windows.biopipe-library.zip`
-- `BioPipe-Library-v4.0.4-Linux.biopipe-library.zip`
-- `biopipe_builtin_library-4.0.4-py3-none-any.whl`
+- `Operon-Library-v4.0.4-Windows.operon-library.zip`
+- `Operon-Library-v4.0.4-Linux.operon-library.zip`
+- `operon_builtin_library-4.0.4-py3-none-any.whl`
 - `QUICKSTART.zh.md`, `QUICKSTART.md`
 - `SHA256SUMS.txt`
 - `verification-windows-latest.json`, `verification-ubuntu-latest.json`

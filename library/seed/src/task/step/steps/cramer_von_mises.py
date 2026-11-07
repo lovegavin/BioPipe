@@ -11,10 +11,15 @@ from ._matrix_common import grouped
 
 
 class CramerVonMisesStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Per-feature two-sample Cramer-von Mises test."""
     parameters_file = 'cramer_von_mises.CramerVonMisesStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'cramer_von_mises',
      'version': '1.0.0',
      'kind': 'operator',

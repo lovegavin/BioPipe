@@ -80,7 +80,7 @@ def test_check_resource_reports_ok_partial_and_missing(tmp_path) -> None:
     absent = check_resource(esm2, tmp_path / "does-not-exist")
     assert absent["status"] == "missing"
     assert absent["root"] == ""
-    assert "BIOPIPE_ESM_MODEL_DIR" in remedy(absent)
+    assert "OPERON_ESM_MODEL_DIR" in remedy(absent)
 
 
 def test_resolve_root_prefers_explicit_then_env(tmp_path, monkeypatch) -> None:
@@ -88,9 +88,9 @@ def test_resolve_root_prefers_explicit_then_env(tmp_path, monkeypatch) -> None:
     explicit = tmp_path / "explicit"
     explicit.mkdir()
     assert resolve_root(rfdiffusion, explicit) == explicit
-    monkeypatch.setenv("BIOPIPE_RFDIFFUSION_PATH", str(explicit))
+    monkeypatch.setenv("OPERON_RFDIFFUSION_PATH", str(explicit))
     assert resolve_root(rfdiffusion) == explicit
-    monkeypatch.delenv("BIOPIPE_RFDIFFUSION_PATH")
+    monkeypatch.delenv("OPERON_RFDIFFUSION_PATH")
     assert resolve_root(rfdiffusion) is None or resolve_root(rfdiffusion).is_dir()
 
 

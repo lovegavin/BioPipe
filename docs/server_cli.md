@@ -1,6 +1,6 @@
 # Operon on a Linux server or in a terminal
 
-The desktop is optional. `operon` and the compatibility name `biopipe` use the
+The desktop is optional. `operon` and the compatibility name `operon` use the
 same application service, task records, memory planner and workers. YAML is an
 authoring format, not a second execution engine. Nothing in this guide requires
 a display server, WebView, the Windows application, or an AI model.
@@ -23,8 +23,8 @@ operon --version
 ```
 
 For wheel releases, install the application wheel and the separately versioned
-reference-library wheel. The application is named `biopipe-studio` on the Python
-packaging interface for compatibility. The library is `biopipe-builtin-library`;
+reference-library wheel. The application is named `operon-studio` on the Python
+packaging interface for compatibility. The library is `operon-builtin-library`;
 its version does not have to equal the application version. Add the application
 `agent` extra only when this environment will host MCP. No frontend build is needed.
 
@@ -162,7 +162,7 @@ come from the [Linux cgroup documentation](https://docs.kernel.org/admin-guide/c
 After verifying a Linux installation, register it once with the installed Python:
 
 ```sh
-python -m biopipe.remote.installation register \
+python -m operon.remote.installation register \
   --base "$HOME/.local/share/operon/server" \
   --workspace "$HOME/operon-projects/shared"
 ```

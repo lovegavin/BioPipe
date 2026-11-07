@@ -15,10 +15,14 @@ _STATISTICS = ["coef", "se", "z", "P", "CI_low", "CI_high"]
 
 
 class ArimaStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Fit a non-seasonal ARIMA(p, d, q) model by maximum likelihood."""
     parameters_file = 'arima.ArimaStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'arima',
      'version': '1.0.0',
      'kind': 'operator',

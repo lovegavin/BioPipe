@@ -1,0 +1,605 @@
+{
+  "$defs": {
+    "DataFormats": {
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/FormatPort"
+          },
+          "maxItems": 20,
+          "title": "Inputs",
+          "type": "array"
+        },
+        "outputs": {
+          "items": {
+            "$ref": "#/$defs/FormatPort"
+          },
+          "maxItems": 20,
+          "title": "Outputs",
+          "type": "array"
+        }
+      },
+      "title": "DataFormats",
+      "type": "object"
+    },
+    "Descriptor": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "protocol_revision": {
+                "const": "3.7"
+              }
+            },
+            "required": [
+              "protocol_revision"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data_formats": {
+                "required": [
+                  "inputs",
+                  "outputs"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "data_formats"
+            ]
+          }
+        }
+      ],
+      "description": "Canonical, versioned extension declaration; UI projections are separate.",
+      "properties": {
+        "protocol_version": {
+          "const": 3,
+          "default": 3,
+          "title": "Protocol Version",
+          "type": "integer"
+        },
+        "protocol_revision": {
+          "anyOf": [
+            {
+              "enum": [
+                "3.5",
+                "3.6",
+                "3.7"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Protocol Revision"
+        },
+        "data_formats": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DataFormats"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "localization": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Localization"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "pattern": "^[A-Za-z_][A-Za-z0-9_.-]{0,79}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][A-Za-z0-9.-]+)?$",
+          "title": "Version",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "operator",
+            "reader"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "entry_point": {
+          "title": "Entry Point",
+          "type": "string"
+        },
+        "code_sha": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Code Sha",
+          "type": "string"
+        },
+        "declaration_sha": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Declaration Sha",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "title": "Description",
+          "type": "string"
+        },
+        "documentation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Documentation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Operator library category, independent of package origin. Custom labels are allowed.",
+          "title": "Category"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional module-relative image path or Studio icon name. Missing or unknown names use the category default.",
+          "title": "Icon"
+        },
+        "icon_image": {
+          "anyOf": [
+            {
+              "pattern": "^data:image/(png|jpeg|webp|gif|svg\\+xml);base64,[A-Za-z0-9+/]+={0,2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SDK-generated portable image data; authors declare a relative path in icon.",
+          "title": "Icon Image"
+        },
+        "parameters_schema": {
+          "additionalProperties": true,
+          "title": "Parameters Schema",
+          "type": "object"
+        },
+        "contracts": {
+          "additionalProperties": true,
+          "title": "Contracts",
+          "type": "object"
+        },
+        "resources": {
+          "additionalProperties": true,
+          "title": "Resources",
+          "type": "object"
+        },
+        "dependencies": {
+          "description": "PEP 508 dependencies; compatible versions share the host runtime, conflicting versions use a private dependency directory and subprocess with the same Python.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        },
+        "dependency_imports": {
+          "description": "Optional import smoke checks, run outside the UI process.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependency Imports",
+          "type": "array"
+        },
+        "inputs_arity": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "const": "*",
+              "type": "string"
+            }
+          ],
+          "default": 0,
+          "title": "Inputs Arity"
+        },
+        "outputs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Outputs",
+          "type": "array"
+        },
+        "output_parameter": {
+          "anyOf": [
+            {
+              "const": "output",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Parameter"
+        },
+        "extensions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Extensions",
+          "type": "array"
+        },
+        "requires_siblings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Requires Siblings",
+          "type": "array"
+        },
+        "excludes_siblings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Excludes Siblings",
+          "type": "array"
+        },
+        "handles_compression": {
+          "default": false,
+          "title": "Handles Compression",
+          "type": "boolean"
+        },
+        "file_input": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "File Input"
+        },
+        "preview": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Preview"
+        },
+        "title_aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Title Aliases",
+          "type": "array"
+        },
+        "title_parameter": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title Parameter"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "kind",
+        "entry_point",
+        "code_sha",
+        "declaration_sha",
+        "title",
+        "parameters_schema",
+        "contracts",
+        "resources"
+      ],
+      "title": "Descriptor",
+      "type": "object"
+    },
+    "Documentation": {
+      "additionalProperties": false,
+      "description": "Optional v3.1 resource metadata; Markdown bytes are stored separately.",
+      "properties": {
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Summary",
+          "type": "string"
+        },
+        "sections": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Sections",
+          "type": "array"
+        },
+        "status": {
+          "default": "authored",
+          "enum": [
+            "generated",
+            "authored",
+            "reviewed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "minimum_sdk": {
+          "const": "3.1.0",
+          "default": "3.1.0",
+          "title": "Minimum Sdk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "title": "Documentation",
+      "type": "object"
+    },
+    "FormatPort": {
+      "additionalProperties": false,
+      "properties": {
+        "logical_type": {
+          "pattern": "^[a-z][a-z0-9_.-]{0,79}$",
+          "title": "Logical Type",
+          "type": "string"
+        },
+        "representations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Representations",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "logical_type",
+        "representations"
+      ],
+      "title": "FormatPort",
+      "type": "object"
+    },
+    "Localization": {
+      "additionalProperties": false,
+      "properties": {
+        "default_locale": {
+          "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$",
+          "title": "Default Locale",
+          "type": "string"
+        },
+        "translations": {
+          "additionalProperties": {
+            "$ref": "#/$defs/OperatorText"
+          },
+          "title": "Translations",
+          "type": "object"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "minimum_sdk": {
+          "const": "3.5.0",
+          "default": "3.5.0",
+          "title": "Minimum Sdk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "default_locale",
+        "translations",
+        "path",
+        "sha256"
+      ],
+      "title": "Localization",
+      "type": "object"
+    },
+    "OperatorText": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "parameters": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ParameterText"
+          },
+          "title": "Parameters",
+          "type": "object"
+        }
+      },
+      "title": "OperatorText",
+      "type": "object"
+    },
+    "ParameterText": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "enum_labels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Enum Labels",
+          "type": "object"
+        }
+      },
+      "title": "ParameterText",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "One installation unit; operator identities remain independent of origin.",
+  "properties": {
+    "protocol_version": {
+      "const": 3,
+      "default": 3,
+      "title": "Protocol Version",
+      "type": "integer"
+    },
+    "name": {
+      "pattern": "^[a-z0-9][a-z0-9.-]*$",
+      "title": "Name",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    },
+    "origin": {
+      "default": "wheel",
+      "enum": [
+        "bundled",
+        "wheel"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "descriptors": {
+      "items": {
+        "$ref": "#/$defs/Descriptor"
+      },
+      "title": "Descriptors",
+      "type": "array"
+    },
+    "dependencies": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependencies",
+      "type": "array"
+    }
+  },
+  "required": [
+    "name",
+    "version",
+    "descriptors"
+  ],
+  "title": "PackageDescriptor",
+  "type": "object"
+}

@@ -56,9 +56,13 @@ def _revcomp(seq: str) -> str:
 
 class FindOrfsStep(Step):
     """Locate complete ATG..stop ORFs on both strands."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'find_orfs.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'find_orfs',
      'version': '1.0.0',
      'kind': 'operator',

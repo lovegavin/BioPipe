@@ -20,7 +20,7 @@ from src.task.runner import run
 from src.task.step.steps._sequence_common import encode_sequences
 from src.task.step.steps.proteinmpnn_score import ProteinmpnnScoreStep
 
-REAL_REPO = Path(os.environ.get("BIOPIPE_PROTEINMPNN_PATH", "/home/gavin/tools/ProteinMPNN"))
+REAL_REPO = Path(os.environ.get("OPERON_PROTEINMPNN_PATH", "/home/gavin/tools/ProteinMPNN"))
 FIXTURE = Path(__file__).parent / "fixtures" / "backbone_1bc8_c60_75.pdb"
 
 
@@ -92,8 +92,8 @@ def test_runner_contract_ensemble(tmp_path, monkeypatch) -> None:
 
 
 @pytest.mark.skipif(
-    not os.environ.get("BIOPIPE_RUN_PROTEINMPNN") or not (REAL_REPO / "vanilla_model_weights" / "v_48_020.pt").is_file(),
-    reason="set BIOPIPE_RUN_PROTEINMPNN=1 with a local ProteinMPNN checkout",
+    not os.environ.get("OPERON_RUN_PROTEINMPNN") or not (REAL_REPO / "vanilla_model_weights" / "v_48_020.pt").is_file(),
+    reason="set OPERON_RUN_PROTEINMPNN=1 with a local ProteinMPNN checkout",
 )
 def test_real_ensemble_matches_single_model(tmp_path) -> None:
     fasta = tmp_path / "native.fasta"

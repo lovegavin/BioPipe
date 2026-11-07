@@ -81,11 +81,14 @@ def contact_order(ca: np.ndarray, cutoff: float, min_separation: int) -> tuple[d
 class StructureContactOrderStep(Step):
     """Absolute and relative contact order of a single-chain structure."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "structure_contact_order.StructureContactOrderStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_contact_order",
         "version": "1.0.0",

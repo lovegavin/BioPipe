@@ -2,12 +2,12 @@
 requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 [project]
-name = "biopipe-plot-examples"
+name = "operon-plot-examples"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["biopipe-studio>=3.0.0,<4"]
-[project.entry-points."biopipe.operators"]
-volcano = "biopipe_plot_examples.volcano:Volcano"
-complex_heatmap = "biopipe_plot_examples.complex_heatmap:ComplexHeatmap"
+dependencies = ["operon-studio>=3.0.0,<4"]
+[project.entry-points."operon.operators"]
+volcano = "operon_plot_examples.volcano:Volcano"
+complex_heatmap = "operon_plot_examples.complex_heatmap:ComplexHeatmap"
 [tool.setuptools.package-data]
-biopipe_plot_examples = ["*.parameters.json"]
+operon_plot_examples = ["*.parameters.json"]

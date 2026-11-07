@@ -12,9 +12,13 @@ from ._phylo_infer import robinson_foulds
 
 
 class PhylotreeDistanceStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "phylo_tree_distance.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "phylo_tree_distance",
         "version": "1.0.0",

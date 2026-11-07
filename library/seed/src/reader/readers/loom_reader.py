@@ -28,10 +28,14 @@ def _text(value):
 
 
 class LoomReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for .loom files."""
     parameters_file = 'loom_reader.LoomReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'LoomReader',
      'version': '1.0.0',
      'kind': 'reader',

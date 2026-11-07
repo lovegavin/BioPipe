@@ -99,9 +99,12 @@ def tm_score(mobile: np.ndarray, reference: np.ndarray, *, cutoff: float = 4.5, 
 
 
 class StructureTmScoreStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_tm_score.StructureTmScoreStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_tm_score",
         "version": "1.0.0",

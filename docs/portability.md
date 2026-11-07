@@ -1,4 +1,4 @@
-# Moving BioPipe to another computer
+# Moving Operon to another computer
 
 Source and default configuration do not depend on a developer drive, username,
 Conda installation or terminal working directory. The desktop host targets Windows
@@ -7,17 +7,17 @@ x64; the Python engine and browser UI do not require the Windows host.
 ## Runtime layout
 
 ```text
-BioPipe/
-  biopipe/                     CLI, plugins and agent gateway
-  biopipe_sdk/                 public SDK and schemas
+Operon/
+  operon/                     CLI, plugins and agent gateway
+  operon_sdk/                 public SDK and schemas
   src/                        engine, built-ins and Studio service
   scripts/                    launch/build/verification scripts
   pyproject.toml
   requirements*.txt
   frontend/dist/              built browser resources (optional for desktop-only delivery)
-  dist/BioPipe Studio/
-    BioPipe Studio.exe
-    biopipe-desktop.json
+  dist/Operon Studio/
+    Operon Studio.exe
+    operon-desktop.json
     frontend/                 desktop resources
     ...                       host dependencies
 ```
@@ -33,13 +33,13 @@ need their packages from `requirements-readers.txt`; analysis extensions use
 `requirements-analysis.txt`. For CLI, SDK and plugin development install the
 repository package with `python -m pip install -e ".[agent,dev]"` in that environment.
 
-`python: "auto"` discovers a usable project environment, a previously used BioPipe
+`python: "auto"` discovers a usable project environment, a previously used Operon
 interpreter, active venv/Conda, PATH Python, Conda environment records and Windows
 Python registrations. It does not require an activated terminal. If none works,
 select the environment's `python.exe` in the desktop prompt. Successful startup
-remembers the current interpreter in `~/.biopipe/runtime.json`; every candidate is
+remembers the current interpreter in `~/.operon/runtime.json`; every candidate is
 revalidated on the target machine. This personal file is not part of a release.
-An explicit `BIOPIPE_PYTHON` or desktop `python` setting overrides discovery and
+An explicit `OPERON_PYTHON` or desktop `python` setting overrides discovery and
 must be updated after moving; source and packaged defaults never need editing.
 
 ```text
@@ -50,7 +50,7 @@ python scripts/run.py tasks/csv_demo
 You can launch a script by its absolute path from another working directory.
 Default profile resolution is independent of cwd. `--workspace` explicitly selects
 an isolated workspace; `--data-dir` must remain inside it. `--frontend` selects
-compiled frontend resources. `BIOPIPE_STUDIO_HOME` and `--profile-dir` select a
+compiled frontend resources. `OPERON_STUDIO_HOME` and `--profile-dir` select a
 shared profile; relative profile overrides are anchored to the user's home.
 
 ## Workflows, plugins and history
@@ -60,7 +60,7 @@ files and generated demo data use relative paths. YAML exports retain relative
 input references; place the export alongside the corresponding base directory and
 preserve the data layout. JSON/YAML files do not contain the input data itself.
 
-Portable route exports use `.biopipe.zip` with `graph.json` and `parameters.json`.
+Portable route exports use `.operon.zip` with `graph.json` and `parameters.json`.
 Move both files together. Saved profile routes reference versioned parameter JSON
 under `workflows/parameters/`; jobs reference a local `parameters.json` beside
 `task.yaml`. These references are relative, and missing value files are errors,

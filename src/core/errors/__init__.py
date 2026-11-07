@@ -1,6 +1,6 @@
 # src/core/errors/__init__.py
 from src.core.errors.errors import (
-    BioPipeError,
+    OperonError,
     ContextError,
     ManifestError,
     ReaderError,
@@ -9,7 +9,7 @@ from src.core.errors.errors import (
 )
 
 __all__ = [
-    "BioPipeError",
+    "OperonError",
     "ContextError",
     "ManifestError",
     "ReaderError",

@@ -5,7 +5,7 @@ using System.Text.Json;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.WinForms;
 
-namespace BioPipe.Desktop;
+namespace Operon.Desktop;
 
 internal static class Program
 {
@@ -63,7 +63,7 @@ internal static class Program
         }
         var dataDir = profile.ProfileDir;
         var identity = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(dataDir.ToUpperInvariant())))[..24];
-        var name = @"Local\BioPipeStudio-" + identity;
+        var name = @"Local\OperonStudio-" + identity;
         using var mutex = new Mutex(true, name, out var first);
         if (!first)
         {
@@ -166,12 +166,12 @@ internal sealed class StudioWindow : Form
             backend = new Process { StartInfo = start, EnableRaisingEvents = true };
             backend.OutputDataReceived += (_, e) => {
                 if (e.Data is null) return;
-                if (e.Data.StartsWith("BIOPIPE_READY "))
+                if (e.Data.StartsWith("OPERON_READY "))
                 {
                     try { using var value = JsonDocument.Parse(e.Data[14..]); ready.TrySetResult(value.RootElement.GetProperty("url").GetString()!); }
                     catch (Exception error) { ready.TrySetException(error); }
                 }
-                else if (e.Data.StartsWith("BIOPIPE_STARTUP_ERROR "))
+                else if (e.Data.StartsWith("OPERON_STARTUP_ERROR "))
                 {
                     try { using var value = JsonDocument.Parse(e.Data[22..]); ready.TrySetException(new InvalidOperationException(value.RootElement.GetProperty("message").GetString())); }
                     catch (Exception error) { ready.TrySetException(error); }

@@ -235,7 +235,7 @@ def test_parse_bias_and_tied_helpers():
 
 
 @pytest.mark.skipif(
-    not Path(os.environ.get("BIOPIPE_PROTEINMPNN_PATH", "/nonexistent")).is_dir(),
+    not Path(os.environ.get("OPERON_PROTEINMPNN_PATH", "/nonexistent")).is_dir(),
     reason="local ProteinMPNN checkout is not configured",
 )
 def test_official_runner_interface_design(tmp_path):
@@ -244,7 +244,7 @@ def test_official_runner_interface_design(tmp_path):
     step = ProteinmpnnInterfaceDesignStep()
     ctx = Ctx({
         "structure_path": str(structure),
-        "proteinmpnn_path": os.environ["BIOPIPE_PROTEINMPNN_PATH"],
+        "proteinmpnn_path": os.environ["OPERON_PROTEINMPNN_PATH"],
         "num_seq_per_target": 1,
         "device": "cpu",
     })

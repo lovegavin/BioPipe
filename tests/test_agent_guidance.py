@@ -11,10 +11,10 @@ from types import SimpleNamespace
 import pytest
 from fastapi.testclient import TestClient
 
-from biopipe.guidance import guide, TOPICS
-from biopipe.agent_views import wait_job
-from biopipe.headless import create_headless_app
-from biopipe.operator_docs import OperatorDocs
+from operon.guidance import guide, TOPICS
+from operon.agent_views import wait_job
+from operon.headless import create_headless_app
+from operon.operator_docs import OperatorDocs
 from src.web.service import Settings
 from test_headless_application import auth, graph, environment
 
@@ -29,7 +29,7 @@ def test_guides_are_offline_cached_bounded_and_cli_readable(tmp_path):
         assert cached['not_modified'] and 'content' not in cached
     with pytest.raises(ValueError, match='Unknown guide'):
         guide('../client')
-    result = subprocess.run([sys.executable, '-m', 'biopipe', '--workspace', str(tmp_path),
+    result = subprocess.run([sys.executable, '-m', 'operon', '--workspace', str(tmp_path),
                              'help', 'workflow', '--compact'], cwd=ROOT,
                             capture_output=True, encoding='utf-8', timeout=15)
     assert result.returncode == 0, result.stderr
@@ -40,7 +40,7 @@ def test_guides_are_offline_cached_bounded_and_cli_readable(tmp_path):
 
 def test_ranked_brief_search_and_selected_docs_are_metadata_first(tmp_path, monkeypatch):
     from test_operator_docs import extension
-    from biopipe_sdk.declarations import source_declarations, compile_declaration
+    from operon_sdk.declarations import source_declarations, compile_declaration
     path, _ = extension(tmp_path, unsafe=True)
     base = compile_declaration(source_declarations(path, 'answer')[0], tmp_path)
     def item(key, title, description, aliases=None):
@@ -53,7 +53,7 @@ def test_ranked_brief_search_and_selected_docs_are_metadata_first(tmp_path, monk
         item('structure_interface_core', 'Structure interface core', 'Analyse an interface', ['结构界面分析']),
         item('aaa', 'Something else', 'Find sequence liability in an example')]}
     docs = OperatorDocs(SimpleNamespace(directory=tmp_path, state=lambda: state))
-    monkeypatch.setattr('biopipe.operator_docs.document_bytes', lambda *a: pytest.fail('metadata imported Markdown'))
+    monkeypatch.setattr('operon.operator_docs.document_bytes', lambda *a: pytest.fail('metadata imported Markdown'))
     full = docs.search('liability')
     brief = docs.search('liability', view='brief')
     assert [i['id'] for i in brief['items']] == ['sequence_liability_scan', 'aaa']
@@ -71,7 +71,7 @@ def test_ranked_brief_search_and_selected_docs_are_metadata_first(tmp_path, monk
 
 
 def test_wait_keeps_receipt_timeout_and_does_not_resubmit(monkeypatch):
-    from biopipe import agent_views
+    from operon import agent_views
     current = [0.0]
     monkeypatch.setattr(agent_views.time, 'monotonic', lambda: current[0])
     monkeypatch.setattr(agent_views.time, 'sleep', lambda n: current.__setitem__(0, current[0] + n))
@@ -89,7 +89,7 @@ def test_wait_keeps_receipt_timeout_and_does_not_resubmit(monkeypatch):
 
 def test_api_guide_permissions_openapi_and_real_third_party_example(environment):
     from examples.api_client.run_workflow import run_workflow, copy_result
-    from biopipe.client import Client
+    from operon.client import Client
     root = environment
     app = create_headless_app(Settings(root, root / '.studio', root / 'no-ui', testing=True, code_root=ROOT))
     with TestClient(app, base_url='http://127.0.0.1') as http:
@@ -99,7 +99,7 @@ def test_api_guide_permissions_openapi_and_real_third_party_example(environment)
         assert http.get('/api/v1/guides/workflow').json() == guide('workflow')
         spec = http.get('/api/v1/openapi.json').json()
         assert '/api/v1/jobs' in spec['paths'] and all(p.startswith('/api/v1/') for p in spec['paths'])
-        assert spec['security'] == [{'BioPipeToken': []}]
+        assert spec['security'] == [{'OperonToken': []}]
         assert http.post('/api/v1/jobs', json={'graph': graph(root)}).status_code == 403
         http.headers.update(auth(http, app, ['context', 'run']))
         def request(path, payload=None):
@@ -140,7 +140,7 @@ def test_api_guide_permissions_openapi_and_real_third_party_example(environment)
 
 
 def test_mcp_guides_resources_and_brief_defaults_without_data_imports():
-    from biopipe.mcp_server import create_server
+    from operon.mcp_server import create_server
     calls = []
     class FakeClient:
         def request(self, path, payload=None):
@@ -148,14 +148,14 @@ def test_mcp_guides_resources_and_brief_defaults_without_data_imports():
             return {'id': 'j', 'status': 'complete'} if '/jobs/' in path else {'items': []}
     server = create_server(FakeClient())
     async def exercise():
-        topics = await server.call_tool('biopipe_guide', {'topic': 'index'})
+        topics = await server.call_tool('operon_guide', {'topic': 'index'})
         assert topics
-        await server.call_tool('biopipe_operator_search', {'query': 'pca'})
+        await server.call_tool('operon_operator_search', {'query': 'pca'})
         assert 'limit=5' in calls[-1][0] and 'view=brief' in calls[-1][0]
-        await server.call_tool('biopipe_operator_describe', {'ids': ['pca'], 'view': 'docs', 'sections': ['purpose']})
+        await server.call_tool('operon_operator_describe', {'ids': ['pca'], 'view': 'docs', 'sections': ['purpose']})
         assert calls[-1][1]['view'] == 'docs'
-        await server.call_tool('biopipe_job', {'job_id': 'j', 'wait_seconds': 1})
+        await server.call_tool('operon_job', {'job_id': 'j', 'wait_seconds': 1})
         assert calls[-1][0].endswith('?view=brief')
         resources = await server.list_resources()
-        assert 'biopipe://guide' in {str(r.uri) for r in resources}
+        assert 'operon://guide' in {str(r.uri) for r in resources}
     asyncio.run(exercise())

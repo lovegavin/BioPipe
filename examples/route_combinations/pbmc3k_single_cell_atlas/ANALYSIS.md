@@ -4,7 +4,7 @@
 
 # PBMC3k 单细胞图谱：H5adReader + 细胞类型分析
 
-本示例用 BioPipe 的 `H5adReader` 读取经典 10x Genomics PBMC3k 单细胞数据，组合
+本示例用 Operon 的 `H5adReader` 读取经典 10x Genomics PBMC3k 单细胞数据，组合
 PCA、UMAP、细胞类型聚合、marker 热图和随机森林分类，演示“专用 Reader + 多个
 算子的可复现分析”，而不是把 CSV 当成所有数据的入口。
 

@@ -3,7 +3,7 @@
 See [the API walkthrough](../../docs/api_quickstart.md). `run_workflow.py` uses the
 public authenticated application API for preparation, validation, submission,
 bounded waiting and native-file handoff. It does not start a desktop, embed an
-agent or import an analysis implementation. Install BioPipe first, then run:
+agent or import an analysis implementation. Install Operon first, then run:
 
 ```text
 python examples/api_client/run_workflow.py --workspace project --workflow project/route.json --request-id demo-001

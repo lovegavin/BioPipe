@@ -64,16 +64,16 @@ def test_modified_launcher_is_not_overwritten(tmp_path):
 
 
 def test_inherited_python_and_conda_settings_are_not_used(monkeypatch):
-    for key in ('PYTHONPATH', 'CONDA_PREFIX', 'BIOPIPE_PYTHON', 'PIP_TARGET', 'VIRTUAL_ENV'):
+    for key in ('PYTHONPATH', 'CONDA_PREFIX', 'OPERON_PYTHON', 'PIP_TARGET', 'VIRTUAL_ENV'):
         monkeypatch.setenv(key, 'old runtime')
     monkeypatch.setenv('HTTPS_PROXY', 'http://proxy.example:8000')
     environment = setup.child_environment()
-    assert not any(key in environment for key in ('PYTHONPATH', 'CONDA_PREFIX', 'BIOPIPE_PYTHON', 'PIP_TARGET', 'VIRTUAL_ENV'))
+    assert not any(key in environment for key in ('PYTHONPATH', 'CONDA_PREFIX', 'OPERON_PYTHON', 'PIP_TARGET', 'VIRTUAL_ENV'))
     assert environment['HTTPS_PROXY'] == 'http://proxy.example:8000'
 
 
 def test_shell_bootstrap_uses_existing_verified_manager_constants():
-    from biopipe.remote.provision import MAMBA_ARCHIVE_SHA, MAMBA_SHA, MAMBA_URL
+    from operon.remote.provision import MAMBA_ARCHIVE_SHA, MAMBA_SHA, MAMBA_URL
     shell = Path('scripts/install_server.sh').read_text()
     assert all(value in shell for value in (MAMBA_ARCHIVE_SHA, MAMBA_SHA, MAMBA_URL))
 
@@ -118,8 +118,8 @@ def test_real_server_install_reinstall_cli_and_yaml(tmp_path):
     built = subprocess.run([sys.executable, '-m', 'pip', 'wheel', '--no-deps', '--wheel-dir', str(wheels),
         str(source), str(source / 'library')], capture_output=True, text=True, timeout=300)
     assert built.returncode == 0, built.stdout + built.stderr
-    second = install('--app-wheel', str(next(wheels.glob('biopipe_studio-*.whl'))),
-                     '--library-wheel', str(next(wheels.glob('biopipe_builtin_library-*.whl'))), source_install=False)
+    second = install('--app-wheel', str(next(wheels.glob('operon_studio-*.whl'))),
+                     '--library-wheel', str(next(wheels.glob('operon_builtin_library-*.whl'))), source_install=False)
     assert second['python'] != first['python']
     assert second['install_dir'] == first['install_dir'] and Path(first['python']).exists()
     assert second['workspace'] == first['workspace'] == str(workspace)

@@ -3,7 +3,7 @@ import type { Graph, GraphNode, GraphEdge, TargetRef } from "./types";
 import { clone } from "./graph";
 import {defaultTarget, executionConfig, withExecution} from './execution';
 
-const FORMAT = "biopipe/graph-fragment-v1";
+const FORMAT = "operon/graph-fragment-v1";
 export type Fragment = { format: typeof FORMAT; base_dir?: string; nodes: GraphNode[]; edges: GraphEdge[];
   node_targets?: Record<string, TargetRef>; file_locations?: Record<string, TargetRef> };
 export function copyFragment(graph: Graph, selected: string[]): Fragment {

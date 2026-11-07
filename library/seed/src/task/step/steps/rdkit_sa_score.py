@@ -49,9 +49,12 @@ def sa_score(molecule) -> float:
 
 
 class RdkitSaScoreStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "rdkit_sa_score.RdkitSaScoreStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "rdkit_sa_score",
         "kind": "operator",

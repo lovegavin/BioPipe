@@ -27,6 +27,10 @@ _LABELS = [
 
 class GenomeRearrangementSummaryStep(Step):
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "id": "genome_rearrangement_summary",
         "title": "Genome rearrangement summary",
         "version": "1.0.0",
@@ -80,7 +84,7 @@ class GenomeRearrangementSummaryStep(Step):
         value_dim = str(params.get("value_dim", "value"))
         out_name = str(params.get("output", "summary"))
 
-        temporary = Path(tempfile.mkdtemp(prefix="biopipe_genome_rearrangement_"))
+        temporary = Path(tempfile.mkdtemp(prefix="operon_genome_rearrangement_"))
         try:
             query_path = temporary / "query.fasta"
             reference_path = temporary / "reference.fasta"

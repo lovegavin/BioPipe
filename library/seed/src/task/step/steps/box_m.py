@@ -13,7 +13,7 @@ from ._stats21_common import numeric_column, table_frame
 
 
 class BoxMStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Box's M test for equal covariance matrices across groups.
 
     Uses the chi-square approximation from ``biotools::boxM``:
@@ -22,7 +22,11 @@ class BoxMStep(Step):
     ``X2=M*(1-C)`` with ``df=p(p+1)(k-1)/2``.
     """
     parameters_file = 'box_m.BoxMStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'box_m',
      'version': '1.0.0',
      'kind': 'operator',

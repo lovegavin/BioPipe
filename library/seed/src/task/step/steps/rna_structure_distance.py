@@ -18,9 +18,12 @@ from src.task.step.steps._sequence_common import decode_sequences
 
 
 class RnaStructureDistanceStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "rna_structure_distance.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "rna_structure_distance",
         "version": "1.0.0",

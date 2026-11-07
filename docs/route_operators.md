@@ -23,7 +23,7 @@ External connections replace its source placeholders.
    last ten closed pages are autosaved. A new UI session starts a fresh undo history.
 
 Desktop and development startup share the same default profile. Explicit isolated
-workspaces remain independent. Export/import a `.biopipe.zip` route bundle to
+workspaces remain independent. Export/import a `.operon.zip` route bundle to
 transfer a route and its independent parameter values to another profile, then
 explicitly register it there. Self-contained graph JSON imports remain supported.
 
@@ -76,8 +76,8 @@ installed separately. See [plugin versions](plugins.md).
 - Limits: six nested route levels, 1,000 expanded nodes and 5,000 edges. Recursive
   routes, cycles, invalid ports and duplicate output references are rejected.
 
-Default shared location: `~/.biopipe/studio/workspace/.studio/workflows/`.
-`BIOPIPE_STUDIO_HOME` or `--profile-dir` changes the profile through one resolver.
+Default shared location: `~/.operon/studio/workspace/.studio/workflows/`.
+`OPERON_STUDIO_HOME` or `--profile-dir` changes the profile through one resolver.
 File locks and atomic replacement protect writes across desktop/development servers.
 No installation drive or username is hard-coded.
 
@@ -95,7 +95,7 @@ First launch registers five templates from `library/seed/src/web/builtin_routes.
 
 Node counts include input nodes.
 
-`biopipe registry build` discovers `routes/**/task.yaml` and `task.yml`, validates
+`operon registry build` discovers `routes/**/task.yaml` and `task.yml`, validates
 the operators and generates the manifest. `scripts/build_builtin_routes.py` is a
 compatibility wrapper; it contains no route list or default historical Git ref.
 See [registry maintenance](registry_maintenance.md). Templates retain example group names, clinical fields and gene choices;

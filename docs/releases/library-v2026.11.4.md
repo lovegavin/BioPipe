@@ -1,15 +1,15 @@
-# BioPipe Operator Library 2026.11.4
+# Operon Operator Library 2026.11.4
 
 This is an **operator library update**, not a Studio application release. Install
-the `.biopipe-library.zip` through **Library manager → Import package**, or:
+the `.operon-library.zip` through **Library manager → Import package**, or:
 
 ```bash
-biopipe plugin install ./BioPipe-Library-v2026.11.4-Windows.biopipe-library.zip
+operon plugin install ./Operon-Library-v2026.11.4-Windows.operon-library.zip
 ```
 
-Requires **BioPipe Studio 2.0.4 or newer** and protocol v3. Existing Lite and Full
+Requires **Operon Studio 2.0.4 or newer** and protocol v3. Existing Lite and Full
 2.0.4 packages can install it without replacing the EXE. Studio downloads remain
-on the [v2.0.4 software page](https://github.com/lovegavin/BioPipe/releases/tag/v2.0.4).
+on the [v2.0.4 software page](https://github.com/lovegavin/Operon/releases/tag/v2.0.4).
 
 Choose **Windows** for the Windows desktop and **Linux** for a Linux server.
 The v2.0.4 installer rebuilds and compares native wheel archives, whose metadata
@@ -45,7 +45,7 @@ adapter/parser/error cases. It does **not** claim end-to-end scientific validati
 of the seven external programs or ship their databases. Their declared platform,
 binary and resource requirements still apply.
 
-See [independent library releases](https://github.com/lovegavin/BioPipe/blob/library-v2026.11.4/docs/library_releases.md)
+See [independent library releases](https://github.com/lovegavin/Operon/blob/library-v2026.11.4/docs/library_releases.md)
 for the update and publication workflow. The version namespace `library-v…` is
 independent of software `v…`; a new library never displaces GitHub's latest
 software release.

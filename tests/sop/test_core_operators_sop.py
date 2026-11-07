@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from biopipe_sdk.testing import run_operator
+from operon_sdk.testing import run_operator
 from src.core import Form
 
 

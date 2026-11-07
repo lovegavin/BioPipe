@@ -77,10 +77,13 @@ def parse_row(text: str, query_name: str, target_name: str) -> dict:
 
 
 class FoldseekAlignStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "foldseek_align.FoldseekAlignStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "foldseek_align",
         "version": "1.0.0",

@@ -6,8 +6,8 @@ mistaken for undeclared top-level operator options.
 """
 from __future__ import annotations
 
-from biopipe.packages import bundled_entries
-from biopipe_sdk.protocol import validate_schema, validate_parameters
+from operon.packages import bundled_entries
+from operon_sdk.protocol import validate_schema, validate_parameters
 import pytest
 
 

@@ -13,7 +13,7 @@ from src.reader.readers._table_common import labels_for
 
 
 class RnkReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for GSEA .rnk ranked gene lists.
 
     The output is ``[gene, feature]`` with a single numeric ``score``
@@ -21,7 +21,11 @@ class RnkReader(Reader):
     preranked GSEA.
     """
     parameters_file = 'rnk_reader.RnkReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'RnkReader',
      'version': '1.0.0',
      'kind': 'reader',

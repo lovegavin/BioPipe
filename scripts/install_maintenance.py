@@ -22,15 +22,15 @@ def main():
     if args.trace_stalls:
         faulthandler.dump_traceback_later(30, repeat=True)
     try:
-        if not (ROOT / 'biopipe-install.json').is_file():
+        if not (ROOT / 'operon-install.json').is_file():
             raise ValueError('Setup installation identity is missing.')
         if sys.version_info < (3, 11):
-            raise RuntimeError('BioPipe requires Python 3.11 or later.')
+            raise RuntimeError('Operon requires Python 3.11 or later.')
         if Path(sys.executable).resolve() != (ROOT / 'runtime/python/python.exe').resolve():
             raise RuntimeError('Setup must use the runtime inside the new installation.')
-        from biopipe.runtime import CORE_MODULES
+        from operon.runtime import CORE_MODULES
         for module in CORE_MODULES:
-            print('[BioPipe setup] Checking ' + module, file=sys.stderr, flush=True)
+            print('[Operon setup] Checking ' + module, file=sys.stderr, flush=True)
             with redirect_stdout(sys.stderr):
                 importlib.import_module(module)
         profile = resolve_profile(ROOT)

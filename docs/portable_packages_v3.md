@@ -3,18 +3,18 @@
 The first verified portable target is a file-based Python script workflow with a
 prepared, relocatable Python runtime. Export includes the actual runtime files,
 script source, frozen parameter JSON, a readable `run.py`, platform launcher and
-manifest. The independent runner imports only the standard library, never BioPipe
+manifest. The independent runner imports only the standard library, never Operon
 or its SDK.
 
 ```sh
-biopipe workflow export workflow.yaml --format portable --runtime-dir ./prepared-runtime --output ./analysis-package
+operon workflow export workflow.yaml --format portable --runtime-dir ./prepared-runtime --output ./analysis-package
 ```
 
 The runtime directory must contain `portable-runtime.json`:
 
 ```json
 {
-  "format": "biopipe.portable-runtime",
+  "format": "operon.portable-runtime",
   "schema_version": 1,
   "platform": "win32",
   "machine": "AMD64",
@@ -44,5 +44,5 @@ native Hi-C export adapters are not implemented by this module.
 
 Acceptance includes a real standard-library-only Windows runtime, relocation to
 a different directory, running a frozen file transformation through its bundled
-interpreter and confirming BioPipe is not importable. This test does not establish
+interpreter and confirming Operon is not importable. This test does not establish
 compatibility for every scientific dependency or Linux binary distribution.

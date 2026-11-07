@@ -67,7 +67,7 @@ def test_validation_errors():
     with pytest.raises(StepError, match="device must be"):
         from src.task.step.steps.esm3_embedding import Esm3EmbeddingStep
 
-        ctx = Context("/tmp/biopipe_esm3", {"params": {}})
+        ctx = Context("/tmp/operon_esm3", {"params": {}})
         ctx.step_params = {"output": "embeddings", "device": "tpu"}
         Esm3EmbeddingStep().run(ctx, [encode_sequences(["ACDE"], "sequence", "position", "protein")])
 
@@ -75,13 +75,13 @@ def test_validation_errors():
 def test_real_esm3(monkeypatch):
     import os
 
-    if os.environ.get("BIOPIPE_ESM3_REAL") != "1":
-        pytest.skip("set BIOPIPE_ESM3_REAL=1 to run the real ESM-3 check")
+    if os.environ.get("OPERON_ESM3_REAL") != "1":
+        pytest.skip("set OPERON_ESM3_REAL=1 to run the real ESM-3 check")
     pytest.importorskip("esm")
     from src.task.step.steps import esm3_embedding as module
 
     module._CACHE.clear()
-    ctx = Context("/tmp/biopipe_esm3_real", {"params": {}})
+    ctx = Context("/tmp/operon_esm3_real", {"params": {}})
     ctx["protein"] = encode_sequences(["MKVLAAGIVGLLLA"], "sequence", "position", "protein")
     run(ctx, [{"name": "esm3_embedding", "inputs": ["protein"], "params": {"output": "embeddings"}}])
     table = ctx["embeddings"]

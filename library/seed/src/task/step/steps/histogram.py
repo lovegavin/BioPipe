@@ -30,9 +30,13 @@ class HistogramStep(Step):
         ylabel      : optional y-axis label (default: "Count")
         log_y       : use log scale on the y axis (default False)
     """
-    provider = 'biopipe-plots'
+    provider = 'operon-plots'
     parameters_file = 'histogram.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': []},
+        'protocol_version': 3,
      'id': 'histogram',
      'version': '1.0.0',
      'kind': 'operator',

@@ -34,7 +34,7 @@ payload = ""
 if "--fixed_positions_jsonl" in sys.argv:
     payload = Path(sys.argv[sys.argv.index("--fixed_positions_jsonl") + 1]).read_text()
 capture = {"argv": sys.argv[1:], "cwd": str(Path.cwd()), "payload": payload}
-Path(__import__("os").environ["BIOPIPE_TEST_CAPTURE"]).write_text(json.dumps(capture))
+Path(__import__("os").environ["OPERON_TEST_CAPTURE"]).write_text(json.dumps(capture))
 header = (
     ">T="
     + pdb.stem
@@ -99,7 +99,7 @@ def test_hotspot_mask_keeps_top_n() -> None:
 
 def test_run_generates_designs_with_fixed_payload(tmp_path, monkeypatch) -> None:
     capture = tmp_path / "captured.json"
-    monkeypatch.setenv("BIOPIPE_TEST_CAPTURE", str(capture))
+    monkeypatch.setenv("OPERON_TEST_CAPTURE", str(capture))
     repo, _weights = _repo(tmp_path)
     form = read_source(FIXTURE, dims=["atom", "field"], labels={"atom": "auto", "field": "builtin"})
     ctx = Context(str(tmp_path / "task"), {"params": {}})
@@ -123,7 +123,7 @@ def test_run_generates_designs_with_fixed_payload(tmp_path, monkeypatch) -> None
 
 
 def test_top_n_above_interface_is_rejected(tmp_path, monkeypatch) -> None:
-    monkeypatch.setenv("BIOPIPE_TEST_CAPTURE", str(tmp_path / "captured.json"))
+    monkeypatch.setenv("OPERON_TEST_CAPTURE", str(tmp_path / "captured.json"))
     repo, _weights = _repo(tmp_path)
     form = read_source(FIXTURE, dims=["atom", "field"], labels={"atom": "auto", "field": "builtin"})
     ctx = Context(str(tmp_path / "task"), {"params": {}})

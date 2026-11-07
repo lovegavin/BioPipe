@@ -90,9 +90,12 @@ def run_posebusters(protein_text: str, ligand_text: str, *, config: str = "dock"
 
 
 class StructureLigandPoseQcStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_ligand_pose_qc.StructureLigandPoseQcStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_ligand_pose_qc",
         "version": "1.0.0",

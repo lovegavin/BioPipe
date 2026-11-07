@@ -8,7 +8,7 @@ The source template is `routes/microbiome/task.yaml`.
 This is downstream OTU/ASV abundance analysis. FASTQ QC, denoising, chimera removal,
 taxonomic assignment, rarefaction and phylogenetic UniFrac are not implemented by
 this route. Its original input filename refers to a table already rarefied to
-20,000 reads. BioPipe does not perform that rarefaction implicitly.
+20,000 reads. Operon does not perform that rarefaction implicitly.
 
 ## Inputs and branches
 
@@ -39,7 +39,7 @@ property of the study design; automatic registration does not establish it.
 
 ## Provider and capabilities
 
-`biopipe-microbiome` contains eight independently addressable operators:
+`operon-microbiome` contains eight independently addressable operators:
 
 | ID | Output | Main options |
 | --- | --- | --- |
@@ -82,10 +82,10 @@ The shipped 16S methods use the base NumPy/SciPy/Matplotlib dependencies. Only
 ## Maintenance and tests
 
 ```bash
-python -m biopipe registry build
-python -m biopipe registry check
+python -m operon registry build
+python -m operon registry check
 python -m pytest -q tests/test_microbiome.py tests/test_builtin_routes.py tests/test_registry_maintenance.py
-python scripts/build_builtin_packages.py --package biopipe-microbiome --output .tmp/packages
+python scripts/build_builtin_packages.py --package operon-microbiome --output .tmp/packages
 ```
 
 The workflow tests run synthetic input through all 22 steps and check five figures;

@@ -102,7 +102,7 @@
     "proteinmpnn_path": {
       "title": "ProteinMPNN 目录",
       "type": "string",
-      "default": "~/.biopipe/resources/proteinmpnn",
+      "default": "~/.operon/resources/proteinmpnn",
       "x-ui-group": "依赖",
       "x-ui-order": 1
     },

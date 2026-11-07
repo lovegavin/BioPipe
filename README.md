@@ -11,6 +11,17 @@ and runs a real workflow, see [Quick Start](QUICKSTART.md) (also in
 
 ## Application and library releases
 
+Application maintenance continues on the existing `fix/3.0.1-installation`
+branch; the library is maintained separately on `library/main`. No combined
+branch is required. SDK 3.7 introduces explicit input/output format declarations
+and static migration for older extensions; declaration changes do not rewrite
+saved workflow parameter values.
+See the [SDK 3.7 static migration guide](docs/format_migration_v37.md) and
+[format contract specification](docs/data_formats.md) before upgrading extensions.
+New revision 3.7 operators require Operon 3.0.2 on the actual execution host,
+including a remote Linux server. Updating the desktop does not upgrade an older
+server. Existing v3, v3.5 and v3.6 libraries remain supported.
+
 The application and operator library have separate source ownership, versions and
 release artifacts. See [Application/library boundary](docs/application_library_boundary.md).
 Operators, Readers, their parameter JSON and route templates live in `library/seed/`.
@@ -20,18 +31,18 @@ Operon (formerly BioPipe) is a local bioinformatics pipeline engine with a visua
 typed data contracts, bounded resource planning and an extensible operator SDK.
 Create branched workflows, reuse saved routes as operators, and connect your own
 AI agent through CLI or MCP. Operon itself does not supply an AI service.
-Existing `biopipe` Python modules, CLI commands, MCP tools and protocol identifiers
+Existing `operon` Python modules, CLI commands, MCP tools and protocol identifiers
 remain compatible; see [rebranding and compatibility](docs/rebranding.md).
 
-The **v3.0.1 application** and the independently versioned operator library share
-this repository. The current library version is recorded in
+The **v3.0.2 application candidate** and the independently versioned operator
+library share this repository. The current library version is recorded in
 [`library/release.json`](library/release.json); its
 [operator](library/seed/operator_index.json), [Reader](library/seed/reader_index.json)
 and route catalogs evolve independently of desktop releases. Operators and Readers
-use **protocol v3 / SDK 3.6**, separate parameter JSON and adjacent Markdown
-documentation. Existing v3 and v3.5 declarations remain supported.
+use **protocol v3 / SDK 3.7**, separate parameter JSON and adjacent Markdown
+documentation. Existing v3, v3.5 and v3.6 declarations remain supported.
 
-Download the [published 3.0.1 Windows installer or Linux server bundle](https://github.com/lovegavin/BioPipe/releases/tag/v3.0.1).
+Download the [published 3.0.2 Windows installer or Linux server bundle](https://github.com/lovegavin/Operon/releases/tag/v3.0.2).
 That release retains its tested library seed; merging newer library sources into
 `main` does not replace the published binaries or change saved workflow values.
 
@@ -87,7 +98,7 @@ undoable edits when open. [Operator discovery](docs/operator_documentation.md)
 returns compact search results and loads selected contracts, parameters and
 Markdown sections on demand without importing implementations.
 
-Start with `biopipe help` or MCP `biopipe_guide` for the installed
+Start with `operon help` or MCP `operon_guide` for the installed
 [three-layer operating guide](docs/agent_operations.md). External applications
 can follow the [API tutorial and runnable client](docs/api_quickstart.md) to
 submit work and hand native results to specialist tools without a desktop or AI.
@@ -123,7 +134,7 @@ Ordinary SSH connection reads an installed server's registration, negotiates
 interface capabilities and reuses its operator/dependency manifests. It does not
 upload this desktop's source or install dependencies. Use **Server maintenance >
 Install / upgrade server** explicitly to prepare a private Linux x86_64 environment
-with Python, BioPipe and Hi-C dependencies. Multiple compatible desktops can reuse
+with Python, Operon and Hi-C dependencies. Multiple compatible desktops can reuse
 that installation. Existing manual server configurations remain supported.
 See [server deployment](docs/REMOTE_EXECUTION.md#connect-or-maintain-the-server) for prerequisites
 and the on-server installation layout.
@@ -144,8 +155,8 @@ multi-group comparisons, GO enrichment, sequence analysis, annotation QC and
 genomic interval analysis; example YAML remains under `tasks/`.
 
 Download the ready-built Windows desktop package from
-[GitHub Releases](https://github.com/lovegavin/BioPipe/releases/latest).
-Extract the complete ZIP and double-click `BioPipe Studio.exe`. The **full Windows
+[GitHub Releases](https://github.com/lovegavin/Operon/releases/latest).
+Extract the complete ZIP and double-click `Operon Studio.exe`. The **full Windows
 x64 package includes Python, SSH support and the built-in Windows CPU analysis/Reader dependencies**.
 No Python, Conda or compiler setup is required. Keep the `runtime` folder beside
 the EXE. If WebView2 is missing, its official Microsoft installer prepares it
@@ -181,13 +192,13 @@ Choose the archive without `Lite` for the bundled environment. The smaller
 `Windows-x64-Lite.zip` uses an existing Python environment instead.
 
 Application and operator/Reader sources now share a single maintained
-[`main`](https://github.com/lovegavin/BioPipe/tree/main). The library remains an
+[`main`](https://github.com/lovegavin/Operon/tree/main). The library remains an
 independently built, versioned installation unit; use
 [library bundles](docs/plugins.md#independent-library-releases) to update it
 without replacing the application. The earlier `release/*` and
 `library/v1.0.0` branches are historical baselines, not competing current sources.
 The previous main is preserved as a checksummed
-[legacy archive](https://github.com/lovegavin/BioPipe/releases/tag/legacy-main-20261101).
+[legacy archive](https://github.com/lovegavin/Operon/releases/tag/legacy-main-20261101).
 Packaged desktop releases are listed separately on the Releases page.
 Upgrading from v0.4.1 uses a one-time backed-up
 [migration](docs/migration_v2.md), automatic for supported built-in desktop profiles;
@@ -224,15 +235,15 @@ wrapper. H5AD keeps its bounded disk preparation when wrapped in gzip. PLINK fil
 sets still require uncompressed files; ZIP archives are not datasets.
 
 On Windows, a built desktop distribution starts by double-clicking
-`dist/BioPipe Studio/BioPipe Studio.exe`. The host bundles the frontend and backend
+`dist/Operon Studio/Operon Studio.exe`. The host bundles the frontend and backend
 startup logic. Python, the backend source and analysis dependencies remain separate.
 See [desktop setup](docs/desktop.md) and [portability](docs/portability.md).
 
-Both desktop and development entry points use `~/.biopipe/studio` by default.
-`BIOPIPE_STUDIO_HOME` or `--profile-dir` selects another shared profile;
+Both desktop and development entry points use `~/.operon/studio` by default.
+`OPERON_STUDIO_HOME` or `--profile-dir` selects another shared profile;
 `--workspace` explicitly isolates a workspace. CLI and MCP use the same resolver.
 No developer username, installation drive or fixed backend port is embedded.
-While evaluating this development version, start with `--profile-dir biopipe-v3-test`
+While evaluating this development version, start with `--profile-dir operon-v3-test`
 to keep a published v0.4.1 desktop profile intact. Startup does not migrate files.
 
 ## Operator authoring and startup
@@ -250,7 +261,7 @@ directories; parameter-only refresh reuses them and preserves frozen job default
 Each explicitly saved route also owns an independent JSON of concrete parameter
 values, including Reader arguments and nested-route values. Editing an operator's
 defaults cannot change saved route values. Each execution keeps its own
-`parameters.json`; portable `.biopipe.zip` bundles contain `graph.json`,
+`parameters.json`; portable `.operon.zip` bundles contain `graph.json`,
 `parameters.json` and `execution.json`. See [workflow parameter values](docs/workflow_parameters.md)
 and [per-workflow execution settings](docs/EXECUTION_ENVIRONMENTS.md#workflow-settings-and-frozen-json-values).
 See [protocol v3](docs/operator_protocol.md), [Step examples](docs/step_extensions.md)
@@ -259,11 +270,11 @@ and [Reader examples](docs/reader_extensions.md).
 ## Maintain built-in registries
 
 ```bash
-python -m biopipe registry discover
-python -m biopipe registry check
-python -m biopipe registry build
+python -m operon registry discover
+python -m operon registry check
+python -m operon registry build
 # Optional, after git fetch origin main:
-python -m biopipe registry discover --source-ref origin/main
+python -m operon registry discover --source-ref origin/main
 ```
 
 The tool discovers new Step/Reader modules and route YAML, validates protocols and
@@ -283,18 +294,18 @@ accepts self-contained `.py` files, wheels and SDK projects. Start with
 [drop-folder instructions](docs/plugins.md#drop-refresh-use).
 
 ```text
-biopipe plugin init ./lab_scale
-biopipe plugin check ./lab_scale
-biopipe plugin test ./lab_scale
-biopipe plugin build ./lab_scale
-biopipe plugin install ./lab_scale/dist/lab_scale-0.1.0-py3-none-any.whl
-biopipe plugin refresh
-biopipe sessions list
-biopipe context get
-biopipe mcp
+operon plugin init ./lab_scale
+operon plugin check ./lab_scale
+operon plugin test ./lab_scale
+operon plugin build ./lab_scale
+operon plugin install ./lab_scale/dist/lab_scale-0.1.0-py3-none-any.whl
+operon plugin refresh
+operon sessions list
+operon context get
+operon mcp
 ```
 
-New plugins use the stable `biopipe_sdk` imports, JSON Schema parameters, explicit
+New plugins use the stable `operon_sdk` imports, JSON Schema parameters, explicit
 info/axis contracts and standard Python entry points. Wheel installation updates
 the JSON registry while Studio is open. Saved graphs and running jobs retain their
 plugin version pins. Declare `category` to place an operator in the appropriate
@@ -358,9 +369,9 @@ New external extensions should follow the SDK guides above.
 
 A declarative, plugin-based bioinformatics pipeline framework.
 
-BioPipe writes task workflows in `task.yaml`, reads external files into unified `Form` objects, and applies pluggable `Step` operators to filter, compute statistics, model, and plot those `Form` objects. The core goals are: **format and algorithm decoupling, label alignment safety, traceable outputs, validated extension registration**.
+Operon writes task workflows in `task.yaml`, reads external files into unified `Form` objects, and applies pluggable `Step` operators to filter, compute statistics, model, and plot those `Form` objects. The core goals are: **format and algorithm decoupling, label alignment safety, traceable outputs, validated extension registration**.
 
-Repository: <https://github.com/lovegavin/BioPipe>
+Repository: <https://github.com/lovegavin/Operon>
 
 ---
 
@@ -402,7 +413,7 @@ Repository: <https://github.com/lovegavin/BioPipe>
 - **Complete label coverage**: every axis position must have a label; filtering, merging and alignment never lose positions.
 - **Axis-parallel metadata sync**: `axis_info` guarantees that arrays such as chromosome and position are trimmed together with axis subsets.
 - **Full export**: every Step's complete result is written to `output/steps/`, with a run index in `run_summary.*`.
-- **Explicit error hierarchy**: `BioPipeError` with `ReaderError`, `ManifestError`, `StepError`, `ValidationError`, `ContextError`.
+- **Explicit error hierarchy**: `OperonError` with `ReaderError`, `ManifestError`, `StepError`, `ValidationError`, `ContextError`.
 
 ---
 
@@ -417,10 +428,10 @@ Python 3.11+ is required. Conda is recommended for environment management.
 **Option 1: Conda (recommended)**
 
 ```bash
-git clone --branch main --single-branch https://github.com/lovegavin/BioPipe.git
-cd BioPipe
+git clone --branch main --single-branch https://github.com/lovegavin/Operon.git
+cd Operon
 conda env create -f environment.yml
-conda activate biopipe
+conda activate operon
 ```
 
 `environment.yml` declares a portable CPU environment for the engine and Studio. It has no machine-specific prefix, local build paths, or mandatory CUDA toolchain.
@@ -428,8 +439,8 @@ conda activate biopipe
 **Option 2: pip**
 
 ```bash
-git clone --branch main --single-branch https://github.com/lovegavin/BioPipe.git
-cd BioPipe
+git clone --branch main --single-branch https://github.com/lovegavin/Operon.git
+cd Operon
 pip install -r requirements.txt
 ```
 
@@ -490,7 +501,7 @@ output/
 
 ## Core Architecture: Runtime Interfaces
 
-BioPipe can be summarized as **four protocols/contracts**, plus two runtime components. The four protocols are the heart of the project; understanding them means understanding the whole framework.
+Operon can be summarized as **four protocols/contracts**, plus two runtime components. The four protocols are the heart of the project; understanding them means understanding the whole framework.
 
 | Protocol | Defined in | Question it answers | Key interface |
 |---|---|---|---|
@@ -623,9 +634,9 @@ class Reader(ABC):
 ### Routing and auto-discovery
 
 `src/reader/__init__.py` loads explicit entry points from
-`library/seed/biopipe/builtin_packages.json`. The full Reader catalog spans the provider
+`library/seed/operon/builtin_packages.json`. The full Reader catalog spans the provider
 packages; hot-installed replacements use the same IDs and resource contracts.
-Scanning is an explicit maintenance command (`python -m biopipe registry build`),
+Scanning is an explicit maintenance command (`python -m operon registry build`),
 not a runtime registration mechanism.
 
 `read_source(path, dims, labels, **args)` is the unified entry:
@@ -777,7 +788,7 @@ Responsibilities:
 
 ## Built-in Readers
 
-Representative formats are shown below. The [complete searchable index](library/seed/reader_index.json) covers all 101 Readers.
+Representative formats are shown below. The [complete searchable index](library/seed/reader_index.json) covers all 108 Readers.
 
 | Reader | Extensions | Main layout | Notes |
 |---|---|---|---|
@@ -962,8 +973,8 @@ changes, then build and hot-install the affected package to update an open Studi
 
 ```bash
 python scripts/build_builtin_packages.py --refresh
-python scripts/build_builtin_packages.py --package biopipe-core --output build/packages
-biopipe plugin install build/packages/biopipe-core/dist/biopipe_core-1.0.0-py3-none-any.whl
+python scripts/build_builtin_packages.py --package operon-core --output build/packages
+operon plugin install build/packages/operon-core/dist/operon_core-1.0.0-py3-none-any.whl
 ```
 
 Bump the package version in the manifest for a published update. Refresh operator
@@ -975,15 +986,15 @@ streaming operators, disk readers and an executable SDK-only example.
 ### Add a Reader or Step
 
 1. Create the Python module and a neighboring parameter JSON, or use
-   `biopipe plugin init <project>` (`--template reader` for a Reader).
+   `operon plugin init <project>` (`--template reader` for a Reader).
 2. Keep identity, input/output contracts, resource modes and optional UI metadata
    in the class's literal `definition`. Reference the JSON with `parameters_file`.
 3. Put parameter types, defaults and constraints only in that JSON. Add adjacent
    Markdown explaining purpose, input/output meaning, assumptions and examples.
 4. Implement `Reader.read`, `Operator.compute` or `Step.run`/`export`. Preserve
    `info` and `axis_info` with the data. Declare only resource modes actually implemented.
-5. Run protocol checks and calculation tests, then `biopipe registry build` for
-   bundled source or `biopipe plugin build <project>` for a distributable wheel.
+5. Run protocol checks and calculation tests, then `operon registry build` for
+   bundled source or `operon plugin build <project>` for a distributable wheel.
    Include parameter JSON, Markdown and optional icons in wheel package data.
 
 Complete examples: [Readers](docs/reader_extensions.md),
@@ -1007,7 +1018,7 @@ Complete examples: [Readers](docs/reader_extensions.md),
 ## Directory Structure
 
 ```text
-biopipe/
+operon/
   application.py            # workflow, task and artifact services
   control_api.py            # versioned HTTP integration
   headless.py               # service without a desktop window
@@ -1081,7 +1092,7 @@ runtime; format-specific Readers require their optional dependencies.
 
 ```bash
 # Activate the environment
-conda activate biopipe
+conda activate operon
 
 # Install the opt-in test dependencies
 python -m pip install -r requirements-dev.txt
@@ -1140,7 +1151,7 @@ imported workflow operators). The library **+** opens Add operators directly.
 Importing a workflow here saves and registers it without changing the active canvas.
 
 **Settings → Language** selects Simplified Chinese, English, or the system language.
-The choice is saved in the current BioPipe profile. Switching does not reload the
+The choice is saved in the current Operon profile. Switching does not reload the
 page or rewrite workflows. Existing v3 operator names stay in their original
 language; optional **v3.5 language packs** translate presentation independently of
 parameter schemas and frozen values. See [the localization guide](docs/localization.md).

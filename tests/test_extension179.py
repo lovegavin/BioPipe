@@ -177,7 +177,7 @@ def test_changed_cdr_is_rejected(tmp_path):
 
 
 def test_parameter_errors(tmp_path, monkeypatch):
-    monkeypatch.delenv("BIOPIPE_PROTEINMPNN_PATH", raising=False)
+    monkeypatch.delenv("OPERON_PROTEINMPNN_PATH", raising=False)
     step = AntibodyCdrRedesignStep()
     repo = _repo(tmp_path)
     with pytest.raises(StepError, match="structure_path is required"):

@@ -1,6 +1,6 @@
 # Migration to protocol v3
 
-BioPipe 0.5.1 requires protocol **3**. Graph schema **2** and workspace
+Operon 0.5.1 requires protocol **3**. Graph schema **2** and workspace
 schema **1** are separate versions and remain unchanged. Migrate a copy first.
 Published v0.4.1 and the local protocol-v2 baseline remain available for comparison.
 
@@ -13,15 +13,15 @@ authoring file and no runtime fallback to old class-level `parameters_schema`.
 Export its old descriptor with the old SDK, then run:
 
 ```text
-biopipe migrate path/to/operator.py --manifest old-provider.json
-biopipe migrate path/to/operator.py --manifest old-provider.json --apply
+operon migrate path/to/operator.py --manifest old-provider.json
+operon migrate path/to/operator.py --manifest old-provider.json --apply
 ```
 
 The preview lists the Python and new `<module>.<Class>.parameters.json` files. Apply backs
 up every affected original before publishing the code/JSON pair, and rolls back
 a failed batch. It removes old declaration assignments, preserves execution methods,
 and writes parameter defaults/UI hints into JSON. Review the pair, include JSON
-in package data, then run `biopipe plugin check`, `test`, and `build`.
+in package data, then run `operon plugin check`, `test`, and `build`.
 
 ## Profiles and saved work
 
@@ -34,10 +34,10 @@ stop startup with an actionable error and leave the originals intact.
 
 The CLI remains available for previewing or explicitly converting a profile:
 
-Close Studio and run `biopipe --profile-dir <profile> migrate` before adding `--apply`.
+Close Studio and run `operon --profile-dir <profile> migrate` before adding `--apply`.
 The Full Windows package includes the CLI: from the extracted folder, use
-`runtime\python\python.exe -I -m biopipe migrate` to preview the default profile,
-then `runtime\python\python.exe -I -m biopipe migrate --apply` to apply with backups.
+`runtime\python\python.exe -I -m operon migrate` to preview the default profile,
+then `runtime\python\python.exe -I -m operon migrate --apply` to apply with backups.
 No system Python installation is needed. Keep the previous release and its profile
 backup until the migrated workflows have been checked.
 Bundled v1/v2 profiles migrate with disabled/removed providers preserved. Historical
@@ -52,10 +52,10 @@ own parameters. Source changes still need an explicit registry refresh/build.
 ## Individual graphs and YAML tasks
 
 ```text
-biopipe migrate analysis.json
-biopipe migrate analysis.json --apply
-biopipe migrate task.yaml --apply
-biopipe --profile-dir <v3-profile> migrate external-analysis.json --apply
+operon migrate analysis.json
+operon migrate analysis.json --apply
+operon migrate task.yaml --apply
+operon --profile-dir <v3-profile> migrate external-analysis.json --apply
 ```
 
 Graph v1 converts explicitly to graph v2. Workspaces, nested routes, layout,

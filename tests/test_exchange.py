@@ -7,8 +7,8 @@ import shutil
 import numpy as np
 import pytest
 
-from biopipe.exchange import export_outputs, register_source
-from biopipe.remote.transfers import TransferStore
+from operon.exchange import export_outputs, register_source
+from operon.remote.transfers import TransferStore
 from src.core import Form
 from src.core.files import FileArtifact
 from src.reader.readers._encoder import LabelEncoder

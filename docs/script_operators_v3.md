@@ -27,16 +27,16 @@ can validate multiple files, but the graph adapter rejects that interface until
 multi-output projection is implemented. It never silently drops outputs.
 
 ```sh
-biopipe script inspect ./copy.py
-biopipe script parameters ./copy.py
-biopipe script extract ./copy.py --names repeat --output ./copy.snapshot.json
+operon script inspect ./copy.py
+operon script parameters ./copy.py
+operon script extract ./copy.py --names repeat --output ./copy.snapshot.json
 ```
 
 Extraction returns source, schema, initial values and binding metadata together;
 it does not overwrite the original script. Python extraction accepts selected
 top-level scalar literals, rejects repeated or shadowed assignments, and rewrites
 the selected AST assignment into a JSON lookup. Equal literal values elsewhere
-are not replaced. The process sets `BIOPIPE_PARAMETERS_FILE` to that run's frozen
+are not replaced. The process sets `OPERON_PARAMETERS_FILE` to that run's frozen
 values. Script source and schema are saved atomically by the document editing
 service. R/C/C++ parameter wiring is explicit in this revision; automatic AST
 binding for those languages is not advertised.
@@ -67,7 +67,7 @@ The graph adapter accepts single-file FileArtifact inputs with matching explicit
 formats. Matrices require an explicit, registered file codec or scientific
 conversion. This preserves memory/streaming contracts rather than eagerly dumping
 arbitrary Forms. Existing managed host admission and spill remain in the shared
-runner; the script's private heap is not directly spillable by BioPipe.
+runner; the script's private heap is not directly spillable by Operon.
 
 ## Promote a script into the library
 
@@ -78,17 +78,17 @@ Use the selected workflow's environment check before running it.
 
 `export_script_package(snapshot, directory, operator_id="lab.my_filter",
 title="My filter", category="data", version="0.1.0")` creates an ordinary v3
-source project. It does not install or execute the script. Run `biopipe plugin
-check PROJECT`, then `biopipe plugin build PROJECT`, and explicitly install the
+source project. It does not install or execute the script. Run `operon plugin
+check PROJECT`, then `operon plugin build PROJECT`, and explicitly install the
 wheel through Add operators. The selected category and title appear in the library.
 
 The equivalent CLI authoring path is:
 
 ```sh
-biopipe script extract copy.py --names repeat --output copy.snapshot.json
-biopipe script package copy.snapshot.json --id lab.copy --title "Repeat text" --category data --output ./copy-project
-biopipe plugin check ./copy-project
-biopipe plugin build ./copy-project
+operon script extract copy.py --names repeat --output copy.snapshot.json
+operon script package copy.snapshot.json --id lab.copy --title "Repeat text" --category data --output ./copy-project
+operon plugin check ./copy-project
+operon plugin build ./copy-project
 ```
 
 The generated provider stores frozen source as literal data, calls the same

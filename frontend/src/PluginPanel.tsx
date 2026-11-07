@@ -51,7 +51,7 @@ export function PluginPanel({onClose, onChanged, initialTab = 'manage'}: {onClos
       <button aria-pressed={tab === 'add'} onClick={() => setTab('add')}>{t('添加算子')}</button>
     </nav>
     <div className="plugin-panel-body">
-      <input ref={file} hidden type="file" accept=".whl,.biopipe-library.zip" onChange={event => {
+      <input ref={file} hidden type="file" accept=".whl,.operon-library.zip,.biopipe-library.zip" onChange={event => {
         const selected = event.target.files?.[0]; event.target.value = '';
         if (selected) void operate(() => api.installPlugin(selected));
       }}/>

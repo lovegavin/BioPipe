@@ -24,8 +24,8 @@ def render(source, cls, declaration, module_doc=None):
     memory = ', '.join(declaration.get('resources', {}).get('memory_modes', ['full']))
     environment = declaration.get('resources', {}).get('environment')
     environment = ('This operator executes in the dedicated `' + environment + '` interpreter; see docs/large_resources.md for resolution and overrides.'
-                   if environment else 'Runs in the shared BioPipe interpreter.')
-    return f'''<!-- biopipe:generated -->
+                   if environment else 'Runs in the shared Operon interpreter.')
+    return f'''<!-- operon:generated -->
 # {declaration.get('title') or name}
 
 ## Purpose
@@ -58,7 +58,7 @@ or statistical assumptions for a particular dataset.
 
 ## Limitations
 
-Declared memory modes: {memory}. BioPipe retains the existing planner, disk-backed
+Declared memory modes: {memory}. Operon retains the existing planner, disk-backed
 inputs and emergency spill behavior; full-mode operators still require their
 declared working set. This generated reference has not been independently
 scientifically reviewed.
@@ -77,9 +77,9 @@ Implementation: `{source}` (`{cls.name}`).
 
 
 def build(root, *, check=False):
-    from biopipe_sdk.declarations import source_declarations
-    from biopipe_sdk.documentation import relative_path
-    from biopipe.library_location import source_root
+    from operon_sdk.declarations import source_declarations
+    from operon_sdk.documentation import relative_path
+    from operon.library_location import source_root
     root = source_root(root)
     changed, preserved, pages, errors = [], [], [], []
     indexes = {'operator': [], 'reader': []}
@@ -104,12 +104,12 @@ def build(root, *, check=False):
                     if destination.exists():
                         existing_bytes = destination.read_bytes()
                         existing = destination.read_text(encoding='utf-8')
-                        if '<!-- biopipe:generated -->' not in existing:
+                        if '<!-- operon:generated -->' not in existing:
                             preserved.append(destination.relative_to(root).as_posix())
                             text = existing
                     else:
                         existing = None
-                    generated = '<!-- biopipe:generated -->' in text
+                    generated = '<!-- operon:generated -->' in text
                     if existing != text or generated and existing_bytes != text.encode('utf-8'):
                         changed.append(destination.relative_to(root).as_posix())
                         if not check:
@@ -122,7 +122,7 @@ def build(root, *, check=False):
                         'category': descriptor.get('category'), 'version': descriptor['version'],
                         'description': descriptor.get('description', ''),
                         'doc': destination.relative_to(root).as_posix(),
-                        'status': 'generated' if '<!-- biopipe:generated -->' in text else 'authored'})
+                        'status': 'generated' if '<!-- operon:generated -->' in text else 'authored'})
             except (OSError, ValueError, KeyError, SyntaxError) as error:
                 errors.append({'source': relative, 'error': str(error)})
     for kind, entries in indexes.items():

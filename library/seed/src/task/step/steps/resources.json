@@ -8,9 +8,9 @@
       "kind": "code+weights",
       "url": "https://github.com/dauparas/ProteinMPNN",
       "install": "git clone https://github.com/dauparas/ProteinMPNN.git && download the v_48_* weights into vanilla_model_weights/",
-      "env": "BIOPIPE_PROTEINMPNN_PATH",
+      "env": "OPERON_PROTEINMPNN_PATH",
       "roots": [
-        "~/.local/share/biopipe/resources/proteinmpnn"
+        "~/.local/share/operon/resources/proteinmpnn"
       ],
       "files": [
         "protein_mpnn_run.py",
@@ -23,9 +23,9 @@
       "kind": "code+weights",
       "url": "https://github.com/dauparas/LigandMPNN",
       "install": "git clone https://github.com/dauparas/LigandMPNN.git && download model_params/ligandmpnn_v_32_010_25.pt",
-      "env": "BIOPIPE_LIGANDMPNN_PATH",
+      "env": "OPERON_LIGANDMPNN_PATH",
       "roots": [
-        "~/.local/share/biopipe/resources/ligandmpnn"
+        "~/.local/share/operon/resources/ligandmpnn"
       ],
       "files": [
         "run.py",
@@ -38,9 +38,9 @@
       "kind": "weights",
       "url": "https://dl.fbaipublicfiles.com/fair-esm/models/esm2_t6_8M_UR50D.pt",
       "install": "curl -L https://dl.fbaipublicfiles.com/fair-esm/models/esm2_t6_8M_UR50D.pt -o esm2_t6_8M_UR50D.pt",
-      "env": "BIOPIPE_ESM_MODEL_DIR",
+      "env": "OPERON_ESM_MODEL_DIR",
       "roots": [
-        "~/.local/share/biopipe/resources/esm2"
+        "~/.local/share/operon/resources/esm2"
       ],
       "files": [
         "esm2_t6_8M_UR50D.pt"
@@ -52,9 +52,9 @@
       "kind": "weights",
       "url": "https://dl.fbaipublicfiles.com/fair-esm/models/esm_if1_gvp4_t16_142M_UR50.pt",
       "install": "curl -L https://dl.fbaipublicfiles.com/fair-esm/models/esm_if1_gvp4_t16_142M_UR50.pt -o esm_if1_gvp4_t16_142M_UR50.pt",
-      "env": "BIOPIPE_ESM_MODEL_DIR",
+      "env": "OPERON_ESM_MODEL_DIR",
       "roots": [
-        "~/.local/share/biopipe/resources/esm_if1"
+        "~/.local/share/operon/resources/esm_if1"
       ],
       "files": [
         "esm_if1_gvp4_t16_142M_UR50.pt"
@@ -66,10 +66,10 @@
       "kind": "weights",
       "url": "https://dl.fbaipublicfiles.com/fair-esm/models/esmfold_3B_v1.pt",
       "install": "python -c \"import esm; esm.pretrained.esmfold_v1()\" (downloads about 2.5 GB on first use)",
-      "env": "BIOPIPE_ESMFOLD_WEIGHTS",
+      "env": "OPERON_ESMFOLD_WEIGHTS",
       "roots": [
         "~/.cache/torch/hub/checkpoints",
-        "~/.local/share/biopipe/resources/esmfold"
+        "~/.local/share/operon/resources/esmfold"
       ],
       "files": [
         "esmfold_3B_v1.pt"
@@ -81,10 +81,10 @@
       "kind": "binary+databases",
       "url": "https://github.com/sokrypton/ColabFold",
       "install": "pip install \"colabfold[alphafold]\" && download the MMseqs2/UniRef databases as described in docs/large_resources.md",
-      "env": "BIOPIPE_COLABFOLD_PATH",
+      "env": "OPERON_COLABFOLD_PATH",
       "roots": [
         "/usr/local/bin",
-        "~/.local/share/biopipe/resources/colabfold"
+        "~/.local/share/operon/resources/colabfold"
       ],
       "files": [
         "colabfold_batch"
@@ -96,9 +96,9 @@
       "kind": "weights+databases",
       "url": "https://github.com/google-deepmind/alphafold",
       "install": "download the AF2 parameter bundle and the BFD/UniRef/MGnify databases into the AlphaFold data directory",
-      "env": "BIOPIPE_ALPHAFOLD_DATA",
+      "env": "OPERON_ALPHAFOLD_DATA",
       "roots": [
-        "~/.local/share/biopipe/resources/alphafold2"
+        "~/.local/share/operon/resources/alphafold2"
       ],
       "files": [
         "params/params_model_1_ptm.npz"
@@ -110,9 +110,9 @@
       "kind": "code+weights",
       "url": "https://github.com/RosettaCommons/RFdiffusion",
       "install": "git clone https://github.com/RosettaCommons/RFdiffusion.git && download the model weights into models/",
-      "env": "BIOPIPE_RFDIFFUSION_PATH",
+      "env": "OPERON_RFDIFFUSION_PATH",
       "roots": [
-        "~/.local/share/biopipe/resources/rfdiffusion"
+        "~/.local/share/operon/resources/rfdiffusion"
       ],
       "files": [
         "scripts/run_inference.py",
@@ -125,11 +125,11 @@
       "kind": "binary",
       "url": "https://github.com/hyattpd/Prodigal",
       "install": "conda install -c bioconda prodigal  (or build from the official source)",
-      "env": "BIOPIPE_PRODIGAL_PATH",
+      "env": "OPERON_PRODIGAL_PATH",
       "roots": [
         "/usr/local/bin",
         "/usr/bin",
-        "~/.local/share/biopipe/resources/prodigal"
+        "~/.local/share/operon/resources/prodigal"
       ],
       "files": [
         "prodigal"
@@ -141,9 +141,9 @@
       "kind": "database",
       "url": "https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz",
       "install": "curl -O https://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/Pfam-A.hmm.gz && gunzip Pfam-A.hmm.gz && hmmpress Pfam-A.hmm",
-      "env": "BIOPIPE_PFAM_HMM",
+      "env": "OPERON_PFAM_HMM",
       "roots": [
-        "~/.local/share/biopipe/resources/pfam"
+        "~/.local/share/operon/resources/pfam"
       ],
       "files": [
         "Pfam-A.hmm"
@@ -155,9 +155,9 @@
       "kind": "weights",
       "url": "https://huggingface.co/boltz-community/boltz-1",
       "install": "python scripts/provision_resources.py --root <dir> --only boltz",
-      "env": "BIOPIPE_BOLTZ_CACHE",
+      "env": "OPERON_BOLTZ_CACHE",
       "roots": [
-        "~/.local/share/biopipe/resources/boltz"
+        "~/.local/share/operon/resources/boltz"
       ],
       "files": [
         "ccd.pkl",
@@ -181,9 +181,9 @@
       "kind": "database",
       "url": "https://ftp.ebi.ac.uk/pub/databases/Rfam/CURRENT/Rfam.cm.gz",
       "install": "download Rfam.cm.gz, gunzip it, then run 'cmpress Rfam.cm' in the same directory",
-      "env": "BIOPIPE_RFAM_DB",
+      "env": "OPERON_RFAM_DB",
       "roots": [
-        "~/.local/share/biopipe/resources/rfam"
+        "~/.local/share/operon/resources/rfam"
       ],
       "files": [
         "Rfam.cm",
@@ -199,9 +199,9 @@
       "kind": "database",
       "url": "https://ftp.ncbi.nlm.nih.gov/pathogen/Antimicrobial_resistance/AMRFinderPlus/database/latest/",
       "install": "amrfinder_update -d /path/to/amrfinder_db (installed with the amrfinder binary)",
-      "env": "BIOPIPE_AMRFINDER_DB",
+      "env": "OPERON_AMRFINDER_DB",
       "roots": [
-        "~/.local/share/biopipe/resources/amrfinder"
+        "~/.local/share/operon/resources/amrfinder"
       ],
       "files": [
         "AMRProt.fa",
@@ -217,9 +217,9 @@
       "kind": "database",
       "url": "https://dl.secondarymetabolites.org/releases/",
       "install": "download-antismash-databases --database-dir /path/to/antismash_db (the conda package ships no databases)",
-      "env": "BIOPIPE_ANTISMASH_DB",
+      "env": "OPERON_ANTISMASH_DB",
       "roots": [
-        "~/.local/share/biopipe/resources/antismash"
+        "~/.local/share/operon/resources/antismash"
       ],
       "files": [
         "mite/1.3/metadata.json",

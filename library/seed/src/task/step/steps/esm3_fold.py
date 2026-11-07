@@ -60,9 +60,12 @@ def fold_sequence(model, sequence: str, *, num_steps: int) -> tuple[object, Path
 
 
 class Esm3FoldStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "esm3_fold.Esm3FoldStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "esm3_fold",
         "version": "1.0.0",

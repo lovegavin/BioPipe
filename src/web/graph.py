@@ -23,7 +23,7 @@ def project_path(root, path, base="."):
     directory = (root / base).resolve()
     candidate = (directory / path).resolve()
     if not directory.is_relative_to(root) or not candidate.is_relative_to(root):
-        raise GraphError("文件路径必须位于当前 BioPipe 项目内；外部数据文件可通过上传添加。")
+        raise GraphError("文件路径必须位于当前 Operon 项目内；外部数据文件可通过上传添加。")
     return candidate
 
 
@@ -43,22 +43,22 @@ def relative_manifest(manifest, directory, catalog=None):
     if catalog:
         operators = {item['id']: item for item in catalog['operators']}
         for step in result['steps']:
-            if step['name'].startswith('biopipe.script.'):
-                from biopipe.script_operators import validate_script
+            if step['name'].startswith('operon.script.'):
+                from operon.script_operators import validate_script
                 validate_script(step['params']['script'])
                 # Script paths are named file ports; code/values are frozen data.
                 schema = {}
             else:
                 schema = operators[step['name']]['parameters_schema']
             for key, field in schema.get('properties', {}).items():
-                if field.get('x-biopipe-path') == 'workflow' and step.get('params', {}).get(key):
+                if field.get('x-operon-path') == 'workflow' and step.get('params', {}).get(key):
                     step['params'][key] = _relative_or_absolute(step['params'][key], directory)
-        from biopipe.reader_selection import candidates
+        from operon.reader_selection import candidates
         for source in result['sources'].values():
             readers = candidates(catalog['readers'], source['path'], source.get('reader'))
             if len(readers) == 1:
                 for key, field in readers[0]['parameters_schema'].get('properties', {}).items():
-                    if field.get('x-biopipe-path') == 'source' and source.get('args', {}).get(key):
+                    if field.get('x-operon-path') == 'source' and source.get('args', {}).get(key):
                         source['args'][key] = _relative_or_absolute(source['args'][key], Path(source['path']).parent)
     for source in result["sources"].values():
         source["path"] = _relative_or_absolute(source["path"], directory)
@@ -84,7 +84,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
         return input_path(root, value, base, input_roots)
     from .parameters import freeze_graph
     if any(node.kind == "script" for node in graph.nodes):
-        from biopipe.script_operators import prepare_script_graph
+        from operon.script_operators import prepare_script_graph
         graph, catalog = prepare_script_graph(graph, catalog)
     graph = freeze_graph(graph, catalog, root, input_roots=input_roots)
     if any(node.kind == "route" for node in graph.nodes):
@@ -122,7 +122,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
             if node.operator not in registry:
                 raise GraphError(f"未找到算子 {node.operator!r}；请更新算子清单。", node.id)
             spec = registry[node.operator]
-            from biopipe_sdk.protocol import validate_parameters
+            from operon_sdk.protocol import validate_parameters
             params = {k: v for k, v in node.params.items() if k != '_input_names'}
             if spec.get("output_parameter"):
                 params.pop(spec["output_parameter"], None)
@@ -181,7 +181,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
             if require_files and not path.is_file():
                 raise GraphError(f"找不到输入文件：{node.source.path}", key)
             source["path"] = str(path)
-            from biopipe.reader_selection import candidates
+            from operon.reader_selection import candidates
             is_exchange = key in graph.runtime.get('exchange_inputs', [])
             readers = [] if is_exchange else candidates(catalog['readers'], path, source.get('reader'), check_siblings=require_files)
             if not is_exchange and source.get('reader') and not readers:
@@ -189,13 +189,13 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
             if require_files and not is_exchange and len(readers) != 1:
                 raise GraphError('Choose a registered Reader for this input; its format is unknown or ambiguous', key)
             if len(readers) == 1:
-                from biopipe_sdk.protocol import validate_parameters
+                from operon_sdk.protocol import validate_parameters
                 try:
                     source['args'] = validate_parameters(readers[0]['parameters_schema'], source['args'])
                 except ValueError as error:
                     raise GraphError(str(error), key) from error
                 for name, field in readers[0]['parameters_schema'].get('properties', {}).items():
-                    if field.get('x-biopipe-path') == 'source' and source['args'].get(name):
+                    if field.get('x-operon-path') == 'source' and source['args'].get(name):
                         extra = read_path(source['args'][name], str(path.parent))
                         if require_files and not extra.is_file():
                             raise GraphError(f'Missing input file: {extra}', key)
@@ -212,7 +212,7 @@ def compile_graph(graph: Graph, catalog: dict, root: Path, *, require_files=Fals
                 inputs.append(outputs[edge.source][index])
             params = {k: v for k, v in node.params.items() if k != '_input_names'}
             for name, field in registry[node.operator]['parameters_schema'].get('properties', {}).items():
-                if field.get('x-biopipe-path') == 'workflow' and params.get(name):
+                if field.get('x-operon-path') == 'workflow' and params.get(name):
                     extra = read_path(params[name], graph.base_dir)
                     if require_files and not extra.is_file():
                         raise GraphError(f'Missing input file: {extra}', key)
@@ -364,7 +364,7 @@ def import_manifest(text, base_dir, catalog, root, *, input_roots=None, resolve_
         params = dict(registry[name].get("runtime_defaults", {}))
         params.update(spec.get("params") or {})
         for field_name, field in registry[name]['parameters_schema'].get('properties', {}).items():
-            if resolve_inputs and field.get('x-biopipe-path') == 'workflow' and params.get(field_name):
+            if resolve_inputs and field.get('x-operon-path') == 'workflow' and params.get(field_name):
                 params[field_name] = input_path(root, params[field_name], base_dir, input_roots).as_posix()
         params.pop('_input_names', None)
         aliases = {}

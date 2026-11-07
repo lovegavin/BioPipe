@@ -13,7 +13,7 @@ from src.core import Form, StepError
 from src.task.step.steps._sequence_common import encode_sequences
 from src.task.step.steps.esm_embedding import EsmEmbeddingStep
 
-REAL_CHECKPOINT = os.environ.get("BIOPIPE_ESM_CHECKPOINT", "")
+REAL_CHECKPOINT = os.environ.get("OPERON_ESM_CHECKPOINT", "")
 
 
 class Ctx(dict):
@@ -187,7 +187,7 @@ def test_embedding_errors(tmp_path, monkeypatch):
 
 @pytest.mark.skipif(
     not REAL_CHECKPOINT or not Path(REAL_CHECKPOINT).is_file(),
-    reason="set BIOPIPE_ESM_CHECKPOINT to a local esm2_t6_8M_UR50D.pt",
+    reason="set OPERON_ESM_CHECKPOINT to a local esm2_t6_8M_UR50D.pt",
 )
 def test_embeddings_with_real_esm_checkpoint(tmp_path, monkeypatch):
     import sys as _sys

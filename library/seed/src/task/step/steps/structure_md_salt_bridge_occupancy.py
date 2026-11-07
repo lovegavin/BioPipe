@@ -83,9 +83,12 @@ def salt_bridge_rows(distances: np.ndarray, acids: list[tuple], bases: list[tupl
 
 
 class StructureMdSaltBridgeOccupancyStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_md_salt_bridge_occupancy.StructureMdSaltBridgeOccupancyStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_md_salt_bridge_occupancy",
         "version": "1.0.0",

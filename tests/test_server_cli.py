@@ -4,13 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from biopipe import cli
+from operon import cli
 
 
 def test_relative_workspace_is_terminal_relative_without_starting_a_service(tmp_path, monkeypatch, capsys):
     monkeypatch.chdir(tmp_path)
     selected = []
-    monkeypatch.setattr('biopipe.client.instances', lambda directory: selected.append(directory) or [])
+    monkeypatch.setattr('operon.client.instances', lambda directory: selected.append(directory) or [])
     cli.main(['service', 'status', '--workspace', '.'])
     assert selected == [tmp_path / '.studio']
     assert json.loads(capsys.readouterr().out) == {'instances': []}
@@ -58,7 +58,7 @@ def test_environment_commands_reuse_shared_route_service(tmp_path, monkeypatch, 
 def test_progress_uses_stderr_and_does_not_pollute_json(monkeypatch, capsys):
     class Client:
         def request(self, path): return {'id':'j1','status':'complete','progress':{'done':1}}
-    monkeypatch.setattr('biopipe.agent_views.time.sleep', lambda _: None)
+    monkeypatch.setattr('operon.agent_views.time.sleep', lambda _: None)
     result = cli._wait_job(Client(), {'id':'j1','status':'running'}, 1, view='brief', progress=True)
     captured = capsys.readouterr()
     assert result['status'] == 'complete' and captured.out == ''

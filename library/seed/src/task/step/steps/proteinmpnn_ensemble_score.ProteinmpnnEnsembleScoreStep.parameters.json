@@ -22,7 +22,7 @@
       "type": "string",
       "default": "",
       "title": "ProteinMPNN 仓库",
-      "description": "官方 ProteinMPNN  checkout 目录，留空时读取 BIOPIPE_PROTEINMPNN_PATH。",
+      "description": "官方 ProteinMPNN  checkout 目录，留空时读取 OPERON_PROTEINMPNN_PATH。",
       "x-ui-group": "basic",
       "x-ui-order": 20
     },

@@ -1,9 +1,12 @@
-# Working with BioPipe
+# Working with Operon
 
-BioPipe has one current implementation on `main`. The archived pre-integration
-main is historical source, not a second runtime or authoring protocol.
+Application maintenance uses existing version branches, currently
+`fix/3.0.1-installation`. The library is independently maintained on `library/main`.
+Do not merge library development into an application branch or maintain a combined
+`main`. Published tags and artifacts are immutable; keep the tested factory seed
+unless a library update is explicitly requested.
 
-For operating the software, start with `biopipe help` (or MCP `biopipe_guide`),
+For operating the software, start with `operon help` (or MCP `operon_guide`),
 then request only the needed task topic and operator schemas/document sections.
 See `docs/agent_operations.md`; third-party application authors should use
 `docs/api_quickstart.md` and its tested client example.

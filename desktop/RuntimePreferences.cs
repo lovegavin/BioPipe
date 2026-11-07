@@ -2,17 +2,17 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Win32;
 
-namespace BioPipe.Desktop;
+namespace Operon.Desktop;
 
 internal static class RuntimePreferences
 {
     // Bootstrap only, independent of canvas profiles. Keep this tiny contract in
-    // sync with biopipe/runtime.py; profile resolution still belongs to Python.
+    // sync with operon/runtime.py; profile resolution still belongs to Python.
     internal static string UserHome => Environment.GetEnvironmentVariable("USERPROFILE")
         is { Length: > 0 } home ? home : Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
     internal static string FilePath => Path.GetFullPath(
-        Environment.GetEnvironmentVariable("BIOPIPE_RUNTIME_CONFIG") is { Length: > 0 } value
-            ? value : ".biopipe/runtime.json", UserHome);
+        Environment.GetEnvironmentVariable("OPERON_RUNTIME_CONFIG") is { Length: > 0 } value
+            ? value : ".operon/runtime.json", UserHome);
 
     internal static string? Read()
     {

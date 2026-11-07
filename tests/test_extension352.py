@@ -70,8 +70,8 @@ def test_real_trnascan_trna(tmp_path):
     import os
     import shutil
 
-    if os.environ.get("BIOPIPE_TRNA_REAL") != "1":
-        pytest.skip("set BIOPIPE_TRNA_REAL=1 to run the real tRNAscan-SE check")
+    if os.environ.get("OPERON_TRNA_REAL") != "1":
+        pytest.skip("set OPERON_TRNA_REAL=1 to run the real tRNAscan-SE check")
     if shutil.which("tRNAscan-SE") is None:
         pytest.skip("tRNAscan-SE is not installed")
     form = encode_sequences(

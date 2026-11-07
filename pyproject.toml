@@ -3,8 +3,8 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "biopipe-studio"
-version = "3.0.1"
+name = "operon-studio"
+version = "3.0.2"
 description = "Operon: typed bioinformatics workflows, desktop canvas and agent interfaces"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -16,12 +16,11 @@ agent = ["mcp>=1.20,<2"]
 dev = ["pytest>=8", "build>=1.2", "setuptools>=69"]
 
 [project.scripts]
-operon = "biopipe.cli:main"
-biopipe = "biopipe.cli:main"
+operon = "operon.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["biopipe*", "src*"]
+include = ["operon*", "src*"]
 
 [tool.setuptools.package-data]
-"biopipe" = ["bundled_history.json", "guides/*.md", "viewers.json"]
-"biopipe_sdk" = ["schemas/*.json"]
+"operon" = ["bundled_history.json", "guides/*.md", "viewers.json"]
+"operon_sdk" = ["schemas/*.json"]

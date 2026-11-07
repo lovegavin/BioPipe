@@ -11,10 +11,14 @@ from ._stats21_common import design_matrix, table_frame
 
 
 class OrdinalLogisticStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Proportional-odds ordinal regression via statsmodels OrderedModel."""
     parameters_file = 'ordinal_logistic.OrdinalLogisticStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'ordinal_logistic',
      'version': '1.0.0',
      'kind': 'operator',

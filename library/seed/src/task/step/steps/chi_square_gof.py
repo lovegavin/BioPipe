@@ -13,10 +13,14 @@ from ._stats21_common import numeric_column, table_frame
 
 
 class ChiSquareGofStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """One-sample chi-square test against expected relative frequencies."""
     parameters_file = 'chi_square_gof.ChiSquareGofStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'chi_square_gof',
      'version': '1.0.0',
      'kind': 'operator',

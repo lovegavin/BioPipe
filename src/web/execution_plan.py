@@ -8,8 +8,8 @@ from copy import deepcopy
 import heapq
 from pathlib import Path, PurePosixPath
 
-from biopipe.file_formats import primary_ext, uncompressed_path
-from biopipe.pins import identity, equivalent, released_replacements
+from operon.file_formats import primary_ext, uncompressed_path
+from operon.pins import identity, equivalent, released_replacements
 from .graph import GraphError
 from .routes import output_names
 
@@ -158,7 +158,7 @@ def _metadata(graph, infos, stat_file, warnings):
     for name, variants in {**operators, **readers}.items():
         schemas[name] = {key for spec in variants
                          for key, field in spec.get('parameters_schema', {}).get('properties', {}).items()
-                         if field.get('x-biopipe-path')}
+                         if field.get('x-operon-path')}
     reader_by_ext = {}
     for name, variants in readers.items():
         for extension in {ext for spec in variants for ext in spec.get('extensions', [])}:

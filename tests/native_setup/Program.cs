@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Text;
-using BioPipe.Setup;
+using Operon.Setup;
 
 var root = Path.GetFullPath(args.Single());
 if (Directory.Exists(root)) throw new Exception("Use a fresh test directory");
@@ -15,10 +15,10 @@ foreach (var bad in new[] { "../outside", "/absolute", "C:/absolute", "folder\\f
 var outside = Path.Combine(Path.GetDirectoryName(root)!, "never-delete");
 Reject(() => InstallFiles.DeleteOwnedStage(root, outside), "accepted outside cleanup");
 var input = new ProcessStartInfo("unused.exe");
-foreach (var variable in new[] { "BIOPIPE_PYTHON", "BIOPIPE_STUDIO_HOME", "BIOPIPE_BASE_PATHS", "BIOPIPE_ENVIRONMENTS_ROOT", "OPERON_HOME", "OPERON_RUNTIME_CONFIG", "PYTHONPATH", "PYTHONHOME", "CONDA_PREFIX", "VIRTUAL_ENV", "PIP_TARGET" }) input.Environment[variable] = "old";
+foreach (var variable in new[] { "OPERON_PYTHON", "OPERON_STUDIO_HOME", "OPERON_BASE_PATHS", "OPERON_ENVIRONMENTS_ROOT", "OPERON_HOME", "OPERON_RUNTIME_CONFIG", "PYTHONPATH", "PYTHONHOME", "CONDA_PREFIX", "VIRTUAL_ENV", "PIP_TARGET" }) input.Environment[variable] = "old";
 input.Environment["HTTPS_PROXY"] = "http://proxy.example:8080";
-BioPipe.Desktop.IsolatedEnvironment.Configure(input, root);
-Check(!input.Environment.Keys.Any(k => k.StartsWith("BIOPIPE_")), "old BioPipe overrides survive");
+Operon.Desktop.IsolatedEnvironment.Configure(input, root);
+Check(!input.Environment.Keys.Any(k => k.StartsWith("OPERON_")), "old Operon overrides survive");
 Check(!input.Environment.Keys.Any(k => k.StartsWith("OPERON_")), "outside Operon overrides survive isolated setup");
 Check(!input.Environment.ContainsKey("PYTHONPATH") && !input.Environment.ContainsKey("CONDA_PREFIX"), "old Python overrides survive");
 Check(input.Environment["PATH"]!.StartsWith(Path.Combine(root, "runtime", "python")), "runtime path not isolated");
@@ -26,7 +26,7 @@ Check(input.Environment["HTTPS_PROXY"] == "http://proxy.example:8080", "proxy wa
 Check(input.Environment["PIP_CONFIG_FILE"] == "NUL", "pip user config was retained");
 
 var logProfile = Path.Combine(root, "log-profile");
-var desktopLog = new BioPipe.Desktop.DesktopLog(logProfile);
+var desktopLog = new Operon.Desktop.DesktopLog(logProfile);
 desktopLog.Write("Host starting");
 var desktopFile = Directory.GetFiles(Path.Combine(logProfile, "logs")).Single();
 using (var lockedLog = new FileStream(desktopFile, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -40,7 +40,7 @@ using (var lockedLog = new FileStream(desktopFile, FileMode.Open, FileAccess.Rea
 Parallel.For(0, 30, i => desktopLog.Write("concurrent-" + i));
 Check(File.ReadAllLines(desktopFile).Count(l => l.Contains("concurrent-")) == 30, "concurrent log messages lost");
 var unavailable = Path.Combine(root, "not-a-profile"); File.WriteAllText(unavailable, "preserve");
-new BioPipe.Desktop.DesktopLog(unavailable).Write("logging cannot crash shutdown");
+new Operon.Desktop.DesktopLog(unavailable).Write("logging cannot crash shutdown");
 Check(File.ReadAllText(unavailable) == "preserve", "logging changed blocking file");
 
 var zip = Path.Combine(root, "payload.zip");
@@ -62,20 +62,20 @@ File.WriteAllText(Path.Combine(occupied, "Operon", "notes.txt"), "keep child fil
 File.WriteAllText(Path.Combine(occupied, "Operon-2"), "occupied file");
 Check(InstallEngine.ResolveDestination(occupied) == Path.Combine(occupied, "Operon-3"), "child collision overwrites user files");
 var ownedChild = Path.Combine(occupied, "Operon-3"); Directory.CreateDirectory(ownedChild);
-File.WriteAllText(Path.Combine(ownedChild, ".biopipe-setup.json"), "{\"owner\":\"" + InstallFiles.Owner + "\"}");
+File.WriteAllText(Path.Combine(ownedChild, ".operon-setup.json"), "{\"owner\":\"" + InstallFiles.Owner + "\"}");
 Check(InstallEngine.ResolveDestination(occupied) == ownedChild, "repeat parent does not reuse owned child");
 Check(InstallEngine.ResolveDestination(ownedChild) == ownedChild, "owned install was nested again");
 Check(File.ReadAllText(untouched) == "keep my files" && File.ReadAllText(Path.Combine(occupied, "Operon-2")) == "occupied file", "destination resolution changed files");
 File.WriteAllText(Path.Combine(ownedChild, "installation.json"), "not-json");
 try { InstallEngine.ResolveDestination(occupied); throw new Exception("accepted corrupt owned receipt"); }
 catch (System.Text.Json.JsonException) { checks++; }
-var legacyRoot = Path.Combine(root, "legacy-biopipe"); Directory.CreateDirectory(legacyRoot);
-var legacyReceipt = "{\"owner\":\"BioPipe.Studio.Install.v1\",\"version\":\"2.6.0\",\"current\":\"versions/old\",\"profile\":\"unused\",\"versions\":[\"versions/old\"],\"shortcuts\":{},\"uninstallKey\":null}";
+var legacyRoot = Path.Combine(root, "legacy-operon"); Directory.CreateDirectory(legacyRoot);
+var legacyReceipt = "{\"owner\":\"Operon.Studio.Install.v1\",\"version\":\"2.6.0\",\"current\":\"versions/old\",\"profile\":\"unused\",\"versions\":[\"versions/old\"],\"shortcuts\":{},\"uninstallKey\":null}";
 File.WriteAllText(Path.Combine(legacyRoot, "installation.json"), legacyReceipt);
-File.WriteAllText(Path.Combine(legacyRoot, "BioPipe Studio.exe"), "preserve old software");
-Reject(() => engine.Uninstall(legacyRoot), "Operon uninstaller accepted a BioPipe receipt");
+File.WriteAllText(Path.Combine(legacyRoot, "Operon Studio.exe"), "preserve old software");
+Reject(() => engine.Uninstall(legacyRoot), "Operon uninstaller accepted a Operon receipt");
 Check(File.ReadAllText(Path.Combine(legacyRoot, "installation.json")) == legacyReceipt &&
-      File.ReadAllText(Path.Combine(legacyRoot, "BioPipe Studio.exe")) == "preserve old software", "old BioPipe installation changed");
+      File.ReadAllText(Path.Combine(legacyRoot, "Operon Studio.exe")) == "preserve old software", "old Operon installation changed");
 var inspection = Path.Combine(root, "inspection.json");
 const string validInspection = "{\"schema_version\":1,\"status\":\"ready\",\"issues\":[]}";
 Check(InstallEngine.PersistInspection(validInspection, inspection).GetProperty("status").GetString() == "ready", "stdout inspection rejected");
@@ -100,9 +100,9 @@ Check(!File.Exists(Path.Combine(root, "escaped.txt")), "zip traversal wrote outs
 var managed = Path.Combine(root, "managed"); var version = Path.Combine(managed, "versions", "old");
 Directory.CreateDirectory(version);
 var profiles = Path.Combine(root, "profiles"); var id = Guid.NewGuid().ToString("N");
-File.WriteAllText(Path.Combine(version, "biopipe-install.json"), "{\"profile_id\":\"" + id + "\"}");
+File.WriteAllText(Path.Combine(version, "operon-install.json"), "{\"profile_id\":\"" + id + "\"}");
 File.WriteAllText(Path.Combine(version, "package-manifest.json"), "{\"files\":[]}");
-using (var busy = new InstallLease("Local\\BioPipeStudio-" + InstallLease.Identity(Path.Combine(profiles, id)))) {
+using (var busy = new InstallLease("Local\\OperonStudio-" + InstallLease.Identity(Path.Combine(profiles, id)))) {
     try { InstallEngine.CleanVersion(managed, "versions/old", profiles); throw new Exception("removed active installation"); }
     catch (InvalidOperationException) { checks++; }
     Check(File.Exists(Path.Combine(version, "package-manifest.json")), "active install manifest removed");

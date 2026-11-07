@@ -20,9 +20,17 @@ def _file_path(artifact, operator, formats):
 
 
 class PrsHarmonizeStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "prs_harmonize.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "prs_harmonize",
         "version": "1.0.0",

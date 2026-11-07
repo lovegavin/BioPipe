@@ -6,9 +6,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_source_ids_and_parameter_schemas_match_static_manifest():
-    from biopipe_sdk.declarations import source_declarations
-    from biopipe_sdk.protocol import Descriptor
-    manifest = json.loads((ROOT / 'library/seed/biopipe/builtin_packages.json').read_text(encoding='utf-8'))
+    from operon_sdk.declarations import source_declarations
+    from operon_sdk.protocol import Descriptor
+    manifest = json.loads((ROOT / 'library/seed/operon/builtin_packages.json').read_text(encoding='utf-8'))
     indexed = {d['id']: d for p in manifest['packages'] for d in p['descriptors']}
     found = {}
     base = ROOT / 'library/seed' if (ROOT / 'library/seed/src').is_dir() else ROOT
@@ -29,8 +29,8 @@ def test_source_ids_and_parameter_schemas_match_static_manifest():
 
 
 def test_reader_platforms_come_from_dependencies_not_editor_os():
-    from biopipe_sdk.protocol import catalog_entry
-    from biopipe.packages import bundled_entries
+    from operon_sdk.protocol import catalog_entry
+    from operon.packages import bundled_entries
     indexed = {d['id']: catalog_entry(d) for _, d in bundled_entries('reader')}
     for key in ('BamReader', 'BcfReader', 'CramReader'):
         assert 'linux' in indexed[key]['supported_systems']

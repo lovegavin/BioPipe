@@ -1,6 +1,6 @@
 # Extension policy: what belongs in the core library
 
-BioPipe ships a large operator library so agents can call a **validated**
+Operon ships a large operator library so agents can call a **validated**
 analysis instead of writing code. That only works if the library is curated.
 This page records the curation rule, so users and agents can decide together
 what to add and what not to add.

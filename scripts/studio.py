@@ -1,4 +1,4 @@
-"""Launch the built BioPipe Studio on loopback; no public-network binding."""
+"""Launch the built Operon Studio on loopback; no public-network binding."""
 import argparse
 import os
 from pathlib import Path
@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT))
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--port", type=int, default=int(os.getenv("BIOPIPE_STUDIO_PORT", "8765")))
+    parser.add_argument("--port", type=int, default=int(os.getenv("OPERON_STUDIO_PORT", "8765")))
     parser.add_argument("--profile-dir", type=Path, help="Shared profile; relative paths are anchored to the user home")
     parser.add_argument("--workspace", type=Path, help="Explicit isolated workspace (disables legacy import)")
     parser.add_argument("--data-dir", type=Path, help="With --workspace only: data directory inside that workspace")
@@ -33,7 +33,7 @@ def main():
         parser.error("port must be between 1 and 65535")
     # Studio renders the persisted metadata catalog. Source imports belong to
     # isolated scan/worker processes, so an unfinished edit cannot break startup.
-    os.environ["BIOPIPE_REGISTRY_MAINTENANCE"] = "1"
+    os.environ["OPERON_REGISTRY_MAINTENANCE"] = "1"
     from src.web.api import create_app
     import uvicorn
     settings = make_settings(ROOT, args.frontend, **options)

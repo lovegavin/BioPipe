@@ -6,10 +6,10 @@ import zipfile
 
 import pytest
 
-from biopipe.dropins import single_file_wheel, module_assets
-from biopipe.install_targets import execution_digest, wheel_entries
-from biopipe_sdk.declarations import compile_declaration, source_declarations
-from biopipe_sdk.localization import LanguagePack, project, localized_text
+from operon.dropins import single_file_wheel, module_assets
+from operon.install_targets import execution_digest, wheel_entries
+from operon_sdk.declarations import compile_declaration, source_declarations
+from operon_sdk.localization import LanguagePack, project, localized_text
 from test_operator_docs import extension
 
 
@@ -99,11 +99,11 @@ def test_wheel_integrity_and_translation_only_execution_identity(tmp_path):
 
 
 def test_translation_refresh_and_fresh_profile_keep_frozen_values(tmp_path, monkeypatch):
-    from biopipe.plugins import PluginManager
+    from operon.plugins import PluginManager
     from src.web.models import Graph
     from src.web.parameters import export_bundle, import_bundle, freeze_graph
     from test_packages import run_worker
-    from biopipe.bytecode import io_path
+    from operon.bytecode import io_path
     path, resource = localized(tmp_path)
     first = single_file_wheel(path, tmp_path / 'v1')
     manager = PluginManager(tmp_path / 'profile', source_root=None, manifest_only=True)
@@ -116,7 +116,7 @@ def test_translation_refresh_and_fresh_profile_keep_frozen_values(tmp_path, monk
     resource.write_text(resource.read_text(encoding='utf-8').replace('答案', '回答'), encoding='utf-8')
     second = single_file_wheel(path, tmp_path / 'v2')
     with monkeypatch.context() as guard:
-        guard.setattr('biopipe.install_targets.install', lambda *a, **k: pytest.fail('translation update reinstalled dependencies'))
+        guard.setattr('operon.install_targets.install', lambda *a, **k: pytest.fail('translation update reinstalled dependencies'))
         updated = manager.install(second)
     assert updated['code_paths'] == initial['code_paths']
     fresh = PluginManager(tmp_path / 'fresh', source_root=None, manifest_only=True)
@@ -131,7 +131,7 @@ def test_translation_refresh_and_fresh_profile_keep_frozen_values(tmp_path, monk
 
 @pytest.mark.parametrize('kind', ['operator', 'reader'])
 def test_sdk_scaffolds_valid_language_pack(tmp_path, kind):
-    from biopipe.developer import scaffold, check_source
+    from operon.developer import scaffold, check_source
     scaffold(tmp_path / kind, kind)
     descriptor = check_source(tmp_path / kind)['descriptors'][0]
     assert descriptor['localization']['minimum_sdk'] == '3.5.0'
@@ -140,8 +140,8 @@ def test_sdk_scaffolds_valid_language_pack(tmp_path, kind):
 
 def test_documented_example_runs_with_independent_parameter_values():
     import numpy as np
-    from biopipe_sdk import Form
-    from biopipe_sdk.testing import run_operator
+    from operon_sdk import Form
+    from operon_sdk.testing import run_operator
     from examples.localized_operator.scale import Scale
     form = Form(np.array([[1., 2.], [3., 4.]]), ['sample', 'feature'],
                 {'sample': {'s1': 0, 's2': 1}, 'feature': {'a': 0, 'b': 1}}, {'missing_code': float('nan')})

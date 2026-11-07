@@ -84,9 +84,13 @@ def _resident(chain: str, number: int, spans: dict[str, list[tuple[int, int]]]) 
 class StructureRmsdStep(Step):
     """Superpose two structures and report per-residue RMSD."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'structure_rmsd.StructureRmsdStep.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'structure_rmsd',
         'version': '1.0.0',

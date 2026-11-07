@@ -4,9 +4,14 @@ from ._ml_common import _ClassificationBase
 
 
 class GradientBoostingClassifierStep(_ClassificationBase):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'gradient_boosting_classifier.GradientBoostingClassifierStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'gradient_boosting_classifier',
      'version': '1.0.0',
      'kind': 'operator',

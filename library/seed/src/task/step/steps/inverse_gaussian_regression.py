@@ -11,10 +11,14 @@ from ._stats21_common import design_matrix, numeric_column, table_frame
 
 
 class InverseGaussianRegressionStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Inverse Gaussian GLM with a log link, fitted by maximum likelihood."""
     parameters_file = 'inverse_gaussian_regression.InverseGaussianRegressionStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'inverse_gaussian_regression',
      'version': '1.0.0',
      'kind': 'operator',

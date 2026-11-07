@@ -12,10 +12,15 @@ from ._tests50_common import grouped_expression
 
 
 class FlignerKilleenStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Fligner-Killeen median-centered rank test for each feature."""
     parameters_file = 'fligner_killeen.FlignerKilleenStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'fligner_killeen',
      'version': '1.0.0',
      'kind': 'operator',

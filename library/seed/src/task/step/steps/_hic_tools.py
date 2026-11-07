@@ -1,8 +1,8 @@
-"""Hi-C adapters. Scientific algorithms belong to BWA/open2c, not BioPipe."""
+"""Hi-C adapters. Scientific algorithms belong to BWA/open2c, not Operon."""
 from pathlib import Path
 import json
 
-from biopipe.tool_runner import ToolRunner
+from operon.tool_runner import ToolRunner
 
 
 def input_path(ctx, value):

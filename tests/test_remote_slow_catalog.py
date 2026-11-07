@@ -6,12 +6,12 @@ from types import SimpleNamespace
 
 import pytest
 
-from biopipe.remote.client import SSHConnection, RemoteError
-from biopipe.remote.protocol import frames, Decoder
+from operon.remote.client import SSHConnection, RemoteError
+from operon.remote.protocol import frames, Decoder
 
 
 def test_slow_valid_response_exceeds_old_absolute_deadline(monkeypatch):
-    import biopipe.remote.client as module
+    import operon.remote.client as module
     clock, lines = [0.0], deque()
     payload = random.Random(19).randbytes(8000).hex()
     def transmit(request, direction, write, read):

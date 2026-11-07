@@ -11,7 +11,7 @@ from ._stats21_common import numeric_column, table_frame
 
 
 class DcaStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Net benefit of a binary prediction rule across probability thresholds.
 
     The net benefit follows the standard decision-curve formulation
@@ -19,7 +19,11 @@ class DcaStep(Step):
     strategies are reported on the same threshold grid.
     """
     parameters_file = 'dca.DcaStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'dca',
      'version': '1.0.0',
      'kind': 'operator',

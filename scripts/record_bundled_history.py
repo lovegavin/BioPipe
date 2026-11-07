@@ -14,9 +14,9 @@ sys.path.insert(0, str(ROOT))
 
 
 def record(source, release, commit, output):
-    from biopipe.packages import bundled_state
-    from biopipe.library_location import source_root
-    from biopipe_sdk.declarations import DeclarationCompiler
+    from operon.packages import bundled_state
+    from operon.library_location import source_root
+    from operon_sdk.declarations import DeclarationCompiler
     if not re.fullmatch(r'[a-f0-9]{40}', commit):
         raise ValueError('Use the full verified release commit')
     manifest = json.loads((Path(source) / 'package-manifest.json').read_text(encoding='utf-8'))
@@ -59,6 +59,6 @@ if __name__ == '__main__':
     parser.add_argument('--source', type=Path, required=True)
     parser.add_argument('--release', required=True)
     parser.add_argument('--commit', required=True)
-    parser.add_argument('--output', type=Path, default=ROOT/'biopipe/bundled_history.json')
+    parser.add_argument('--output', type=Path, default=ROOT/'operon/bundled_history.json')
     args = parser.parse_args()
     print(json.dumps({'package_receipts': record(args.source, args.release, args.commit, args.output)}))

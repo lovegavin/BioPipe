@@ -5,7 +5,7 @@ import time
 
 from fastapi.testclient import TestClient
 
-from biopipe.application import ACTIVE
+from operon.application import ACTIVE
 from src.web.api import create_app
 from src.web.service import Settings
 
@@ -24,10 +24,10 @@ Path(args.out_result).write_text('value\\n' + str(scale) + '\\n')
 def test_editor_script_freeze_and_real_worker(tmp_path, monkeypatch):
     monkeypatch.setenv('PYTHONUTF8', '1')
     monkeypatch.setenv('PYTHONIOENCODING', 'utf-8')
-    monkeypatch.setenv('BIOPIPE_ADMISSION_DIR', str(tmp_path / 'admission'))
+    monkeypatch.setenv('OPERON_ADMISSION_DIR', str(tmp_path / 'admission'))
     monkeypatch.setenv('TEMP', str(tmp_path))
     monkeypatch.setenv('TMP', str(tmp_path))
-    from biopipe.dependencies import DependencySession
+    from operon.dependencies import DependencySession
     calls = []
     original = DependencySession.check
     def checked(self, **kwargs):
@@ -94,11 +94,11 @@ def test_static_inspection_does_not_execute(tmp_path):
 
 
 def test_branched_file_scripts_keep_both_outputs(tmp_path, monkeypatch):
-    from biopipe.workflow_spec import load_workflow
+    from operon.workflow_spec import load_workflow
     monkeypatch.setenv('PYTHONUTF8', '1')
     monkeypatch.setenv('TEMP', str(tmp_path))
     monkeypatch.setenv('TMP', str(tmp_path))
-    monkeypatch.setenv('BIOPIPE_ADMISSION_DIR', str(tmp_path / 'admission'))
+    monkeypatch.setenv('OPERON_ADMISSION_DIR', str(tmp_path / 'admission'))
     graph = load_workflow(ROOT / 'examples/workflows/script_pipeline/workflow.yaml')
     # There are no external source files; the generated file fans out twice.
     graph['base_dir'] = '.'

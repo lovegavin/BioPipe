@@ -14,7 +14,7 @@
       "type": "string",
       "default": "",
       "title": "LigandMPNN 目录",
-      "description": "LigandMPNN 官方仓库目录，需包含 run.py；留空时读取环境变量 BIOPIPE_LIGANDMPNN_PATH。",
+      "description": "LigandMPNN 官方仓库目录，需包含 run.py；留空时读取环境变量 OPERON_LIGANDMPNN_PATH。",
       "x-ui-group": "basic",
       "x-ui-order": 10
     },

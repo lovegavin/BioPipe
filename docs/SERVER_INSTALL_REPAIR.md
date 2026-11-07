@@ -12,7 +12,7 @@ Conda installation recipe or a database download instruction.
   cooler and cooltools checks still abort installation. A successful `pip check`
   alone is insufficient to publish a server registration.
 - Missing external tools and unavailable dedicated environments retain `failed`
-  status and their diagnostic text in `biopipe-ready.json`. The handshake restores
+  status and their diagnostic text in `operon-ready.json`. The handshake restores
   matching successes **and failures**, without starting installation or probing
   the entire library again.
 - Restored readiness is tied to implementation/dependency identity, runtime,
@@ -31,7 +31,7 @@ spill, task admission and saved execution pins are unchanged.
 
 Use the installation directory in the desktop SSH connection profile, not the
 current terminal directory. An empty installation-directory field uses the SSH
-account's `$HOME/.local/share/biopipe`.
+account's `$HOME/.local/share/operon`.
 
 ```text
 <installation-directory>/managed-v1/setup-<source-digest-prefix>.log

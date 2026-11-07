@@ -13,7 +13,7 @@ from ._tests39_common import select_groups
 
 
 class VanWaerdenStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Two-sample Van der Waerden normal-scores test.
 
     Matches ``DescTools::VanWaerdenTest``: normal scores are
@@ -21,7 +21,12 @@ class VanWaerdenStep(Step):
     ``(n-1)/sum(z^2) * sum((sum_g z)^2/n_g)`` with a chi-square p-value.
     """
     parameters_file = 'van_waerden.VanWaerdenStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'van_waerden',
      'version': '1.0.0',
      'kind': 'operator',

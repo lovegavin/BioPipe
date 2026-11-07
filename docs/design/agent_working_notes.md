@@ -1,6 +1,6 @@
 # Agent working notes
 
-Practical rules for agents that extend BioPipe, debug remote installs or run the
+Practical rules for agents that extend Operon, debug remote installs or run the
 release loop. These are process rules, not API documentation.
 
 ## Context and token discipline
@@ -32,24 +32,24 @@ release loop. These are process rules, not API documentation.
 
 1. Three files per capability: `<module>.py`, `<module>.<Class>.parameters.json`
    and the generated `<module>.<Class>.md`.
-2. `scripts/build_operator_docs.py` -> `python -m biopipe registry build` ->
-   `python -m biopipe registry check`; the check must report `errors []`.
+2. `scripts/build_operator_docs.py` -> `python -m operon registry build` ->
+   `python -m operon registry check`; the check must report `errors []`.
 3. Tests: hand-computed case plus an authoritative oracle or a fake runner that
    asserts the exact command line and parsed output.
-4. Version bump in `pyproject.toml`, `biopipe/__init__.py`, `README.md`,
+4. Version bump in `pyproject.toml`, `operon/__init__.py`, `README.md`,
    `docs/UNIFIED_MAIN.md`, `docs/package_protocol.md`,
    `docs/backend_versioning.md`, plus `docs/releases/vX.Y.Z.md`.
 5. Run focused tests, then the six packaging tests, then commit with
    `Backend version: X.Y.Z (operators N, Readers 101)` in the body, annotated
-   tag, push, sync `<BioPipe-directory>` when the user asks for it.
+   tag, push, sync `<Operon-directory>` when the user asks for it.
 6. If the push fails, record the pending version in
-   `~/biopipe-backlog.md` and retry next batch; never claim a release
+   `~/operon-backlog.md` and retry next batch; never claim a release
    that is not on the remote.
 
 ## Remote install debugging
 
 - Reproduce on the real host before changing code: read
-  `~/.local/share/biopipe/managed-v1/setup-*.log`, then run the failing pip
+  `~/.local/share/operon/managed-v1/setup-*.log`, then run the failing pip
   command by hand.
 - Check the host `ldd --version`, `python -V`, and whether the failed package
   has a wheel for that platform (`pip download --only-binary=:all: --dry-run`).

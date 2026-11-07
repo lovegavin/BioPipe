@@ -46,7 +46,7 @@ than fastp.
 ## Running
 
 ```bash
-python -m biopipe --workspace "$PWD" run library/seed/routes/sequencing_qc/route.biopipe.zip
+python -m operon --workspace "$PWD" run library/seed/routes/sequencing_qc/route.operon.zip
 ```
 
 or from a source checkout:

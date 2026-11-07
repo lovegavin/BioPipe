@@ -45,7 +45,7 @@ R `MatchIt` 4.8.2 (`matchit(treat ~ 1, distance = ps, method = "nearest",
 caliper = 0.2, std.caliper = TRUE, ratio = 1, replace = FALSE)`), with
 independent GLM coefficients from `glm()` and SMDs recomputed in base R.
 
-| quantity | BioPipe | R oracle | difference |
+| quantity | Operon | R oracle | difference |
 |---|---|---|---|
 | matched pairs | 113 | 113 | 0 |
 | propensity score | - | `predict(glm)` | max abs 3.14e-9 |

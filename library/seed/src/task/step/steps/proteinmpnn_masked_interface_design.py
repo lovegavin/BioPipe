@@ -96,13 +96,16 @@ def mask_from_labels(labels: set[str]) -> dict[str, list[int]]:
 
 
 class ProteinmpnnMaskedInterfaceDesignStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = (
         "proteinmpnn_masked_interface_design."
         "ProteinmpnnMaskedInterfaceDesignStep.parameters.json"
     )
 
     definition: dict[str, Any] = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_masked_interface_design",
         "version": "1.0.0",

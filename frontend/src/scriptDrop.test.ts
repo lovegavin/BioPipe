@@ -14,7 +14,7 @@ beforeEach(() => vi.restoreAllMocks());
 it('accepts copy-only OS file drags while retaining canvas operator moves', () => {
   expect(fileDropEffect(['Files'])).toBe('copy');
   expect(fileDropEffect(['Files', 'text/uri-list'])).toBe('copy');
-  expect(fileDropEffect(['application/biopipe'])).toBe('move');
+  expect(fileDropEffect(['application/operon'])).toBe('move');
 });
 it('recognizes scripts without treating gzip data as code and freezes values on drop', async () => {
   vi.spyOn(api, 'inspectScript').mockResolvedValue({script, candidates: []});

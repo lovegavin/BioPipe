@@ -2,7 +2,7 @@
 
 The same abundance table, group labels and tree are evaluated with
 ``vegan::simper``, ``vegan::mrpp``, ``vegan::specaccum`` and
-``ape::cophenetic.phylo``, then compared with the BioPipe operators.
+``ape::cophenetic.phylo``, then compared with the Operon operators.
 """
 from __future__ import annotations
 

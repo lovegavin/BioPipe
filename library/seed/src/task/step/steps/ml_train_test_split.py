@@ -10,9 +10,12 @@ from src.task.step.steps._ml_utils import label_vector, stratified_split
 
 class MlTrainTestSplitStep(Step):
     """Split samples into train (0) and test (1) partitions."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'ml_train_test_split.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'ml_train_test_split',
         'version': '1.0.0',

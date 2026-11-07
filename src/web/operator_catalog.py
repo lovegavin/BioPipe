@@ -1,5 +1,5 @@
 """Service catalog projection. Never imports extension implementations."""
-from biopipe_sdk.protocol import PROTOCOL_VERSION, catalog_entry
+from operon_sdk.protocol import PROTOCOL_VERSION, catalog_entry
 
 
 def catalog_from_descriptors(descriptors=()):

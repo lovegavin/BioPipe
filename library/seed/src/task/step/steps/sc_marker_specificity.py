@@ -16,9 +16,13 @@ STATS = ["top_cluster", "specificity_tau", "max_mean", "max_detected_fraction", 
 class ScMarkerSpecificityStep(Step):
     """Rank genes by how specifically they mark one cluster."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "sc_marker_specificity.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "sc_marker_specificity",
         "version": "1.0.0",

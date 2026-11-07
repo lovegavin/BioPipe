@@ -29,9 +29,13 @@ from ._popgen_common import allele_counts, prepare_genotypes
 
 
 class SiteFrequencySpectrumStep(Step):
-    provider = 'biopipe-genetics'
+    provider = 'operon-genetics'
     parameters_file = 'site_frequency_spectrum.SiteFrequencySpectrumStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'site_frequency_spectrum',
      'version': '1.0.0',
      'kind': 'operator',

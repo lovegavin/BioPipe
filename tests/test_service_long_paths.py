@@ -9,8 +9,8 @@ import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
-from biopipe.bytecode import io_path
-from biopipe.headless import create_headless_app
+from operon.bytecode import io_path
+from operon.headless import create_headless_app
 from src.web.api import create_app
 from src.web.service import Settings
 
@@ -32,8 +32,8 @@ def deep_workspace(tmp_path):
 def test_deep_profile_worker_outputs_and_api_readback(tmp_path, monkeypatch, host):
     monkeypatch.setenv('PYTHONUTF8', '1')
     monkeypatch.setenv('PYTHONIOENCODING', 'utf-8')
-    monkeypatch.setenv('BIOPIPE_REGISTRY_MAINTENANCE', '1')
-    monkeypatch.setenv('BIOPIPE_ADMISSION_DIR', str(tmp_path / 'admission'))
+    monkeypatch.setenv('OPERON_REGISTRY_MAINTENANCE', '1')
+    monkeypatch.setenv('OPERON_ADMISSION_DIR', str(tmp_path / 'admission'))
     root = deep_workspace(tmp_path)
     io_path(root / 'input.csv').write_text('a,b\n1,2\n3,4\n', encoding='utf-8')
     settings = Settings(root, root / '.studio', root / 'no-frontend', testing=True,
@@ -52,7 +52,7 @@ def test_deep_profile_worker_outputs_and_api_readback(tmp_path, monkeypatch, hos
              'edges': [{'id': 'summary-edge', 'source': 'input', 'target': 'summary'},
                        {'id': 'plot-edge', 'source': 'input', 'target': 'plot'}]}
     with TestClient(app, base_url='http://127.0.0.1') as client:
-        connected = client.post('/api/agent/connect', headers={'X-BioPipe-Bridge': app.state.bridge.secret},
+        connected = client.post('/api/agent/connect', headers={'X-Operon-Bridge': app.state.bridge.secret},
                                 json={'name': 'deep-profile-test', 'scopes': ['context', 'edit', 'run']})
         assert connected.status_code == 200, connected.text
         client.headers.update({'Authorization': 'Bearer ' + connected.json()['token']})

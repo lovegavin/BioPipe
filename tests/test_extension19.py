@@ -10,7 +10,7 @@ from src.core import StepError
 from src.reader.readers.fcs_reader import FcsReader
 from src.task.step.steps.flow_gate import FlowGateStep
 from src.task.step.steps.flow_transform import FlowTransformStep
-from biopipe_sdk.declarations import bind_class, for_class
+from operon_sdk.declarations import bind_class, for_class
 
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures"

@@ -16,7 +16,7 @@ from src.task.step.steps.proteinmpnn_design_profile import (
 )
 from src.task.step.steps.proteinmpnn_position_entropy import AA_ORDER
 
-REAL_REPO = Path(os.environ.get("BIOPIPE_PROTEINMPNN_PATH", "/home/gavin/tools/ProteinMPNN"))
+REAL_REPO = Path(os.environ.get("OPERON_PROTEINMPNN_PATH", "/home/gavin/tools/ProteinMPNN"))
 
 FAKE_RUNNER = r'''
 import json

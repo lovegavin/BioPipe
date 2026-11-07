@@ -89,10 +89,10 @@ def test_errors(tmp_path):
         run(ctx, [{"name": "openfold_predict", "inputs": ["sequence"], "params": {**_params(repo, weights), "params_path": str(tmp_path / "missing.pt")}}])
 
 
-@pytest.mark.skipif(os.environ.get("BIOPIPE_OPENFOLD_REAL") != "1", reason="set BIOPIPE_OPENFOLD_REAL=1 for a real OpenFold run")
+@pytest.mark.skipif(os.environ.get("OPERON_OPENFOLD_REAL") != "1", reason="set OPERON_OPENFOLD_REAL=1 for a real OpenFold run")
 def test_real_openfold(tmp_path):
-    repo = Path(os.environ.get("BIOPIPE_OPENFOLD_PATH", "/home/gavin/tools/openfold"))
-    weights = Path(os.environ.get("BIOPIPE_OPENFOLD_PARAMS", "/home/gavin/models/openfold/finetuning_ptm_2.pt"))
+    repo = Path(os.environ.get("OPERON_OPENFOLD_PATH", "/home/gavin/tools/openfold"))
+    weights = Path(os.environ.get("OPERON_OPENFOLD_PARAMS", "/home/gavin/models/openfold/finetuning_ptm_2.pt"))
     if not (repo / "run_pretrained_openfold.py").is_file() or not weights.is_file():
         pytest.skip("OpenFold checkout or weights are missing")
     form = encode_sequences(["MKVLAAGIVGLLLA"], "sequence", "position", "protein")

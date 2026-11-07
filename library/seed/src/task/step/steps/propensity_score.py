@@ -15,9 +15,12 @@ _DEFAULT_COVARIATES = "age,educ,black,hispan,married,nodegree,re74,re75"
 class PropensityScoreStep(Step):
     """Estimate propensity scores and report model fit."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "propensity_score.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "propensity_score",
         "version": "1.0.0",

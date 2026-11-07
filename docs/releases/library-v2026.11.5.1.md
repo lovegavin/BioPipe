@@ -1,8 +1,8 @@
-# BioPipe Operator Library 2026.11.5.1
+# Operon Operator Library 2026.11.5.1
 
 This is an independent operator-library update. The application remains v2.3.0;
 no new EXE, application installation or protocol migration is required. The
-library targets released BioPipe 2.0.4 and newer compatible applications.
+library targets released Operon 2.0.4 and newer compatible applications.
 
 ## Unified branch export
 
@@ -21,7 +21,7 @@ library targets released BioPipe 2.0.4 and newer compatible applications.
 
 ## Installation
 
-Import the **Windows** `.biopipe-library.zip` in a Windows BioPipe operator library,
+Import the **Windows** `.operon-library.zip` in a Windows Operon operator library,
 or the **Linux** bundle on a Linux installation. Existing independent library
 installation/refresh paths apply; do not unzip files into the application package.
 The seed wheel is for factory/library deployment, not a replacement desktop app.

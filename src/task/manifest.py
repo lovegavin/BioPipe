@@ -9,7 +9,7 @@ import yaml
 
 from src.core import ManifestError
 from src.task.memory.config import MemoryConfig
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 
 
 _SOURCE_KEYS = {"path", "dims", "labels", "args", "reader"}
@@ -26,7 +26,7 @@ def load_manifest(path: Path) -> dict:
         raise ManifestError("Manifest must be a YAML mapping")
 
     if "parameters_file" in raw:
-        from biopipe.parameter_values import read_values, restore_task
+        from operon.parameter_values import read_values, restore_task
         try:
             raw = restore_task(raw, read_values(path.parent, raw["parameters_file"]))
         except (ValueError, TypeError, KeyError, AttributeError) as exc:

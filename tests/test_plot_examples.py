@@ -3,16 +3,16 @@ import json
 from pathlib import Path
 
 import numpy as np
-from biopipe_sdk import Context, Form
-from biopipe_sdk.declarations import bind_class, for_class
-from biopipe_sdk.protocol import validate_parameters
-from biopipe.parameter_values import split_task, restore_task
+from operon_sdk import Context, Form
+from operon_sdk.declarations import bind_class, for_class
+from operon_sdk.protocol import validate_parameters
+from operon.parameter_values import split_task, restore_task
 from src.task import STEPS, run
 
 
 def test_volcano_collection_runs_with_memory_and_frozen_values(tmp_path, monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / 'examples/plotting_plugin'))
-    from biopipe_plot_examples.volcano import Volcano
+    from operon_plot_examples.volcano import Volcano
     cls = bind_class(Volcano, for_class(Volcano))
     monkeypatch.setitem(STEPS, cls.name, cls)
     values = validate_parameters(cls.parameters_schema, {'fdr': .01, 'figure_width_mm': 95})
@@ -39,7 +39,7 @@ def test_volcano_collection_runs_with_memory_and_frozen_values(tmp_path, monkeyp
 
 def test_r_domain_example_has_static_v3_declaration_and_separate_schema(monkeypatch):
     monkeypatch.syspath_prepend(str(Path(__file__).resolve().parents[1] / 'examples/plotting_plugin'))
-    from biopipe_plot_examples.complex_heatmap import ComplexHeatmap
+    from operon_plot_examples.complex_heatmap import ComplexHeatmap
     descriptor = for_class(ComplexHeatmap)
     cls = bind_class(ComplexHeatmap, descriptor)
     assert descriptor['protocol_version'] == 3

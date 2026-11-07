@@ -1,13 +1,13 @@
 # Connect your own agent: CLI, MCP and canvas context
 
-BioPipe supplies local tools and semantic canvas state. It does not provide a model,
+Operon supplies local tools and semantic canvas state. It does not provide a model,
 chat service or API-key store. Ask questions in your own agent client. An agent can
 read the currently selected nodes, edit the graph and, when separately enabled,
 start analysis jobs.
 
 For the operating sequence and small-response defaults, start with the
 [three-layer agent guide](agent_operations.md), available in every installation
-as `biopipe help` / `biopipe_guide`. For a non-agent application use the
+as `operon help` / `operon_guide`. For a non-agent application use the
 [API tutorial](api_quickstart.md).
 
 ## Setup
@@ -27,14 +27,14 @@ artifacts. Configure a client supporting MCP stdio with:
 ```json
 {
   "mcpServers": {
-    "biopipe": {"command": "biopipe", "args": ["mcp"]}
+    "operon": {"command": "operon", "args": ["mcp"]}
   }
 }
 ```
 
 If the client does not inherit the environment's PATH, set `command` to that
-environment's Python executable and use `args: ["-m", "biopipe", "mcp"]`.
-This is a user-supplied runtime location, not a path embedded in BioPipe.
+environment's Python executable and use `args: ["-m", "operon", "mcp"]`.
+This is a user-supplied runtime location, not a path embedded in Operon.
 The current transport uses the Python MCP SDK v1 (`mcp>=1.20,<2`).
 
 Default capabilities are `context` and `edit`: graph changes appear directly and
@@ -46,11 +46,11 @@ connected clients and can revoke their tokens.
 Example for a separate profile:
 
 ```json
-{"mcpServers":{"biopipe":{"command":"biopipe","args":["--profile-dir","~/research-profile","mcp","--read-only"]}}}
+{"mcpServers":{"operon":{"command":"operon","args":["--profile-dir","~/research-profile","mcp","--read-only"]}}}
 ```
 
 Desktop, development server, CLI and MCP use the same profile resolver. The default
-is `~/.biopipe/studio`; use `--workspace` only when Studio was launched with that
+is `~/.operon/studio`; use `--workspace` only when Studio was launched with that
 same isolated workspace. Servers publish authenticated discovery records under
 `<data>/agent/servers/`. Ports are discovered dynamically and remain loopback-only.
 Process identity is checked; an authenticated instance handshake supports agent
@@ -73,10 +73,10 @@ Single-click selects; double-click opens the inspector. Select several nodes wit
 Ctrl-click or Shift selection. Use **Agent → Copy selection context**, or the canvas
 context menu, to paste the JSON into a client without MCP.
 
-An empty canvas-session list is normal without Studio; use `biopipe_workflows`
-and `biopipe_submit` instead of inventing a canvas session. MCP instructions ask
-the agent to call `biopipe_context` before answering a canvas
-question. Tools always read current state; BioPipe cannot force a particular client
+An empty canvas-session list is normal without Studio; use `operon_workflows`
+and `operon_submit` instead of inventing a canvas session. MCP instructions ask
+the agent to call `operon_context` before answering a canvas
+question. Tools always read current state; Operon cannot force a particular client
 to inject context automatically. This version exposes polling and resources, not
 MCP resource-change subscriptions or unsolicited messages to a model. A client that
 wants continuous awareness should poll events and refresh context when they change.
@@ -90,7 +90,7 @@ the returned `updated_at` makes stale state visible.
 ## CLI
 
 `graph open` and `graph validate` accept self-contained graph JSON or portable
-`.biopipe.zip` bundles (`graph.json` plus `parameters.json`). Context/graph responses
+`.operon.zip` bundles (`graph.json` plus `parameters.json`). Context/graph responses
 always contain hydrated values. Agent-triggered jobs use the same independent
 parameter snapshot as desktop-triggered jobs. See
 [workflow parameter values](workflow_parameters.md).
@@ -100,34 +100,34 @@ Commands return UTF-8 JSON on stdout; diagnostics/errors go to stderr. Global fl
 before or after subcommands. Replace placeholders below with IDs from the responses.
 
 ```text
-biopipe sessions list
-biopipe --session <session> context get
-biopipe --session <session> context get --scope document
-biopipe operators list
-biopipe operators describe pca
-biopipe operators search --query "principal components"
-biopipe operators describe pca --section parameters
-biopipe workflow validate route.json --require-files
-biopipe run route.json --request-id analysis-001
-biopipe jobs logs <job> --follow
-biopipe artifacts list <job>
-biopipe graph validate route.json
-biopipe --session <session> graph open route.json --expected-revision 4 --new-tab
-biopipe --session <session> graph get
-biopipe --session <session> graph apply commands.json --document <document> --expected-revision 5 --request-id edit-001
-biopipe --session <session> graph undo --document <document> --expected-revision 6
-biopipe --session <session> graph redo --document <document> --expected-revision 7
-biopipe --session <session> events watch --after 0
-biopipe --session <session> run --document <document> --expected-revision 8
-biopipe jobs get <job>
-biopipe jobs cancel <job>
+operon sessions list
+operon --session <session> context get
+operon --session <session> context get --scope document
+operon operators list
+operon operators describe pca
+operon operators search --query "principal components"
+operon operators describe pca --section parameters
+operon workflow validate route.json --require-files
+operon run route.json --request-id analysis-001
+operon jobs logs <job> --follow
+operon artifacts list <job>
+operon graph validate route.json
+operon --session <session> graph open route.json --expected-revision 4 --new-tab
+operon --session <session> graph get
+operon --session <session> graph apply commands.json --document <document> --expected-revision 5 --request-id edit-001
+operon --session <session> graph undo --document <document> --expected-revision 6
+operon --session <session> graph redo --document <document> --expected-revision 7
+operon --session <session> events watch --after 0
+operon --session <session> run --document <document> --expected-revision 8
+operon jobs get <job>
+operon jobs cancel <job>
 ```
 
 The numbers illustrate sequential revisions; always use the actual returned value.
 `graph open` creates a new tab without executing it. Positions may be omitted from
 generated nodes; the service fills a deterministic DAG layout. A generated graph
 must use known operator IDs, `kind`, `params`, sources and edge ports from the
-[graph schema](../biopipe_sdk/schemas/graph.json). `graph validate` checks a complete
+[graph schema](../operon_sdk/schemas/graph.json). `graph validate` checks a complete
 pipeline; editing permits incomplete drafts but rejects cycles and known incompatible
 connections. File existence and real values are checked again when running.
 
@@ -175,19 +175,19 @@ change; a local backup is retained if the 20-tab limit prevents recovery.
 
 | Tools | Purpose |
 | --- | --- |
-| `biopipe_guide` | One installed task guide, topic index or conditional cached read |
-| `biopipe_sessions`, `biopipe_context`, `biopipe_graph` | Choose a window and read state |
-| `biopipe_catalog`, `biopipe_validate` | Discover schemas and validate a graph |
-| `biopipe_open`, `biopipe_apply`, `biopipe_undo` | New tab, transactional edit, undo/redo |
-| `biopipe_events` | Poll changes after a cursor |
-| `biopipe_run`, `biopipe_job`, `biopipe_cancel` | Explicit execution and job inspection |
-| `biopipe_plugin_install` | Capability-gated local wheel installation |
-| `biopipe_operator_search`, `biopipe_operator_describe` | Paged discovery and selected documentation sections |
-| `biopipe_workflows`, `biopipe_workflow_save`, `biopipe_workflow_prepare` | Workflows independent of canvas sessions |
-| `biopipe_submit`, `biopipe_jobs`, `biopipe_logs`, `biopipe_artifacts` | Headless execution, status, log cursors and result links |
+| `operon_guide` | One installed task guide, topic index or conditional cached read |
+| `operon_sessions`, `operon_context`, `operon_graph` | Choose a window and read state |
+| `operon_catalog`, `operon_validate` | Discover schemas and validate a graph |
+| `operon_open`, `operon_apply`, `operon_undo` | New tab, transactional edit, undo/redo |
+| `operon_events` | Poll changes after a cursor |
+| `operon_run`, `operon_job`, `operon_cancel` | Explicit execution and job inspection |
+| `operon_plugin_install` | Capability-gated local wheel installation |
+| `operon_operator_search`, `operon_operator_describe` | Paged discovery and selected documentation sections |
+| `operon_workflows`, `operon_workflow_save`, `operon_workflow_prepare` | Workflows independent of canvas sessions |
+| `operon_submit`, `operon_jobs`, `operon_logs`, `operon_artifacts` | Headless execution, status, log cursors and result links |
 
-Resources: `biopipe://selection`, `biopipe://sessions/{session_id}/selection`,
-`biopipe://catalog`, `biopipe://guide`, `biopipe://guide/{topic}`.
+Resources: `operon://selection`, `operon://sessions/{session_id}/selection`,
+`operon://catalog`, `operon://guide`, `operon://guide/{topic}`.
 Commands share the CLI's HTTP service and validations.
 MCP stdout is reserved for JSON-RPC; logs stay on stderr.
 

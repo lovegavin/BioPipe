@@ -1,6 +1,6 @@
 # Author workflows in YAML
 
-BioPipe 3.0 accepts `biopipe.workflow` schema version 1. This is an authoring
+Operon 3.0 accepts `operon.workflow` schema version 1. This is an authoring
 format, not a new execution engine: it compiles into the same Graph used by
 Studio, the application API and MCP. Existing graph JSON and route ZIP remain
 accepted.
@@ -15,12 +15,12 @@ directory; correct the location or file and retry. Failed imports do not modify
 frozen values or start a task.
 
 ```sh
-biopipe workflow init ./analysis --template csv-pca
-biopipe workflow lint ./analysis/workflow.yaml
-biopipe workflow format ./analysis/workflow.yaml --check
-biopipe workflow prepare ./analysis/workflow.yaml --format yaml --output ./prepared
-biopipe workflow validate ./prepared/workflow.yaml --require-files
-biopipe run ./prepared/workflow.yaml --wait
+operon workflow init ./analysis --template csv-pca
+operon workflow lint ./analysis/workflow.yaml
+operon workflow format ./analysis/workflow.yaml --check
+operon workflow prepare ./analysis/workflow.yaml --format yaml --output ./prepared
+operon workflow validate ./prepared/workflow.yaml --require-files
+operon run ./prepared/workflow.yaml --wait
 ```
 
 `init`, `lint`, `format`, `schema workflow` and script inspection run without a
@@ -30,7 +30,7 @@ dependencies exist on the execution target. Format normalizes YAML and may remov
 comments; `--check` writes nothing and exits 1 if formatting differs.
 
 ```yaml
-format: biopipe.workflow
+format: operon.workflow
 schema_version: 1
 name: PCA branches
 parameters_file: parameters.json
@@ -65,7 +65,7 @@ and explicit strings in hand-authored documents.
 
 ```json
 {
-  "format": "biopipe.workflow-parameters",
+  "format": "operon.workflow-parameters",
   "schema_version": 1,
   "sources": {"matrix": {"args": {}}},
   "steps": {
@@ -80,7 +80,7 @@ inventing a second scheduler configuration:
 
 ```json
 {
-  "format": "biopipe.workflow-execution",
+  "format": "operon.workflow-execution",
   "schema_version": 1,
   "memory": {"enabled": true, "auto_spill": true},
   "runtime": {}
@@ -124,7 +124,7 @@ into lists just because a representation can be serialized. Scientific conversio
 remain explicit nodes. The workflow `outputs` mapping records named output
 references; artifact publication continues through the shared output service.
 
-Use `biopipe schema workflow` for the authoring structure schema. Library schemas,
+Use `operon schema workflow` for the authoring structure schema. Library schemas,
 runtime contracts and target readiness add validation beyond that structure.
 
 ## Scripts and independent exports

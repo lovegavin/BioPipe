@@ -2,7 +2,7 @@
 """Core kernel: forms and errors."""
 
 from src.core.errors import (
-    BioPipeError,
+    OperonError,
     ContextError,
     ManifestError,
     ReaderError,
@@ -20,7 +20,7 @@ def __getattr__(name):
     return Form
 
 __all__ = [
-    "BioPipeError",
+    "OperonError",
     "ContextError",
     "ManifestError",
     "ReaderError",

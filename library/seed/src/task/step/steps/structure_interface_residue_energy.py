@@ -107,9 +107,12 @@ def interaction_arrays(data: dict, side_a: np.ndarray, side_b: np.ndarray) -> tu
 
 
 class StructureInterfaceResidueEnergyStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_interface_residue_energy.StructureInterfaceResidueEnergyStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_interface_residue_energy",
         "version": "1.0.0",

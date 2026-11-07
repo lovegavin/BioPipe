@@ -107,13 +107,13 @@ def test_errors(tmp_path):
 def test_real_inverse_folding():
     import os
 
-    if os.environ.get("BIOPIPE_ESM3_REAL") != "1":
-        pytest.skip("set BIOPIPE_ESM3_REAL=1 to run the real ESM-3 check")
+    if os.environ.get("OPERON_ESM3_REAL") != "1":
+        pytest.skip("set OPERON_ESM3_REAL=1 to run the real ESM-3 check")
     pytest.importorskip("esm")
     import src.task.step.steps.esm3_inverse_folding as module
 
     module._CACHE.clear()
-    ctx = Context("/tmp/biopipe_esm3_if", {"params": {}})
+    ctx = Context("/tmp/operon_esm3_if", {"params": {}})
     run(ctx, [{"name": "esm3_inverse_folding", "params": {"output": "designs", "structure_path": str(FIXTURES / "vhh_1mel.pdb"), "chain": "A", "num_steps": 10, "temperature": 0.7}}])
     table = ctx["designs"]
     assert table.data.shape[0] == 1

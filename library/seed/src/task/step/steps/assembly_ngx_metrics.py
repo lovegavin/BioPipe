@@ -14,16 +14,19 @@ from ._assembly_utils import contig_records
 
 class AssemblyNgxMetricsStep(Step):
     id = "assembly_ngx_metrics"
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "assembly_ngx_metrics.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "assembly_ngx_metrics",
         "version": "1.0.0",
         "kind": "operator",
         "title": "Assembly NGx and auN metrics",
         "description": "Compute NGx/NAx thresholds, N50/L50 and area-under-the-Nx-curve metrics for a genome assembly.",
-        "provider": "biopipe-core",
+        "provider": "operon-core",
         "category": "Genome",
         "icon": "Ruler",
         "resources": {

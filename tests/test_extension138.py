@@ -15,7 +15,7 @@ from src.task.step.steps.esm_if_design import EsmIfDesignStep
 from src.task.step.steps.esm_if_score import EsmIfScoreStep
 
 CHECKPOINT = os.environ.get(
-    "BIOPIPE_ESM_IF_CHECKPOINT", "/home/gavin/models/esm_if1_gvp4_t16_142M_UR50.pt"
+    "OPERON_ESM_IF_CHECKPOINT", "/home/gavin/models/esm_if1_gvp4_t16_142M_UR50.pt"
 )
 FIXTURE = Path(__file__).parent / "fixtures" / "backbone_1bc8_c60_75.pdb"
 

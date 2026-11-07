@@ -84,7 +84,7 @@ def test_small_numeric_tables_stay_float32(tmp_path):
 
 
 def test_interval_merge_preserves_large_coordinates(tmp_path):
-    from biopipe_sdk.testing import run_operator
+    from operon_sdk.testing import run_operator
     from src.task.step.steps.interval_merge import IntervalMergeStep
 
     path = tmp_path / "overlap.bed"

@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 import pytest
 import yaml
 
-from biopipe.parameter_values import read_values, split_task, restore_task
+from operon.parameter_values import read_values, split_task, restore_task
 from src.core import ManifestError
 from src.task.manifest import load_manifest
 from src.web.api import create_app
@@ -176,9 +176,9 @@ def test_bundle_api_and_run_use_concrete_task_values(studio):
     with ZipFile(BytesIO(exported.content)) as archive:
         assert sorted(archive.namelist()) == ['execution.json', 'graph.json', 'parameters.json']
         assert json.loads(archive.read('parameters.json'))['nodes']['pca']['params']['n_components'] == 10
-    bundle_path = service.root / 'saved.biopipe.zip'
+    bundle_path = service.root / 'saved.operon.zip'
     bundle_path.write_bytes(exported.content)
-    from biopipe.cli import read_graph_file
+    from operon.cli import read_graph_file
     assert node(Graph.model_validate(read_graph_file(bundle_path)), 'pca').params['n_components'] == 10
     imported = client.post('/api/workflows/import', content=exported.content,
                            headers={'Content-Type': 'application/zip'})
@@ -258,14 +258,14 @@ def test_legacy_inline_route_converts_on_explicit_save(studio):
 def test_bundle_prepares_and_runs_after_default_rebuild_in_a_fresh_profile(tmp_path, monkeypatch):
     """A real index rebuild, not just a metadata update in an existing profile."""
     import shutil
-    import biopipe.packages as packages
-    from biopipe.registry import maintain
+    import operon.packages as packages
+    from operon.registry import maintain
     checkout = tmp_path / 'checkout'
     for relative in ('src/task/step/steps', 'src/reader/readers'):
         shutil.copytree(ROOT / "library/seed" / relative, checkout / relative, ignore=shutil.ignore_patterns('__pycache__'))
-    (checkout / 'biopipe').mkdir()
-    shutil.copy2(ROOT / 'library/seed/biopipe/builtin_packages.json', checkout / 'biopipe/builtin_packages.json')
-    monkeypatch.setattr('biopipe.library_location.source_root', lambda root=None: checkout if root is None else Path(root))
+    (checkout / 'operon').mkdir()
+    shutil.copy2(ROOT / 'library/seed/operon/builtin_packages.json', checkout / 'operon/builtin_packages.json')
+    monkeypatch.setattr('operon.library_location.source_root', lambda root=None: checkout if root is None else Path(root))
 
     def app_for(name):
         directory = tmp_path / name
@@ -335,13 +335,13 @@ def test_bundle_prepares_and_runs_after_default_rebuild_in_a_fresh_profile(tmp_p
     assert old.plugin_lock['pca'] == old_pin
     assert old_job_lock.read_bytes() == old_lock_bytes
     archived = next(d for d in json.loads(old_lock_bytes)['descriptors'] if d['id'] == 'pca')
-    from biopipe_sdk.declarations import load_class
+    from operon_sdk.declarations import load_class
     assert load_class(archived).parameters_schema['properties']['n_components']['default'] == 10
 
 
 def test_published_v05_bundle_runs_in_a_new_profile_without_old_snapshots(tmp_path):
     """Replay the public-release demo pins, not a user route or copied profile."""
-    history = json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))
+    history = json.loads((ROOT / 'operon/bundled_history.json').read_text(encoding='utf-8'))
     pins = {identifier: deepcopy(p['implementation']) for p in history['packages']
             for identifier in p['operators'] if any(r['tag'] == 'v0.5.1' for r in p['releases'])}
     directory = tmp_path / 'fresh'

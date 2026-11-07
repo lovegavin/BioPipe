@@ -299,7 +299,7 @@ def test_missing_score_file_is_reported(tmp_path):
 
 
 REAL_REPO = Path(
-    os.environ.get("BIOPIPE_PROTEINMPNN_PATH", "/home/gavin/tools/ProteinMPNN")
+    os.environ.get("OPERON_PROTEINMPNN_PATH", "/home/gavin/tools/ProteinMPNN")
 )
 HAS_REAL = (REAL_REPO / "protein_mpnn_run.py").is_file() and (
     REAL_REPO / "vanilla_model_weights" / "v_48_020.pt"

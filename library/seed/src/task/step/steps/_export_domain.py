@@ -5,7 +5,7 @@ from xml.sax.saxutils import escape, quoteattr
 
 import numpy as np
 
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 from src.core import StepError
 
 
@@ -39,7 +39,7 @@ def write_genbank(path, form, params):
                 raise StepError('GenBank DNA export requires nonempty IUPAC nucleotide sequences')
             if not re.fullmatch(r'[^\s]+', str(name)) or len(str(name)) > 64:
                 raise StepError('GenBank record identifiers must be nonempty, whitespace-free and at most 64 characters')
-            record = SeqRecord(Seq(sequence), id=str(name), name=str(name), description='BioPipe sequence export')
+            record = SeqRecord(Seq(sequence), id=str(name), name=str(name), description='Operon sequence export')
             record.annotations = {'molecule_type': 'DNA', 'topology': params.get('topology', 'linear')}
             yield record
     with io_path(path).open('w', encoding='utf-8', newline='\n') as stream:

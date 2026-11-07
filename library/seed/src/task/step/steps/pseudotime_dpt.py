@@ -75,9 +75,12 @@ def diffusion_pseudotime(embedding, root_index: int, n_neighbors: int = 15, n_dc
 class PseudotimeDptStep(Step):
     """Diffusion pseudotime from a cell-by-component embedding."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "pseudotime_dpt.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "pseudotime_dpt",
         "version": "1.0.0",

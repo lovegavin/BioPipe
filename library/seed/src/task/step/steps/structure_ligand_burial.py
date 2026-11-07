@@ -116,10 +116,13 @@ def burial_rows(
 class StructureLigandBurialStep(Step):
     """Buried fraction of ligand surface area inside a protein structure."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_ligand_burial.StructureLigandBurialStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_ligand_burial",
         "version": "1.0.0",

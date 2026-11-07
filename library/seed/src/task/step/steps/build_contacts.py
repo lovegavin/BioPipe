@@ -3,9 +3,17 @@ from src.task.step.base import Step
 
 
 class BuildContactsStep(Step):
-    provider = 'biopipe-hic'
+    provider = 'operon-hic'
     parameters_file = 'build_contacts.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'build_contacts',
      'version': '1.0.0',
      'kind': 'operator',

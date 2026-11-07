@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Win32;
 
-namespace BioPipe.Setup;
+namespace Operon.Setup;
 
 internal sealed record InstallOptions(string InstallDir, string? Payload = null,
     bool Register = true);
@@ -102,7 +102,7 @@ internal sealed class InstallEngine
                 owner.ValueKind == JsonValueKind.String && owner.GetString() == InstallFiles.Owner;
         }
         bool marker;
-        try { marker = Owned(Path.Combine(root, ".biopipe-setup.json")); }
+        try { marker = Owned(Path.Combine(root, ".operon-setup.json")); }
         catch (JsonException) { marker = false; }
         bool receipt;
         try { receipt = Owned(ReceiptPath(root)); }
@@ -119,7 +119,7 @@ internal sealed class InstallEngine
         var file = ReceiptPath(root);
         if (!File.Exists(file))
         {
-            var marker = Path.Combine(root, ".biopipe-setup.json");
+            var marker = Path.Combine(root, ".operon-setup.json");
             bool owned = File.Exists(marker) && JsonDocument.Parse(File.ReadAllText(marker)).RootElement.GetProperty("owner").GetString() == InstallFiles.Owner;
             if (!owned && Directory.EnumerateFileSystemEntries(root).Any())
                 throw new InvalidOperationException("此目录已有其他文件。请选择新的安装目录；原文件会保留。");
@@ -145,11 +145,11 @@ internal sealed class InstallEngine
             StandardOutputEncoding = Encoding.UTF8, StandardErrorEncoding = Encoding.UTF8
         };
         foreach (var arg in new[] { "-I", "-X", "utf8", "-B", "-u", InstallFiles.Inside(code, "scripts/install_maintenance.py"), "--trace-stalls" }) start.ArgumentList.Add(arg);
-        BioPipe.Desktop.IsolatedEnvironment.Configure(start, code);
+        Operon.Desktop.IsolatedEnvironment.Configure(start, code);
         start.Environment["PYTHONUTF8"] = "1"; start.Environment["PYTHONIOENCODING"] = "utf-8";
         start.Environment["PYTHONDONTWRITEBYTECODE"] = "1";
         start.Environment["MPLCONFIGDIR"] = Path.Combine(work, "matplotlib");
-        using var lifetime = new BioPipe.Desktop.ProcessLifetime();
+        using var lifetime = new Operon.Desktop.ProcessLifetime();
         using var child = Process.Start(start) ?? throw new IOException("无法启动内置运行环境。");
         try { lifetime.Attach(child); } catch { child.Kill(true); throw; }
         child.StandardInput.Close();
@@ -204,7 +204,7 @@ internal sealed class InstallEngine
     internal async Task<InstallResult> Install(InstallOptions options, CancellationToken token)
     {
         string root = ResolveDestination(options.InstallDir);
-        using var installLease = new InstallLease("Local\\BioPipeSetup-" + InstallLease.Identity(root));
+        using var installLease = new InstallLease("Local\\OperonSetup-" + InstallLease.Identity(root));
         InstallFiles.NoLinks(root);
         var old = ReadReceipt(root);
         string? stage = null, installed = null, resolvedProfile = null;
@@ -233,14 +233,14 @@ internal sealed class InstallEngine
             Report("准备安装 Operon " + spec.Version, 0);
             var payload = await InstallFiles.MaterializePayload(spec, cache, options.Payload, progress, token);
             Directory.CreateDirectory(root);
-            InstallFiles.AtomicJson(Path.Combine(root, ".biopipe-setup.json"), new { owner = InstallFiles.Owner });
+            InstallFiles.AtomicJson(Path.Combine(root, ".operon-setup.json"), new { owner = InstallFiles.Owner });
             var versions = Path.Combine(root, "versions"); Directory.CreateDirectory(versions);
             stage = Path.Combine(versions, ".install-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(stage);
-            InstallFiles.AtomicJson(Path.Combine(stage, ".biopipe-install.json"), new { owner = InstallFiles.Owner, version = spec.Version });
+            InstallFiles.AtomicJson(Path.Combine(stage, ".operon-install.json"), new { owner = InstallFiles.Owner, version = spec.Version });
             await InstallFiles.Extract(payload, stage, spec, progress, token);
             Report("正在核对已安装文件…", 76); InstallFiles.VerifyPackage(stage, spec, token);
             var profileId = Guid.NewGuid().ToString("N");
-            InstallFiles.AtomicJson(Path.Combine(stage, "biopipe-install.json"),
+            InstallFiles.AtomicJson(Path.Combine(stage, "operon-install.json"),
                 new { schema_version = 1, isolated = true, profile_id = profileId, product = "operon" });
             Report("正在验证独立运行环境…", 82);
             var inspection = await Inspect(stage, token);
@@ -248,7 +248,7 @@ internal sealed class InstallEngine
                 ?? throw new InvalidDataException("用户档案路径无效。");
             if ((resolvedProfile.TrimEnd('\\') + "\\").StartsWith(root + "\\", StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("用户档案必须位于安装目录之外，以便升级和卸载时保留。");
-            profileLease = new InstallLease("Local\\BioPipeStudio-" + InstallLease.Identity(resolvedProfile));
+            profileLease = new InstallLease("Local\\OperonStudio-" + InstallLease.Identity(resolvedProfile));
             token.ThrowIfCancellationRequested();
             // A fresh profile is never populated from an old registry or target.
             if (Directory.Exists(resolvedProfile)) throw new IOException("新档案目录已存在，请重新运行安装程序。");
@@ -360,9 +360,9 @@ internal sealed class InstallEngine
     internal InstallResult Uninstall(string installDir)
     {
         string root = Path.GetFullPath(installDir).TrimEnd(Path.DirectorySeparatorChar);
-        using var lease = new InstallLease("Local\\BioPipeSetup-" + InstallLease.Identity(root));
+        using var lease = new InstallLease("Local\\OperonSetup-" + InstallLease.Identity(root));
         var receipt = ReadReceipt(root) ?? throw new InvalidOperationException("此目录没有 Operon 安装记录。");
-        using var profileLease = new InstallLease("Local\\BioPipeStudio-" + InstallLease.Identity(receipt.Profile));
+        using var profileLease = new InstallLease("Local\\OperonStudio-" + InstallLease.Identity(receipt.Profile));
         Report("正在卸载软件；用户档案和分析数据会保留…", 0);
         var expectedKey = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\OperonStudio-" + InstallLease.Identity(root);
         if (receipt.UninstallKey is not null && receipt.UninstallKey != expectedKey) throw new InvalidDataException("卸载注册信息无效。");
@@ -380,7 +380,7 @@ internal sealed class InstallEngine
             Registry.CurrentUser.DeleteSubKeyTree(expectedKey, false);
         }
         File.Delete(ReceiptPath(root));
-        File.Delete(Path.Combine(root, ".biopipe-setup.json"));
+        File.Delete(Path.Combine(root, ".operon-setup.json"));
         var uninstaller = Path.Combine(root,"Operon_Uninstall.exe");
         if (File.Exists(uninstaller) && !string.Equals(uninstaller, Environment.ProcessPath, StringComparison.OrdinalIgnoreCase)) File.Delete(uninstaller);
         Report("已卸载 Operon；用户档案、路线、数据和任务记录均已保留。",100);
@@ -391,12 +391,12 @@ internal sealed class InstallEngine
         {
             var version = InstallFiles.Inside(root, relative);
             if (!Directory.Exists(version) || !File.Exists(Path.Combine(version, "package-manifest.json"))) return;
-            using var identity = JsonDocument.Parse(File.ReadAllText(InstallFiles.Inside(version, "biopipe-install.json")));
+            using var identity = JsonDocument.Parse(File.ReadAllText(InstallFiles.Inside(version, "operon-install.json")));
             var id = identity.RootElement.GetProperty("profile_id").GetString();
             if (!Guid.TryParseExact(id, "N", out _)) throw new InvalidDataException("旧安装档案标识无效，原文件已保留。");
             var profile = Path.Combine(profiles, id!);
             using var versionLease = string.Equals(profile, heldProfile, StringComparison.OrdinalIgnoreCase)
-                ? null : new InstallLease("Local\\BioPipeStudio-" + InstallLease.Identity(profile));
+                ? null : new InstallLease("Local\\OperonStudio-" + InstallLease.Identity(profile));
             // Only delete manifest-listed software files. Preserve unexpected
             // user files and any changed/linked paths for manual inspection.
             using var manifest = JsonDocument.Parse(File.ReadAllText(InstallFiles.Inside(version, "package-manifest.json")));
@@ -405,8 +405,8 @@ internal sealed class InstallEngine
                 var path = InstallFiles.Inside(version, item.GetProperty("path").GetString()!);
                 if (File.Exists(path) && InstallFiles.Hash(path) == item.GetProperty("sha256").GetString()) File.Delete(path);
             }
-            File.Delete(Path.Combine(version, "package-manifest.json")); File.Delete(Path.Combine(version, ".biopipe-install.json"));
-            File.Delete(Path.Combine(version, "biopipe-install.json"));
+            File.Delete(Path.Combine(version, "package-manifest.json")); File.Delete(Path.Combine(version, ".operon-install.json"));
+            File.Delete(Path.Combine(version, "operon-install.json"));
             void EmptyDirectories(string directory) {
                 foreach (var child in Directory.EnumerateDirectories(directory)) { InstallFiles.NoLinks(child); EmptyDirectories(child); }
                 if (!Directory.EnumerateFileSystemEntries(directory).Any()) Directory.Delete(directory);

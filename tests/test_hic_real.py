@@ -1,6 +1,6 @@
 """Linux acceptance: actual tools, synthetic data, no reference downloads.
 
-BIOPIPE_HIC_REAL=1 python -m pytest tests/test_hic_real.py -v
+OPERON_HIC_REAL=1 python -m pytest tests/test_hic_real.py -v
 """
 import gzip
 import os
@@ -11,7 +11,7 @@ import shutil
 import numpy as np
 import pytest
 
-pytestmark = pytest.mark.skipif(os.environ.get('BIOPIPE_HIC_REAL') != '1', reason='Set BIOPIPE_HIC_REAL=1 in the Linux Hi-C environment')
+pytestmark = pytest.mark.skipif(os.environ.get('OPERON_HIC_REAL') != '1', reason='Set OPERON_HIC_REAL=1 in the Linux Hi-C environment')
 
 
 def require_tools():

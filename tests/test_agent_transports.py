@@ -39,7 +39,7 @@ def test_cli_and_mcp_share_context_transactions_and_permissions(tmp_path):
                 "schema_version": 1, "active_id": "main", "documents": [{"id": "main", "graph": bootstrap["demo"]}]}}).json()
             session = state["id"]
             ui.post(f"/api/agent/sessions/{session}/presence", json={"document_id": "main", "nodes": ["pca"], "edges": []}).raise_for_status()
-            command = [sys.executable, "-m", "biopipe", "--workspace", str(tmp_path), "--session", session]
+            command = [sys.executable, "-m", "operon", "--workspace", str(tmp_path), "--session", session]
             result = subprocess.run(command + ["context", "get"], cwd=root, capture_output=True, encoding="utf-8", timeout=20)
             assert result.returncode == 0, result.stderr
             context = json.loads(result.stdout)
@@ -49,30 +49,30 @@ def test_cli_and_mcp_share_context_transactions_and_permissions(tmp_path):
             async def exercise_mcp():
                 from mcp import ClientSession, StdioServerParameters
                 from mcp.client.stdio import stdio_client
-                config = StdioServerParameters(command=sys.executable, args=["-m", "biopipe", "--workspace", str(tmp_path), "mcp"],
+                config = StdioServerParameters(command=sys.executable, args=["-m", "operon", "--workspace", str(tmp_path), "mcp"],
                                                cwd=str(root), env={**os.environ, "PYTHONIOENCODING": "utf-8"})
                 async with stdio_client(config) as (reader, writer):
                     async with ClientSession(reader, writer) as client:
                         initialized = await client.initialize()
-                        assert 'biopipe_guide' in initialized.instructions
-                        assert "biopipe_apply" in {t.name for t in (await client.list_tools()).tools}
-                        guidance = await client.call_tool('biopipe_guide', {'topic': 'canvas'})
+                        assert 'operon_guide' in initialized.instructions
+                        assert "operon_apply" in {t.name for t in (await client.list_tools()).tools}
+                        guidance = await client.call_tool('operon_guide', {'topic': 'canvas'})
                         assert not guidance.isError
                         assert json.loads(guidance.content[0].text)['topic'] == 'canvas'
-                        guide_resource = await client.read_resource('biopipe://guide/workflow')
+                        guide_resource = await client.read_resource('operon://guide/workflow')
                         assert json.loads(guide_resource.contents[0].text)['topic'] == 'workflow'
-                        value = await client.call_tool("biopipe_context", {"session_id": session})
+                        value = await client.call_tool("operon_context", {"session_id": session})
                         assert not value.isError
                         assert json.loads(value.content[0].text)["selection"]["nodes"] == ["pca"]
-                        resource = await client.read_resource(f"biopipe://sessions/{session}/selection")
+                        resource = await client.read_resource(f"operon://sessions/{session}/selection")
                         assert json.loads(resource.contents[0].text)["document_id"] == "main"
                         payload = {"session_id": session, "document_id": "main", "expected_revision": 0,
                                    "request_id": "mcp-test-batch", "commands": [
                                        {"op": "update_node", "id": "pca", "patch": {"params": {"dim": "feature", "n_components": 3, "output": "pcs"}}},
                                        {"op": "configure", "patch": {"name": "Agent edited route"}}]}
-                        changed = await client.call_tool("biopipe_apply", payload)
+                        changed = await client.call_tool("operon_apply", payload)
                         assert not changed.isError, changed
-                        denied = await client.call_tool("biopipe_run", {"session_id": session, "document_id": "main", "expected_revision": 1})
+                        denied = await client.call_tool("operon_run", {"session_id": session, "document_id": "main", "expected_revision": 1})
                         assert denied.isError
                         assert "capability" in denied.content[0].text
             asyncio.run(exercise_mcp())

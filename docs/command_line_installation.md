@@ -76,8 +76,8 @@ bash scripts/install_server.sh --source . --prefix "$HOME/apps/operon-test"
 
 # Or choose an existing Python and local release wheels.
 python3 scripts/install_server.py --python /path/to/python3.11 \
-  --app-wheel /path/to/biopipe_studio-VERSION-py3-none-any.whl \
-  --library-wheel /path/to/biopipe_builtin_library-LIBRARY_VERSION-py3-none-any.whl \
+  --app-wheel /path/to/operon_studio-VERSION-py3-none-any.whl \
+  --library-wheel /path/to/operon_builtin_library-LIBRARY_VERSION-py3-none-any.whl \
   --prefix "$HOME/apps/operon"
 ```
 

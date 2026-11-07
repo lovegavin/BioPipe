@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
+
 import numpy as np
 import pytest
 
@@ -120,9 +124,9 @@ def test_real_antifold_when_available():
     pytest.importorskip("antifold")
     import os
 
-    weights = os.environ.get("BIOPIPE_ANTIFOLD_WEIGHTS", "")
+    weights = os.environ.get("OPERON_ANTIFOLD_WEIGHTS", "")
     if not weights or not os.path.isfile(weights):
-        pytest.skip("BIOPIPE_ANTIFOLD_WEIGHTS is not set")
+        pytest.skip("OPERON_ANTIFOLD_WEIGHTS is not set")
     import tempfile
 
     from src.task.context import Context as RealContext
@@ -130,7 +134,7 @@ def test_real_antifold_when_available():
     ctx = RealContext(tempfile.mkdtemp(), {"params": {}})
     params = {
         "output": "scores",
-        "structure_path": "/home/gavin/BioPipe/tests/fixtures/vhh_1mel.pdb",
+        "structure_path": str(ROOT / "tests" / "fixtures" / "vhh_1mel.pdb"),
         "chains": "A",
         "weights_path": weights,
         "device": "cpu",

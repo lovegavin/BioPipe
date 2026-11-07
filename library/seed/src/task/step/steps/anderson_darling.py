@@ -13,7 +13,7 @@ from ._stats21_common import numeric_column, table_frame
 
 
 class AndersonDarlingStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Anderson-Darling composite normality test.
 
     Uses the mean and sample standard deviation estimated from the data, as
@@ -25,7 +25,11 @@ class AndersonDarlingStep(Step):
     approximations from that implementation.
     """
     parameters_file = 'anderson_darling.AndersonDarlingStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'anderson_darling',
      'version': '1.0.0',
      'kind': 'operator',

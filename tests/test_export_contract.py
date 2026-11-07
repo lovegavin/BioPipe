@@ -74,7 +74,7 @@ from pathlib import Path
 args = sys.argv[1:]
 out = Path(args[args.index("--out_dir") + 1]) / "pred"
 out.mkdir(parents=True, exist_ok=True)
-shutil.copy(os.environ["BIOPIPE_TEST_PDB"], out / "prediction.pdb")
+shutil.copy(os.environ["OPERON_TEST_PDB"], out / "prediction.pdb")
 (out / "confidence_model_0.json").write_text(json.dumps({
     "confidence_score": 0.8, "ptm": 0.5, "iptm": 0.4, "complex_plddt": 0.7,
     "complex_iplddt": 0.6, "complex_pde": 1.0, "chain_pair_iptm": 0.3,
@@ -87,7 +87,7 @@ def test_boltz_registers_native_pdb(tmp_path, monkeypatch):
     model.write_text(PDB)
     script = tmp_path / "boltz.py"
     script.write_text(FAKE_BOLTZ)
-    monkeypatch.setenv("BIOPIPE_TEST_PDB", str(model))
+    monkeypatch.setenv("OPERON_TEST_PDB", str(model))
     ctx = Context(tmp_path / "task", {})
     ctx["sequence"] = encode_sequences(["MKV"], "sequence", "position", "protein")
     try:

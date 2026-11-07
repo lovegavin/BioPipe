@@ -91,10 +91,13 @@ def predict_secondary_structure(model, sequence: str, *, num_steps: int) -> str:
 
 
 class Esm3SecondaryStructureStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "esm3_secondary_structure.Esm3SecondaryStructureStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "esm3_secondary_structure",
         "version": "1.0.0",

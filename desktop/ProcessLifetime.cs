@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-namespace BioPipe.Desktop;
+namespace Operon.Desktop;
 
 // Windows closes this handle even after a host crash, killing the backend and
 // its analysis workers. No global process-name based cleanup is used.

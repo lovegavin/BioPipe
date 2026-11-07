@@ -122,10 +122,13 @@ def scan_residues(pdb_path: Path, text: str, binder: tuple[str, ...], target: tu
 
 
 class InterfaceAlanineScanStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "interface_alanine_scan.InterfaceAlanineScanStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "interface_alanine_scan",
         "version": "1.0.0",

@@ -1,12 +1,12 @@
 # Protocol v3 examples
 
-All examples target the public `biopipe_sdk` 2.0 import surface. The implementation
+All examples target the public `operon_sdk` 2.0 import surface. The implementation
 class is the single declaration source. There is no hand-maintained UI registry.
 
 | Example | Demonstrates | Verification |
 | --- | --- | --- |
 | [dropins/scale.py](dropins/scale.py) | Single-file operator, numeric schema, metadata preservation, author SVG icon | `python -m pytest tests/test_operator_images.py tests/test_plugin_refresh.py` |
-| [resource_plugin](resource_plugin/) | Stream reduction and a bounded NumPy disk Reader | `python -m biopipe plugin check examples/resource_plugin` and `python -m pytest tests/test_packages.py` |
+| [resource_plugin](resource_plugin/) | Stream reduction and a bounded NumPy disk Reader | `python -m operon plugin check examples/resource_plugin` and `python -m pytest tests/test_packages.py` |
 | [IGV handoff](igv_handoff/) | Actual genomic interval results as native BED/bedGraph file artifacts, public API handoff and portable IGV session | `python -m pytest tests/test_igv_handoff_example.py` and opt-in `scripts/accept_igv_handoff.py` |
 | [Step guide](../docs/step_extensions.md) | Complete `Operator.compute` implementation and missing-value handling | `python -m pytest tests/test_extension_guides.py` |
 | [Reader guide](../docs/reader_extensions.md) | Complete `Reader.read` implementation with labels | `python -m pytest tests/test_extension_guides.py` |
@@ -14,10 +14,10 @@ class is the single declaration source. There is no hand-maintained UI registry.
 To start a package with tests:
 
 ```text
-python -m biopipe plugin init lab_scale
-python -m biopipe plugin check lab_scale
-python -m biopipe plugin test lab_scale
-python -m biopipe plugin build lab_scale
+python -m operon plugin init lab_scale
+python -m operon plugin check lab_scale
+python -m operon plugin test lab_scale
+python -m operon plugin build lab_scale
 ```
 
 For a Reader use `--template reader`. To hot-load a single module, open Studio's

@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
 import numpy as np
 import pytest
 
@@ -14,7 +19,7 @@ pytest.importorskip("openmm")
 
 from src.task.step.steps import structure_openmm_energy as module
 
-FIXTURE = "/home/gavin/BioPipe/tests/fixtures/vhh_1mel.pdb"
+FIXTURE = str(ROOT / "tests" / "fixtures" / "vhh_1mel.pdb")
 
 
 def _pdb_form(tmp_path):

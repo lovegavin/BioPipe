@@ -15,11 +15,21 @@ TEXT_SUFFIXES = {".py", ".cs", ".json", ".yaml", ".yml", ".toml", ".md", ".txt",
 LOCAL_PATH = re.compile(r"(?<![A-Za-z0-9_])(?:[A-Za-z]:[\\/]|/(?:home|Users)/)[^\s\"'<>]+")
 EXCLUDED = {"__pycache__", "node_modules", "bin", "obj", ".git", ".venv", "venv", ".local", ".tmp", ".verification"}
 
+# Release notes and verification evidence record past machine paths; they are
+# historical documents, not the active source shipped with the product.
+HISTORICAL = {Path("docs/releases"), Path("docs/verification")}
+
+
+def _historical(relative):
+    return any(relative == folder or folder in relative.parents for folder in HISTORICAL)
+
 
 def active_files(root):
-    for folder in ("src", "biopipe", "biopipe_sdk", "desktop", "scripts", "library/seed", "docs", "examples", "frontend"):
+    for folder in ("src", "operon", "operon_sdk", "desktop", "scripts", "library/seed", "docs", "examples", "frontend"):
         for file in (root / folder).rglob("*"):
-            if (not EXCLUDED.intersection(file.relative_to(root).parts)
+            relative = file.relative_to(root)
+            if (not EXCLUDED.intersection(relative.parts)
+                    and not _historical(relative)
                     and file.is_file()
                     and not file.name.endswith((".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx"))):
                 yield file

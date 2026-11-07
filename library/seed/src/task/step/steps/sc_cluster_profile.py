@@ -16,9 +16,13 @@ STATS = ["mean", "detected_fraction", "n_cells"]
 class ScClusterProfileStep(Step):
     """Mean expression and detection fraction for every cluster and gene."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "sc_cluster_profile.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "sc_cluster_profile",
         "version": "1.0.0",

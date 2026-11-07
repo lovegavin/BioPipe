@@ -46,7 +46,7 @@ def finished(client, key):
 
 def copy_code(destination):
     destination.mkdir(parents=True)
-    for name in ("src", "scripts", "biopipe", "biopipe_sdk", "library"):
+    for name in ("src", "scripts", "operon", "operon_sdk", "library"):
         shutil.copytree(ROOT / name, destination / name, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     shutil.copytree(ROOT / "frontend/dist", destination / "frontend/dist")
 
@@ -78,7 +78,7 @@ def test_export_runs_after_moving_code_and_data_from_unrelated_cwd(tmp_path):
         assert not Path(manifest["sources"]["expression"]["path"]).is_absolute()
         assert manifest["runtime"]["memory"]["cache_dir"] == "cache"
         (original / "task.yaml").write_text(exported, encoding="utf-8")
-    relocated = tmp_path / "搬迁 BioPipe"
+    relocated = tmp_path / "搬迁 Operon"
     copy_code(relocated)
     shutil.copytree(original, relocated, dirs_exist_ok=True)
     # Remove the old usable location by renaming this test-owned directory only.
@@ -180,8 +180,8 @@ def test_desktop_worker_completes_with_host_control_pipe_open(tmp_path):
                 content = log_path.read_text(encoding="utf-8")
                 assert server.poll() is None, content
                 for line in content.splitlines():
-                    if line.startswith("BIOPIPE_READY "):
-                        origin = json.loads(line.removeprefix("BIOPIPE_READY "))["url"]
+                    if line.startswith("OPERON_READY "):
+                        origin = json.loads(line.removeprefix("OPERON_READY "))["url"]
                 if origin:
                     break
                 time.sleep(.1)

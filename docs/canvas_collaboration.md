@@ -1,14 +1,14 @@
 # Live canvas collaboration and script editing
 
-BioPipe 3.0 uses the existing document service as the source of truth for both
+Operon 3.0 uses the existing document service as the source of truth for both
 Studio and agent changes. A desktop window is not required for an agent to edit
 a persisted session. Opening a workspace with the same document IDs resumes its
 latest session and displays edits made while Studio was closed.
 
 ## Read a small change stream
 
-Start with `biopipe_sessions` and `biopipe_context`. Use a session's event cursor
-to request incremental updates with `biopipe_events(session_id, after, limit)`.
+Start with `operon_sessions` and `operon_context`. Use a session's event cursor
+to request incremental updates with `operon_events(session_id, after, limit)`.
 The equivalent HTTP endpoint is:
 
 ```text
@@ -39,7 +39,7 @@ Read more detail only when needed:
 GET /api/agent/sessions/{session_id}/transactions/{transaction_id}?offset=0&limit=20
 ```
 
-MCP exposes the same operation as `biopipe_transaction_diff`. It returns keyed
+MCP exposes the same operation as `operon_transaction_diff`. It returns keyed
 paths, previous/new values, truncation flags, total count and `next_offset`.
 Values are previews, not executable patches: a large code value can be truncated.
 Retrieve the node/document to inspect its complete current source. Expired
@@ -55,7 +55,7 @@ receipt and `replayed: true`; it does not apply the changes twice. Actor identit
 comes from the authenticated server context, never from a caller-supplied label.
 Graph, event and receipt are persisted in the same atomic session-file update.
 
-`biopipe_undo` accepts an optional `transaction_id`. A targeted undo checks that
+`operon_undo` accepts an optional `transaction_id`. A targeted undo checks that
 the fields touched by that transaction still contain its result, then reverses
 those fields as a new transaction. Later unrelated user edits are preserved.
 Overlapping edits, dangling edges or cycles return a conflict instead of

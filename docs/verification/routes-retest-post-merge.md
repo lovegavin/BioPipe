@@ -3,7 +3,7 @@
 Date: 2026-11-07. Tree: `release/4.x` at `e122cee9` (after merging the
 collaborator's Operon 3.0.1 / library 4.0.5 update). Runner:
 `scripts/run.py workdir/<route> --memory-mb <budget>` on WSL Ubuntu-24.04,
-Python 3.12 (conda `biopipe`).
+Python 3.12 (conda `operon`).
 
 Every route below was first exercised before the collaborator update, so it is
 stale under the release policy and was re-run once here. Results:

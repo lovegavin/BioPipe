@@ -11,9 +11,13 @@ from ._sequence_common import CODON_TABLE, decode_sequences
 
 
 class CodonUsageStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'codon_usage.CodonUsageStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'codon_usage',
      'version': '1.0.0',
      'kind': 'operator',

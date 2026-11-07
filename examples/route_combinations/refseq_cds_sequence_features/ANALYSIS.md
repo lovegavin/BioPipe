@@ -6,7 +6,7 @@
 
 ## 数据与问题
 
-本示例用 NCBI RefSeq 的 6 条人类编码序列（CDS），通过 BioPipe 的 `FastaReader` 读入，回答三个描述性问题：
+本示例用 NCBI RefSeq 的 6 条人类编码序列（CDS），通过 Operon 的 `FastaReader` 读入，回答三个描述性问题：
 
 1. 六条 CDS 的长度和 GC 含量分别是多少？
 2. 按标准遗传密码翻译后，六种蛋白的理化性质（长度、分子量、等电点、GRAVY、芳香族比例）如何？

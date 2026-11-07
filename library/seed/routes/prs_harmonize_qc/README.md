@@ -24,7 +24,7 @@ weights (TsvFileReader) ────────┘        │
                                          └─ prs (existing) ─ export prs_scores.csv
 ```
 
-`prs` is the existing `biopipe-genetics` scoring operator; it assumes dosages
+`prs` is the existing `operon-genetics` scoring operator; it assumes dosages
 and weights already refer to the same effect allele. `prs_harmonize` supplies
 that contract by matching PGS rows to VCF records (rsID first, then
 chrom:pos), flipping the sign when the effect allele is the reference allele,

@@ -25,9 +25,19 @@ def _wrap(sequence: str, width: int = 60) -> list:
 
 class ConsensusSequenceStep(Step):
     """Build a majority-allele consensus genome in FASTA format."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'consensus_sequence.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         'protocol_version': 3,
         'id': 'consensus_sequence',
         'version': '1.0.0',

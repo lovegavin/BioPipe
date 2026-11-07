@@ -99,8 +99,8 @@ def test_real_lambda_genome(tmp_path):
     import os
     import shutil
 
-    if os.environ.get("BIOPIPE_PRODIGAL_REAL") != "1":
-        pytest.skip("set BIOPIPE_PRODIGAL_REAL=1 to run the real Prodigal check")
+    if os.environ.get("OPERON_PRODIGAL_REAL") != "1":
+        pytest.skip("set OPERON_PRODIGAL_REAL=1 to run the real Prodigal check")
     if shutil.which("prodigal") is None:
         pytest.skip("prodigal is not installed")
     from src.task.step.steps._sequence_common import encode_sequences

@@ -77,7 +77,7 @@
       "type": "string",
       "default": "",
       "title": "ProteinMPNN 路径",
-      "description": "Official ProteinMPNN checkout holding protein_mpnn_run.py; falls back to BIOPIPE_PROTEINMPNN_PATH.",
+      "description": "Official ProteinMPNN checkout holding protein_mpnn_run.py; falls back to OPERON_PROTEINMPNN_PATH.",
       "x-ui-group": "Environment",
       "x-ui-order": 0
     },

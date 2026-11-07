@@ -1,7 +1,7 @@
 # Operator library release standard
 
 This page records the release contract used by the independent operator-library
-channel, confirmed against **BioPipe Operator Library 2026.11.5.2** (tag
+channel, confirmed against **Operon Operator Library 2026.11.5.2** (tag
 `library-v2026.11.5.2`, commit `4cc3ad34`). It describes what a library release
 must contain and what CI verifies; it does not change protocol v3 or workflow
 parameter JSON.
@@ -63,7 +63,7 @@ version.
 CI uses two runners, Windows and Ubuntu, Python 3.11. Each runner:
 
 1. Installs the **released application wheel** matching `build_application`
-   (`biopipe_studio-<version>-py3-none-any.whl`) plus analysis/test dependencies
+   (`operon_studio-<version>-py3-none-any.whl`) plus analysis/test dependencies
    (`pytest`, `h5py`, `scikit-learn`, `biopython`, `rdkit`, CPU `torch`).
 2. Runs `python -I -m pytest tests/test_library_release.py -q`.
 3. Builds with `python -I scripts/release_library.py --tag library-v<version>
@@ -78,7 +78,7 @@ CI uses two runners, Windows and Ubuntu, Python 3.11. Each runner:
    --outdir build/library library` and writes `SHA256SUMS-seed.txt`.
 
 The builder produces a native envelope per platform
-(`BioPipe-Library-v<version>-<Windows|Linux>.biopipe-library.zip`), a
+(`Operon-Library-v<version>-<Windows|Linux>.operon-library.zip`), a
 `library-build.json`, a platform `SHA256SUMS-<system>.txt` and a
 `verification-<os>.json`.
 
@@ -88,9 +88,9 @@ The tag job runs only for `refs/tags/library-v*` and requires the verify matrix:
 
 ```bash
 gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
-  --title "BioPipe Operator Library v${GITHUB_REF_NAME#library-v}" \
+  --title "Operon Operator Library v${GITHUB_REF_NAME#library-v}" \
   --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
-  artifacts/*.biopipe-library.zip artifacts/*.whl artifacts/SHA256SUMS.txt \
+  artifacts/*.operon-library.zip artifacts/*.whl artifacts/SHA256SUMS.txt \
   artifacts/verification-*.json
 ```
 
@@ -102,9 +102,9 @@ the supported minimum, changed operators/Readers, dependency changes and limits.
 
 Expected release assets:
 
-- `BioPipe-Library-v<version>-Windows.biopipe-library.zip`
-- `BioPipe-Library-v<version>-Linux.biopipe-library.zip`
-- `biopipe_builtin_library-<version>-py3-none-any.whl`
+- `Operon-Library-v<version>-Windows.operon-library.zip`
+- `Operon-Library-v<version>-Linux.operon-library.zip`
+- `operon_builtin_library-<version>-py3-none-any.whl`
 - `SHA256SUMS.txt` (all platform sums merged by the publish job)
 - `verification-windows-latest.json`, `verification-ubuntu-latest.json`
 
@@ -135,19 +135,19 @@ its own state; application updates do not overwrite user-installed providers.
 
 # 2. Rebuild generated metadata
 python scripts/build_operator_docs.py
-python -m biopipe registry build
-python -m biopipe registry check
+python -m operon registry build
+python -m operon registry check
 
 # 3. Release rules (released application must be importable with python -I)
 python -I -m pytest tests/test_library_release.py -q
 
 # 4. Build and verify
 python -I scripts/release_library.py --tag library-vX --output build/library
-python -I scripts/verify_library_release.py --bundle build/library/BioPipe-Library-vX-<OS>.biopipe-library.zip --work build/library-verify
+python -I scripts/verify_library_release.py --bundle build/library/Operon-Library-vX-<OS>.operon-library.zip --work build/library-verify
 
 # 5. Commit, annotated tag, push
-git commit -m "release: BioPipe Operator Library vX"
-git tag -a library-vX -m "BioPipe Operator Library vX"
+git commit -m "release: Operon Operator Library vX"
+git tag -a library-vX -m "Operon Operator Library vX"
 git push origin main library-vX
 ```
 

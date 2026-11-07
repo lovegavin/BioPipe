@@ -45,7 +45,7 @@ def window_rows(sequence: str, designs: list[str], windows: list[tuple[int, int]
 class EsmIfMaskedRegionScanStep(Step):
     """Scan a sliding masked window along a chain and score each window."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "esm_if_masked_region_scan.EsmIfMaskedRegionScanStep.parameters.json"
 
     @classmethod
@@ -53,6 +53,9 @@ class EsmIfMaskedRegionScanStep(Step):
         return (600 * 1024 * 1024, 0)
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "esm_if_masked_region_scan",
         "version": "1.0.0",

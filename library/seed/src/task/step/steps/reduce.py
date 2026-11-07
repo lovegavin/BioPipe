@@ -77,9 +77,13 @@ _COMPONENT_PREFIX = {
 
 class ReduceStep(Step):
     """Reduce one axis of a 2D form to a small number of components."""
-    provider = 'biopipe-microbiome'
+    provider = 'operon-microbiome'
     parameters_file = 'reduce.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'reduce',
      'version': '1.0.0',
      'kind': 'operator',

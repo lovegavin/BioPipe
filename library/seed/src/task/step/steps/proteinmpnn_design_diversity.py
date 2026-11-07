@@ -130,7 +130,7 @@ def run_designer(params: dict, structure: Path, chain: str) -> list[str]:
         raise StepError("proteinmpnn_design_diversity: device must be 'cpu' or 'cuda'")
 
     python = str(params.get("python_executable") or "") or sys.executable
-    out_dir = Path(tempfile.mkdtemp(prefix="biopipe-mpnn-diversity-"))
+    out_dir = Path(tempfile.mkdtemp(prefix="operon-mpnn-diversity-"))
     command = [
         python,
         str(runner),
@@ -192,11 +192,14 @@ def run_designer(params: dict, structure: Path, chain: str) -> list[str]:
 class ProteinmpnnDesignDiversityStep(Step):
     """Pairwise identity and single-linkage clusters across ProteinMPNN designs."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "proteinmpnn_design_diversity.ProteinmpnnDesignDiversityStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_design_diversity",
         "version": "1.0.0",

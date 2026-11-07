@@ -3,15 +3,15 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "biopipe-resource-example"
+name = "operon-resource-example"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["biopipe-studio>=3.0.0,<4"]
+dependencies = ["operon-studio>=3.0.0,<4"]
 
-[project.entry-points."biopipe.operators"]
+[project.entry-points."operon.operators"]
 sum = "resource_example:Sum"
 
-[project.entry-points."biopipe.readers"]
+[project.entry-points."operon.readers"]
 npy = "resource_example:NpyReader"
 
 [tool.setuptools.package-data]

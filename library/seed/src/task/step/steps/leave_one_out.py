@@ -47,10 +47,14 @@ def _pooled(effect: np.ndarray, variance: np.ndarray, method: str):
 
 
 class LeaveOneOutStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Refit an intercept-only meta-analysis after omitting each study."""
     parameters_file = 'leave_one_out.LeaveOneOutStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'leave_one_out',
      'version': '1.0.0',
      'kind': 'operator',

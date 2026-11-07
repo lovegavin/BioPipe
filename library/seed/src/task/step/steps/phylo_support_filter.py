@@ -15,9 +15,13 @@ from src.task.step.steps._tree_ops_utils import (
 class PhyloSupportFilterStep(Step):
     """Remove splits whose bootstrap support is below a threshold."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "phylo_support_filter.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "phylo_support_filter",
         "version": "1.0.0",

@@ -13,9 +13,13 @@ from ._kmer_utils import mash_distance, unique_kmers
 class GenomeMashDistanceStep(Step):
     """Mash distance/ANI computed from the exact k-mer Jaccard index."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "genome_mash_distance.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "genome_mash_distance",
         "version": "1.0.0",

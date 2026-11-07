@@ -11,7 +11,7 @@ from ._stats21_common import numeric_column, table_frame
 
 
 class LowessStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Cleveland's LOWESS smoother with a fixed span and robust iterations.
 
     The implementation delegates the local regressions to
@@ -19,7 +19,11 @@ class LowessStep(Step):
     ``stats::lowess`` for the same span and iteration count.
     """
     parameters_file = 'lowess.LowessStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'lowess',
      'version': '1.0.0',
      'kind': 'operator',

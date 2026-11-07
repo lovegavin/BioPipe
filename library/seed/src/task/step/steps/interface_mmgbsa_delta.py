@@ -98,10 +98,13 @@ def mmgbsa_terms(pdb_path: Path, *, forcefield_name: str, implicit: str, ph: flo
 
 
 class InterfaceMmgbsaDeltaStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "interface_mmgbsa_delta.InterfaceMmgbsaDeltaStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "interface_mmgbsa_delta",
         "version": "1.0.0",

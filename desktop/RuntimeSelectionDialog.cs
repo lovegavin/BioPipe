@@ -1,4 +1,4 @@
-namespace BioPipe.Desktop;
+namespace Operon.Desktop;
 
 internal sealed class RuntimeSelectionDialog : Form
 {

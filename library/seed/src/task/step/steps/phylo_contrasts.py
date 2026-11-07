@@ -13,9 +13,13 @@ from src.task.step.steps._phylo_compare_utils import (
 class PhyloContrastsStep(Step):
     """Phylogenetically independent contrasts (Felsenstein 1985)."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "phylo_contrasts.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "phylo_contrasts",
         "version": "1.0.0",

@@ -45,10 +45,13 @@ def pca_loadings(matrix: np.ndarray, n_components: int) -> dict:
 
 
 class EsmEmbeddingPcaLoadingsStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "esm_embedding_pca_loadings.EsmEmbeddingPcaLoadingsStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "esm_embedding_pca_loadings",
         "version": "1.0.0",

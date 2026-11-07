@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace BioPipe.Desktop;
+namespace Operon.Desktop;
 
 internal sealed class DesktopLog(string profile)
 {

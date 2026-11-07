@@ -1,7 +1,7 @@
 # Quickstart example: VHH / 1MEL interface
 
 A minimal, real-data workflow used by `QUICKSTART.md` at the repository root and by the
-`BioPipe-Quickstart-*.zip` release asset. It runs in a few seconds on a laptop CPU
+`Operon-Quickstart-*.zip` release asset. It runs in a few seconds on a laptop CPU
 and produces two exported CSV tables.
 
 ## Files
@@ -15,7 +15,7 @@ and produces two exported CSV tables.
 ## Run
 
 ```bash
-python -m biopipe --workspace "$PWD" run examples/quickstart/vhh_interface.route.json --wait
+python -m operon --workspace "$PWD" run examples/quickstart/vhh_interface.route.json --wait
 ```
 
 `base_dir` is `examples/quickstart`, resolved against the workspace root. Exports are

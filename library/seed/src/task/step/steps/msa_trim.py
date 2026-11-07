@@ -16,9 +16,14 @@ def _wrap(sequence, width=60):
 
 
 class MsaTrimStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "msa_trim.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
         "protocol_version": 3,
         "id": "msa_trim",
         "version": "1.0.0",

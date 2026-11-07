@@ -14,16 +14,19 @@ from ._assembly_utils import contig_records
 
 class AssemblyNgxCurveStep(Step):
     id = "assembly_ngx_curve"
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "assembly_ngx_curve.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "assembly_ngx_curve",
         "version": "1.0.0",
         "kind": "operator",
         "title": "Assembly Nx curve",
         "description": "Compute the Nx curve (contig length threshold and cumulative coverage) for an assembly.",
-        "provider": "biopipe-core",
+        "provider": "operon-core",
         "category": "Genome",
         "icon": "TrendingUp",
         "resources": {

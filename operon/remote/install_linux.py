@@ -1,0 +1,398 @@
+"""Managed server installer. Invoked only inside the isolated deployment prefix."""
+import argparse
+import importlib.metadata as metadata
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tomllib
+
+
+PIP_INDEX = (
+    '-i', 'https://pypi.tuna.tsinghua.edu.cn/simple',
+    '--trusted-host', 'pypi.tuna.tsinghua.edu.cn',
+)
+PIP_TRANSFER = (
+    '--disable-pip-version-check', '--progress-bar', 'off',
+    '--retries', '5', '--timeout', '60',
+)
+PIP_CONSTRAINTS = (
+    'pyarrow<22',   # newer sdists drop the cp311 wheel and need Arrow C++
+    'libcst<1.8',   # newer sdists are Rust builds; 1.7 ships cp311 wheels
+)
+# pysam wheels need glibc >= 2.28 on manylinux, so old HPC hosts get it from
+# conda-forge/bioconda together with the rest of the native stack.
+# antifold 0.3.x pins numpy==1.26.*, which conflicts with pydeseq2>=0.5 (numpy>=2);
+# it lives in a dedicated environment and is selected with python_executable.
+# pdbfixer needs openmm>=8.2, and PyPI ships openmm 8.1.1 wheels built for NumPy 1;
+# MD/energy operators are an optional conda-forge extra (see docs/agent_environment_repair.md).
+CONDA_PROVIDED = frozenset({'pdbfixer', 'openmm', 'pysam', 'antifold'})
+# Missing imports for these extras are reported, not fatal for the install.
+OPTIONAL_MODULES = ('pdbfixer', 'openmm', 'antifold', 'boltz', 'foldseek')
+# Light pure-Python or wheel-only operator extras installed after the main solve.
+EXTRA_PIP = ('pdb2pqr', 'ViennaRNA')
+# Large model packages whose pins over-constrain shared runtimes: install the
+# distributions without forcing their resolver into the environment, then let
+# the dependency probe import them.
+EXTRA_NO_DEPS = ()  # conflicting model packages live in declared environments
+CONDA_FORGE = 'https://conda.anaconda.org/conda-forge'
+BIOCONDA = 'https://conda.anaconda.org/bioconda'
+
+
+def conda_environment():
+    """Keep transport settings, but do not inherit another activated Conda prefix."""
+    return {key: value for key, value in os.environ.items()
+            if not key.startswith(('CONDA_', 'MAMBA_')) and key not in ('_CE_CONDA', '_CE_M')}
+
+
+def requirements(code):
+    project = tomllib.loads((code / 'pyproject.toml').read_text(encoding='utf-8'))['project']
+    from operon.library_location import source_root
+    library = source_root(code)
+    index = library / 'operon/builtin_packages.json'
+    manifest = json.loads(index.read_text(encoding='utf-8')) if index.is_file() else {'packages': []}
+    entries = [d for p in manifest['packages'] for d in p['descriptors']]
+    Requirement = _requirement_class()
+    # Operators with a declared environment own their dependency pins; installing them
+    # into the shared interpreter is exactly what breaks `pip check` (Boltz pins
+    # pyyaml/requests/scipy, AntiFold pins NumPy 1.26).
+    # The server is an application installation, not an eager installation of
+    # every optional model/tool in the independently maintained library.
+    specs = sorted(set(project['dependencies']))
+    specs = [spec for spec in specs if Requirement(spec).name.lower() not in CONDA_PROVIDED]
+    # pdbfixer is published on conda-forge only; installing it with pip aborts
+    # the whole resolve. The managed micromamba environment provides it.
+    hic = [line.strip() for line in (code / 'requirements-hic-linux.txt').read_text().splitlines()
+           if line.strip() and not line.startswith('#')]
+    return specs + hic, entries
+
+
+def pip_command(request, wheel_only, constraints=None, bundle=None):
+    """Build a mirror-first pip command, optionally restricted to wheels."""
+    command = [sys.executable, '-I', '-m', 'pip', '--isolated', 'install', *PIP_TRANSFER, *PIP_INDEX]
+    if wheel_only:
+        command.append('--only-binary=:all:')
+    else:
+        command.append('--prefer-binary')
+    if constraints is not None:
+        command.extend(['--constraint', str(constraints)])
+    if bundle is not None and Path(bundle).is_dir():
+        command.extend(['--find-links', str(bundle)])
+    command.extend(['-r', str(request)])
+    return command
+
+
+def compiler_environment():
+    """Expose the bundled conda-forge toolchain to source builds."""
+    environment = dict(os.environ)
+    for variable, candidates in (
+        ('CC', ('x86_64-conda-linux-gnu-cc', 'gcc', 'cc')),
+        ('CXX', ('x86_64-conda-linux-gnu-c++', 'g++', 'c++')),
+    ):
+        if environment.get(variable):
+            continue
+        for candidate in candidates:
+            resolved = shutil.which(candidate)
+            if resolved:
+                environment[variable] = resolved
+                break
+    return environment
+
+
+def _install(request, wheel_only, environment, constraints=None, bundle=None):
+    command = pip_command(request, wheel_only, constraints, bundle)
+    result = subprocess.run(command, capture_output=True, text=True, env=environment)
+    if result.returncode:
+        tail = (getattr(result, 'stdout', '') or '') + (getattr(result, 'stderr', '') or '')
+        return result.returncode, tail.strip()[-4000:]
+    return 0, ''
+
+
+def _ensure_compilers():
+    """Install the conda-forge toolchain only when a source build is needed."""
+    mamba = os.environ.get('OPERON_MAMBA')
+    if not mamba or not Path(mamba).is_file():
+        return
+    subprocess.run(
+        [mamba, '--no-rc', 'install', '-y', '-p', sys.prefix, '--override-channels',
+         '-c', CONDA_FORGE, 'gxx_linux-64', 'cmake', 'make'],
+        env=conda_environment(), check=False,
+    )
+
+
+def _requirement_class():
+    """Return packaging.Requirement, installing packaging when the venv is bare."""
+    try:
+        from packaging.requirements import Requirement
+    except ImportError:
+        subprocess.run(
+            [sys.executable, '-I', '-m', 'pip', '--isolated', 'install', *PIP_TRANSFER, *PIP_INDEX, 'packaging'],
+            check=True,
+        )
+        from packaging.requirements import Requirement
+    return Requirement
+
+
+
+def split_failures(results, entries=(), *, required_ids=None):
+    """Separate base-runtime failures from unavailable library capabilities.
+
+    Dedicated environments and external tools belong to library capabilities.
+    Their real failure states are retained in the receipt. The shared runtime
+    and the explicit native Hi-C checks remain mandatory.
+    """
+    optional_ids = {entry['id'] for entry in entries
+                    if any((entry.get('resources') or {}).get(key)
+                           for key in ('environment', 'external_tools'))}
+    failed = {key: value['error'] for key, value in results.items() if value['status'] != 'passed'}
+    if required_ids is not None:
+        required = {key: value for key, value in failed.items() if key in required_ids}
+        return required, {key: value for key, value in failed.items() if key not in required_ids}
+    optional = {
+        key: error for key, error in failed.items()
+        if key in optional_ids or any(name in error.lower() for name in OPTIONAL_MODULES)
+    }
+    required = {key: error for key, error in failed.items() if key not in optional}
+    return required, optional
+
+def _ensure_conda_extras():
+    """Add conda-only binaries after pip: pysam is needed by several Readers."""
+    try:
+        import pysam  # noqa: F401
+        return True
+    except ImportError:
+        pass
+    mamba = os.environ.get('OPERON_MAMBA')
+    if not mamba or not Path(mamba).is_file():
+        return False
+    result = subprocess.run(
+        [mamba, '--no-rc', 'install', '-y', '-p', sys.prefix, '--override-channels',
+         '-c', CONDA_FORGE, '-c', BIOCONDA, '--strict-channel-priority', 'pysam=0.22.1'],
+        env=conda_environment(), check=False,
+    )
+    return result.returncode == 0
+
+
+def _ensure_python_extras(constraints=None):
+    """Install light operator extras that are not part of the policy requirement set."""
+    command = [
+        sys.executable, '-I', '-m', 'pip', '--isolated', 'install',
+        *PIP_TRANSFER, *PIP_INDEX, '--prefer-binary', *EXTRA_PIP,
+    ]
+    if constraints is not None:
+        command.extend(['--constraint', str(constraints)])
+    result = subprocess.run(command, check=False)
+    return result.returncode == 0
+
+
+def _ensure_isolated_extras():
+    """Install large model packages without letting their pins rewrite NumPy/Torch."""
+    if not EXTRA_NO_DEPS:
+        return True
+    command = [
+        sys.executable, '-I', '-m', 'pip', '--isolated', 'install',
+        *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *EXTRA_NO_DEPS,
+    ]
+    result = subprocess.run(command, check=False)
+    return result.returncode == 0
+
+
+def _ensure_isolated_environments(prefix, *, failures=None):
+    """Create one interpreter per declared operator environment (AntiFold, ...)."""
+    from operon.environments import load, resolve
+    mamba = Path(os.environ.get('OPERON_MAMBA') or
+                 prefix.parent / 'tools/micromamba-2.10.0/bin/micromamba')
+    root = prefix / 'external'
+    failures = {} if failures is None else failures
+    ok = True
+    for name, entry in load().items():
+        if resolve(name):
+            continue
+        target = root / name
+        print(f'Preparing isolated environment {name} at {target}', flush=True)
+        if not entry.get('venv_shared') and not mamba.is_file():
+            failures[name] = 'managed environment manager is unavailable'
+            ok = False
+            continue
+        env = dict(conda_environment(), MAMBA_ROOT_PREFIX=str(prefix.parent / 'mamba-cache'))
+        prepared = True
+        if entry.get('venv_shared'):
+            create = [str(Path(sys.executable)), '-m', 'venv', '--system-site-packages', str(target)]
+        elif entry.get('clone_shared'):
+            create = [str(mamba), '--no-rc', 'create', '-y', '-p', str(target), '--clone', str(prefix)]
+        else:
+            create = [str(mamba), '--no-rc', 'create', '-y', '-p', str(target), '-c', CONDA_FORGE,
+                      '--override-channels', 'python=' + str(entry.get('python', '3.11')), 'pip']
+        if subprocess.run(create, env=env, check=False).returncode:
+            failures[name] = 'environment creation failed; see the preceding log'
+            ok = False
+            continue
+        python = target / 'bin/python'
+        conda_packages = entry.get('conda_packages') or []
+        if conda_packages:
+            install = [str(mamba), '--no-rc', 'install', '-y', '-p', str(target), '-c', CONDA_FORGE,
+                       '--override-channels', '--strict-channel-priority', *conda_packages]
+            if subprocess.run(install, env=env, check=False).returncode:
+                prepared = False
+        requirements = entry.get('requirements') or []
+        direct = entry.get('pip_pypi') or []
+        if entry.get('torch_cpu'):
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, 'torch',
+                       '--index-url', 'https://download.pytorch.org/whl/cpu']
+            if subprocess.run(install, check=False).returncode:
+                prepared = False
+        if direct:
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--index-url', 'https://pypi.org/simple', *direct]
+            if subprocess.run(install, check=False).returncode:
+                prepared = False
+        wheels = entry.get('pip_wheels') or []
+        if wheels:
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--only-binary=:all:', *PIP_INDEX, *wheels]
+            if subprocess.run(install, check=False).returncode:
+                prepared = False
+        if requirements:
+            install = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, '--prefer-binary', *PIP_INDEX, *requirements]
+            if subprocess.run(install, check=False).returncode:
+                failures[name] = 'Python dependency installation failed; see the preceding log'
+                ok = False
+                continue
+        no_build = entry.get('no_build_isolation') or []
+        if no_build:
+            pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX,
+                   '--no-build-isolation', '--no-deps', *no_build]
+            if subprocess.run(pip, check=False).returncode:
+                prepared = False
+        no_deps = entry.get('no_deps') or []
+        if no_deps:
+            pip = [str(python), '-m', 'pip', 'install', *PIP_TRANSFER, *PIP_INDEX, '--no-deps', *no_deps]
+            if subprocess.run(pip, check=False).returncode:
+                prepared = False
+        from operon.environments import probe as probe_environment
+        passed, interpreter, error = probe_environment(name)
+        ready = prepared and passed
+        reason = error or 'one or more dependency installation commands failed; see the preceding log'
+        if not ready:
+            failures[name] = reason
+        print(f'isolated environment {name}: ' + ('ready' if ready else 'unavailable: ' + reason), flush=True)
+        ok = ok and ready
+    return ok
+
+
+def ensure_requirements(specs, request, bundle=None, *, prepare_library=False):
+    """Repair the complete dependency graph, including missing transitive libraries."""
+    Requirement = _requirement_class()
+    missing = []
+    for spec in specs:
+        req = Requirement(spec)
+        if req.marker and not req.marker.evaluate():
+            continue
+        try:
+            if req.specifier and not req.specifier.contains(metadata.version(req.name), prereleases=True):
+                missing.append(spec)
+        except metadata.PackageNotFoundError:
+            missing.append(spec)
+    request.write_text('\n'.join(specs) + '\n', encoding='utf-8')
+    constraints = request.with_name('pip-constraints.txt')
+    constraints.write_text('\n'.join(PIP_CONSTRAINTS) + '\n', encoding='utf-8')
+    health = subprocess.run([sys.executable, '-I', '-m', 'pip', 'check'], capture_output=True, text=True)
+    if missing or health.returncode:
+        print(f'Repairing dependencies ({len(missing)} direct requirements missing or incompatible)', flush=True)
+        # One pip solve for all Python libraries: do not preinstall conda's
+        # NumPy-1 Hi-C builds then replace NumPy underneath their binary ABI.
+        # micromamba supplies Python, native tools and the build compilers.
+        environment = compiler_environment()
+        status, tail = _install(request, True, environment, constraints, bundle)
+        if status:
+            print('No prebuilt wheel for the whole requirement set; '
+                  'retrying with source distributions', flush=True)
+            status, tail = _install(request, False, environment, constraints, bundle)
+        if status:
+            print('A source build needs the bundled C/C++ toolchain; retrying', flush=True)
+            _ensure_compilers()
+            environment = compiler_environment()
+            status, tail = _install(request, False, environment, constraints, bundle)
+        if status:
+            raise RuntimeError('pip install failed after the wheel and source attempts:\n' + tail)
+    if not prepare_library:
+        return {}
+    if not _ensure_python_extras(constraints):
+        print('some light operator extras could not be installed', flush=True)
+    environment_failures = {}
+    if not _ensure_isolated_environments(Path(sys.prefix).resolve(), failures=environment_failures):
+        print('an isolated operator environment could not be prepared', flush=True)
+    if not _ensure_isolated_extras():
+        print(
+            'optional model packages could not be installed; '
+            'the affected operators report the missing environment at run time',
+            flush=True,
+        )
+    if not _ensure_conda_extras():
+        print(
+            'pysam could not be installed; BAM/CRAM/VCF Readers need the '
+            'bioconda pysam package',
+            flush=True,
+        )
+    return environment_failures
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--code', type=Path, required=True)
+    parser.add_argument('--digest', required=True)
+    args = parser.parse_args()
+    code = args.code.resolve()
+    sys.path.insert(0, str(code))
+    prefix = Path(sys.prefix).resolve()
+    if sys.platform != 'linux' or not prefix.name.startswith('env-') or prefix.parent.name != 'managed-v1':
+        raise ValueError('Installer only writes to a Operon managed Linux environment')
+    specs, entries = requirements(code)
+    environment_failures = ensure_requirements(specs, prefix / 'operon-requirements.txt', code / 'operon' / 'bundled') or {}
+    # Install the SDK distribution metadata (without altering the dependency plan).
+    receipt = prefix / 'operon-ready.json'
+    previous = json.loads(receipt.read_text()) if receipt.exists() else {}
+    if previous.get('source_sha256') != args.digest:
+        subprocess.run([sys.executable, '-I', '-m', 'pip', '--isolated', 'install', '--no-deps', str(code)], check=True)
+        if (code / 'library/pyproject.toml').is_file():
+            subprocess.run([sys.executable, '-I', '-m', 'pip', '--isolated', 'install', '--no-deps', str(code / 'library')], check=True)
+    subprocess.run([sys.executable, '-I', '-m', 'pip', 'check'], check=True)
+    from operon.dependencies import probe, scope
+    allowed = scope()
+    if allowed:
+        entries = [entry for entry in entries if entry['id'] in allowed]
+        print(f'dependency scope active: checking {len(entries)} entries', flush=True)
+    results = probe(entries)
+    for entry in entries:
+        environment = (entry.get('resources') or {}).get('environment')
+        if environment in environment_failures:
+            results[entry['id']] = {'status': 'failed', 'error': environment + ': ' + environment_failures[environment]}
+    # pip check validates the base environment; explicit native Hi-C smoke
+    # checks below remain mandatory. Optional library failures stay visible.
+    required, optional = split_failures(results, entries, required_ids=set())
+    if required:
+        raise ValueError('Operator dependency checks failed: ' + json.dumps(required))
+    if optional:
+        print('Optional operator capabilities are unavailable; affected workflows require repair:', flush=True)
+        for name, error in sorted(optional.items()):
+            print(f'  {name}: {error}', flush=True)
+    for name, command, allowed in [
+        ('bwa', ['bwa'], (1,)), ('samtools', ['samtools', '--version'], (0,)),
+        ('pairtools', ['pairtools', '--version'], (0,)), ('cooler', ['cooler', '--version'], (0,)),
+        ('cooltools', ['cooltools', '--version'], (0,))]:
+        result = subprocess.run(command, capture_output=True, text=True, timeout=60)
+        if result.returncode not in allowed:
+            raise ValueError(name + ' check failed: ' + (result.stdout + result.stderr)[-2000:])
+        print(name + ': ready', flush=True)
+    value = {'source_sha256': args.digest, 'python': sys.version, 'operators_checked': len(results),
+             'packages': {d.metadata['Name']: d.version for d in metadata.distributions()}}
+    from operon.remote.handshake import installation_readiness
+    value['dependency_readiness'] = installation_readiness(entries, results)
+    temporary = receipt.with_suffix('.tmp')
+    temporary.write_text(json.dumps(value, indent=2), encoding='utf-8')
+    os.replace(temporary, receipt)
+    print('Operon and Hi-C environment ready', flush=True)
+
+
+if __name__ == '__main__':
+    main()

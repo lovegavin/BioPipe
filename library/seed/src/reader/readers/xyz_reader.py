@@ -24,10 +24,14 @@ _MASS = {
 
 
 class XyzReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """XYZ reader, one row per atom."""
     parameters_file = 'xyz_reader.XyzReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'XyzReader',
      'version': '1.0.0',
      'kind': 'reader',

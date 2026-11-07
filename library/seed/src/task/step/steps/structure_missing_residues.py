@@ -52,10 +52,13 @@ def missing_residue_rows(residues: list[dict]) -> tuple[list[dict], dict]:
 class StructureMissingResiduesStep(Step):
     """Count internal residue-number gaps for every polymer chain."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_missing_residues.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_missing_residues",
         "version": "1.0.0",

@@ -126,7 +126,7 @@ def antifold_command(
     """Build the official AntiFold command line."""
 
     if not python_executable:
-        from biopipe.environments import resolve
+        from operon.environments import resolve
         resolved = resolve('antifold')
         python_executable = str(resolved) if resolved else ''
     launcher = python_executable or sys.executable
@@ -182,9 +182,12 @@ def run_antifold(command: list[str], out_dir: Path, *, timeout: int = 1800) -> t
 
 
 class AntifoldDesignStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "antifold_design.AntifoldDesignStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "antifold_design",
         "version": "1.0.0",

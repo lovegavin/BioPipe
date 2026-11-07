@@ -1,4 +1,4 @@
-# BioPipe Operator Library v4.0.2
+# Operon Operator Library v4.0.2
 
 **Minimum application:** 2.6.0 (frontend 2.6.0)
 
@@ -10,7 +10,7 @@ workflows do not need to be repinned.
 ## What changed
 
 - Added `QUICKSTART.md` (English) and `QUICKSTART.zh.md` (Chinese) at the repository
-  root: install `BioPipe_Setup.exe` 2.6.0, import the operator-library zip through
+  root: install `Operon_Setup.exe` 2.6.0, import the operator-library zip through
   **Operator Library → Import package**, and run a real 1MEL/VHH workflow. Both
   documents include an agent prompt that requires reading the documentation and
   inspecting the canvas before any edit, and explicit confirmation before a run.
@@ -18,7 +18,7 @@ workflows do not need to be repinned.
   `vhh.fasta` derived from its chain A SEQRES) and `vhh_interface.route.json`, a
   six-node graph producing `interface_residues.csv` (88 rows) and
   `liabilities.csv` (10 rows).
-- The library release now attaches `BioPipe-Quickstart-<version>.zip` so a
+- The library release now attaches `Operon-Quickstart-<version>.zip` so a
   setup.exe user can obtain the example and both quickstart documents without a
   source checkout.
 - Corrected the stale interface count in `examples/smoke_real_data/README.md` and
@@ -37,9 +37,9 @@ workflows do not need to be repinned.
 
 ## Assets
 
-- `BioPipe-Library-v4.0.2-Linux.biopipe-library.zip`
-- `BioPipe-Library-v4.0.2-Windows.biopipe-library.zip`
-- `biopipe_builtin_library-4.0.2-py3-none-any.whl`
-- `BioPipe-Quickstart-v4.0.2.zip`
+- `Operon-Library-v4.0.2-Linux.operon-library.zip`
+- `Operon-Library-v4.0.2-Windows.operon-library.zip`
+- `operon_builtin_library-4.0.2-py3-none-any.whl`
+- `Operon-Quickstart-v4.0.2.zip`
 - `SHA256SUMS.txt`
 - `verification-ubuntu-latest.json`, `verification-windows-latest.json`

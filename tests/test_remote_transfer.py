@@ -7,10 +7,10 @@ import threading
 
 import pytest
 
-from biopipe.remote.client import SSHConnection
-from biopipe.remote.protocol import Decoder, frames
-from biopipe.remote.server import RemoteService
-from biopipe.remote.transfers import TransferStore
+from operon.remote.client import SSHConnection
+from operon.remote.protocol import Decoder, frames
+from operon.remote.server import RemoteService
+from operon.remote.transfers import TransferStore
 from src.web.transfers import TransferClient
 
 
@@ -51,7 +51,7 @@ def test_real_local_ssh_binary_upload_download_without_sftp(tmp_path):
             connection, _ = listener.accept()
             transport = paramiko.Transport(connection); transports.append(transport); transport.add_server_key(key)
             transport.start_server(server=Server())
-            channel = transport.accept(5); channel.sendall(b'BIOPIPE_REMOTE_READY 1\n')
+            channel = transport.accept(5); channel.sendall(b'OPERON_REMOTE_READY 1\n')
             decoder = Decoder('Q')
             for line in channel.makefile('r'):
                 request = decoder.feed(line.decode() if isinstance(line, bytes) else line)
@@ -59,7 +59,7 @@ def test_real_local_ssh_binary_upload_download_without_sftp(tmp_path):
                 if request is None: continue
                 try:
                     if request['method'] == 'handshake':
-                        from biopipe.remote.handshake import CAPABILITIES
+                        from operon.remote.handshake import CAPABILITIES
                         result = {'protocol_version': 1, 'catalog': {'operators': [], 'readers': []},
                                   'handshake': {'version': 1, 'operator_protocol': 3,
                                                 'capabilities': list(CAPABILITIES), 'catalog_digest': 'test'}}

@@ -51,7 +51,7 @@ Updating a source checkout is distinct from installing a newer operator library.
   agent bridge and add-operator suites: **45 passed** across seven files. The
   presentation suite was repeated after the icon fix.
 - Production frontend TypeScript/Vite build: passed.
-- `python -m biopipe registry check`: no errors and no changed indexes.
+- `python -m operon registry check`: no errors and no changed indexes.
 - `python scripts/build_operator_docs.py --check`: no changed library pages or indexes.
 - Library tree comparison with the author commit: identical.
 

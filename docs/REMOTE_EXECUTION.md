@@ -1,6 +1,6 @@
 # Windows editing and SSH execution
 
-BioPipe Studio v0.8.1 can prepare a Linux server and run a workflow over SSH. Choose an execution
+Operon Studio v0.8.1 can prepare a Linux server and run a workflow over SSH. Choose an execution
 target in the top toolbar, select server files in the input inspector, then use
 the existing **Check**, **Run**, **Stop**, results and log controls. This feature
 is included in both the full and Lite Windows desktop archives.
@@ -36,7 +36,7 @@ failed operator capabilities; they do not prevent a healthy base service from
 being registered. Shared Python failures and the explicit native Hi-C checks
 remain fatal. A connected server is not a claim that every library entry is ready.
 
-The default installation directory is `$HOME/.local/share/biopipe`, resolved on
+The default installation directory is `$HOME/.local/share/operon`, resolved on
 the server. It can be changed in the connection panel. The default run directory
 is `workspace/` below that location. No sudo, system Python modifications, shell
 startup edits, or global Conda activation are used. Existing manually specified
@@ -64,7 +64,7 @@ and closes SSH; allow any outstanding installer to release its lock before retry
 ### Use an existing environment
 
 Use a Linux account that can read the input data and write its run directory.
-Place a compatible BioPipe server installation on the server, including `scripts/run.py`,
+Place a compatible Operon server installation on the server, including `scripts/run.py`,
 the generated bundled catalog and the independent `*.parameters.json` files.
 Prepare Python 3.11+ and the dependencies of the operators you will use. For Hi-C,
 follow [the Linux environment instructions](HIC.md#linux-tool-environment).
@@ -79,7 +79,7 @@ Either use its paths directly in **Manually specify environment**, or register
 that installation once for discovery by other desktops:
 
 ```sh
-python -m biopipe.remote.installation register --app-dir /srv/biopipe --workspace /srv/biopipe-work
+python -m operon.remote.installation register --app-dir /srv/operon --workspace /srv/operon-work
 ```
 
 The paths above are examples chosen by the administrator. Add `--base` for a
@@ -100,9 +100,9 @@ Open the settings button beside the execution target and add a server:
 |---|---|
 | Name | A local display name |
 | Host, port, username | The SSH endpoint and existing account |
-| Server environment | Registered BioPipe server (default) or manually specified environment |
+| Server environment | Registered Operon server (default) or manually specified environment |
 | Installation directory | Optional absolute Linux path for a managed deployment; defaults to the server user's home |
-| BioPipe directory | Absolute Linux path to a compatible installed server |
+| Operon directory | Absolute Linux path to a compatible installed server |
 | Run directory | Absolute writable Linux directory for jobs and the server registry |
 | Python | The environment's absolute Python executable, or `python3` on the remote PATH |
 | Authentication | Password, a local private-key file, or SSH Agent |
@@ -209,25 +209,25 @@ served from a different checkout is rejected rather than silently switching it.
 
 The projected registry contains `supported_systems` and `systems_status`; no v3
 operator declaration or parameter protocol changes are required. These values
-are derived from known dependencies and BioPipe's external-tool adapters.
+are derived from known dependencies and Operon's external-tool adapters.
 The Hi-C BWA/samtools/pairtools/cooltools adapters select Linux; their library items
 and canvas cards display **Linux**. This describes the supported adapter path,
 not a claim that every upstream tool can never be ported to another OS.
 
 Unknown or conditional dependencies have `systems_status: "unknown"`; their
 candidate platform list is not a compatibility guarantee. Maintain recognized
-capabilities in `biopipe/platforms.py`. Actual tool availability is returned by the
+capabilities in `operon/platforms.py`. Actual tool availability is returned by the
 server connection handshake and executable validation remains at runtime.
 
 ## Implementation map
 
 | Module | Responsibility |
 |---|---|
-| `biopipe/remote/protocol.py` | Framed, checksummed control messages that tolerate PTY banners and echo |
-| `biopipe/remote/client.py` | SSH authentication, explicit host trust, ordinary/interactive transport |
-| `biopipe/remote/provision.py` | Python-free bootstrap, source allowlist, verified download and installation progress |
-| `biopipe/remote/install_linux.py` | Managed environment requirements, dependency and executable checks, readiness receipt |
-| `biopipe/remote/server.py` | Private socket service, file metadata, detached jobs, resumable logs |
+| `operon/remote/protocol.py` | Framed, checksummed control messages that tolerate PTY banners and echo |
+| `operon/remote/client.py` | SSH authentication, explicit host trust, ordinary/interactive transport |
+| `operon/remote/provision.py` | Python-free bootstrap, source allowlist, verified download and installation progress |
+| `operon/remote/install_linux.py` | Managed environment requirements, dependency and executable checks, readiness receipt |
+| `operon/remote/server.py` | Private socket service, file metadata, detached jobs, resumable logs |
 | `src/web/remote_service.py` | Local profiles, cached catalogs, remote job references and retry identities |
 | `src/web/remote_api.py` | Local token-protected endpoints and log streaming |
 | `frontend/src/RemotePanel.tsx` | Connection dialog and server file picker |

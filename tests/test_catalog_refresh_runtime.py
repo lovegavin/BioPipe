@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from fastapi.testclient import TestClient
 import pytest
 
-from biopipe.plugins import PluginManager
+from operon.plugins import PluginManager
 from src.web.api import create_app
 from src.web.service import Settings
 
@@ -86,13 +86,13 @@ def test_replace_during_read_is_not_hidden_by_a_later_file_stamp(tmp_path, monke
 
 
 def test_unchanged_source_refresh_hashes_without_staging_and_detects_same_size_edit(tmp_path, monkeypatch):
-    from biopipe import source_library
+    from operon import source_library
     root = tmp_path / 'sources'
-    for directory in ('src/task/step/steps', 'src/reader/readers', 'biopipe'):
+    for directory in ('src/task/step/steps', 'src/reader/readers', 'operon'):
         (root / directory).mkdir(parents=True)
     code = root / 'src/task/step/steps/example.py'
     code.write_text('value = 1\n', encoding='utf-8')
-    (root / 'biopipe/builtin_packages.json').write_text('{"packages": []}', encoding='utf-8')
+    (root / 'operon/builtin_packages.json').write_text('{"packages": []}', encoding='utf-8')
     fingerprint = source_library.snapshot_sources(root, tmp_path / 'initial-copy')
     assert fingerprint == source_library.snapshot_sources(root)
     manager = SimpleNamespace(source_root=root, managed_sources=False)

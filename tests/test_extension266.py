@@ -34,7 +34,7 @@ while index < len(args):
         index += 2
     else:
         index += 1
-capture = os.environ.get("BIOPIPE_TEST_CAPTURE")
+capture = os.environ.get("OPERON_TEST_CAPTURE")
 if capture:
     Path(capture).write_text(json.dumps({"options": options, "argv": args}))
 out = Path(options["--out_folder"]) / "seqs"
@@ -86,7 +86,7 @@ def test_parse_omit():
 def test_run_designs_without_omitted_residues(tmp_path, monkeypatch):
     params = _params(tmp_path)
     capture = tmp_path / "capture.json"
-    monkeypatch.setenv("BIOPIPE_TEST_CAPTURE", str(capture))
+    monkeypatch.setenv("OPERON_TEST_CAPTURE", str(capture))
     ctx = _ctx(tmp_path, "designs", params)
     run(ctx, [{"name": "proteinmpnn_omit_design", "inputs": [], "params": params}])
     form = ctx["designs"]
@@ -103,7 +103,7 @@ def test_run_designs_without_omitted_residues(tmp_path, monkeypatch):
 def test_leaked_residues_are_rejected(tmp_path, monkeypatch):
     params = _params(tmp_path)
     params["omit_AAs"] = "A"
-    monkeypatch.setenv("BIOPIPE_TEST_CAPTURE", str(tmp_path / "capture.json"))
+    monkeypatch.setenv("OPERON_TEST_CAPTURE", str(tmp_path / "capture.json"))
     ctx = _ctx(tmp_path, "designs", params)
     with pytest.raises(StepError, match="omitted residues"):
         run(ctx, [{"name": "proteinmpnn_omit_design", "inputs": [], "params": params}])

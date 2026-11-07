@@ -2,9 +2,9 @@ import json
 from pathlib import Path
 
 import pytest
-from biopipe.r_runtime import RRuntime
-from biopipe_sdk.r_dependencies import validate_r
-from biopipe.dependencies import DependencySession
+from operon.r_runtime import RRuntime
+from operon_sdk.r_dependencies import validate_r
+from operon.dependencies import DependencySession
 from test_dependencies import Manager
 
 SPEC = {'version': '>=4.3,<5', 'packages': [{'name': 'ggplot2', 'source': 'cran', 'version': '>=3.5'}]}
@@ -24,7 +24,7 @@ def test_success_receipt_reused_failure_never_published_and_versions_isolated(tm
     calls = []
     monkeypatch.setattr(runtime, '_bootstrap', lambda spec: str(exe))
     monkeypatch.setattr(runtime, '_install', lambda *args: calls.append(args[1]))
-    monkeypatch.setattr(runtime, '_probe', lambda *args: {'BIOPIPE_R': '4.4.3', 'ggplot2': '3.5.2'})
+    monkeypatch.setattr(runtime, '_probe', lambda *args: {'OPERON_R': '4.4.3', 'ggplot2': '3.5.2'})
     first = runtime.ensure(SPEC)
     assert runtime.ensure(SPEC) == first and len(calls) == 1
     changed = {**SPEC, 'packages': [{'name': 'ggplot2', 'source': 'cran', 'version': '<3'}]}
@@ -68,16 +68,16 @@ def test_missing_r_cannot_report_passed_and_failure_is_retryable(tmp_path, monke
 
 
 def test_run_r_uses_frozen_json_and_records_errors(tmp_path, monkeypatch):
-    from biopipe.r_runtime import run_r
+    from operon.r_runtime import run_r
     from src.task.context import Context
     monkeypatch.setattr(RRuntime, 'ensure', lambda *args, **kwargs: {
-        'executable': 'Rscript', 'library': str(tmp_path), 'versions': {'BIOPIPE_R': '4.4.3'}})
+        'executable': 'Rscript', 'library': str(tmp_path), 'versions': {'OPERON_R': '4.4.3'}})
     seen = []
     def call(args, **kwargs):
         request = json.loads(Path(args[-1]).read_text())
         seen.append(request)
         return 'plot complete'
-    monkeypatch.setattr('biopipe.r_runtime._call', call)
+    monkeypatch.setattr('operon.r_runtime._call', call)
     ctx = Context(tmp_path, {'sources': {}, 'steps': []})
     try:
         ctx.step_params = {'palette': ['#0072B2', '#D55E00'], 'title': '中文'}
@@ -91,7 +91,7 @@ def test_run_r_uses_frozen_json_and_records_errors(tmp_path, monkeypatch):
 
 def test_probe_rejects_actual_version_mismatch(tmp_path, monkeypatch):
     runtime = RRuntime(tmp_path)
-    monkeypatch.setattr('biopipe.r_runtime._call', lambda *a, **k: 'BIOPIPE_R\t4.4.3\nggplot2\t2.0.0\njsonlite\t2.0.0\n')
+    monkeypatch.setattr('operon.r_runtime._call', lambda *a, **k: 'OPERON_R\t4.4.3\nggplot2\t2.0.0\njsonlite\t2.0.0\n')
     with pytest.raises(ValueError, match='ggplot2'):
         runtime._probe('Rscript', tmp_path, validate_r(SPEC))
 
@@ -103,7 +103,7 @@ def test_server_can_repair_r_while_python_repair_stays_disabled(tmp_path, monkey
     monkeypatch.setattr(RRuntime, 'ensure', lambda self, spec, **kwargs: calls.append(kwargs))
     def forbidden(*args, **kwargs):
         pytest.fail('Python repair should not run during an R-only server repair')
-    monkeypatch.setattr('biopipe.install_targets.repair_entries', forbidden)
+    monkeypatch.setattr('operon.install_targets.repair_entries', forbidden)
     session = DependencySession(manager, inspector=lambda python, entries, directory: {
         e['id']: {'status': 'passed' if e['id'] == 'a' else 'failed', 'error': 'missing Python package'} for e in entries})
     result = session.check(repair=False, repair_r=True)
@@ -112,8 +112,8 @@ def test_server_can_repair_r_while_python_repair_stays_disabled(tmp_path, monkey
 
 
 def test_python_installation_receipt_never_certifies_r_packages():
-    from biopipe.remote.handshake import installation_readiness
-    from biopipe.platforms import systems_status
+    from operon.remote.handshake import installation_readiness
+    from operon.platforms import systems_status
     entry = {'id': 'plot', 'resources': {'r': SPEC}, 'dependencies': []}
     receipt = installation_readiness([entry], {'plot': {'status': 'passed'}})
     assert 'plot' not in receipt['entries']

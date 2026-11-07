@@ -9,8 +9,8 @@ import sys
 
 import pytest
 
-from biopipe.packages import bundled_state
-from biopipe.plugins import PluginManager, active_descriptors
+from operon.packages import bundled_state
+from operon.plugins import PluginManager, active_descriptors
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -19,20 +19,20 @@ ROOT = Path(__file__).resolve().parents[1]
 def checkout(tmp_path):
     root = tmp_path / "checkout"
     root.mkdir()
-    for name in ("src", "biopipe", "biopipe_sdk", "scripts"):
+    for name in ("src", "operon", "operon_sdk", "scripts"):
         shutil.copytree(ROOT / name, root / name, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     shutil.copytree(ROOT / "library/seed", root / "library/seed", ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     return root
 
 
 def cli(root, *args):
-    process = subprocess.run([sys.executable, "-m", "biopipe", "registry", *args], cwd=root,
+    process = subprocess.run([sys.executable, "-m", "operon", "registry", *args], cwd=root,
                              capture_output=True, text=True, encoding="utf-8", timeout=60)
     assert process.stdout, process.stderr
     return process.returncode, json.loads(process.stdout)
 
 
-NEW_OPERATOR = '''from biopipe_sdk import Step, port
+NEW_OPERATOR = '''from operon_sdk import Step, port
 class Probe(Step):
     name = "example.probe"
     category = "analysis"
@@ -53,7 +53,7 @@ def add_extension(root, source=NEW_OPERATOR):
 
 
 def indexes(root):
-    return [(root / "library/seed" / path).read_bytes() for path in ("biopipe/builtin_packages.json", "src/web/builtin_routes.json")]
+    return [(root / "library/seed" / path).read_bytes() for path in ("operon/builtin_packages.json", "src/web/builtin_routes.json")]
 
 
 def test_discover_build_check_new_operator_and_unlisted_route(checkout):
@@ -80,7 +80,7 @@ steps:
     operator_count = sum(d["kind"] == "operator" for d in bundled_state()["descriptors"])
     route_count = len(json.loads(before[1])['routes'])
     assert code == 0 and built["operators"] == operator_count + 1 and built["routes"] == route_count + 1
-    manifest = json.loads((checkout / "library/seed/biopipe/builtin_packages.json").read_text(encoding="utf-8"))
+    manifest = json.loads((checkout / "library/seed/operon/builtin_packages.json").read_text(encoding="utf-8"))
     descriptor = next(d for p in manifest["packages"] for d in p["descriptors"] if d["id"] == "example.probe")
     assert descriptor["category"] == "analysis" and descriptor["icon"] == "Sigma"
     code, check = cli(checkout, "check")
@@ -95,7 +95,7 @@ def test_sdk_operator_is_discovered_and_missing_startup_index_can_be_rebuilt(che
                   .replace('    def run(self, ctx, inputs):', '    output_parameter = None\n    def compute(self, inputs, params, context):'))
     code, result = cli(checkout, "discover")
     assert code == 0 and any(e['id'] == 'example.probe' and e['kind'] == 'operator' for e in result['extensions'])
-    index = checkout / 'library/seed/biopipe/builtin_packages.json'
+    index = checkout / 'library/seed/operon/builtin_packages.json'
     value = json.loads(index.read_text(encoding='utf-8'))
     # A removed module referenced by an old startup index must not block repair.
     entry = deepcopy(next(d for p in value['packages'] for d in p['descriptors'] if d['id'] == 'diversity'))
@@ -142,25 +142,25 @@ def test_new_bundled_package_migrates_without_restoring_removals(tmp_path):
     manager = PluginManager(tmp_path)
     manager.directory.mkdir(parents=True)
     state = deepcopy(bundled_state())
-    state["packages"] = [p for p in state["packages"] if p["name"] != "biopipe-microbiome"]
-    state["descriptors"] = [d for d in state["descriptors"] if d["distribution"] != "biopipe-microbiome"]
+    state["packages"] = [p for p in state["packages"] if p["name"] != "operon-microbiome"]
+    state["descriptors"] = [d for d in state["descriptors"] if d["distribution"] != "operon-microbiome"]
     state.update(protocol_version=3, package_protocol_version=3, generation="before16s", bundled_seen=[p["name"] for p in state["packages"]])
     history = manager.directory / "snapshots"
     history.mkdir()
     (history / "old.json").write_text(json.dumps(state), encoding="utf-8")
-    state["packages"] = [p for p in state["packages"] if p["name"] != "biopipe-genetics"]
-    state["descriptors"] = [d for d in state["descriptors"] if d["distribution"] != "biopipe-genetics"]
-    next(p for p in state["packages"] if p["name"] == "biopipe-core")["enabled"] = False
+    state["packages"] = [p for p in state["packages"] if p["name"] != "operon-genetics"]
+    state["descriptors"] = [d for d in state["descriptors"] if d["distribution"] != "operon-genetics"]
+    next(p for p in state["packages"] if p["name"] == "operon-core")["enabled"] = False
     manager.registry.write_text(json.dumps(state), encoding="utf-8")
     updated = manager.state()
     names = {p["name"] for p in updated["packages"]}
-    assert "biopipe-microbiome" in names and "biopipe-genetics" not in names
-    assert not next(p for p in updated["packages"] if p["name"] == "biopipe-core")["enabled"]
+    assert "operon-microbiome" in names and "operon-genetics" not in names
+    assert not next(p for p in updated["packages"] if p["name"] == "operon-core")["enabled"]
     assert "diversity" in {d["id"] for d in active_descriptors(updated)}
     assert manager.state()["generation"] == updated["generation"]
-    manager.manage("biopipe-microbiome", "remove")
-    assert "biopipe-microbiome" not in {p["name"] for p in manager.state()["packages"]}
-    manager.manage("biopipe-microbiome", "restore")
+    manager.manage("operon-microbiome", "remove")
+    assert "operon-microbiome" not in {p["name"] for p in manager.state()["packages"]}
+    manager.manage("operon-microbiome", "restore")
     assert "diversity" in {d["id"] for d in active_descriptors(manager.state())}
 
 

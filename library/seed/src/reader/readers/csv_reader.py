@@ -60,12 +60,18 @@ from src.reader.readers._labels import unique_labels
 
 class CsvReader(Reader):
     """Reader for .csv files."""
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     parameters_file = 'csv_reader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'CsvReader',
      'version': '1.0.0',
      'kind': 'reader',
+    'dependencies': ['pandas>=2.0'],
+    'dependency_imports': ['pandas'],
      'title': 'CsvReader',
      'contracts': {'version': 1,
                    'inputs': [],

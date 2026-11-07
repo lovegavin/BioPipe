@@ -11,10 +11,15 @@ from ._cluster_agreement import paired_labels
 
 
 class AdjustedMutualInfoStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Adjusted mutual information between two partitions."""
     parameters_file = 'adjusted_mutual_info.AdjustedMutualInfoStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'adjusted_mutual_info',
      'version': '1.0.0',
      'kind': 'operator',

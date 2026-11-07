@@ -20,7 +20,7 @@ _STATISTICS = [
 
 
 class AdditiveSplineRegressionStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Fit an additive OLS model with one cubic B-spline per predictor.
 
     The basis uses :func:`patsy.bs`; for a given ``df`` it has the same
@@ -28,7 +28,11 @@ class AdditiveSplineRegressionStep(Step):
     not a penalized GAM: no smoothing parameter is estimated.
     """
     parameters_file = 'additive_spline_regression.AdditiveSplineRegressionStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'additive_spline_regression',
      'version': '1.0.0',
      'kind': 'operator',

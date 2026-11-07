@@ -57,10 +57,13 @@ def charge_row(molecule) -> list[float]:
 class RdkitChargeProfileStep(Step):
     """Formal-charge and Gasteiger summaries for a set of molecules."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "rdkit_charge_profile.RdkitChargeProfileStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "rdkit_charge_profile",
         "version": "1.0.0",

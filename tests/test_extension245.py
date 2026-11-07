@@ -128,8 +128,8 @@ def test_runner_round_trip(tmp_path, monkeypatch) -> None:
 def test_real_esmfold():
     import os
 
-    if os.environ.get("BIOPIPE_ESMFOLD_REAL") != "1":
-        pytest.skip("set BIOPIPE_ESMFOLD_REAL=1 to run ESMFold 3B")
+    if os.environ.get("OPERON_ESMFOLD_REAL") != "1":
+        pytest.skip("set OPERON_ESMFOLD_REAL=1 to run ESMFold 3B")
     pytest.importorskip("esm")
     from src.task.step.steps._sequence_common import encode_sequences
 

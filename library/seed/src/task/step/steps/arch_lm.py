@@ -11,13 +11,17 @@ from ._stats21_common import numeric_column, table_frame
 
 
 class ArchLmStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """ARCH LM test on a residual or return series.
 
     The input is treated as residuals; the operator does not fit a mean model.
     """
     parameters_file = 'arch_lm.ArchLmStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'arch_lm',
      'version': '1.0.0',
      'kind': 'operator',

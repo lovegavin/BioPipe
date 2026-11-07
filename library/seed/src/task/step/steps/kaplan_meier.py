@@ -39,9 +39,13 @@ from src.task.step.steps._plot_helpers import save_figure, setup_style, figure_r
 
 class KaplanMeierStep(Step):
     """Draw Kaplan-Meier survival curves."""
-    provider = 'biopipe-plots'
+    provider = 'operon-plots'
     parameters_file = 'kaplan_meier.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': []},
+        'protocol_version': 3,
      'id': 'kaplan_meier',
      'version': '1.0.0',
      'kind': 'operator',

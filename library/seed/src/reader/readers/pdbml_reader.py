@@ -41,9 +41,13 @@ def _number(value: str, default: float = float("nan")) -> float:
 class PdbmlReader(Reader):
     """Read the coordinate table of a PDBML document."""
 
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     parameters_file = 'pdbml_reader.PdbmlReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'PdbmlReader',
      'version': '1.0.0',
      'kind': 'reader',

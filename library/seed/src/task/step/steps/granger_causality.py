@@ -19,9 +19,13 @@ _STATS = ["F", "p", "df_denom", "df_num"]
 
 
 class GrangerCausalityStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'granger_causality.GrangerCausalityStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'granger_causality',
      'version': '1.0.0',
      'kind': 'operator',

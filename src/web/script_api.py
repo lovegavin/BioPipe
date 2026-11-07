@@ -43,11 +43,11 @@ def source_for(manager, identifier):
         root = (directory / relative).resolve()
         if root.is_relative_to(directory):
             roots.append(root)
-    from biopipe.library_location import source_root
+    from operon.library_location import source_root
     seed = source_root()
     if seed:
         roots.append(seed.resolve())
-    from biopipe_sdk.declarations import code_hash
+    from operon_sdk.declarations import code_hash
     for root in roots:
         for relative in (module.replace('.', '/') + '.py', module.replace('.', '/') + '/__init__.py'):
             path = (root / relative).resolve()
@@ -63,7 +63,7 @@ def source_for(manager, identifier):
 def mount_scripts(app, service):
     @app.post('/api/scripts/inspect')
     def inspect(payload: InspectScript):
-        from biopipe.script_operators import inspect_source, validate_script, parameter_candidates
+        from operon.script_operators import inspect_source, validate_script, parameter_candidates
         if Path(payload.filename).name != payload.filename or '/' in payload.filename or '\\' in payload.filename:
             raise HTTPException(422, 'Script filename must be a basename')
         try:
@@ -81,7 +81,7 @@ def mount_scripts(app, service):
 
     @app.post('/api/scripts/extract')
     def extract(payload: ExtractScript):
-        from biopipe.script_operators import extract_parameters
+        from operon.script_operators import extract_parameters
         try:
             return extract_parameters(payload.script, payload.names)
         except (ValueError, SyntaxError) as exc:
@@ -93,8 +93,8 @@ def mount_scripts(app, service):
 
     @app.post('/api/scripts/publish')
     def publish(payload: PublishScript):
-        from biopipe.script_operators import export_script_package
-        from biopipe.dropins import single_file_wheel
+        from operon.script_operators import export_script_package
+        from operon.dropins import single_file_wheel
         directory = service.directory / 'script-inspection'
         directory.mkdir(parents=True, exist_ok=True)
         try:
@@ -106,8 +106,8 @@ def mount_scripts(app, service):
                                                 title=payload.title, category=payload.category, version=payload.version)
                 source = Path(folder) / project['module'] / '__init__.py'
                 metadata = {'name': project['package'], 'version': project['version'],
-                            'dependencies': ['biopipe-studio>=3.0.0,<4']}
-                source.write_text('BIOPIPE_PLUGIN = ' + repr(metadata) + '\n' + source.read_text(encoding='utf-8'), encoding='utf-8')
+                            'dependencies': ['operon-studio>=3.0.0,<4']}
+                source.write_text('OPERON_PLUGIN = ' + repr(metadata) + '\n' + source.read_text(encoding='utf-8'), encoding='utf-8')
                 wheel = single_file_wheel(source, Path(folder) / 'dist')
                 service.plugins.install(wheel)
             service.refresh_catalog()

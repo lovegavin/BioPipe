@@ -15,9 +15,14 @@ from src.task.step.steps._atac_utils import bam_path, iter_fragments
 
 class AtacFragmentSizeStep(Step):
     """Histogram of ATAC-seq fragment lengths."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'atac_fragment_size.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'atac_fragment_size',
         'version': '1.0.0',

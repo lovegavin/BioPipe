@@ -54,15 +54,15 @@
     },
     "view": {
       "type": "string",
-      "x-biopipe-path": "workflow"
+      "x-operon-path": "workflow"
     },
     "phasing_track": {
       "type": "string",
-      "x-biopipe-path": "workflow"
+      "x-operon-path": "workflow"
     },
     "features": {
       "type": "string",
-      "x-biopipe-path": "workflow"
+      "x-operon-path": "workflow"
     },
     "features_format": {
       "type": "string",

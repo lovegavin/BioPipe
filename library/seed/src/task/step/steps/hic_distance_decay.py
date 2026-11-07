@@ -12,9 +12,12 @@ _FIELDS = ["distance_start", "distance_end", "n_contacts", "n_pairs", "mean_coun
 
 
 class HicDistanceDecayStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "hic_distance_decay.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "hic_distance_decay",
         "version": "1.0.0",

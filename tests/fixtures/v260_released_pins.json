@@ -2,14 +2,14 @@
   "CsvReader": {
     "version": "1.0.0",
     "sha256": "78eba02061bb01aae043c5beac6c41e81500fe247a724900df48685d5d2c4c92",
-    "package": "biopipe-readers",
+    "package": "operon-readers",
     "code_sha": "0793377470c30aac9e8a179be30882f8795ba0f84c400122fc825bd6c732daa3",
     "declaration_sha": "730f6d49d4dc3c44c0430b53cbaacf875b403e66d13390fa9da21afb36ccbb30"
   },
   "pca": {
     "version": "1.0.0",
     "sha256": "e5776122e7bdf94e35c9ab19d0c871faec1bf9857311033919c569a459bc32d4",
-    "package": "biopipe-genetics",
+    "package": "operon-genetics",
     "code_sha": "0793377470c30aac9e8a179be30882f8795ba0f84c400122fc825bd6c732daa3",
     "declaration_sha": "fdbeb58500dd1b859face5cc6be2b0f4eb3e77b41041c3858ccc065d62f808d8"
   }

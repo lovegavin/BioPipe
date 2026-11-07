@@ -183,10 +183,13 @@ def run_designer(
 class ProteinmpnnBiasScanStep(Step):
     """Quantify the per-position effect of a ProteinMPNN amino-acid bias."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "proteinmpnn_bias_scan.ProteinmpnnBiasScanStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_bias_scan",
         "version": "1.0.0",
@@ -228,7 +231,7 @@ class ProteinmpnnBiasScanStep(Step):
         params = ctx.step_params
         structure = Path(str(params.get("structure_path", ""))).expanduser()
         repo_value = str(params.get("proteinmpnn_path", "") or "")
-        repo = Path(repo_value).expanduser() if repo_value else Path(os.environ.get("BIOPIPE_PROTEINMPNN_PATH", ""))
+        repo = Path(repo_value).expanduser() if repo_value else Path(os.environ.get("OPERON_PROTEINMPNN_PATH", ""))
         weights = str(params.get("weights_path", "") or "")
         python = str(params.get("python_executable", "") or "") or sys.executable
         model_name = str(params.get("model_name", "v_48_020") or "v_48_020")
@@ -255,7 +258,7 @@ class ProteinmpnnBiasScanStep(Step):
             raise StepError(
                 f"proteinmpnn_bias_scan: model_name must be one of {list(MODELS)}"
             )
-        if not repo_value and not os.environ.get("BIOPIPE_PROTEINMPNN_PATH"):
+        if not repo_value and not os.environ.get("OPERON_PROTEINMPNN_PATH"):
             raise StepError(
                 "proteinmpnn_bias_scan: proteinmpnn_path is required; point it at an "
                 "official ProteinMPNN checkout"
@@ -273,8 +276,8 @@ class ProteinmpnnBiasScanStep(Step):
         if device not in ("cpu", "cuda"):
             raise StepError("proteinmpnn_bias_scan: device must be 'cpu' or 'cuda'")
         bias = parse_bias(str(bias_text))
-        baseline_dir = Path(tempfile.mkdtemp(prefix="biopipe-bias-base-"))
-        biased_dir = Path(tempfile.mkdtemp(prefix="biopipe-bias-boost-"))
+        baseline_dir = Path(tempfile.mkdtemp(prefix="operon-bias-base-"))
+        biased_dir = Path(tempfile.mkdtemp(prefix="operon-bias-boost-"))
         try:
             bias_file = biased_dir / "bias.json"
             bias_file.write_text(json.dumps(bias), encoding="utf-8")

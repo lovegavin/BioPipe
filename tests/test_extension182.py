@@ -123,7 +123,7 @@ def test_step_outputs(tmp_path):
 
 
 def test_parameter_errors(tmp_path, monkeypatch):
-    monkeypatch.delenv("BIOPIPE_PROTEINMPNN_PATH", raising=False)
+    monkeypatch.delenv("OPERON_PROTEINMPNN_PATH", raising=False)
     repo = _repo(tmp_path)
     step = ProteinmpnnTemperatureLadderStep()
     with pytest.raises(StepError, match="structure_path is required"):

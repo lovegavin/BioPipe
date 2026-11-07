@@ -15,7 +15,7 @@
       "type": "string",
       "default": "",
       "title": "ProteinMPNN 路径",
-      "description": "Official ProteinMPNN checkout; empty uses BIOPIPE_PROTEINMPNN_PATH.",
+      "description": "Official ProteinMPNN checkout; empty uses OPERON_PROTEINMPNN_PATH.",
       "x-ui-group": "basic",
       "x-ui-order": 10
     },

@@ -47,7 +47,7 @@ Each upload gets its own directory. Original filenames remain intact within it,
 so sibling lookup works and repeated filenames from separate imports cannot
 overwrite each other. Files stream to disk without an application-imposed size
 limit by default; upload size is independent of the analysis memory budget.
-To explicitly impose a per-file cap, set `BIOPIPE_STUDIO_MAX_UPLOAD_MB` to a positive
+To explicitly impose a per-file cap, set `OPERON_STUDIO_MAX_UPLOAD_MB` to a positive
 integer in MiB before starting Studio. Both desktop and development launchers use
 this setting; unset or `0` means no configured cap. Disk capacity and filesystem
 limits still apply. Failed transfers remove partial files; a failed batch

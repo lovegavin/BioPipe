@@ -9,7 +9,7 @@ from src.reader.readers._gsea_common import parse_phenotype, phenotype_form
 
 
 class ClsReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for GSEA .cls categorical phenotype files.
 
     The output is ``[sample, feature]`` with one encoded ``class`` column.
@@ -17,7 +17,11 @@ class ClsReader(Reader):
     recover them for differential-expression operators.
     """
     parameters_file = 'cls_reader.ClsReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'ClsReader',
      'version': '1.0.0',
      'kind': 'reader',

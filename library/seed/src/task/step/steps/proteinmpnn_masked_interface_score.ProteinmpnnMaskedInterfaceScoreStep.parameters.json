@@ -80,7 +80,7 @@
     "proteinmpnn_path": {
       "type": "string",
       "title": "ProteinMPNN 目录",
-      "description": "官方仓库路径；留空则读 BIOPIPE_PROTEINMPNN_PATH",
+      "description": "官方仓库路径；留空则读 OPERON_PROTEINMPNN_PATH",
       "default": "",
       "x-ui-group": "模型",
       "x-ui-order": 2

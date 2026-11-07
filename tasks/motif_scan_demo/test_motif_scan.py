@@ -2,7 +2,7 @@ import numpy as np
 
 from src.core import Form, StepError
 from src.task.step.steps.motif_scan import MotifScanStep
-from biopipe_sdk.testing import run_operator
+from operon_sdk.testing import run_operator
 import pytest
 
 

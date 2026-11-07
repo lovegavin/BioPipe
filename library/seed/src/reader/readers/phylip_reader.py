@@ -14,10 +14,14 @@ _CODES = {"A": 0, "C": 1, "G": 2, "T": 3, "U": 3, "N": 4}
 
 
 class PhylipReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for sequential PHYLIP alignments."""
     parameters_file = 'phylip_reader.PhylipReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'PhylipReader',
      'version': '1.0.0',
      'kind': 'reader',

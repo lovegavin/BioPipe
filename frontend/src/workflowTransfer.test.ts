@@ -15,7 +15,7 @@ it('transfers the route bundle as binary and preserves concrete imported values'
   await api.bootstrap();
   const bundle = await api.exportWorkflow(graph);
   expect(new Uint8Array(await bundle.arrayBuffer())).toEqual(bytes);
-  const file = new File([bundle], 'saved.biopipe.zip', {type: 'application/zip'});
+  const file = new File([bundle], 'saved.operon.zip', {type: 'application/zip'});
   expect(await api.importWorkflow(file)).toEqual(graph);
   expect(fetcher.mock.calls[1][1].headers['X-Studio-Token']).toBe('workflow-test-token');
   expect(fetcher.mock.calls[2][1].body).toBe(file);
@@ -25,6 +25,6 @@ it('transfers the route bundle as binary and preserves concrete imported values'
 it('surfaces a broken pair error instead of opening a graph with new defaults', async () => {
   vi.stubGlobal('fetch', vi.fn().mockResolvedValue(Response.json(
     {message: 'Graph parameter values do not match the saved graph'}, {status: 422})));
-  await expect(api.importWorkflow(new File(['broken'], 'bad.biopipe.zip')))
+  await expect(api.importWorkflow(new File(['broken'], 'bad.operon.zip')))
     .rejects.toThrow('Graph parameter values do not match the saved graph');
 });

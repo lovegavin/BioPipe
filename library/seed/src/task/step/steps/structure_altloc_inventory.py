@@ -78,10 +78,13 @@ def altloc_rows(form, atom_dim: str, field_dim: str) -> tuple[list[dict], dict]:
 class StructureAltlocInventoryStep(Step):
     """Inventory alternate conformers and their occupancies."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "structure_altloc_inventory.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "structure_altloc_inventory",
         "version": "1.0.0",

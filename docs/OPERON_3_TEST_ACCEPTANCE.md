@@ -98,7 +98,7 @@ Get-FileHash -LiteralPath '<received-package>/Operon_Setup.exe' -Algorithm SHA25
 ```
 
 Before installation, record existence and hashes of the old global runtime hint,
-old BioPipe installation receipt/uninstall registration, existing shortcuts, and
+old Operon installation receipt/uninstall registration, existing shortcuts, and
 the previously agreed sample of old profile/provider files. If a file is absent,
 record absence. Do not delete, repair, migrate or rewrite the old profile. Keep
 old evidence and user data unchanged. Do not install a system Python for this test.
@@ -116,7 +116,7 @@ missing fixture; do not silently use files from an unrelated build.
 2. Launch the installed program using the installer's normal launch action or
    its newly created shortcut. Record the actual EXE path. Confirm **Operon** in
    the window/shortcut and application version **3.0.0**. Check the icon in the
-   newly installed build, not an old cached BioPipe shortcut.
+   newly installed build, not an old cached Operon shortcut.
 3. From the installation receipt and startup log, record the installation ID,
    profile/workspace path and selected Python path. The interpreter must belong
    to this installation. The profile must be new; an old v1 registry must not
@@ -126,7 +126,7 @@ missing fixture; do not silently use files from an unrelated build.
    reading the library must not start pip/conda/R scientific-package installation
    or execute analysis nodes. Loading the management backend and checking bundled
    runtime integrity are expected and are not scientific execution.
-5. Confirm that existing BioPipe shortcuts/registration and the sampled old
+5. Confirm that existing Operon shortcuts/registration and the sampled old
    profile/runtime files retain their baseline identity. Report any intentional
    installer coexistence policy separately; do not hide unexpected rewrites.
 
@@ -165,13 +165,13 @@ six real-desktop Agent phases.
 
 ## 3. Six Agent phases on the real installed instance
 
-Use the installed bundled Python and the package root containing `biopipe`, `src`
+Use the installed bundled Python and the package root containing `operon`, `src`
 and `scripts`. Obtain the live workspace path from the startup log. Run the
 following from that package root to list instances; select the actual desktop
 instance, not a leftover headless service:
 
 ```powershell
-& '<bundled-python>' -m biopipe --workspace '<workspace>' service status
+& '<bundled-python>' -m operon --workspace '<workspace>' service status
 ```
 
 Record the non-secret instance ID. Never include discovery secrets, tokens or
@@ -271,13 +271,13 @@ must still be present. This is distinct from the older low-level execution YAML.
 With a copy of the delivered standalone script example, run static CLI checks:
 
 ```powershell
-& $testPython -m biopipe workflow lint '<fixture-copy>/workflow.yaml'
-& $testPython -m biopipe workflow format '<fixture-copy>/workflow.yaml' --check
+& $testPython -m operon workflow lint '<fixture-copy>/workflow.yaml'
+& $testPython -m operon workflow format '<fixture-copy>/workflow.yaml' --check
 ```
 
 Lint/format may inspect metadata but must not start an application service or
 install dependencies. For the new alias, verify `operon help` if the installer
-provides it; the compatibility command `python -m biopipe help` must still work.
+provides it; the compatibility command `python -m operon help` must still work.
 
 For a UI negative case, duplicate `scale.py` and change only its declared input
 from `file.csv` to `file.tsv`. Connect it to the CSV generator. Validation must
@@ -288,7 +288,7 @@ For the logical-type rule, execute the following component diagnostic with the
 installed Python from the installed package root, recording stdout and exit code:
 
 ```python
-from biopipe.conversions import plan_conversion
+from operon.conversions import plan_conversion
 matrix = {"logical_type": "matrix", "representations": ["numpy.ndarray"]}
 vector = {"logical_type": "list", "representations": ["numpy.ndarray"]}
 mapped = {"logical_type": "matrix", "representations": ["npy.memmap"]}
@@ -336,7 +336,7 @@ and verify the new workspace starts empty. The previous test profile and its
 saved output hashes must remain unchanged. Launch and close the reinstalled build.
 Uninstall **only this test Operon installation** through Windows Installed apps.
 Verify its registration/shortcuts are removed, profiles/results are retained and
-old BioPipe registration/runtime/provider samples match the baseline. List
+old Operon registration/runtime/provider samples match the baseline. List
 retained unknown/compiled/cache files; do not delete them to conceal retention.
 
 Deliver a report containing:

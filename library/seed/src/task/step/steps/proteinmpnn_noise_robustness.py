@@ -163,7 +163,7 @@ def run_replicate(
             "proteinmpnn_noise_robustness: device must be 'cpu' or 'cuda'"
         )
     python = str(params.get("python_executable") or "") or sys.executable
-    out_dir = Path(tempfile.mkdtemp(prefix="biopipe-mpnn-noise-"))
+    out_dir = Path(tempfile.mkdtemp(prefix="operon-mpnn-noise-"))
     command = [
         python,
         str(runner),
@@ -228,7 +228,7 @@ def run_replicate(
 class ProteinmpnnNoiseRobustnessStep(Step):
     """ProteinMPNN sequence recovery under increasing backbone noise."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = (
         "proteinmpnn_noise_robustness."
@@ -236,6 +236,9 @@ class ProteinmpnnNoiseRobustnessStep(Step):
     )
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_noise_robustness",
         "version": "1.0.0",
@@ -281,7 +284,7 @@ class ProteinmpnnNoiseRobustnessStep(Step):
         ).expanduser()
         repo = Path(
             str(params.get("proteinmpnn_path", "")).strip()
-            or os.environ.get("BIOPIPE_PROTEINMPNN_PATH", "")
+            or os.environ.get("OPERON_PROTEINMPNN_PATH", "")
         ).expanduser()
         weights_text = str(params.get("weights_path", "")).strip()
         chain = str(params.get("chains", "")).strip()
@@ -303,7 +306,7 @@ class ProteinmpnnNoiseRobustnessStep(Step):
         if not repo.is_dir():
             raise StepError(
                 f"proteinmpnn_noise_robustness: proteinmpnn_path '{repo}' is not "
-                "a directory (set BIOPIPE_PROTEINMPNN_PATH or the "
+                "a directory (set OPERON_PROTEINMPNN_PATH or the "
                 "proteinmpnn_path parameter)"
             )
         runner = repo / "protein_mpnn_run.py"
@@ -342,7 +345,7 @@ class ProteinmpnnNoiseRobustnessStep(Step):
         seed = int(params.get("seed") or 0)
         rng = np.random.default_rng(seed)
         rows: list[tuple[float, ...]] = []
-        with tempfile.TemporaryDirectory(prefix="biopipe-noise-") as folder:
+        with tempfile.TemporaryDirectory(prefix="operon-noise-") as folder:
             root = Path(folder)
             for sigma in levels:
                 for replicate in range(replicates):

@@ -9,7 +9,7 @@ import hashlib
 import os
 from pathlib import Path
 
-from biopipe.remote.transfers import (CHUNK_BYTES, MAX_CHUNK_BYTES, basename, digest,
+from operon.remote.transfers import (CHUNK_BYTES, MAX_CHUNK_BYTES, basename, digest,
                                       no_symlinks, number, open_file, signature, sync_directory, _io)
 from src.web.storage import FileLock, atomic_json
 
@@ -141,9 +141,9 @@ class TransferClient:
         check_cancel(cancel)
         ref = self.describe(reference, cancel=cancel, progress=progress)
         sha, size = digest(ref['sha256']), number(ref['bytes'])
-        partial = self.owned(path.parent/(path.name+'.biopipe-part'))
-        receipt = self.owned(path.parent/(path.name+'.biopipe-receipt.json'))
-        lock = self.owned(path.parent/(path.name+'.biopipe-transfer.lock'))
+        partial = self.owned(path.parent/(path.name+'.operon-part'))
+        receipt = self.owned(path.parent/(path.name+'.operon-receipt.json'))
+        lock = self.owned(path.parent/(path.name+'.operon-transfer.lock'))
         with FileLock(_io(lock)):
             if _io(path).exists():
                 actual, _ = self.hash_file(path, cancel=cancel, progress=progress, phase='verifying')

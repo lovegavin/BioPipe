@@ -27,6 +27,10 @@ _LABELS = [
 
 class GenomeAlignmentStatsStep(Step):
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "id": "genome_alignment_stats",
         "title": "Genome alignment statistics",
         "version": "1.0.0",
@@ -79,7 +83,7 @@ class GenomeAlignmentStatsStep(Step):
         value_dim = str(params.get("value_dim", "value"))
         out_name = str(params.get("output", "stats"))
 
-        temporary = Path(tempfile.mkdtemp(prefix="biopipe_genome_align_"))
+        temporary = Path(tempfile.mkdtemp(prefix="operon_genome_align_"))
         try:
             query_path = temporary / "query.fasta"
             reference_path = temporary / "reference.fasta"

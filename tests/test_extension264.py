@@ -28,7 +28,7 @@ header = ">T=" + pdb.stem + ", sample=1, score=1.1, global_score=1.2, seq_recove
 bias = ""
 if "--bias_by_res_jsonl" in sys.argv:
     bias = Path(sys.argv[sys.argv.index("--bias_by_res_jsonl") + 1]).read_text()
-Path(os.environ["BIOPIPE_BIAS_CAPTURE"]).write_text(json.dumps({"argv": sys.argv[1:], "bias": bias}))
+Path(os.environ["OPERON_BIAS_CAPTURE"]).write_text(json.dumps({"argv": sys.argv[1:], "bias": bias}))
 """
 
 
@@ -82,7 +82,7 @@ def test_run_bias_design(tmp_path, monkeypatch) -> None:
     repo = _repo(tmp_path)
     structure = _structure(tmp_path / "mini.pdb")
     capture = tmp_path / "capture.json"
-    monkeypatch.setenv("BIOPIPE_BIAS_CAPTURE", str(capture))
+    monkeypatch.setenv("OPERON_BIAS_CAPTURE", str(capture))
     params = {
         "structure_path": str(structure),
         "proteinmpnn_path": str(repo),

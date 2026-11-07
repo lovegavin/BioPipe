@@ -39,9 +39,13 @@ _STAT_LABELS = ("n_exons", "n_introns", "gene_length", "cds_total", "strand")
 
 class GeneStructureStep(Step):
     """Per-gene exon/intron/CDS summary for GFF3/GTF."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'gene_structure.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'gene_structure',
      'version': '1.0.0',
      'kind': 'operator',

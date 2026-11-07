@@ -10,9 +10,12 @@ from src.task.step.steps._ml_utils import label_vector, stratified_folds
 
 class MlStratifiedFoldsStep(Step):
     """Assign samples to stratified folds."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'ml_stratified_folds.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'ml_stratified_folds',
         'version': '1.0.0',

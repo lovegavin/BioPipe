@@ -3,16 +3,16 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "biopipe-igv-example"
+name = "operon-igv-example"
 version = "0.1.0"
 requires-python = ">=3.11"
-dependencies = ["biopipe-studio>=3.0.0,<4"]
+dependencies = ["operon-studio>=3.0.0,<4"]
 
-[project.entry-points."biopipe.operators"]
-genome_tracks = "biopipe_igv_example.tracks:GenomeTracks"
+[project.entry-points."operon.operators"]
+genome_tracks = "operon_igv_example.tracks:GenomeTracks"
 
 [tool.setuptools.packages.find]
-include = ["biopipe_igv_example*"]
+include = ["operon_igv_example*"]
 
 [tool.setuptools.package-data]
-biopipe_igv_example = ["*.parameters.json", "*.md"]
+operon_igv_example = ["*.parameters.json", "*.md"]

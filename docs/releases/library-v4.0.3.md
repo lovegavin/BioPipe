@@ -1,4 +1,4 @@
-# BioPipe Operator Library v4.0.3
+# Operon Operator Library v4.0.3
 
 **Minimum application:** 2.6.0 (frontend 2.6.0)
 
@@ -10,7 +10,7 @@ existing workflows do not need to be repinned.
 ## What changed
 
 - `examples/quickstart/data/vhh.fasta` is now tracked. The repository `.gitignore`
-  excludes `*.fasta`, so v4.0.2's `BioPipe-Quickstart-v4.0.2.zip` contained the
+  excludes `*.fasta`, so v4.0.2's `Operon-Quickstart-v4.0.2.zip` contained the
   structure input but not the sequence input, and the bundled route could not run
   before repointing both sources by hand.
 - `.gitignore` now carries an explicit `!examples/quickstart/data/vhh.fasta`
@@ -19,7 +19,7 @@ existing workflows do not need to be repinned.
 
 ## Verification
 
-- `BioPipe-Quickstart-v4.0.3.zip` contains 8 entries: both QUICKSTART documents,
+- `Operon-Quickstart-v4.0.3.zip` contains 8 entries: both QUICKSTART documents,
   `quickstart/README.md`, `quickstart/vhh_interface.route.json`,
   `quickstart/data/vhh_1mel.pdb` (361,017 B), `quickstart/data/vhh.fasta` (145 B).
 - The route itself is unchanged and was validated end to end: job complete 4/4,
@@ -30,9 +30,9 @@ existing workflows do not need to be repinned.
 
 ## Assets
 
-- `BioPipe-Library-v4.0.3-Linux.biopipe-library.zip`
-- `BioPipe-Library-v4.0.3-Windows.biopipe-library.zip`
-- `biopipe_builtin_library-4.0.3-py3-none-any.whl`
-- `BioPipe-Quickstart-v4.0.3.zip`
+- `Operon-Library-v4.0.3-Linux.operon-library.zip`
+- `Operon-Library-v4.0.3-Windows.operon-library.zip`
+- `operon_builtin_library-4.0.3-py3-none-any.whl`
+- `Operon-Quickstart-v4.0.3.zip`
 - `SHA256SUMS.txt`
 - `verification-ubuntu-latest.json`, `verification-windows-latest.json`

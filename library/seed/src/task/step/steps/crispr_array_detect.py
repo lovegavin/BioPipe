@@ -174,10 +174,13 @@ def run_minced(
 
 
 class CrisprArrayDetectStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "crispr_array_detect.CrisprArrayDetectStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "crispr_array_detect",
         "version": "1.0.0",

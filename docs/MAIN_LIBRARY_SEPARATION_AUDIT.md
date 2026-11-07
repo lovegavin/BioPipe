@@ -12,7 +12,7 @@ This document records observed boundaries; it does not claim a merge to `main`.
 | --- | --- | --- |
 | Runtime plugin installation | v3 provider wheels/library bundles can update the installed registry independently of the EXE | Preserve this existing interface and old workflow pins |
 | Release products | Studio v2.0.4 and library-v2026.11.4 are separate products | Bring the separate release workflow and version policy into main |
-| Main's build configuration | `pyproject.toml` still includes `biopipe*` and `src*`, including all shipped Reader/operator implementations | Define separately built application and library packages, with an explicitly versioned optional offline seed |
+| Main's build configuration | `pyproject.toml` still includes `operon*` and `src*`, including all shipped Reader/operator implementations | Define separately built application and library packages, with an explicitly versioned optional offline seed |
 | Library tooling | `library/release.json`, release/verification scripts, library CI and documentation exist on library/main, not inspected main | Integrate these without replacing the tested application runtime with older main engine files |
 | Server bootstrap | Collects all shared bundled-provider requirements and prepares all declared model environments; source digest selects code/environment paths | Install the base service independently, then install/repair requested library capabilities from library-owned recipes |
 | Resource manifests | Inspected main keeps the resource manifest under the application; library/main already packages adjacent provider resources | Make library-owned resource/environment metadata travel with the provider |

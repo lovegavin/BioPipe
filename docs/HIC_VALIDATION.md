@@ -26,13 +26,13 @@ Local commands:
 python -m pytest tests -q --basetemp=.tmp/hic-all --junitxml=.tmp/hic-all.xml
 npm test
 npm run build
-python -m biopipe registry check
+python -m operon registry check
 ```
 
 Linux command, inside the dedicated tool environment:
 
 ```bash
-BIOPIPE_HIC_REAL=1 python -m pytest tests/test_hic_real.py -v
+OPERON_HIC_REAL=1 python -m pytest tests/test_hic_real.py -v
 ```
 
 ## What ran

@@ -11,13 +11,13 @@ import zipfile
 from PIL import Image
 import pytest
 
-from biopipe_sdk.icons import image_data, icon_path
-from biopipe_sdk.protocol import describe_operator
-from biopipe.dropins import single_file_wheel, snapshot_module
-from biopipe.developer import embed_manifest
+from operon_sdk.icons import image_data, icon_path
+from operon_sdk.protocol import describe_operator
+from operon.dropins import single_file_wheel, snapshot_module
+from operon.developer import embed_manifest
 
 SVG = b'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="#818cf8"/></svg>'
-SOURCE = '''from biopipe_sdk import Step
+SOURCE = '''from operon_sdk import Step
 class Picture(Step):
     name = "lab.picture"
     category = "analysis"
@@ -102,7 +102,7 @@ def test_svg_rejects_active_or_external_content(tmp_path, content):
 
 
 def test_sdk_build_rejects_a_missing_packaged_icon(tmp_path):
-    from biopipe_sdk.declarations import compile_declaration, source_declarations
+    from operon_sdk.declarations import compile_declaration, source_declarations
     source = tmp_path / 'lab/__init__.py'
     source.parent.mkdir()
     write_extension(source, SOURCE)
@@ -120,4 +120,4 @@ def test_sdk_build_rejects_a_missing_packaged_icon(tmp_path):
         archive.writestr("lab/icons/picture.svg", SVG)
     embed_manifest(wheel, {"descriptors": [descriptor]})
     with zipfile.ZipFile(wheel) as archive:
-        assert json.loads(archive.read("lab-1.0.0.dist-info/biopipe.json"))["descriptors"][0] == descriptor
+        assert json.loads(archive.read("lab-1.0.0.dist-info/operon.json"))["descriptors"][0] == descriptor

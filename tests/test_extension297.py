@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
 import pytest
 
 pytest.importorskip("openmm")
@@ -10,7 +15,7 @@ pytest.importorskip("pdbfixer")
 from src.core.errors import StepError
 from src.task.step.steps import interface_alanine_scan as module
 
-FIXTURE = "/home/gavin/BioPipe/tests/fixtures/vhh_1mel.pdb"
+FIXTURE = str(ROOT / "tests" / "fixtures" / "vhh_1mel.pdb")
 
 
 def _complex_text(tmp_path):
@@ -55,7 +60,6 @@ def _ctx(params):
 
 def test_interface_contacts_are_ranked():
     import tempfile
-    from pathlib import Path
 
     workdir = Path(tempfile.mkdtemp())
     path = workdir / "complex.pdb"

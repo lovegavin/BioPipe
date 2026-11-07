@@ -89,9 +89,12 @@ def run_cofold(
 
 
 class SequenceRnaCofoldStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "sequence_rna_cofold.SequenceRnaCofoldStep.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "sequence_rna_cofold",
         "version": "1.0.0",

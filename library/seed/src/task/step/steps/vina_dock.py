@@ -221,11 +221,14 @@ def stack_poses(poses: list[dict]) -> tuple[np.ndarray, dict, dict]:
 class VinaDockStep(Step):
     """Dock one ligand into a receptor with AutoDock Vina."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "vina_dock.VinaDockStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "vina_dock",
         "version": "1.0.0",

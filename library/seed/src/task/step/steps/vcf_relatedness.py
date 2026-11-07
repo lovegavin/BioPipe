@@ -24,9 +24,15 @@ from src.task.step.steps import _vcf_utils as vcf
 
 class VcfRelatednessStep(Step):
     """KING-robust kinship matrix for the selected VCF samples."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'vcf_relatedness.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'vcf_relatedness',
      'version': '1.0.1',
      'kind': 'operator',

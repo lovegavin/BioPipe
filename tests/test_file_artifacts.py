@@ -6,7 +6,7 @@ import pytest
 from src.core import FileArtifact, Form, StepError, ValidationError
 from src.core.contracts import describe_form, compatible, validate_form, source_schema
 from src.task.context import Context
-from biopipe.wire import Wire
+from operon.wire import Wire
 
 
 def test_file_reference_spill_reload_and_no_payload_copy(tmp_path):
@@ -71,7 +71,7 @@ def test_file_output_download_survives_workspace_move_and_rejects_external_input
 
 def test_long_artifact_path_preview_preserves_project_boundary(tmp_path):
     from pathlib import Path
-    from biopipe.bytecode import filesystem_path
+    from operon.bytecode import filesystem_path
     from src.web.service import JobService
     directory=tmp_path/('a'*80)/('b'*80)/('c'*80)
     native=Path(filesystem_path(directory)); native.mkdir(parents=True)

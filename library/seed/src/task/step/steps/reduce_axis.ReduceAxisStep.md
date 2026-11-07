@@ -1,4 +1,4 @@
-<!-- biopipe:generated -->
+<!-- operon:generated -->
 # Axis statistics
 
 ## Purpose
@@ -68,11 +68,11 @@ or statistical assumptions for a particular dataset.
 
 ## Runtime environment
 
-Runs in the shared BioPipe interpreter.
+Runs in the shared Operon interpreter.
 
 ## Limitations
 
-Declared memory modes: full. BioPipe retains the existing planner, disk-backed
+Declared memory modes: full. Operon retains the existing planner, disk-backed
 inputs and emergency spill behavior; full-mode operators still require their
 declared working set. This generated reference has not been independently
 scientifically reviewed.

@@ -4,7 +4,7 @@
     "pairs_table": {
       "type": "string",
       "default": "",
-      "x-biopipe-path": "workflow",
+      "x-operon-path": "workflow",
       "description": "CSV table with ligand and receptor columns."
     },
     "min_mean": {

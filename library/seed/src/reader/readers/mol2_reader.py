@@ -11,10 +11,14 @@ from src.reader.readers._table_common import table_form
 
 
 class Mol2Reader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """MOL2 reader with atom and bond counts per molecule."""
     parameters_file = 'mol2_reader.Mol2Reader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'Mol2Reader',
      'version': '1.0.0',
      'kind': 'reader',

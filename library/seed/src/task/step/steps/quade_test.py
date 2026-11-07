@@ -10,14 +10,18 @@ from src.task.step.base import Step
 
 
 class QuadeTestStep(Step):
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     """Quade rank test for a complete block design.
 
     Each block is ranked internally, blocks are weighted by their range, and
     the resulting F statistic matches ``stats::quade.test``.
     """
     parameters_file = 'quade_test.QuadeTestStep.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'quade_test',
      'version': '1.0.0',
      'kind': 'operator',

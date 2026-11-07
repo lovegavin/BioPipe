@@ -1,6 +1,6 @@
 # Application API, CLI and MCP
 
-BioPipe has one application layer and three public integration surfaces:
+Operon has one application layer and three public integration surfaces:
 
 | Surface | Responsibility |
 | --- | --- |
@@ -20,29 +20,29 @@ For YAML-first batch use and environment configuration, follow the
 
 ## Run without a desktop window
 
-Install BioPipe normally; install the `agent` extra when MCP is required. There
+Install Operon normally; install the `agent` extra when MCP is required. There
 is no frontend build or desktop dependency for headless execution.
-Standard wheels include the analysis worker as `biopipe.worker`; they do not
+Standard wheels include the analysis worker as `operon.worker`; they do not
 require a source checkout or a `scripts/` directory. For a prepared task folder,
-`python -m biopipe.worker /path/to/task --check` validates without executing,
+`python -m operon.worker /path/to/task --check` validates without executing,
 and omitting `--check` runs it. Source checkouts retain `scripts/run.py` as a
 compatible wrapper with the same memory overrides and logging behavior.
 
 ```text
-biopipe --workspace /path/to/project workflow validate route.json --require-files
-biopipe --workspace /path/to/project workflow save route.json
-biopipe --workspace /path/to/project run route.json --request-id analysis-001
-biopipe --workspace /path/to/project jobs get <job-id>
-biopipe --workspace /path/to/project jobs logs <job-id> --follow
-biopipe --workspace /path/to/project artifacts list <job-id>
-biopipe --workspace /path/to/project artifacts report <job-id> 0 --output summary.json
+operon --workspace /path/to/project workflow validate route.json --require-files
+operon --workspace /path/to/project workflow save route.json
+operon --workspace /path/to/project run route.json --request-id analysis-001
+operon --workspace /path/to/project jobs get <job-id>
+operon --workspace /path/to/project jobs logs <job-id> --follow
+operon --workspace /path/to/project artifacts list <job-id>
+operon --workspace /path/to/project artifacts report <job-id> 0 --output summary.json
 ```
 
 Use the same workspace/profile selectors for every command. Relative input paths
 are relative to the workflow's `base_dir` within the selected workspace, not the
 terminal's current directory. Use an explicit workspace containing the inputs;
 the existing data-root validation is not bypassed by the CLI. Self-contained
-graph JSON and `.biopipe.zip` bundles are accepted. Saved JSON records containing
+graph JSON and `.operon.zip` bundles are accepted. Saved JSON records containing
 a `graph` member are also accepted. Portable workflow bundles preserve independent
 parameter values but do not automatically contain large input datasets.
 Public workflow YAML is also accepted. `--workspace .` resolves against the
@@ -57,10 +57,10 @@ port or machine-specific installation path is embedded. The service persists
 after a CLI command or MCP connection exits, so submitted jobs continue.
 
 ```text
-biopipe --workspace /path/to/project service status
-biopipe --workspace /path/to/project service start
-biopipe --workspace /path/to/project service stop
-biopipe --workspace /path/to/project serve --port 0
+operon --workspace /path/to/project service status
+operon --workspace /path/to/project service start
+operon --workspace /path/to/project service stop
+operon --workspace /path/to/project serve --port 0
 ```
 
 `serve` is the foreground alternative for a process manager. `service status`
@@ -90,10 +90,10 @@ refresh. Workers still verify their pinned implementations before execution.
 `parameters/<id>/vN.json` and `execution/<id>/vN.json` separately, as in Studio.
 
 ```text
-biopipe workflow prepare route.json
-biopipe workflow export route.json --output route.biopipe.zip
-biopipe workflow save changed.json --id <workflow-id> --expected-version 1
-biopipe run --workflow <workflow-id> --expected-version 2 --request-id analysis-002
+operon workflow prepare route.json
+operon workflow export route.json --output route.operon.zip
+operon workflow save changed.json --id <workflow-id> --expected-version 1
+operon run --workflow <workflow-id> --expected-version 2 --request-id analysis-002
 ```
 
 Each run freezes its graph, operator pins and its own `parameters.json`; later
@@ -124,7 +124,7 @@ The public application prefix is `/api/v1`. Existing `/api/agent` canvas methods
 remain available for desktop compatibility. An integration obtains the dynamically
 discovered loopback URL and authenticates using the existing discovery exchange:
 `POST /api/agent/connect`, followed by `Authorization: Bearer <token>`.
-The Python `biopipe.client.Client` implements this exchange. Discovery credentials
+The Python `operon.client.Client` implements this exchange. Discovery credentials
 are local secrets and must not be copied into agent prompts.
 
 | Endpoint | Required capability | Purpose |
@@ -162,7 +162,7 @@ reassembly when UTF-8 characters span chunks. `text` is for immediate display.
 Artifact listing uses persisted metadata and does not load matrix contents;
 explicit file copies stream to disk. Remote files continue using the existing
 resumable transfer cache and memory accounting. Intermediates without a retained
-file reference have `available: false`; files deleted outside BioPipe return a
+file reference have `available: false`; files deleted outside Operon return a
 missing-file error when opened and are never silently recomputed.
 The index also exposes every registered figure ID/format with its original-file
 link, physical dimensions and producing step. It uses figure metadata already
@@ -172,20 +172,20 @@ list. Historical jobs lacking that metadata retain their original report links.
 HTTP defaults remain full for compatibility. `GET /operators?view=brief` returns
 ranked compact summaries. Describe accepts `view=schema|docs|full`. Job reads accept
 `view=brief|full`; logs accept `encoding=text|base64|both`. MCP/CLI use compact
-discovery/status and text-only logs by default. `biopipe_job(wait_seconds=30)` and
-`biopipe jobs wait <id> --timeout 30` wait without repeated model calls. Timeouts
+discovery/status and text-only logs by default. `operon_job(wait_seconds=30)` and
+`operon jobs wait <id> --timeout 30` wait without repeated model calls. Timeouts
 never cancel or duplicate a submitted task.
 
 ## MCP without a canvas
 
-Configure the existing `biopipe mcp` command. Add `--allow-run` to grant execution
+Configure the existing `operon mcp` command. Add `--allow-run` to grant execution
 within the user's authorized task; `--read-only` removes editing and
 `--allow-plugins` separately grants installation. Window-independent tools include:
 
-- `biopipe_operator_search`, `biopipe_operator_describe`;
-- `biopipe_workflows`, `biopipe_workflow_save`, `biopipe_workflow_prepare`;
-- `biopipe_submit`, `biopipe_jobs`, `biopipe_job`, `biopipe_logs`, `biopipe_cancel`;
-- `biopipe_artifacts`.
+- `operon_operator_search`, `operon_operator_describe`;
+- `operon_workflows`, `operon_workflow_save`, `operon_workflow_prepare`;
+- `operon_submit`, `operon_jobs`, `operon_job`, `operon_logs`, `operon_cancel`;
+- `operon_artifacts`.
 
 Search returns summaries. Describe returns contracts, parameter schema and a
 section index by default; request only needed sections, or `['*']` explicitly.

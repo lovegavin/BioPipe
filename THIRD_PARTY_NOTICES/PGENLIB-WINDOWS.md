@@ -2,11 +2,11 @@
 
 The Windows x64 runtime includes pgenlib 0.95.1, distributed under LGPL-3.0-only.
 Its license is retained in `runtime/python/Lib/site-packages/pgenlib-0.95.1.dist-info/`.
-BioPipe's release assets include the corresponding modified source archive,
-`pgenlib-0.95.1-biopipe-windows-source.tar.gz`, including the build recipe and the
+Operon's release assets include the corresponding modified source archive,
+`pgenlib-0.95.1-operon-windows-source.tar.gz`, including the build recipe and the
 zlib 1.3.2 source linked into this extension. The upstream bundled libdeflate and
 zstd notices are retained with those sources. The extension is a separate `.pyd`
-file and can be replaced/rebuilt without rebuilding the BioPipe desktop host.
+file and can be replaced/rebuilt without rebuilding the Operon desktop host.
 
 Sources:
 

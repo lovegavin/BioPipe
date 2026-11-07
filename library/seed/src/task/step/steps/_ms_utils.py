@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from itertools import product
 
-from biopipe_sdk import StepError
+from operon_sdk import StepError
 
 PROTON = 1.007276466621
 WATER = 18.01056468403

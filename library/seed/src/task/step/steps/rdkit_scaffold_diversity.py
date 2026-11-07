@@ -47,10 +47,13 @@ def diversity_rows(molecules) -> list[dict]:
 class RdkitScaffoldDiversityStep(Step):
     """Counts how many distinct Murcko scaffolds a SMILES collection contains."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "rdkit_scaffold_diversity.RdkitScaffoldDiversityStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "rdkit_scaffold_diversity",
         "version": "1.0.0",

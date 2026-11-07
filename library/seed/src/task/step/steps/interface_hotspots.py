@@ -35,9 +35,12 @@ def contact_statistics(
 class InterfaceHotspotsStep(Step):
     """Rank interface residues by contact density and buried area."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'interface_hotspots.InterfaceHotspotsStep.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'interface_hotspots',
         'version': '1.0.0',

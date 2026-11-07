@@ -31,9 +31,14 @@ class AttachInfoStep(Step):
         target_dim : dimension of the target to align against
         output     : context key for the result
     """
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'attach_info.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'attach_info',
      'version': '1.0.0',
      'kind': 'operator',

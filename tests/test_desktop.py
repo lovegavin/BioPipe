@@ -27,7 +27,7 @@ def test_stalled_shutdown_reports_threads_only_until_backend_finishes(monkeypatc
     finished = threading.Event()
     report_stalled_shutdown(finished, delay=0)
     assert len(calls) == 1 and calls[0]['all_threads']
-    assert '[BioPipe shutdown]' in capsys.readouterr().err
+    assert '[Operon shutdown]' in capsys.readouterr().err
     finished.set()
     report_stalled_shutdown(finished, delay=0)
     assert len(calls) == 1 and not capsys.readouterr().err
@@ -48,7 +48,7 @@ def test_backend_shutdown_cancels_dependency_preparation(tmp_path, phase):
         # child. The production cancellation/ownership path stays unchanged.
         # A blocked single file catches both non-cancellable loops and designs
         # that only check cancellation between files.
-        import biopipe.bytecode
+        import operon.bytecode
         compiler = tmp_path / 'slow_compiler.py'
         release = tmp_path / 'release-compiler'
         compiler.write_text(f'''
@@ -61,13 +61,13 @@ def _blocked_compile(*args, **kwargs):
         _time.sleep(.02)
     return _original_compile(*args, **kwargs)
 _compiler.compile = _blocked_compile
-''' + Path(biopipe.bytecode.__file__).read_text(encoding='utf-8'), encoding='utf-8')
+''' + Path(operon.bytecode.__file__).read_text(encoding='utf-8'), encoding='utf-8')
         target = tmp_path / 'synthetic-dependency'
         target.mkdir()
         (target / 'value.py').write_text('VALUE = 42\n', encoding='utf-8')
-        setup = f'''import runpy, biopipe.bytecode
-biopipe.bytecode.precompile = runpy.run_path({str(compiler)!r})['precompile']'''
-        operation = f'biopipe.bytecode.precompile({str(target)!r})'
+        setup = f'''import runpy, operon.bytecode
+operon.bytecode.precompile = runpy.run_path({str(compiler)!r})['precompile']'''
+        operation = f'operon.bytecode.precompile({str(target)!r})'
     else:
         setup = ''
         operation = f'run_process([sys.executable, "-c", {parent_code!r}, {child_code!r}, {str(pid_file)!r}])'
@@ -75,22 +75,22 @@ biopipe.bytecode.precompile = runpy.run_path({str(compiler)!r})['precompile']'''
     bootstrap.write_text(f'''
 import sys
 sys.path.insert(0, {str(ROOT)!r})
-from biopipe.dependencies import DependencySession
-from biopipe.plugins import run_process
-import biopipe.install_targets
+from operon.dependencies import DependencySession
+from operon.plugins import run_process
+import operon.install_targets
 {setup}
 DependencySession._inspect = lambda self, state, entries: {{
     item['id']: {{'status': 'failed', 'error': 'Synthetic missing dependency'}} for item in entries}}
 def repair(manager, state, entries):
     {operation}
     return state
-biopipe.install_targets.repair_entries = repair
+operon.install_targets.repair_entries = repair
 from scripts.desktop_server import main
 main()
 ''', encoding='utf-8')
-    environment = dict(os.environ, BIOPIPE_DEPENDENCY_SCOPE='esm_embedding',
-                       BIOPIPE_RUNTIME_CONFIG=str(tmp_path / 'runtime.json'),
-                       BIOPIPE_ADMISSION_DIR=str(tmp_path / 'admission'), PYTHONUTF8='1')
+    environment = dict(os.environ, OPERON_DEPENDENCY_SCOPE='esm_embedding',
+                       OPERON_RUNTIME_CONFIG=str(tmp_path / 'runtime.json'),
+                       OPERON_ADMISSION_DIR=str(tmp_path / 'admission'), PYTHONUTF8='1')
     log_path = tmp_path / 'shutdown.log'
     with log_path.open('w', encoding='utf-8') as log:
         process = subprocess.Popen([sys.executable, '-u', str(bootstrap), '--workspace',
@@ -104,7 +104,7 @@ main()
             while not url and time.monotonic() < deadline:
                 assert process.poll() is None, log_path.read_text(encoding='utf-8')
                 for line in log_path.read_text(encoding='utf-8').splitlines():
-                    if line.startswith('BIOPIPE_READY '):
+                    if line.startswith('OPERON_READY '):
                         url = json.loads(line.split(' ', 1)[1])['url']
                 if not url:
                     time.sleep(.05)
@@ -227,8 +227,8 @@ def test_desktop_server_owns_port_and_exits_with_host(tmp_path, exit_mode):
                 except queue.Empty:
                     assert process.poll() is None, (tmp_path / "server.log").read_text(encoding="utf-8")
                     continue
-                if line.startswith("BIOPIPE_READY "):
-                    url = json.loads(line[14:])["url"]
+                if line.startswith("OPERON_READY "):
+                    url = json.loads(line.split(" ", 1)[1])["url"]
                     break
             assert url and not url.endswith(":" + str(occupied.getsockname()[1]))
             with httpx.Client(trust_env=False) as client:

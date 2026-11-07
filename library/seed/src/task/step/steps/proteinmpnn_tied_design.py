@@ -143,7 +143,7 @@ def run_tied_designer(
         raise StepError("proteinmpnn_tied_design: device must be 'cpu' or 'cuda'")
     python = str(params.get("python_executable") or "") or sys.executable
 
-    out_dir = Path(tempfile.mkdtemp(prefix="biopipe-mpnn-tied-"))
+    out_dir = Path(tempfile.mkdtemp(prefix="operon-mpnn-tied-"))
     payload_path = out_dir / "tied_positions.jsonl"
     payload_path.write_text(json.dumps(payload) + "\n", encoding="utf-8")
     command = [
@@ -205,11 +205,14 @@ def run_tied_designer(
 class ProteinmpnnTiedDesignStep(Step):
     """Tie symmetry-equivalent positions to a shared amino acid during design."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
 
     parameters_file = "proteinmpnn_tied_design.ProteinmpnnTiedDesignStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_tied_design",
         "version": "1.0.0",

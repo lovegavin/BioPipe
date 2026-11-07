@@ -1,6 +1,6 @@
 # Resource planner and spill runtime
 
-BioPipe uses a fixed-order resource planner. Existing YAML tasks retain eager
+Operon uses a fixed-order resource planner. Existing YAML tasks retain eager
 execution unless `runtime.memory` or a memory CLI override enables management.
 Studio enables it by default. The analysis implementations remain CPU-based.
 
@@ -225,5 +225,5 @@ payload bytes are reported separately. Cache eviction removes the descriptor's
 cache files, never an external input. Existing numeric disk readers and reduction
 streaming retain their protocols. External tools receive a frozen admitted
 workspace and bounded sort/chunk settings; their private memory is sampled and
-can trigger process termination, but cannot be converted into a BioPipe array
+can trigger process termination, but cannot be converted into a Operon array
 spill. See [Hi-C memory and streaming](HIC.md#memory-streaming-and-logs).

@@ -248,12 +248,12 @@ def test_non_finite_confidences_are_rejected(tmp_path):
         )
 
 
-REPO = os.environ.get("BIOPIPE_LIGANDMPNN_PATH", "")
-WEIGHTS = os.environ.get("BIOPIPE_LIGANDMPNN_WEIGHTS", "")
+REPO = os.environ.get("OPERON_LIGANDMPNN_PATH", "")
+WEIGHTS = os.environ.get("OPERON_LIGANDMPNN_WEIGHTS", "")
 REAL = bool(REPO and WEIGHTS and Path(REPO, "run.py").is_file() and Path(WEIGHTS).is_file())
 
 
-@pytest.mark.skipif(not REAL, reason="set BIOPIPE_LIGANDMPNN_PATH and BIOPIPE_LIGANDMPNN_WEIGHTS for the official oracle")
+@pytest.mark.skipif(not REAL, reason="set OPERON_LIGANDMPNN_PATH and OPERON_LIGANDMPNN_WEIGHTS for the official oracle")
 def test_official_runner_oracle(tmp_path):
     params = {
         "structure_path": str(FIXTURE),

@@ -30,9 +30,15 @@ _LABELS = (
 
 class FastqStatsStep(Step):
     """Summarise read count, length, GC content and quality of a FASTQ file."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'fastq_stats.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'fastq_stats',
      'version': '1.0.0',
      'kind': 'operator',

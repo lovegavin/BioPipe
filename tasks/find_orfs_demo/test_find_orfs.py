@@ -3,7 +3,7 @@ import numpy as np
 
 from src.core import Form, StepError
 from src.task.step.steps.find_orfs import FindOrfsStep
-from biopipe_sdk.testing import run_operator
+from operon_sdk.testing import run_operator
 import pytest
 
 

@@ -74,10 +74,13 @@ def interface_bonds(
 class InterfaceHbondNetworkStep(Step):
     """Kabsch-Sander hydrogen bonds across a binder/target interface."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "interface_hbond_network.InterfaceHbondNetworkStep.parameters.json"
 
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "interface_hbond_network",
         "version": "1.0.0",

@@ -12,9 +12,13 @@ from src.task.step.steps._ml_utils import (
 
 class MlFeatureAblationStep(Step):
     """Change in AUC or accuracy when each feature is removed and refit."""
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'ml_feature_ablation.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'ml_feature_ablation',
         'version': '1.0.0',

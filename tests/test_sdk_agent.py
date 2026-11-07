@@ -11,9 +11,9 @@ import numpy as np
 import pytest
 from fastapi.testclient import TestClient
 
-from biopipe_sdk import Form, Operator, port, project_metadata
-from biopipe_sdk.protocol import Descriptor, validate_parameters
-from biopipe_sdk.testing import run_operator
+from operon_sdk import Form, Operator, port, project_metadata
+from operon_sdk.protocol import Descriptor, validate_parameters
+from operon_sdk.testing import run_operator
 from src.task import STEPS
 from src.task.operator_catalog import build_catalog
 from src.web.api import create_app
@@ -85,8 +85,8 @@ def test_parameter_schema_never_fetches_remote_references():
 
 
 def test_union_parameters_and_large_generated_graph():
-    from biopipe_sdk.protocol import schema_to_fields
-    from biopipe.documents import layout
+    from operon_sdk.protocol import schema_to_fields
+    from operon.documents import layout
     fields = schema_to_fields({"type": "object", "properties": {"value": {"type": ["number", "null"]}}})
     assert fields[0]["type"] == "number"
     graph = {"nodes": [{"id": f"n{i}"} for i in range(1000)],
@@ -97,7 +97,7 @@ def test_union_parameters_and_large_generated_graph():
 def test_public_schema_files_match_live_models():
     from src.web.models import Graph, Workspace
     for name, cls in {"operator": Descriptor, "graph": Graph, "workspace": Workspace}.items():
-        assert json.loads((ROOT / "biopipe_sdk/schemas" / f"{name}.json").read_text(encoding="utf-8")) == cls.model_json_schema()
+        assert json.loads((ROOT / "operon_sdk/schemas" / f"{name}.json").read_text(encoding="utf-8")) == cls.model_json_schema()
 
 
 def test_selection_scope_and_ui_revision(gateway):
@@ -144,7 +144,7 @@ def test_atomic_edits_conflicts_and_shared_undo(gateway):
 
 def test_gateway_capabilities_and_revocation(gateway):
     client, app, data, state = gateway
-    token = client.post("/api/agent/connect", headers={"X-BioPipe-Bridge": app.state.bridge.secret},
+    token = client.post("/api/agent/connect", headers={"X-Operon-Bridge": app.state.bridge.secret},
                         json={"name": "user", "scopes": ["context"]}).json()["token"]
     client.headers.pop("X-Studio-Token")
     assert client.get("/api/agent/sessions").status_code == 403
@@ -181,14 +181,14 @@ def test_view_changes_do_not_invalidate_graph_revision(gateway):
 
 
 def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeypatch):
-    from biopipe.developer import scaffold, build
-    from biopipe.plugins import PluginManager
+    from operon.developer import scaffold, build
+    from operon.plugins import PluginManager
     client, app, data, state = gateway
     source = tmp_path / "scale_plugin"
     scaffold(source)
     import tomllib
     from packaging.requirements import Requirement
-    from biopipe import __version__
+    from operon import __version__
     project = tomllib.loads((source / 'pyproject.toml').read_text(encoding='utf-8'))
     requirement = Requirement(project['project']['dependencies'][0])
     assert __version__ in requirement.specifier
@@ -196,7 +196,7 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
     wheel = build(source)["wheels"][0]
     import zipfile
     with zipfile.ZipFile(wheel) as archive:
-        descriptor_file = next(name for name in archive.namelist() if name.endswith(".dist-info/biopipe.json"))
+        descriptor_file = next(name for name in archive.namelist() if name.endswith(".dist-info/operon.json"))
         descriptor = json.loads(archive.read(descriptor_file))["descriptors"][0]
         assert descriptor["id"] == "example.scale_plugin"
         assert descriptor["category"] == "data"
@@ -205,17 +205,17 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
     # installations). A plugin worker must resolve the same transitive paths.
     indirect = tmp_path / "indirect_dependency"
     indirect.mkdir()
-    (indirect / "biopipe_test_dependency.py").write_text("VALUE = 42\n", encoding="utf-8")
+    (indirect / "operon_test_dependency.py").write_text("VALUE = 42\n", encoding="utf-8")
     manager = app.state.service.plugins
     installed = manager.install(wheel)
     # The same executable is retained; private targets are selected by the
     # bootstrap, not by returning another venv's Python path. Already-processed
     # parent .pth paths remain available without executing .pth in target dirs.
     monkeypatch.syspath_prepend(str(indirect))
-    from biopipe.targets import invoke
+    from operon.targets import invoke
     request, response = tmp_path / 'probe-request.json', tmp_path / 'probe-response.json'
-    request.write_text(json.dumps([{'id': 'inherited', 'dependency_imports': ['biopipe_test_dependency']}]))
-    invoke([], 'biopipe.dependencies', [request, response], tmp_path)
+    request.write_text(json.dumps([{'id': 'inherited', 'dependency_imports': ['operon_test_dependency']}]))
+    invoke([], 'operon.dependencies', [request, response], tmp_path)
     assert json.loads(response.read_text())['inherited']['status'] == 'passed'
     assert manager.python_for(installed) == sys.executable
     assert len([d for d in installed["descriptors"] if d['distribution'] == 'scale-plugin']) == 1
@@ -266,7 +266,7 @@ def test_hot_plugin_install_worker_and_pinned_upgrade(gateway, tmp_path, monkeyp
 
 
 def test_reader_plugin_is_discovered_and_runs_in_worker(gateway, tmp_path):
-    from biopipe.developer import scaffold, build
+    from operon.developer import scaffold, build
     client, app, data, state = gateway
     source = tmp_path / "array_plugin"
     scaffold(source, "reader")
@@ -293,7 +293,7 @@ def test_reader_plugin_is_discovered_and_runs_in_worker(gateway, tmp_path):
 
 def test_client_restart_rediscovers_after_studio_restart(monkeypatch, tmp_path):
     from types import SimpleNamespace
-    from biopipe import client as module
+    from operon import client as module
 
     first = {"instance_id": "a", "url": "http://127.0.0.1:1", "secret": "old", "pid": 1, "created": 1}
     second = {"instance_id": "b", "url": "http://127.0.0.1:1", "secret": "new", "pid": 2, "created": 2}

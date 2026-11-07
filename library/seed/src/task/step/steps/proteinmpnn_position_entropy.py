@@ -161,11 +161,14 @@ def run_designer(repo: Path, structure: Path, out_dir: Path, params: dict) -> No
 
 
 class ProteinmpnnPositionEntropyStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = (
         "proteinmpnn_position_entropy.ProteinmpnnPositionEntropyStep.parameters.json"
     )
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_position_entropy",
         "version": "1.0.0",
@@ -243,7 +246,7 @@ class ProteinmpnnPositionEntropyStep(Step):
         raw_timeout = params.get("timeout")
         timeout = 1800 if raw_timeout is None else int(raw_timeout)
         out_name = params["output"]
-        with tempfile.TemporaryDirectory(prefix="biopipe-mpnn-entropy-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="operon-mpnn-entropy-") as tmp:
             out_dir = Path(tmp)
             run_designer(
                 repo,

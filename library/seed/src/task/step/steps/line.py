@@ -29,9 +29,13 @@ class LineStep(Step):
         ylabel   : optional y-axis label (default: y_label)
         sort     : sort points by x before drawing (default True)
     """
-    provider = 'biopipe-plots'
+    provider = 'operon-plots'
     parameters_file = 'line.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': []},
+        'protocol_version': 3,
      'id': 'line',
      'version': '1.0.0',
      'kind': 'operator',

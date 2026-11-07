@@ -14,9 +14,13 @@ from src.task.step.steps._pwm_utils import BASES, read_pwm, scan_pwm
 class PwmScanStep(Step):
     """Report PWM hits above a score threshold on one or both strands."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'pwm_scan.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}},
+                    {'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'pwm_scan',
         'version': '1.0.0',

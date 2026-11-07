@@ -61,7 +61,7 @@ describe('language projections', () => {
     expect(html).toContain('Manage library'); expect(html).toContain('Add operators');
     expect(html).toContain('Operators and Readers'); expect(html).toContain('Workflow operators');
     expect(html).toContain('Import package'); expect(html).toContain('Import workflow file');
-    expect(html).toContain('.whl,.biopipe-library.zip'); expect(html).toContain('aria-pressed="true">Add operators');
+    expect(html).toContain('.whl,.operon-library.zip,.biopipe-library.zip'); expect(html).toContain('aria-pressed="true">Add operators');
   });
   it('puts language beside existing settings without remounting server drafts', () => {
     setLanguage('en'); expect(t('设置')).toBe('Settings');
@@ -75,10 +75,10 @@ describe('language projections', () => {
     const fallback = renderToStaticMarkup(<AgentPanel onClose={()=>{}} onCopySelection={()=>{}}/>);
     expect(fallback).toContain('Operon CLI');
     expect(fallback).toContain('&quot;command&quot;: &quot;operon&quot;');
-    const configured = renderToStaticMarkup(<AgentPanel command={{command:'python',args:['-m','biopipe','mcp','--allow-run']}} onClose={()=>{}} onCopySelection={()=>{}}/>);
+    const configured = renderToStaticMarkup(<AgentPanel command={{command:'python',args:['-m','operon','mcp','--allow-run']}} onClose={()=>{}} onCopySelection={()=>{}}/>);
     expect(configured).toContain('&quot;operon&quot;: {');
     expect(configured).toContain('&quot;command&quot;: &quot;python&quot;');
-    expect(configured).toContain('&quot;biopipe&quot;');
+    expect(configured).toContain('&quot;operon&quot;');
     expect(configured).toContain('The Python module name is retained for compatibility');
   });
 });

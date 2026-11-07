@@ -67,9 +67,12 @@ def residue_graph(
 class StructureContactsStep(Step):
     """Residue-level contact counts and nearest partner distances."""
 
-    provider = 'biopipe-core'
+    provider = 'operon-core'
     parameters_file = 'structure_contacts.StructureContactsStep.parameters.json'
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         'protocol_version': 3,
         'id': 'structure_contacts',
         'version': '1.0.0',

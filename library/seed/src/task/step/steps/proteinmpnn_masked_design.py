@@ -68,7 +68,7 @@ def run_masked_designer(params: dict, structure: Path, chain_text: str, payload:
         raise StepError("proteinmpnn_masked_design: device must be 'cpu' or 'cuda'")
 
     python = str(params.get("python_executable") or "") or sys.executable
-    out_dir = Path(tempfile.mkdtemp(prefix="biopipe-mpnn-masked-"))
+    out_dir = Path(tempfile.mkdtemp(prefix="operon-mpnn-masked-"))
     fixed_path = out_dir / "fixed_positions.jsonl"
     fixed_path.write_text(json.dumps(payload), encoding="utf-8")
     command = [
@@ -123,10 +123,13 @@ def run_masked_designer(params: dict, structure: Path, chain_text: str, payload:
 
 
 class ProteinmpnnMaskedDesignStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "proteinmpnn_masked_design.ProteinmpnnMaskedDesignStep.parameters.json"
 
     definition: dict[str, Any] = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_masked_design",
         "version": "1.0.0",

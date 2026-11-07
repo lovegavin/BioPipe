@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from biopipe.inspect import inspect_source
+from operon.inspect import inspect_source
 from src.task import load_manifest
 from src.task.check import check_manifest
 

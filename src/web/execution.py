@@ -18,7 +18,7 @@ import threading
 import time
 import uuid
 
-from biopipe.remote.client import RemoteError
+from operon.remote.client import RemoteError
 from .admission import process_identity, process_alive
 from .contracts import analyze_graph
 from .execution_plan import ACTIVE, LOCAL, make_plan, target, target_key, settings, source_location, operator_nodes
@@ -144,7 +144,7 @@ class ExecutionService:
             info.update(target={'kind': 'ssh', 'profile_id': item['profile']['id']}, name=item['profile']['name'])
             result.append(info)
         if graph is not None:
-            from biopipe.pins import graphs
+            from operon.pins import graphs
             from .execution_pins import validated_pins
             requested = {}
             for part in graphs(graph):
@@ -175,7 +175,7 @@ class ExecutionService:
         # Retain old pins; each selected host resolves them against its immutable
         # installed generations on stage submission. Defaults are already frozen.
         available = {s['id']: s.get('implementation') for s in catalog['operators'] + catalog['readers']}
-        from biopipe.pins import graphs
+        from operon.pins import graphs
         for part in graphs(graph):
             for node in part.nodes:
                 if node.kind == 'operator' and available.get(node.operator):
@@ -212,8 +212,8 @@ class ExecutionService:
         checked = graph.model_copy(deep=True)
         catalog = self.catalog(graph)
         specs = {s['id']: s for s in catalog['operators']}
-        from biopipe.pins import graphs
-        from biopipe.file_formats import primary_ext
+        from operon.pins import graphs
+        from operon.file_formats import primary_ext
         checked.base_dir = '.'
         for part in graphs(checked):
             part.base_dir = '.'
@@ -224,14 +224,14 @@ class ExecutionService:
                     node.source.path = node.id + primary_ext(node.source.path)
                     node.source.location = None
                     for key in list(node.source.args):
-                        from biopipe.reader_selection import candidates
+                        from operon.reader_selection import candidates
                         field = next((r.get('parameters_schema', {}).get('properties', {}).get(key, {})
                                       for r in candidates(catalog['readers'], node.source.path, node.source.reader)), {})
-                        if field.get('x-biopipe-path'):
+                        if field.get('x-operon-path'):
                             node.source.args[key] = 'reference.dat'
                 elif node.kind == 'operator':
                     for key, field in specs[node.operator]['parameters_schema'].get('properties', {}).items():
-                        if field.get('x-biopipe-path') and node.params.get(key):
+                        if field.get('x-operon-path') and node.params.get(key):
                             node.params[key] = 'reference.dat'
         checked.runtime.pop('execution', None)
         return compile_graph(checked, catalog, self.service.root)
@@ -263,7 +263,7 @@ class ExecutionService:
         plan = self.plan(graph)
         key = 'exec-' + uuid.uuid4().hex
         folder = self.path(key); folder.mkdir()
-        (folder / 'workflow.biopipe').write_bytes(export_bundle(graph))
+        (folder / 'workflow.operon').write_bytes(export_bundle(graph))
         job = {'id': key, 'name': graph.name, 'status': 'preparing', 'created_at': now(), 'finished_at': None,
                'error': None, 'graph': graph.model_dump(mode='json'), 'execution_plan': plan, 'owner': self.owner,
                'children': [], 'completed_units': [], 'receipts': {}, 'logs_complete': False,
@@ -398,7 +398,7 @@ class ExecutionService:
         path_type = Path if location['kind'] == 'local' else PurePosixPath
         path = path_type(info['path'].replace('\\', '/'))
         files = [{'name': path.name, **info}]
-        from biopipe.file_formats import uncompressed_path
+        from operon.file_formats import uncompressed_path
         # Companions are descriptor-driven, with conventional optional indexes.
         # No directory is recursively uploaded.
         root = uncompressed_path(path)
@@ -425,7 +425,7 @@ class ExecutionService:
             self._check(key)
             if node.source and node.id not in graph.runtime.get('exchange_inputs', []):
                 location = source_location(node, original_config)
-                from biopipe.reader_selection import candidates
+                from operon.reader_selection import candidates
                 readers = candidates(catalog['readers'], node.source.path, node.source.reader)
                 # Resolve ambiguous companion formats using the owning host.
                 reader = readers[0] if len(readers) == 1 else None
@@ -444,7 +444,7 @@ class ExecutionService:
                 node.source.path = paths[files[0]['name']]
                 fields = (reader or {}).get('parameters_schema', {}).get('properties', {})
                 for name, field in fields.items():
-                    if field.get('x-biopipe-path') and node.source.args.get(name):
+                    if field.get('x-operon-path') and node.source.args.get(name):
                         location_key = f'{node.id}.source.args.{name}'
                         where = config['file_locations'].get(location_key, location)
                         reference_base = graph.base_dir if location_key in config['file_locations'] else source_base
@@ -454,7 +454,7 @@ class ExecutionService:
                 node.source.location = ExecutionTarget.model_validate(unit['target'])
             elif node.kind == 'operator':
                 for name, field in specs[node.operator]['parameters_schema'].get('properties', {}).items():
-                    if field.get('x-biopipe-path') and node.params.get(name):
+                    if field.get('x-operon-path') and node.params.get(name):
                         where = config['file_locations'].get(f'{node.id}.params.{name}', target(original_config))
                         refs = self._file_group(where, node.params[name], graph.base_dir)
                         node.params[name] = self._move(key, unit, refs, where)[refs[0]['name']]
@@ -541,7 +541,7 @@ class ExecutionService:
         stage.runtime['exchange_outputs'] = sorted(outgoing)
         self._stage_paths(key, unit, stage, catalog, settings(graph))
         used = {n.operator for node in stage.nodes for n in operator_nodes(node)}
-        from biopipe.reader_selection import candidates
+        from operon.reader_selection import candidates
         for node in stage.nodes:
             if node.source and node.id not in stage.runtime.get('exchange_inputs', []):
                 used.update(r['id'] for r in candidates(catalog['readers'], node.source.path, node.source.reader))

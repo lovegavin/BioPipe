@@ -10,8 +10,8 @@ from pathlib import Path
 
 def run_example(directory):
     import numpy as np
-    from biopipe_sdk.declarations import bind_class, for_class
-    from biopipe_sdk.testing import run_operator
+    from operon_sdk.declarations import bind_class, for_class
+    from operon_sdk.testing import run_operator
     from src.reader.readers.csv_reader import CsvReader
     from src.task.step.steps.normalize import NormalizeStep
     from src.task.step.steps.pca import PcaStep

@@ -311,10 +311,14 @@ def _parse_binary(
 
 
 class PlyReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Parse a PLY mesh (ASCII or binary, either byte order) into a table."""
     parameters_file = 'ply_reader.PlyReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'PlyReader',
      'version': '1.0.0',
      'kind': 'reader',

@@ -12,10 +12,14 @@ from src.reader.readers._labels import unique_labels
 
 
 class GctReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for .gct expression matrices; output is sample x gene."""
     parameters_file = 'gct_reader.GctReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'GctReader',
      'version': '1.0.0',
      'kind': 'reader',

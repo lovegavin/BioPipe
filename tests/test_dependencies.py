@@ -6,8 +6,8 @@ import threading
 
 import pytest
 
-from biopipe.dependencies import DependencySession, probe
-from biopipe_sdk.dependencies import requirements
+from operon.dependencies import DependencySession, probe
+from operon_sdk.dependencies import requirements
 
 
 def descriptor(name, dependencies=None):
@@ -42,7 +42,7 @@ def test_dedicated_environment_failure_never_repairs_shared_python(tmp_path, mon
     def install(*args):
         repairs.append(args[2][0]['id'])
         raise ValueError('Shared pip must not provision a dedicated interpreter')
-    monkeypatch.setattr('biopipe.install_targets.repair_entries', install)
+    monkeypatch.setattr('operon.install_targets.repair_entries', install)
     session = DependencySession(manager, inspector=inspector)
     state = session.check()
     assert repairs == []
@@ -61,7 +61,7 @@ def test_shutdown_during_repair_does_not_start_the_next_install(tmp_path, monkey
         repairs.append(args[2][0]['id'])
         session.cancel.set()
         raise ValueError('Dependency preparation cancelled: Studio is closing')
-    monkeypatch.setattr('biopipe.install_targets.repair_entries', install)
+    monkeypatch.setattr('operon.install_targets.repair_entries', install)
     state = session.check()
     assert repairs == ['b']
     assert state['running'] is False
@@ -114,7 +114,7 @@ def test_failed_repair_does_not_publish_or_invalidate_passed_entry(tmp_path, mon
     def install(manager, state, entries):
         assert [e['id'] for e in entries] == ['b']
         raise ValueError('ResolutionImpossible: version conflict')
-    monkeypatch.setattr('biopipe.install_targets.repair_entries', install)
+    monkeypatch.setattr('operon.install_targets.repair_entries', install)
     session = DependencySession(manager, inspector=inspector)
     state = session.check()
     assert state['running'] is False
@@ -129,7 +129,7 @@ def test_repair_publishes_only_after_reprobe_passes(tmp_path, monkeypatch):
     def inspector(python, entries, directory):
         calls.append((python, [e['id'] for e in entries]))
         return {e['id']: {'status': 'passed' if e['id'] == 'a' or python == 'candidate' else 'failed', 'error': ''} for e in entries}
-    monkeypatch.setattr('biopipe.install_targets.repair_entries', lambda *args, **kwargs: {**manager.state(), 'python': 'candidate'})
+    monkeypatch.setattr('operon.install_targets.repair_entries', lambda *args, **kwargs: {**manager.state(), 'python': 'candidate'})
     session = DependencySession(manager, inspector=inspector)
     assert all(e['status'] == 'passed' for e in session.check()['entries'])
     assert calls == [('base', ['a', 'b']), ('candidate', ['b'])]
@@ -143,8 +143,8 @@ def test_requirements_reject_nonportable_or_invalid_specifications():
 
 def test_probe_checks_versions_markers_and_import_errors():
     result = probe([descriptor('a', ['numpy>=0']), descriptor('b', ['numpy<0']),
-                    descriptor('c', ['biopipe-impossible-package; python_version < "1"']),
-                    {**descriptor('d'), 'dependency_imports': ['biopipe_missing_module']}])
+                    descriptor('c', ['operon-impossible-package; python_version < "1"']),
+                    {**descriptor('d'), 'dependency_imports': ['operon_missing_module']}])
     assert result['a']['status'] == result['c']['status'] == 'passed'
     assert 'installed' in result['b']['error']
     assert 'ModuleNotFoundError' in result['d']['error']
@@ -182,7 +182,7 @@ def test_shutdown_cancels_probe_process_without_leaving_it_alive(tmp_path):
     import sys
     import time
     import psutil
-    from biopipe.plugins import process_context, run_process
+    from operon.plugins import process_context, run_process
     pid_file = tmp_path / 'probe.pid'
     cancel = threading.Event()
     errors = []
@@ -225,7 +225,7 @@ def test_installer_uses_bundled_wheel_when_selected_python_has_no_pip(tmp_path):
     probe = subprocess.run([sys.executable, '-I', '-S', '-c',
                             'import importlib.util; assert importlib.util.find_spec("pip") is None'], capture_output=True, text=True)
     assert probe.returncode == 0, probe.stderr
-    bootstrap = Path(__file__).resolve().parents[1] / 'biopipe/runtime_bootstrap.py'
+    bootstrap = Path(__file__).resolve().parents[1] / 'operon/runtime_bootstrap.py'
     result = subprocess.run([sys.executable, '-I', '-S', str(bootstrap), str(config), 'pip', '--version'],
                             capture_output=True, text=True, timeout=30)
     assert result.returncode == 0, result.stderr
@@ -233,12 +233,12 @@ def test_installer_uses_bundled_wheel_when_selected_python_has_no_pip(tmp_path):
 
 
 def test_probe_uses_isolated_environment_for_declared_operator(monkeypatch, tmp_path):
-    from biopipe import dependencies as module
+    from operon import dependencies as module
     fake = tmp_path / 'bin/python'
     fake.parent.mkdir(parents=True)
     fake.write_text('#!/bin/sh\nexit 0\n')
     fake.chmod(0o755)
-    monkeypatch.setattr('biopipe.environments.resolve', lambda name: fake)
+    monkeypatch.setattr('operon.environments.resolve', lambda name: fake)
     monkeypatch.setattr(module.subprocess, 'run', lambda *a, **k: type('R', (), {'returncode': 0, 'stdout': '', 'stderr': ''})())
     entry = {**descriptor('isolated'), 'resources': {'environment': 'antifold'}, 'dependency_imports': ['antifold']}
     result = module.probe([entry])['isolated']

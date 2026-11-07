@@ -14,7 +14,7 @@ from src.task.runner import run
 from src.task.step.steps._sequence_common import encode_sequences
 from src.task.step.steps.crispr_array_detect import parse_crisprs
 
-MINCED = os.environ.get("BIOPIPE_MINCED") or shutil.which("minced")
+MINCED = os.environ.get("OPERON_MINCED") or shutil.which("minced")
 FIXTURES = Path(__file__).parent / "fixtures"
 
 SAMPLE = """Sequence 'NC_000913.3_crispr1' (562 bp)
@@ -109,7 +109,7 @@ def test_run_errors(tmp_path) -> None:
 
 @pytest.mark.skipif(not MINCED, reason="minced is not available")
 @pytest.mark.skipif(
-    not os.environ.get("BIOPIPE_REAL_CRISPR"), reason="set BIOPIPE_REAL_CRISPR=1"
+    not os.environ.get("OPERON_REAL_CRISPR"), reason="set OPERON_REAL_CRISPR=1"
 )
 def test_real_minced(tmp_path) -> None:
     text = (FIXTURES / "ecoli_crispr.fa").read_text()

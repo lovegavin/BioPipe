@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from biopipe import registry
+from operon import registry
 
 
 def test_default_route_roots_pairs_env_with_its_code_dir(monkeypatch, tmp_path):
@@ -13,7 +13,7 @@ def test_default_route_roots_pairs_env_with_its_code_dir(monkeypatch, tmp_path):
     other = tmp_path / "managed-v1" / "code-old" / "routes"
     other.mkdir(parents=True)
     monkeypatch.setattr("sys.prefix", str(prefix))
-    monkeypatch.delenv("BIOPIPE_ROUTES", raising=False)
+    monkeypatch.delenv("OPERON_ROUTES", raising=False)
     assert registry.default_route_roots(tmp_path / "site-packages") == [paired.resolve()]
 
 
@@ -23,7 +23,7 @@ def test_default_route_roots_falls_back_to_managed_code_dir(monkeypatch, tmp_pat
     code = tmp_path / "managed-v1" / "code-abc" / "routes"
     code.mkdir(parents=True)
     monkeypatch.setattr("sys.prefix", str(prefix))
-    monkeypatch.delenv("BIOPIPE_ROUTES", raising=False)
+    monkeypatch.delenv("OPERON_ROUTES", raising=False)
     roots = registry.default_route_roots(tmp_path / "site-packages")
     assert roots == [code.resolve()]
 
@@ -31,7 +31,7 @@ def test_default_route_roots_falls_back_to_managed_code_dir(monkeypatch, tmp_pat
 def test_default_route_roots_prefers_env_override(monkeypatch, tmp_path):
     override = tmp_path / "custom-routes"
     override.mkdir()
-    monkeypatch.setenv("BIOPIPE_ROUTES", str(override))
+    monkeypatch.setenv("OPERON_ROUTES", str(override))
     roots = registry.default_route_roots(tmp_path / "nowhere")
     assert roots and roots[0] == override.resolve()
 
@@ -43,6 +43,6 @@ def test_route_sources_uses_fallback_when_root_has_no_routes(monkeypatch, tmp_pa
     routes.mkdir(parents=True)
     (routes / "task.yaml").write_text("name: demo\nsteps: []\n")
     monkeypatch.setattr("sys.prefix", str(prefix))
-    monkeypatch.delenv("BIOPIPE_ROUTES", raising=False)
+    monkeypatch.delenv("OPERON_ROUTES", raising=False)
     found = registry.route_sources(tmp_path / "site-packages")
     assert [relative for _, relative in found] == ["demo"]

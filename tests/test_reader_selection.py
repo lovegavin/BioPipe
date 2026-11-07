@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 import yaml
 
-from biopipe.packages import bundled_state
-from biopipe.plugins import PluginManager
+from operon.packages import bundled_state
+from operon.plugins import PluginManager
 from src.core import ReaderError
 from src.reader import pick_reader, read_source
 from src.web.assets import plan_input

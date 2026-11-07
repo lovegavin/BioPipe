@@ -106,7 +106,7 @@ def run_bias_designer(
     timeout = int(params.get("timeout_seconds", 1800) or 1800)
     device = str(params.get("device", "cpu")).strip() or "cpu"
     executable = str(params.get("python_executable", "")).strip() or sys.executable
-    with tempfile.TemporaryDirectory(prefix="biopipe_bias_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="operon_bias_") as tmp:
         out_dir = Path(tmp) / "designs"
         out_dir.mkdir()
         bias_path = Path(tmp) / "bias.jsonl"
@@ -166,11 +166,14 @@ def run_bias_designer(
 class ProteinmpnnBiasMatrixStep(Step):
     """Bias selected positions towards (or away from) amino acids."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = (
         "proteinmpnn_bias_matrix.ProteinmpnnBiasMatrixStep.parameters.json"
     )
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "proteinmpnn_bias_matrix",
         "version": "1.0.0",

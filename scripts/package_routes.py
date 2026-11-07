@@ -1,6 +1,6 @@
 """Package builtin route templates as importable workflow bundles.
 
-The Studio imports workflows as ``.biopipe.zip`` archives containing
+The Studio imports workflows as ``.operon.zip`` archives containing
 ``graph.json``, ``parameters.json`` and ``execution.json``.  Builtin routes are
 authored as ``task.yaml`` templates; this script compiles the reviewed route
 index into one bundle per route and collects them into a single release asset.
@@ -39,7 +39,7 @@ def main() -> int:
     version = args.version or json.loads(args.release.read_text(encoding="utf-8"))["version"]
     index = json.loads(args.index.read_text(encoding="utf-8"))
 
-    from biopipe.application import Application
+    from operon.application import Application
     from src.web.parameters import export_bundle
     from src.web.profile import make_settings
 
@@ -55,7 +55,7 @@ def main() -> int:
         for record in index.get("routes", []):
             key = route_key(record, index.get("sources", {}))
             prepared = application.prepare(record["graph"])
-            target = routes_dir / f"{key}.biopipe.zip"
+            target = routes_dir / f"{key}.operon.zip"
             target.write_bytes(export_bundle(prepared))
             written.append((key, record["name"], target))
         application.shutdown()
@@ -65,10 +65,10 @@ def main() -> int:
         digest = hashlib.sha256(target.read_bytes()).hexdigest()
         checksums.append(f"{digest}  routes/{target.name}")
     readme = [
-        f"# BioPipe route library v{version}",
+        f"# Operon route library v{version}",
         "",
         "Import one bundle at a time in Studio: File -> Import workflow bundle or JSON,",
-        "or with the CLI: biopipe graph open <key>.biopipe.zip.",
+        "or with the CLI: operon graph open <key>.operon.zip.",
         "",
         "Each bundle keeps its source paths relative to the builtin route workspace;",
         "point the Source nodes at your own files after import.",
@@ -76,10 +76,10 @@ def main() -> int:
         "| Route | File |",
         "| --- | --- |",
     ]
-    readme += [f"| {name} | routes/{key}.biopipe.zip |" for key, name, _ in sorted(written)]
+    readme += [f"| {name} | routes/{key}.operon.zip |" for key, name, _ in sorted(written)]
     readme_text = "\n".join(readme) + "\n"
 
-    archive = args.output / f"BioPipe-Routes-v{version}.zip"
+    archive = args.output / f"Operon-Routes-v{version}.zip"
     with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
         bundle.writestr("README.md", readme_text)
         bundle.writestr("SHA256SUMS.txt", "\n".join(checksums) + "\n")

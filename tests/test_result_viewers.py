@@ -7,8 +7,8 @@ from types import SimpleNamespace
 import pytest
 from fastapi.testclient import TestClient
 
-from biopipe import viewers as module
-from biopipe.documents import CommandError
+from operon import viewers as module
+from operon.documents import CommandError
 
 
 @pytest.fixture
@@ -114,15 +114,15 @@ def test_custom_catalog_validation(service, tmp_path):
 
 def test_open_and_configuration_require_execution_permission(tmp_path, monkeypatch):
     from src.web.service import Settings
-    from biopipe.headless import create_headless_app
-    monkeypatch.setenv('BIOPIPE_REGISTRY_MAINTENANCE', '1')
+    from operon.headless import create_headless_app
+    monkeypatch.setenv('OPERON_REGISTRY_MAINTENANCE', '1')
     app = create_headless_app(Settings(tmp_path, tmp_path / 'profile', tmp_path / 'no-ui', testing=True,
                                        code_root=Path(__file__).resolve().parents[1]))
     app.state.application.viewers.prepare = lambda *args: {'path': 'prepared'}
     app.state.application.viewers.open = lambda j, a, r, v: {'viewer': v, 'role': r}
     with TestClient(app, base_url='http://127.0.0.1') as client:
         def auth(scopes):
-            r = client.post('/api/agent/connect', headers={'X-BioPipe-Bridge': app.state.bridge.secret}, json={'name': 'viewer-test', 'scopes': scopes})
+            r = client.post('/api/agent/connect', headers={'X-Operon-Bridge': app.state.bridge.secret}, json={'name': 'viewer-test', 'scopes': scopes})
             return {'Authorization': 'Bearer ' + r.json()['token']}
         read, run = auth(['context']), auth(['context', 'run'])
         assert client.get('/api/v1/viewers').status_code == 403
@@ -194,7 +194,7 @@ def test_default_uses_longest_suffix_and_does_not_fetch_outputs(service, tmp_pat
 
 
 def test_cli_exposes_viewer_actions():
-    from biopipe.cli import parser
+    from operon.cli import parser
     assert parser().parse_args(['viewers', 'list', '--refresh']).refresh
     args = parser().parse_args(['artifacts', 'open', 'job', 'artifact', '--role', 'data', '--viewer', 'igv'])
     assert args.viewer == 'igv' and args.role == 'data'
@@ -205,11 +205,11 @@ def test_cli_exposes_viewer_actions():
 
 def test_mcp_viewer_uses_shared_api_and_escapes_ids():
     import asyncio
-    from biopipe.mcp_server import create_server
+    from operon.mcp_server import create_server
     calls = []
     client = SimpleNamespace(request=lambda *args: (calls.append(args), {'ok': True})[1])
     server = create_server(client)
-    asyncio.run(server.call_tool('biopipe_viewer', {'job_id': 'j/a', 'artifact_id': 'a b', 'role': 'data'}))
+    asyncio.run(server.call_tool('operon_viewer', {'job_id': 'j/a', 'artifact_id': 'a b', 'role': 'data'}))
     assert calls[-1] == ('/v1/jobs/j%2Fa/artifacts/a%20b/viewers?role=data',)
-    asyncio.run(server.call_tool('biopipe_viewer', {'job_id': 'job', 'artifact_id': 'artifact', 'role': 'data', 'viewer': 'igv'}))
+    asyncio.run(server.call_tool('operon_viewer', {'job_id': 'job', 'artifact_id': 'artifact', 'role': 'data', 'viewer': 'igv'}))
     assert calls[-1] == ('/v1/jobs/job/artifacts/artifact/open-viewer', {'role': 'data', 'viewer': 'igv'})

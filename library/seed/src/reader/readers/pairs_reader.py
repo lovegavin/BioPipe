@@ -3,9 +3,15 @@ from src.reader.base import Reader
 
 
 class PairsReader(Reader):
-    provider = 'biopipe-hic'
+    provider = 'operon-hic'
     parameters_file = 'pairs.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'file_artifact',
+                      'representations': ['file_artifact'],
+                      'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'PairsReader',
      'version': '1.0.0',
      'kind': 'reader',

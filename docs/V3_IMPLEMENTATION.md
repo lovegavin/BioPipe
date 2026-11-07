@@ -12,7 +12,7 @@ and the release's separate validation reports.
 
 | Area | Implemented behavior | Boundary |
 | --- | --- | --- |
-| Workflow authoring | Strict `biopipe.workflow` YAML, stable node/edge IDs, branches, route snapshots, JSON values and execution sidecars; CLI init/lint/format/export/prepare/run | Existing execution YAML remains a separate low-level format |
+| Workflow authoring | Strict `operon.workflow` YAML, stable node/edge IDs, branches, route snapshots, JSON values and execution sidecars; CLI init/lint/format/export/prepare/run | Existing execution YAML remains a separate low-level format |
 | Desktop YAML | Export a five-file editable YAML project ZIP and import it through the workflow menu | Browser imports resolve input paths against the selected workspace; data is not copied into this project archive |
 | Lightweight startup | Start the management service, read registry metadata; registration neither imports provider code nor resolves scientific dependencies | The desktop still needs a small Python management service; this is not a browser-only launcher |
 | Validation | Route-scoped, selected-host checks; ready-only cache; explicit dependency preparation; run refuses blocked environments | Existing managed dependency directories and configured SSH installations remain the supported targets |
@@ -58,7 +58,7 @@ exercise the new editor, script drop, promotion, localization and bridge transpo
 The public-project round trip is checked through the same HTTP endpoints as the UI.
 
 The standalone test copies a real CPython runtime, moves the output package and
-runs it without importing BioPipe. That is evidence for the tested Python file
+runs it without importing Operon. That is evidence for the tested Python file
 workflow, not evidence for arbitrary Hi-C/R/C++ portable packages or a clean-machine
 installer. A new Setup build and actual double-click acceptance remain release
 gates; no GitHub release is created by this implementation task.

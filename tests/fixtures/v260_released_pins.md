@@ -1,7 +1,7 @@
 # Released v2.6.0 pin fixture
 
 `v260_released_pins.json` contains only the public CsvReader/PCA implementation
-identities from `BioPipe_Setup.exe` on the official v2.6.0 release:
+identities from `Operon_Setup.exe` on the official v2.6.0 release:
 
 - Source commit: `e539ecd3a21fa6edbb5fd5c1e424c9aa98835237`.
 - Setup SHA256: `2f93df3f8f8d3e96a2c930b8565446e9606d2fc63e29fb88a765d9d9fc27ca71`.

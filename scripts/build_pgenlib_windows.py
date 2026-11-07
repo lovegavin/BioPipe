@@ -74,7 +74,7 @@ class ClangLib(build_clib):
                       'gzread', 'gzwrite', 'inflate', 'infback', 'inftrees',
                       'inffast', 'trees', 'uncompr', 'zutil']
         text = text.replace('ext_modules = [',
-            "# BioPipe Windows build: zlib 1.3.2 is linked into the extension.\n"
+            "# Operon Windows build: zlib 1.3.2 is linked into the extension.\n"
             + f"clib[1]['sources'] += {['src/zlib/'+name+'.c' for name in zlib_files]!r}\n\n"
             + 'ext_modules = [')
         setup.write_text(text, encoding='utf-8')
@@ -99,7 +99,7 @@ class ClangLib(build_clib):
 #include <errno.h>
 #include <io.h>
 #include <windows.h>
-static inline wchar_t* BiopipeWidePath(const char* path) {
+static inline wchar_t* OperonWidePath(const char* path) {
   int count = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
   if (!count) { errno = EINVAL; return NULL; }
   wchar_t* result = (wchar_t*)malloc((size_t)count * sizeof(wchar_t));
@@ -109,8 +109,8 @@ static inline wchar_t* BiopipeWidePath(const char* path) {
   }
   return result;
 }
-static inline FILE* BiopipeFopenUtf8(const char* path, const char* mode) {
-  wchar_t* wide = BiopipeWidePath(path);
+static inline FILE* OperonFopenUtf8(const char* path, const char* mode) {
+  wchar_t* wide = OperonWidePath(path);
   if (!wide) return NULL;
   wchar_t wide_mode[16];
   size_t n = strlen(mode);
@@ -120,8 +120,8 @@ static inline FILE* BiopipeFopenUtf8(const char* path, const char* mode) {
   free(wide);
   return result;
 }
-static inline int BiopipeUnlinkUtf8(const char* path) {
-  wchar_t* wide = BiopipeWidePath(path);
+static inline int OperonUnlinkUtf8(const char* path) {
+  wchar_t* wide = OperonWidePath(path);
   if (!wide) return -1;
   int result = _wunlink(wide);
   free(wide);
@@ -130,11 +130,11 @@ static inline int BiopipeUnlinkUtf8(const char* path) {
 '''
         base.write_text(base.read_text().replace('#endif  // __PLINK2_BASE_H__', shim + '\n#endif  // __PLINK2_BASE_H__'))
         for native in (source / 'src/plink2/include').glob('*.cc'):
-            code = native.read_text().replace('fopen(', 'BiopipeFopenUtf8(').replace('unlink(', 'BiopipeUnlinkUtf8(')
+            code = native.read_text().replace('fopen(', 'OperonFopenUtf8(').replace('unlink(', 'OperonUnlinkUtf8(')
             native.write_text(code)
         # Record sources before generated objects/wheels enter the tree.
-        shutil.copy2(Path(__file__), source / 'BIOPIPE_WINDOWS_BUILD.py')
-        with tarfile.open(output / 'pgenlib-0.95.1-biopipe-windows-source.tar.gz', 'w:gz') as archive:
+        shutil.copy2(Path(__file__), source / 'OPERON_WINDOWS_BUILD.py')
+        with tarfile.open(output / 'pgenlib-0.95.1-operon-windows-source.tar.gz', 'w:gz') as archive:
             archive.add(source, arcname=source.name)
         subprocess.run([sys.executable, '-I', '-m', 'build', '--wheel', '--no-isolation',
                         '--outdir', str(output), str(source)], check=True)

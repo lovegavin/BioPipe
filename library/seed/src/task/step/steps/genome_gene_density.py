@@ -41,9 +41,12 @@ _STATISTICS = (
 class GenomeGeneDensityStep(Step):
     """Gene (or CDS) density in fixed windows along each sequence."""
 
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "genome_gene_density.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "genome_gene_density",
         "version": "1.0.0",

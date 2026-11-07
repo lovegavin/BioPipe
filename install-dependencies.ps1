@@ -1,8 +1,8 @@
-# BioPipe Operator Library: install the dependencies declared by the library.
+# Operon Operator Library: install the dependencies declared by the library.
 #
-#   .\install-dependencies.ps1 -ProfileDir C:\BioPipe -DryRun
-#   .\install-dependencies.ps1 -ProfileDir C:\BioPipe
-#   .\install-dependencies.ps1 -ProfileDir C:\BioPipe -Tools
+#   .\install-dependencies.ps1 -ProfileDir <profile-dir> -DryRun
+#   .\install-dependencies.ps1 -ProfileDir <profile-dir>
+#   .\install-dependencies.ps1 -ProfileDir <profile-dir> -Tools
 #
 # The script re-launches itself with the interpreter recorded in server.json.
 [CmdletBinding()]

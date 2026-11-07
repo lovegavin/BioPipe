@@ -1,8 +1,8 @@
 """Copy these four files into the operator directory and scan for operators."""
 import numpy as np
-from biopipe_sdk import Operator, Form, project_metadata
+from operon_sdk import Operator, Form, project_metadata
 
-BIOPIPE_PLUGIN = {"name": "example-localized-scale", "version": "0.1.0", "dependencies": ["numpy>=1.26"]}
+OPERON_PLUGIN = {"name": "example-localized-scale", "version": "0.1.0", "dependencies": ["numpy>=1.26"]}
 
 
 class Scale(Operator):

@@ -11,10 +11,10 @@ from src.web.profile import resolve_profile
 
 def identity(root, value='a' * 32, **extra):
     root.mkdir(parents=True, exist_ok=True)
-    (root / 'biopipe-install.json').write_text(json.dumps({'schema_version': 1, 'isolated': True, 'profile_id': value, **extra}))
+    (root / 'operon-install.json').write_text(json.dumps({'schema_version': 1, 'isolated': True, 'profile_id': value, **extra}))
 
 
-@pytest.mark.parametrize('product,namespace', [('operon', '.operon'), ('biopipe', '.biopipe'), (None, '.biopipe')])
+@pytest.mark.parametrize('product,namespace', [('operon', '.operon'), ('biopipe', '.biopipe'), (None, '.operon')])
 def test_product_marker_owns_its_profile_without_adopting_other_product_state(tmp_path, monkeypatch, product, namespace):
     install, home = tmp_path / 'relocated install', tmp_path / 'home'
     identity(install, **({'product': product} if product else {}))
@@ -26,7 +26,7 @@ def test_product_marker_owns_its_profile_without_adopting_other_product_state(tm
     legacy.parent.mkdir(parents=True); legacy.write_bytes(b'legacy runtime identity')
     before = {path: path.read_bytes() for path in home.rglob('*') if path.is_file()}
     expected = home / namespace / 'profiles' / ('a' * 32)
-    result = resolve_profile(install, home=home, environ={'BIOPIPE_STUDIO_HOME': str(legacy.parent)})
+    result = resolve_profile(install, home=home, environ={'OPERON_STUDIO_HOME': str(legacy.parent)})
     assert result.profile_dir == expected and result.workspace == expected / 'workspace'
     assert result.data_dir == expected / 'workspace/.studio'
     assert not expected.exists() and all(path.read_bytes() == value for path, value in before.items())
@@ -38,12 +38,12 @@ def test_product_marker_owns_its_profile_without_adopting_other_product_state(tm
         resolve_profile(install, home=home, profile_dir=home / '.biopipe/studio')
 
 
-@pytest.mark.parametrize('product', ['unknown', '../biopipe', '.operon', 'Operon', '', None, [], {}])
+@pytest.mark.parametrize('product', ['unknown', '../operon', '.operon', 'Operon', '', None, [], {}])
 def test_unknown_product_fails_before_profile_creation_or_environment_mutation(tmp_path, monkeypatch, product):
-    from biopipe.installation import configure_environment
+    from operon.installation import configure_environment
     import os
     identity(tmp_path, product=product)
-    monkeypatch.setenv('BIOPIPE_STUDIO_HOME', 'keep-this-existing-override')
+    monkeypatch.setenv('OPERON_STUDIO_HOME', 'keep-this-existing-override')
     monkeypatch.setenv('PYTHONPATH', 'keep-existing-python-path')
     original = dict(os.environ)
     with pytest.raises(ValueError, match='Unknown installation product'):
@@ -55,22 +55,22 @@ def test_unknown_product_fails_before_profile_creation_or_environment_mutation(t
 
 def test_isolated_profile_ignores_old_profiles_environment_and_cwd(tmp_path, monkeypatch):
     home, install = tmp_path / 'home', tmp_path / 'install'
-    old = home / '.biopipe/studio/workspace/.studio/plugins/registry.json'
+    old = home / '.operon/studio/workspace/.studio/plugins/registry.json'
     old.parent.mkdir(parents=True); old.write_bytes(b'broken old registry')
     identity(install)
-    environment = {'BIOPIPE_STUDIO_HOME': str(home / 'old'), 'BIOPIPE_STUDIO_DATA': 'invalid-outside-workspace'}
+    environment = {'OPERON_STUDIO_HOME': str(home / 'old'), 'OPERON_STUDIO_DATA': 'invalid-outside-workspace'}
     before = {p: p.read_bytes() for p in home.rglob('*') if p.is_file()}
     result = resolve_profile(install, home=home, environ=environment)
     monkeypatch.chdir(tmp_path)
     assert resolve_profile(install, home=home, environ=environment) == result
-    assert result.profile_dir == home / '.biopipe/profiles' / ('a' * 32)
+    assert result.profile_dir == home / '.operon/profiles' / ('a' * 32)
     assert not result.profile_dir.exists()
     assert all(p.read_bytes() == raw for p, raw in before.items())
     assert resolve_profile(install, home=home, environ=environment, profile_dir=result.profile_dir) == result
     # Headless auto-start passes the resolved workspace/data pair explicitly.
     assert resolve_profile(install, home=home, environ=environment, workspace=result.workspace, data_dir=result.data_dir) == result
     with pytest.raises(ValueError, match='own profile'):
-        resolve_profile(install, home=home, profile_dir=home / '.biopipe/studio')
+        resolve_profile(install, home=home, profile_dir=home / '.operon/studio')
 
 
 def test_reinstall_gets_a_new_identity_without_changing_previous_state(tmp_path):
@@ -91,17 +91,17 @@ def test_invalid_install_identity_fails_closed(tmp_path, profile_id):
 
 
 def test_portable_and_development_profiles_remain_compatible(tmp_path):
-    assert resolve_profile(tmp_path, home=tmp_path / 'home', environ={}).profile_dir == tmp_path / 'home/.biopipe/studio'
+    assert resolve_profile(tmp_path, home=tmp_path / 'home', environ={}).profile_dir == tmp_path / 'home/.operon/studio'
 
 
 def test_bundled_cli_uses_same_install_identity_and_sanitizes_overrides(tmp_path, monkeypatch):
-    from biopipe.installation import configure_environment
+    from operon.installation import configure_environment
     install = tmp_path / 'install'; identity(install)
     python = install / 'runtime/python/python.exe'
     monkeypatch.setattr(sys, 'executable', str(python))
     site = python.parent / 'Lib/site-packages'
-    monkeypatch.setenv('BIOPIPE_BASE_PATHS', '["old-target"]')
-    monkeypatch.setenv('BIOPIPE_ENVIRONMENTS_ROOT', str(tmp_path / 'old-deps'))
+    monkeypatch.setenv('OPERON_BASE_PATHS', '["old-target"]')
+    monkeypatch.setenv('OPERON_ENVIRONMENTS_ROOT', str(tmp_path / 'old-deps'))
     monkeypatch.setenv('PYTHONPATH', 'old')
     monkeypatch.setenv('HTTPS_PROXY', 'http://proxy.example:8080')
     # Restore every changed environment variable after this test.
@@ -113,7 +113,7 @@ def test_bundled_cli_uses_same_install_identity_and_sanitizes_overrides(tmp_path
             monkeypatch.delenv(key, raising=False)
     assert resolve_profile(site, home=tmp_path/'home', environ={}) == resolve_profile(install, home=tmp_path/'home', environ={})
     configure_environment(site)
-    assert 'BIOPIPE_BASE_PATHS' not in os.environ and 'BIOPIPE_ENVIRONMENTS_ROOT' not in os.environ
+    assert 'OPERON_BASE_PATHS' not in os.environ and 'OPERON_ENVIRONMENTS_ROOT' not in os.environ
     assert 'PYTHONPATH' not in os.environ and os.environ['PATH'].startswith(str(python.parent))
     assert os.environ['HTTPS_PROXY'] == 'http://proxy.example:8080'
 
@@ -129,7 +129,7 @@ def test_setup_probe_rejects_nonbundled_python_without_touching_old_profile(tmp_
 
 def test_setup_probe_returns_result_without_writing_in_parent_log_directory(tmp_path, monkeypatch, capsys):
     from scripts import install_maintenance as probe
-    import biopipe.runtime as runtime
+    import operon.runtime as runtime
     root = tmp_path / 'install'
     identity(root)
     monkeypatch.setattr(probe, 'ROOT', root)
@@ -145,12 +145,12 @@ def test_setup_probe_returns_result_without_writing_in_parent_log_directory(tmp_
 
 def test_installed_cli_copy_cannot_publish_runtime_hint(tmp_path, monkeypatch):
     """The wheel in runtime/site-packages shares the desktop install identity."""
-    import biopipe.runtime as runtime
+    import operon.runtime as runtime
     install = tmp_path / 'installed'
     identity(install)
     python = install / 'runtime/python/python.exe'
     monkeypatch.setattr(sys, 'executable', str(python))
-    monkeypatch.setattr(runtime, '__file__', str(python.parent / 'Lib/site-packages/biopipe/runtime.py'))
+    monkeypatch.setattr(runtime, '__file__', str(python.parent / 'Lib/site-packages/operon/runtime.py'))
     monkeypatch.setattr(runtime, 'CORE_MODULES', ())
     hint = tmp_path / 'runtime.json'
     assert runtime.remember_runtime(path=hint) is False
@@ -167,19 +167,19 @@ def test_isolated_desktop_lifespan_does_not_publish_global_runtime(tmp_path, mon
     from fastapi.testclient import TestClient
     from src.web.api import create_app
     from src.web.service import Settings
-    import biopipe.runtime as runtime
+    import operon.runtime as runtime
 
     # Model a successful bundled-runtime probe, independent of optional test-host deps.
     monkeypatch.setattr(runtime, 'CORE_MODULES', ())
     install = tmp_path / 'install'
     identity(install)
-    monkeypatch.setattr(runtime, '__file__', str(install / 'biopipe/runtime.py'))
-    hint = tmp_path / 'home/.biopipe/runtime.json'
+    monkeypatch.setattr(runtime, '__file__', str(install / 'operon/runtime.py'))
+    hint = tmp_path / 'home/.operon/runtime.json'
     original = b'{"schema_version":1,"python":"old-portable-python"}\n'
     if existing_hint:
         hint.parent.mkdir(parents=True)
         hint.write_bytes(original)
-    monkeypatch.setenv('BIOPIPE_RUNTIME_CONFIG', str(hint))
+    monkeypatch.setenv('OPERON_RUNTIME_CONFIG', str(hint))
     root = Path(__file__).resolve().parents[1]
     workspace = tmp_path / 'workspace'
     settings = Settings(workspace, workspace / '.studio', root / 'frontend/dist',

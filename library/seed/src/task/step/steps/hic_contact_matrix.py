@@ -19,9 +19,17 @@ def _file_path(artifact, operator):
 
 
 class HicContactMatrixStep(Step):
-    provider = "biopipe-core"
+    provider = "operon-core"
     parameters_file = "hic_contact_matrix.parameters.json"
     definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [{'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}},
+                    {'logical_type': 'file_artifact',
+                     'representations': ['file_artifact'],
+                     'metadata': {}}],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
         "protocol_version": 3,
         "id": "hic_contact_matrix",
         "version": "1.0.0",

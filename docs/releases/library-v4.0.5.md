@@ -1,4 +1,4 @@
-# BioPipe Operator Library v4.0.5
+# Operon Operator Library v4.0.5
 
 Patch release for the 4.0 line. Operator behaviour is unchanged; this release
 ships root-level installers for the dependencies declared by the library.
@@ -20,14 +20,14 @@ what Studio's **Repair dependencies** button repairs. Python packages are
 installed into immutable per-operator targets under the active profile.
 
 ```bash
-./install-dependencies.sh --profile-dir /srv/biopipe --dry-run
-./install-dependencies.sh --profile-dir /srv/biopipe
-./install-dependencies.sh --profile-dir /srv/biopipe --tools
+./install-dependencies.sh --profile-dir /srv/operon --dry-run
+./install-dependencies.sh --profile-dir /srv/operon
+./install-dependencies.sh --profile-dir /srv/operon --tools
 ```
 
 ```powershell
-.\install-dependencies.ps1 -ProfileDir C:\BioPipe -DryRun
-.\install-dependencies.ps1 -ProfileDir C:\BioPipe -Tools
+.\install-dependencies.ps1 -ProfileDir C:\Operon -DryRun
+.\install-dependencies.ps1 -ProfileDir C:\Operon -Tools
 ```
 
 `--tools` creates `managed-v1/env-tools` with QUAST, minced, Flye, Infernal,
@@ -38,7 +38,7 @@ these scripts: they remain explicit resource steps.
 
 ## Assets
 
-- Linux and Windows `.biopipe-library.zip`
+- Linux and Windows `.operon-library.zip`
 - seed wheel
 - `QUICKSTART.md`, `QUICKSTART.zh.md`
 - `install-dependencies.sh`, `install-dependencies.ps1`, `install_dependencies.py`

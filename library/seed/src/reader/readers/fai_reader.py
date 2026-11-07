@@ -8,10 +8,14 @@ from ._table_common import read_whitespace, table_form
 
 
 class FaiReader(Reader):
-    provider = 'biopipe-readers'
+    provider = 'operon-readers'
     """Reader for 5-column .fai sequence index files."""
     parameters_file = 'fai_reader.FaiReader.parameters.json'
-    definition = {'protocol_version': 3,
+    definition = {
+        'protocol_revision': '3.7',
+        'data_formats': {'inputs': [],
+         'outputs': [{'logical_type': 'form', 'representations': ['form'], 'metadata': {}}]},
+        'protocol_version': 3,
      'id': 'FaiReader',
      'version': '1.0.0',
      'kind': 'reader',

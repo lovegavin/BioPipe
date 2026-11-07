@@ -88,7 +88,7 @@ def contact_source(value, params, chunk, ctx):
             import json
             inherited = value.info.get('conversion') or {}
             try:
-                inherited = json.loads(group.attrs.get('metadata', '{}')).get('biopipe_export', inherited)
+                inherited = json.loads(group.attrs.get('metadata', '{}')).get('operon_export', inherited)
             except (TypeError, ValueError):
                 pass
             yield sizes, resolution, str(assembly), batches(), {
@@ -171,6 +171,6 @@ def write_contacts(path, value, params, ctx, format):
         import json
         with h5py.File(path, 'r+') as handle:
             handle.attrs['genome-assembly'] = str(assembly)
-            handle.attrs['metadata'] = json.dumps({'biopipe_export': metadata})
+            handle.attrs['metadata'] = json.dumps({'operon_export': metadata})
     return {**metadata, 'chrom_sizes': chroms, 'resolution': resolution, 'assembly': assembly,
             'values': 'raw counts', 'normalizations': [], 'writer': 'hictkpy'}

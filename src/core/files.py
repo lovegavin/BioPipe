@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 from .errors import ValidationError
-from biopipe.bytecode import io_path
+from operon.bytecode import io_path
 
 
 @dataclass

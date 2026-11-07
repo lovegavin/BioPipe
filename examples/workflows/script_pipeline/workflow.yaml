@@ -1,4 +1,4 @@
-format: biopipe.workflow
+format: operon.workflow
 schema_version: 1
 name: Script parameter and branch demo
 parameters_file: parameters.json
