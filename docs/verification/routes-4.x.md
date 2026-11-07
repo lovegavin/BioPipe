@@ -2980,3 +2980,89 @@ assortativity differ (-0.15851767550170345 vs -0.15851767550170331, absolute
 - The undirected projection discards regulatory direction.
 - `network_communities` is greedy modularity, not an exhaustive optimum.
 - `diameter` is computed on the largest connected component only.
+
+## Batch 40 — GO semantic similarity
+
+### Data
+
+| Input | Source | Size | SHA256 |
+|---|---|---|---|
+| `go-basic.obo` | Gene Ontology (release 2026-07-26) | 32,227,785 B | `b08d45b268b8c24ccb2513dbbbc7d4df9f6521c099b413f79eb31e06e0fa3bcc` |
+| `ecocyc.gaf.gz` | EcoCyc GAF 2.2, aspect P | 1,097,004 B | `edd882f3c9c538119b93c040522f6bc3b84f199566dc1236387fc953350c8f01` |
+| `terms.csv` | 300 most frequently annotated GO terms | 3,305 B | derived |
+| `pairs.csv` | 300 random term pairs (seed 7) | 6,614 B | derived |
+| `gene_pairs.csv` | 300 random gene pairs (>=3 annotations) | 3,194 B | derived |
+
+The annotation file has 55,158 non-comment lines; 5,550 genes carry at least
+one aspect-P annotation. The ontology contributes 48,340 terms, but only
+is_a edges are followed (see Fixes).
+
+### Route
+
+`go_semantic_similarity` runs six steps on the three tables:
+
+| # | Operator | What it computes | WSL (s) | srv (s) | Windows (s) |
+|---|---|---|---|---|---|
+| 1 | `go_ic_profile` | IC, annotation count, depth, parent count for 300 terms | 0.414 | 0.777 | 0.403 |
+| 2 | `export_results` | `go_ic_profile.csv` | 0.003 | 0.007 | 0.008 |
+| 3 | `go_term_similarity` | Resnik, Lin, Jaccard, IC for 300 term pairs | 0.479 | 1.077 | 0.482 |
+| 4 | `export_results` | `go_term_similarity.csv` | 0.002 | 0.021 | 0.011 |
+| 5 | `go_gene_similarity` | best-match average, max similarity, shared terms | 0.480 | 0.775 | 0.436 |
+| 6 | `export_results` | `go_gene_similarity.csv` | 0.002 | 0.015 | 0.008 |
+
+Total elapsed: **1.3797 s** (WSL), **2.6719 s** (srv), **1.3471 s** (Windows).
+
+### Results
+
+- `go_ic_profile`: 300 rows. GO:0006355 has IC 3.1551837 from 623 annotated
+  genes, depth 9 and two is_a parents.
+- `go_term_similarity`: 300 rows. Resnik is 0 whenever two terms share only the
+  root; Lin and Jaccard remain defined for those pairs.
+- `go_gene_similarity`: mean best-match average **1.1321**, mean max
+  similarity **1.9155** over the 300 sampled gene pairs.
+
+### Oracles
+
+| Oracle | Version | Metrics | Maximum absolute difference |
+|---|---|---|---|
+| goatools `TermCounts` / `resnik_sim` / `lin_sim` | 1.6.9 | IC, annotated genes, depth, parents, Resnik, Lin, Jaccard, BMA, max, shared | 8.88e-16 |
+| Independent base R implementation | 4.3.3 | same ten metrics | 4.44e-16 |
+
+Both oracles parse the same OBO and GAF files independently. goatools reports
+IC in nats; the comparison converts it to bits by dividing by ln 2.
+
+### Three platforms
+
+| Platform | Python | `go_ic_profile.csv` | `go_term_similarity.csv` | `go_gene_similarity.csv` |
+|---|---|---|---|---|
+| WSL | 3.12 | 7bc8a4d3b005ef8260c3f7d2238b4983 (12,998 B) | a2e5f74b31c109778d911d335c58aa98 (25,605 B) | 663ec7371bf93a5add85b026c9d6569d (13,594 B) |
+| srv | 3.11 | 7bc8a4d3b005ef8260c3f7d2238b4983 (12,998 B) | e80c7554639c3c7a926bb5ab02eaf34e (25,673 B) | 85b8f39dfe6e8bddd2195638133f67e0 (13,739 B) |
+| Windows | 3.12 | 7bc8a4d3b005ef8260c3f7d2238b4983 (12,998 B) | a2e5f74b31c109778d911d335c58aa98 (25,605 B) | 663ec7371bf93a5add85b026c9d6569d (13,594 B) |
+
+WSL and Windows are byte-identical. The srv files differ only in floating
+point formatting: `go_term_similarity` max abs 2.78e-17 and
+`go_gene_similarity` max abs 8.88e-16 over all 300 shared rows.
+
+### Fixes
+
+1. `parse_obo` originally followed both `is_a` and `relationship: part_of`.
+   goatools and GOSemSim follow only `is_a`, so the annotation counts (and
+   therefore IC) diverged. The operator now follows `is_a` only and says so in
+   the adjacent Markdown.
+2. `read_gaf` kept annotations to terms that are absent from the OBO or marked
+   obsolete; these inflated a gene's term set and biased BMA by 0.045. It now
+   accepts the parsed ontology and drops those annotations.
+3. The route parameters used absolute WSL paths, so the srv run failed with
+   `FileNotFoundError`. They are now relative to the checkout root, which works
+   on all three hosts.
+
+### Limitations
+
+- Only the aspect-P annotations from EcoCyc are used; no evidence codes or
+  qualifiers are weighted, and electronic annotations are not separated.
+- Only `is_a` edges are traversed.
+- Similarity is Resnik/Lin/Jaccard over the ancestor closure; no shortest-path
+  or semantic-distance measure is offered.
+- The route samples 300 terms and 300 pairs for runtime, not the full ontology.
+- Gene similarity is best-match average over the annotated terms; isoforms and
+  multi-domain proteins are not modelled.
