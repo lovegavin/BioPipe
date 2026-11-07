@@ -1,7 +1,7 @@
 name: Assemble verified release asset
 on:
   push:
-    branches: ['release/**']
+    branches: ['release/**', 'fix/**']
     paths: ['.github/release-transfer.json']
 permissions:
   contents: write
