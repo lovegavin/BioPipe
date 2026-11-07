@@ -61,6 +61,11 @@
       "sha256": "b37ab2efe559605c2323af3b402b5f71ee29fb612bcc7e2e0eb66780f19c7d77",
       "parameters_sha256": "16967af63ea2bd91dc383a813d953e77fb69f0fefc999db659d3c31e6a460b0c"
     },
+    "route_7da71ef100d9": {
+      "path": "routes/fastq_composition_qc/task.yaml",
+      "sha256": "28310025732462f916110ca1f4d98c0a3ba951f43ad82a34695c57aa4503563a",
+      "parameters_sha256": "868cfe6e5a056a047c29ae11f8c0d68809b3fa559be327566e6d92bccf6d0eab"
+    },
     "route_d2a9ab1bb4a6": {
       "path": "routes/fba_flux_balance/task.yaml",
       "sha256": "73a44b337d48c9faa3f1c3c09775697198c0251dfadf25eddbd4a15068bf0e9b",
@@ -18831,6 +18836,331 @@
                   "representation": {
                     "type": "string",
                     "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_7da71ef100d9",
+      "version": 1,
+      "name": "FASTQ composition QC: duplication, over-representation and GC",
+      "graph": {
+        "schema_version": 2,
+        "name": "FASTQ composition QC: duplication, over-representation and GC",
+        "base_dir": ".studio/builtin-inputs/fastq_composition_qc",
+        "nodes": [
+          {
+            "id": "reads",
+            "kind": "source",
+            "script": null,
+            "operator": null,
+            "title": "reads",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastqReader",
+              "path": "input/reads_1.fastq.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fastq_duplication_profile_1",
+            "kind": "operator",
+            "script": null,
+            "operator": "fastq_duplication_profile",
+            "title": "fastq_duplication_profile",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "max_reads": 0,
+              "output": "duplication_profile"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fastq_duplication_profile",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fastq_overrepresented_3",
+            "kind": "operator",
+            "script": null,
+            "operator": "fastq_overrepresented",
+            "title": "fastq_overrepresented",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "max_reads": 0,
+              "output": "overrepresented",
+              "threshold": 0.001,
+              "adapters": []
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fastq_overrepresented",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fastq_gc_distribution_5",
+            "kind": "operator",
+            "script": null,
+            "operator": "fastq_gc_distribution",
+            "title": "fastq_gc_distribution",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "max_reads": 0,
+              "output": "gc_distribution"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fastq_gc_distribution",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "adaptation": null,
+            "id": "reads-fastq_duplication_profile_1-0",
+            "source": "reads",
+            "target": "fastq_duplication_profile_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "fastq_duplication_profile_1-export_results_2-0",
+            "source": "fastq_duplication_profile_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "reads-fastq_overrepresented_3-0",
+            "source": "reads",
+            "target": "fastq_overrepresented_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "fastq_overrepresented_3-export_results_4-0",
+            "source": "fastq_overrepresented_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "reads-fastq_gc_distribution_5-0",
+            "source": "reads",
+            "target": "fastq_gc_distribution_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "fastq_gc_distribution_5-export_results_6-0",
+            "source": "fastq_gc_distribution_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {
+          "description": "Duplication levels, over-represented sequences and per-read GC distribution for a real 200k-read ENA subset.",
+          "version": "1.0.0"
+        },
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "reads",
+              "label": "reads",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "fastq"
                   }
                 },
                 "info_open": true,

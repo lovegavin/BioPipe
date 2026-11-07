@@ -2380,6 +2380,36 @@
     "status": "generated"
   },
   {
+    "id": "fastq_duplication_profile",
+    "kind": "operator",
+    "title": "fastq_duplication_profile",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Histogram of read duplication levels with deduplicated percentage.",
+    "doc": "src/task/step/steps/fastq_duplication_profile.FastqDuplicationProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fastq_gc_distribution",
+    "kind": "operator",
+    "title": "fastq_gc_distribution",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "Histogram of per-read GC percentages with summary statistics.",
+    "doc": "src/task/step/steps/fastq_gc_distribution.FastqGcDistributionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fastq_overrepresented",
+    "kind": "operator",
+    "title": "fastq_overrepresented",
+    "category": "Quality Control",
+    "version": "1.0.0",
+    "description": "List sequences exceeding a fraction threshold with optional adapter source.",
+    "doc": "src/task/step/steps/fastq_overrepresented.FastqOverrepresentedStep.md",
+    "status": "generated"
+  },
+  {
     "id": "fastq_quality_profile",
     "kind": "operator",
     "title": "fastq_quality_profile",

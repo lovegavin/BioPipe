@@ -1,0 +1,78 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "reads": {}
+  },
+  "steps": [
+    {
+      "name": "fastq_duplication_profile",
+      "inputs": [
+        "reads"
+      ],
+      "params": {
+        "max_reads": 0,
+        "output": "duplication_profile"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "duplication_profile"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "fastq_duplication_profile"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "fastq_overrepresented",
+      "inputs": [
+        "reads"
+      ],
+      "params": {
+        "max_reads": 0,
+        "threshold": 0.001,
+        "adapters": [],
+        "output": "overrepresented"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "overrepresented"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "fastq_overrepresented"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "fastq_gc_distribution",
+      "inputs": [
+        "reads"
+      ],
+      "params": {
+        "max_reads": 0,
+        "output": "gc_distribution"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "gc_distribution"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "fastq_gc_distribution"
+      },
+      "context_params": {}
+    }
+  ]
+}

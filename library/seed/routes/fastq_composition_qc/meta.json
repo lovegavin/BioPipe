@@ -1,0 +1,5 @@
+{
+  "mode": "real",
+  "source": "ENA SRR001666 subset",
+  "route_key": "fastq_composition_qc"
+}

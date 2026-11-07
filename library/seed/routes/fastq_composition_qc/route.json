@@ -1,0 +1,5 @@
+{
+  "key": "fastq_composition_qc",
+  "title": "FASTQ duplication, over-representation and GC QC",
+  "description": "Duplication levels, over-represented sequences and per-read GC distribution for a real 200k-read ENA subset."
+}

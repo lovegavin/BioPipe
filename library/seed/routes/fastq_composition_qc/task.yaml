@@ -1,0 +1,54 @@
+{
+  "name": "FASTQ composition QC: duplication, over-representation and GC",
+  "description": "Duplication levels, over-represented sequences and per-read GC distribution for a real 200k-read ENA subset.",
+  "version": "1.0.0",
+  "sources": {
+    "reads": {
+      "path": "input/reads_1.fastq.gz",
+      "dims": [
+        "file"
+      ],
+      "labels": {},
+      "reader": "FastqReader"
+    }
+  },
+  "steps": [
+    {
+      "name": "fastq_duplication_profile",
+      "inputs": [
+        "reads"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "duplication_profile"
+      ]
+    },
+    {
+      "name": "fastq_overrepresented",
+      "inputs": [
+        "reads"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "overrepresented"
+      ]
+    },
+    {
+      "name": "fastq_gc_distribution",
+      "inputs": [
+        "reads"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "gc_distribution"
+      ]
+    }
+  ],
+  "parameters_file": "parameters.json"
+}

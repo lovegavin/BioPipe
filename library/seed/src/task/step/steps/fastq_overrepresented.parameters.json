@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "max_reads": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "result"
+    },
+    "threshold": {
+      "type": "number",
+      "exclusiveMinimum": 0.0,
+      "maximum": 1.0,
+      "default": 0.001
+    },
+    "adapters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "output"
+  ],
+  "additionalProperties": false
+}
