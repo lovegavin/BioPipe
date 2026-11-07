@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "split_multiallelic": {"type": "boolean", "default": true, "title": "Split multi-allelic records", "description": "Split multi-allelic sites into biallelic records with genotype remapping."},
+    "max_records": {"type": "integer", "minimum": 0, "default": 0, "title": "Maximum records", "description": "Stop after this many input records (0 = all)."},
+    "output": {"type": "string", "default": "normalized", "title": "Output name"}
+  },
+  "required": ["output"],
+  "additionalProperties": false
+}

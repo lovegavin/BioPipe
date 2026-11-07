@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "output": {"type": "string", "default": "concatenated", "title": "Output name"}
+  },
+  "required": ["output"],
+  "additionalProperties": false
+}

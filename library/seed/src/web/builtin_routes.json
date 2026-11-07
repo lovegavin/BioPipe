@@ -240,6 +240,11 @@
       "path": "routes/variant_qc_concordance/task.yaml",
       "sha256": "286554c6aea9eb540c82af7791b1aa582ac0f125e46131f305ab5ac6540b568a",
       "parameters_sha256": "d220eef1af8ddb4d77299a58ff2e43338d021d2f81086875be72e2ae493279f8"
+    },
+    "route_c9383b5d9f2d": {
+      "path": "routes/vcf_normalization/task.yaml",
+      "sha256": "5485c50e070828a3705043d524d240b322a8220b2c18d6639abcf8f91214d109",
+      "parameters_sha256": "85af13f0eaad4f96537f9f1b2d22520ffa8ab78e67d727f7f8e32700a788d589"
     }
   },
   "routes": [
@@ -19076,6 +19081,398 @@
                 "info": {
                   "representation": {
                     "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_c9383b5d9f2d",
+      "version": 1,
+      "name": "VCF normalization and merging",
+      "graph": {
+        "schema_version": 2,
+        "name": "VCF normalization and merging",
+        "base_dir": ".studio/builtin-inputs/vcf_normalization",
+        "nodes": [
+          {
+            "id": "part_a",
+            "kind": "source",
+            "operator": null,
+            "title": "part_a",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/partA.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "part_b",
+            "kind": "source",
+            "operator": null,
+            "title": "part_b",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/partB.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reference",
+            "kind": "source",
+            "operator": null,
+            "title": "reference",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaFileReader",
+              "path": "input/chr22_1000g.fa",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "subset",
+            "kind": "source",
+            "operator": null,
+            "title": "subset",
+            "position": {
+              "x": 70.0,
+              "y": 730.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/subset.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "truth_norm",
+            "kind": "source",
+            "operator": null,
+            "title": "truth_norm",
+            "position": {
+              "x": 70.0,
+              "y": 940.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/truth_norm.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "vcf_normalize_1",
+            "kind": "operator",
+            "operator": "vcf_normalize",
+            "title": "VCF normalise",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "split_multiallelic": true,
+              "max_records": 0,
+              "output": "normalized"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "vcf_concat_2",
+            "kind": "operator",
+            "operator": "vcf_concat",
+            "title": "vcf_concat",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "output": "concatenated"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "vcf_merge_3",
+            "kind": "operator",
+            "operator": "vcf_merge",
+            "title": "vcf_merge",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "output": "merged"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "subset-vcf_normalize_1-0",
+            "source": "subset",
+            "target": "vcf_normalize_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-vcf_normalize_1-1",
+            "source": "reference",
+            "target": "vcf_normalize_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "part_a-vcf_concat_2-0",
+            "source": "part_a",
+            "target": "vcf_concat_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "part_b-vcf_concat_2-1",
+            "source": "part_b",
+            "target": "vcf_concat_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "vcf_normalize_1-vcf_merge_3-0",
+            "source": "vcf_normalize_1",
+            "target": "vcf_merge_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "truth_norm-vcf_merge_3-1",
+            "source": "truth_norm",
+            "target": "vcf_merge_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "part_a",
+              "label": "part_a",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "part_b",
+              "label": "part_b",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "reference",
+              "label": "reference",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "fasta"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "subset",
+              "label": "subset",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "truth_norm",
+              "label": "truth_norm",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "vcf_concat_2",
+              "handle": "out",
+              "label": "vcf_concat",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "vcf_merge_3",
+              "handle": "out",
+              "label": "vcf_merge",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
                   }
                 },
                 "axis_info": {},

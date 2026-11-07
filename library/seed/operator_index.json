@@ -7640,6 +7640,16 @@
     "status": "generated"
   },
   {
+    "id": "vcf_concat",
+    "kind": "operator",
+    "title": "vcf_concat",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Concatenate two VCFs with identical samples into a single VCF.",
+    "doc": "src/task/step/steps/vcf_concat.VcfConcatStep.md",
+    "status": "generated"
+  },
+  {
     "id": "vcf_concordance",
     "kind": "operator",
     "title": "vcf_concordance",
@@ -7657,6 +7667,26 @@
     "version": "1.0.0",
     "description": "Filter VCF records by quality, FILTER, variant type, depth, missingness and region.",
     "doc": "src/task/step/steps/vcf_filter.VcfFilterStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vcf_merge",
+    "kind": "operator",
+    "title": "vcf_merge",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Merge two VCFs into a sample-aware union of sites (missing genotypes filled).",
+    "doc": "src/task/step/steps/vcf_merge.VcfMergeStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vcf_normalize",
+    "kind": "operator",
+    "title": "VCF normalise",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Split multi-allelic records and left-align/trim indels against a reference FASTA.",
+    "doc": "src/task/step/steps/vcf_normalize.VcfNormalizeStep.md",
     "status": "generated"
   },
   {

@@ -1,0 +1,30 @@
+name: vcf_normalization
+sources:
+  part_a:
+    reader: VcfFileReader
+    path: input/partA.vcf.gz
+    dims: [file]
+  part_b:
+    reader: VcfFileReader
+    path: input/partB.vcf.gz
+    dims: [file]
+  subset:
+    reader: VcfFileReader
+    path: input/subset.vcf.gz
+    dims: [file]
+  truth_norm:
+    reader: VcfFileReader
+    path: input/truth_norm.vcf.gz
+    dims: [file]
+  reference:
+    reader: FastaFileReader
+    path: input/chr22_1000g.fa
+    dims: [file]
+parameters_file: parameters.json
+steps:
+  - name: vcf_normalize
+    inputs: [subset, reference]
+  - name: vcf_concat
+    inputs: [part_a, part_b]
+  - name: vcf_merge
+    inputs: [normalized, truth_norm]

@@ -1,0 +1,11 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {"subset": {}, "part_a": {}, "part_b": {}, "truth_norm": {}, "reference": {}},
+  "steps": [
+    {"name": "vcf_normalize", "inputs": ["subset", "reference"], "params": {"output": "normalized", "split_multiallelic": true}, "context_params": {}},
+    {"name": "vcf_concat", "inputs": ["part_a", "part_b"], "params": {"output": "concatenated"}, "context_params": {}},
+    {"name": "vcf_merge", "inputs": ["normalized", "truth_norm"], "params": {"output": "merged"}, "context_params": {}}
+  ]
+}

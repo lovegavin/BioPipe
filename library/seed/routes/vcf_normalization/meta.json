@@ -1,0 +1,14 @@
+{
+  "reference": "GRCh37",
+  "chromosome": "22",
+  "callset": "1000 Genomes phase 3",
+  "truth": "GIAB HG001",
+  "archive": "1000 Genomes chr22 release and GIAB truth VCF",
+  "sha256": {
+    "subset.vcf.gz": "f67e2332b39e6c51aa5dcf6f33f6929937207debe99e4c042418fe6ef9ca042e",
+    "partA.vcf.gz": "a88b705bd1b3dd8678252cbf967698d780add2547490e63f98e25f142a815ed4",
+    "partB.vcf.gz": "26fcddd07bd2b2acb63c5af1ef4e3620aae04ec945ec2982e75f191f683501b3",
+    "truth_norm.vcf.gz": "3492060aa6272380403741dff1c4ea430745c4c1647940e0c695d847a0e9af5b",
+    "chr22_1000g.fa": "51c376f6c0b898b23bc067f53d93ca801beabfb1d846898372837d37d5578829"
+  }
+}
