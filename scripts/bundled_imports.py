@@ -1,11 +1,41 @@
 """Private Windows Python: use long-path imports only when ordinary lookup fails.
 
 Normal module identities and __file__ paths remain unchanged. ZIP/custom path
-hooks still handle non-directories. No scientific imports or host policy edits.
+hooks still handle non-directories. Package resources use native paths because
+their filenames can be longer than the importable package itself. No scientific
+imports or host policy edits.
 """
 import importlib.machinery as machinery
 import os
 import sys
+
+
+def _native_path(path):
+    absolute = os.path.abspath(path)
+    if absolute.startswith('\\\\?\\'):
+        return absolute
+    return '\\\\?\\UNC\\' + absolute[2:] if absolute.startswith('\\\\') else '\\\\?\\' + absolute
+
+
+class _PackageResources:
+    def get_resource_reader(self, fullname):
+        if not self.is_package(fullname):
+            return None
+        from importlib.resources.readers import FileReader
+        from types import SimpleNamespace
+        return FileReader(SimpleNamespace(path=_native_path(self.path)))
+
+
+class _SourceLoader(_PackageResources, machinery.SourceFileLoader):
+    pass
+
+
+class _BytecodeLoader(_PackageResources, machinery.SourcelessFileLoader):
+    pass
+
+
+class _ExtensionLoader(_PackageResources, machinery.ExtensionFileLoader):
+    pass
 
 
 class FallbackFinder:
@@ -28,15 +58,15 @@ class FallbackFinder:
 
 if os.name == 'nt':
     _hook = machinery.FileFinder.path_hook(
-        (machinery.ExtensionFileLoader, machinery.EXTENSION_SUFFIXES),
-        (machinery.SourceFileLoader, machinery.SOURCE_SUFFIXES),
-        (machinery.SourcelessFileLoader, machinery.BYTECODE_SUFFIXES))
+        (_ExtensionLoader, machinery.EXTENSION_SUFFIXES),
+        (_SourceLoader, machinery.SOURCE_SUFFIXES),
+        (_BytecodeLoader, machinery.BYTECODE_SUFFIXES))
 
     def _windows_imports(path):
         absolute = os.path.abspath(path)
         if absolute.startswith('\\\\?\\'):
             return _hook(path)
-        extended = '\\\\?\\UNC\\' + absolute[2:] if absolute.startswith('\\\\') else '\\\\?\\' + absolute
+        extended = _native_path(absolute)
         native = _hook(extended)  # ImportError lets ZIP and custom hooks continue.
         try:
             ordinary = _hook(path)

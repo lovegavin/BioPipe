@@ -54,3 +54,28 @@ def test_short_source_import_keeps_original_identity(tmp_path):
     result = subprocess.run([sys.executable, '-I', '-S', '-c', code, str(tmp_path),
         str(ROOT / 'scripts/bundled_imports.py')], capture_output=True, text=True, check=True)
     assert result.stdout.strip() == str(tmp_path / 'identity_probe.py')
+
+
+@pytest.mark.skipif(sys.platform != 'win32', reason='Windows package resource paths')
+def test_deep_package_resources_keep_module_identity(tmp_path):
+    target = tmp_path
+    while len(str(target)) < 205:
+        target /= 'r' * min(50, 205 - len(str(target)))
+    package = target / 'resource_probe'
+    io_path(package).mkdir(parents=True)
+    io_path(package / '__init__.py').write_text('value = 7\n')
+    resource = package / ('schemas' * 9) / 'metaschema.json'
+    io_path(resource.parent).mkdir()
+    io_path(resource).write_text('{"ready": true}\n')
+    assert len(str(package / '__init__.py')) < 260 < len(str(resource))
+    code = ('import sys,json; sys.path.insert(0,sys.argv[1]); '
+            'exec(open(sys.argv[2],encoding="utf-8").read()); '
+            'import resource_probe; from importlib.resources import files; '
+            'print(json.dumps({"file":resource_probe.__file__,"data":json.loads('
+            'files(resource_probe).joinpath(sys.argv[3],"metaschema.json").read_text())}))')
+    result = subprocess.run([sys.executable, '-I', '-S', '-c', code, str(target),
+        str(ROOT / 'scripts/bundled_imports.py'), resource.parent.name],
+        capture_output=True, text=True, timeout=30)
+    assert result.returncode == 0, result.stderr
+    observed = json.loads(result.stdout)
+    assert observed == {'file': str(package / '__init__.py'), 'data': {'ready': True}}
