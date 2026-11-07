@@ -2392,3 +2392,77 @@ inputs)` steps, matching the base class signature.
 **Limits.** b/y ions only; no a/x/c/z ions or neutral losses. Fixed
 modifications are residue-level mass shifts only. Isotope fractions assume
 natural abundances and ignore instrument resolution.
+
+## Batch 31 — Phylogenetic signal and ancestral states (`phylo_comparative`)
+
+### Data
+
+| File | Size | SHA256 | Description |
+| --- | --- | --- | --- |
+| `ssu_aligned.fasta` | 48,899 B | `6df770ce70b0e6e6dac180266929c5f61d2929cb93c846fc4809d18945772c44` | Rfam RF00177 SSU rRNA seed alignment, 24 sequences x 1,980 columns |
+| `gc_content.csv` | 910 B | derived | GC fraction `(G+C)/(A+C+G+T)` per aligned sequence, 24 rows |
+
+### Route (8 steps)
+
+`FastaReader` -> `phylo_distance_matrix` (JC69) -> `phylo_neighbor_joining`
+(24 tips, 47 nodes) -> `phylo_lambda`, `phylo_contrasts`, `phylo_ancestral`
+-> three `export_results` steps.
+
+### Results
+
+| Quantity | Value |
+| --- | --- |
+| Pagel's lambda (ML) | `0.9999999849124109` |
+| log-likelihood | `45.2192497307` |
+| log-likelihood at lambda = 0 | `42.5442707149` |
+| likelihood ratio | `5.3499580317` |
+| p-value | `0.0103613848` |
+| independent contrasts | 23 rows |
+| ancestral estimates | 23 nodes, 0.657-0.711 |
+
+### Oracle (independent R implementation, ape 5.8.1)
+
+Profile-likelihood lambda in R, `ape::pic(var.contrasts = TRUE)`, and
+`ape::ace(method = "REML")`:
+
+| Quantity | max abs difference |
+| --- | --- |
+| lambda | `6.86e-11` |
+| log-likelihood | `1.69e-9` |
+| log-likelihood at lambda = 0 | `1.23e-9` |
+| p-value | `5.93e-12` |
+| PIC standardized contrast (absolute values) | `2.00e-11` |
+| PIC contrast variance (`v1 + v2`) | `4.81e-11` |
+| ancestral estimate | `8.68e-8` |
+
+Contrast signs depend on child order, so contrasts are compared on absolute
+values. The exported `variance` column is the variance of the raw contrast
+(`v1 + v2`), matching `ape::pic(var.contrasts = TRUE)`; the node variance
+`v1*v2/(v1+v2)` remains internal to the upward pass.
+
+### Three platforms
+
+| Platform | Steps | total_elapsed | Export MD5 (lambda / contrasts / ancestral) |
+| --- | --- | --- | --- |
+| WSL (Python 3.12, numpy 1.x) | 8/8 | `0.0543 s` | `48f847fc…` / `adbb8457…` / `c16e829d…` |
+| srv (Python 3.11, numpy 2.4) | 8/8 | `0.2394 s` | `48f847fc…` / `adbb8457…` / `c16e829d…` |
+| Windows (Python 3.12) | 8/8 | `0.0682 s` | `48f847fc…` / `adbb8457…` / `c16e829d…` |
+
+### Fixes found by this route
+
+1. `_depths` iterated `tree.postorder()` (children before parents), so every
+   node depth collapsed to its own branch length and the covariance matrix was
+   wrong; iterating `tree.postorder()[::-1]` restores parent-first accumulation.
+2. The trait source needed `labels: {"sample": {"statistic": 0}}`; with
+   `"sample": "auto"` the CSV first column is not used as the row index and all
+   24 tips are reported missing.
+3. `phylo_contrasts` originally exported the node variance
+   `v1*v2/(v1+v2)`; it now exports the standard contrast variance `v1+v2`.
+
+### Limitations
+
+- `phylo_contrasts` requires a fully binary tree.
+- lambda is optimized on `[0, 1]`; a boundary estimate means the trait is close
+  to Brownian motion (lambda = 1) or to a star phylogeny (lambda = 0).
+- REML ancestral states assume Brownian motion; the standard errors are model
+  based and were not independently validated.
