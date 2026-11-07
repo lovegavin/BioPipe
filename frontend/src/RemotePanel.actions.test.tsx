@@ -103,7 +103,7 @@ describe('remote connection actions', () => {
   it('exposes installation on a missing server without automatically installing', async () => {
     vi.mocked(api.connectRemote).mockRejectedValueOnce(new ApiError('not installed', undefined, 409, 'server_not_installed'));
     start('connect'); await updated();
-    expect(text(render())).toContain('未找到 BioPipe 服务端，请先安装服务端。');
+    expect(text(render())).toContain('未找到 Operon 服务端，请先安装服务端。');
     expect(elements(render()).find(node => node.props.className === 'remote-maintenance')?.props.open).toBe(true);
     expect(api.installRemote).not.toHaveBeenCalled(); expect(onSelect).not.toHaveBeenCalled();
   });
@@ -133,7 +133,7 @@ describe('remote connection actions', () => {
     servers = [{profile: {...profile, environment: 'existing', app_dir: '/code', python: '/env/bin/python', workspace: '/work'}, connected: false}];
     vi.mocked(api.connectRemote).mockRejectedValueOnce(new ApiError('not installed', undefined, 409, 'server_not_installed'));
     start('connect'); await updated();
-    expect(text(render())).toContain('未找到 BioPipe 服务端，请检查 BioPipe 目录与 Python 路径。');
+    expect(text(render())).toContain('未找到 Operon 服务端，请检查 Operon 目录与 Python 路径。');
     expect(text(render())).not.toContain('安装 / 升级服务端');
     expect(api.installRemote).not.toHaveBeenCalled();
   });

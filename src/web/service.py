@@ -85,6 +85,8 @@ class JobService:
         self.dependencies = DependencySession(self.plugins)
         self.dependencies.sync(self.plugins.state())
         self.catalog = self.plugins.extend_catalog(catalog)
+        self._catalog_stamp = None
+        self._catalog_lock = threading.Lock()
         if not self.directory.is_relative_to(self.root):
             raise ValueError("Studio data directory must be inside the project")
         self.jobs_dir = self.directory / "jobs"
@@ -140,14 +142,21 @@ class JobService:
                 'contracts': analyze_graph(graph, catalog, self.root, input_roots=self.settings.input_roots)}
 
     def refresh_catalog(self):
-        state = self.plugins.state()
-        if state["generation"] != self.catalog.get("plugin_generation"):
-            self.dependencies.sync(state)
-            value = self.plugins.extend_catalog(self.base_catalog)
-            self.catalog.update(value)
-            write_json(self.directory / "operators.json", self.catalog)
-            return True
-        return False
+        with self._catalog_lock:
+            stamp = self.plugins.catalog_stamp()
+            if stamp is not None and stamp == self._catalog_stamp:
+                return False
+            # Record the stamp from BEFORE reading. A concurrent atomic replace
+            # must invalidate the next read, rather than hiding its generation.
+            state = self.plugins.state()
+            changed = state["generation"] != self.catalog.get("plugin_generation")
+            if changed:
+                self.dependencies.sync(state)
+                value = self.plugins._catalog(state, self.base_catalog)
+                self.catalog.update(value)
+                write_json(self.directory / "operators.json", self.catalog)
+            self._catalog_stamp = stamp
+            return changed
 
     def _refresh_jobs(self, *, active_only=False):
         import psutil

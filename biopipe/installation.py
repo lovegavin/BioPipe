@@ -22,8 +22,18 @@ def profile_id(root):
     value = json.loads((Path(root) / 'biopipe-install.json').read_text(encoding='utf-8'))
     if (value.get('schema_version') != 1 or value.get('isolated') is not True or
             not re.fullmatch(r'[a-f0-9]{32}', str(value.get('profile_id', '')))):
-        raise ValueError('Invalid isolated installation identity; rerun BioPipe Setup.')
+        raise ValueError('Invalid isolated installation identity; rerun Operon Setup.')
     return value['profile_id']
+
+
+def profile_namespace(root):
+    """New branded installs cannot attach to an older product's profile."""
+    profile_id(root)
+    value = json.loads((Path(root) / 'biopipe-install.json').read_text(encoding='utf-8'))
+    product = value.get('product', 'biopipe')
+    if not isinstance(product, str) or product not in {'operon', 'biopipe'}:
+        raise ValueError('Unknown installation product; rerun Operon Setup.')
+    return '.' + product
 
 
 def configure_environment(code_root):
@@ -31,7 +41,7 @@ def configure_environment(code_root):
     root = isolated_root(code_root)
     if root is None:
         return
-    profile_id(root)  # Invalid identity fails closed.
+    profile_namespace(root)  # Reject an invalid identity/product before changing the environment.
     for key in list(os.environ):
         upper = key.upper()
         if upper.startswith(('BIOPIPE_', 'PYTHON', 'CONDA')) or upper in {

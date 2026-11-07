@@ -93,8 +93,8 @@ class SSHConnection:
     def handshake(self, cached_info=None):
         from .protocol import VERSION
         from biopipe_sdk.protocol import PROTOCOL_VERSION
-        capabilities = ['manifest_handshake', 'dependency_readiness', 'registry_refresh',
-                        'jobs', 'execution_pins', 'streaming', 'spill', 'upload']
+        from .handshake import CAPABILITIES
+        capabilities = list(CAPABILITIES)
         cached_info = cached_info or {}
         known = cached_info.get('handshake', {}).get('catalog_digest')
         params = {'version': 1, 'protocol_version': VERSION, 'operator_protocol': PROTOCOL_VERSION,
@@ -177,7 +177,10 @@ class SSHConnection:
                          lambda part: self.channel.sendall(part.encode()), self._line)
                 decoder = Decoder('R')
                 hard_deadline = time.monotonic() + 1800
-                deadline = time.monotonic() + 100
+                # Explicit dependency repair can download/build packages before
+                # returning its first frame. Ordinary metadata RPC stays short.
+                response_timeout = 1800 if method == 'validate_environment' and (params or {}).get('repair') is True else 100
+                deadline = min(hard_deadline, time.monotonic() + response_timeout)
                 progress = 0
                 while True:
                     try: response = decoder.feed(self._line(deadline))
@@ -187,7 +190,7 @@ class SSHConnection:
                     # inactivity deadline; duplicate/noisy traffic cannot do so.
                     if decoder.progress > progress:
                         progress = decoder.progress
-                        deadline = min(hard_deadline, time.monotonic() + 100)
+                        deadline = min(hard_deadline, time.monotonic() + response_timeout)
                     if decoder.ack: self.channel.sendall(decoder.ack.encode())
                     if response is None or response.get('id') != identity: continue
                     if not response.get('ok'):

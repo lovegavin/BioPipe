@@ -19,6 +19,7 @@ import threading
 from datetime import datetime, timezone
 
 from packaging.requirements import Requirement
+from biopipe.bytecode import io_path
 
 
 def find_tool(name):
@@ -134,7 +135,8 @@ def probe(entries):
 def inspect_environment(python, entries, directory):
     from biopipe.plugins import run_process
     import tempfile
-    Path(directory).mkdir(parents=True, exist_ok=True)
+    directory = io_path(directory)
+    directory.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix='dependency-', dir=directory) as tmp:
         request, response = Path(tmp) / 'request.json', Path(tmp) / 'response.json'
         request.write_text(json.dumps(entries), encoding='utf-8')
@@ -185,8 +187,8 @@ class DependencySession:
             for key in ids:
                 self.entries[key].update(status=status, error=error)
                 record = {**self.entries[key], 'time': datetime.now(timezone.utc).isoformat()}
-                self.log.parent.mkdir(parents=True, exist_ok=True)
-                with self.log.open('a', encoding='utf-8') as output:
+                io_path(self.log.parent).mkdir(parents=True, exist_ok=True)
+                with io_path(self.log).open('a', encoding='utf-8') as output:
                     output.write(json.dumps(record, ensure_ascii=False) + '\n')
 
     def _inspect(self, state, entries):
@@ -201,14 +203,14 @@ class DependencySession:
             python = self.manager.python_for(state)
         except Exception:
             python = 'unknown'
-        path = self.log.parent / 'dependency-checks.log'
+        path = io_path(self.log.parent / 'dependency-checks.log')
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open('a', encoding='utf-8') as handle:
             handle.write(json.dumps({'time': datetime.now(timezone.utc).isoformat(),
                                      'python': str(python),
                                      'ids': [entry['id'] for entry in entries]}, ensure_ascii=False) + '\n')
 
-    def check(self, *, repair=True, repair_r=None):
+    def check(self, *, repair=True, repair_r=None, ids=None):
         # Shared with source/wheel transactions so the runtime cannot change
         # between probing and committing a repair. HTTP reads remain lock-free.
         if self.cancel.is_set():
@@ -220,11 +222,15 @@ class DependencySession:
                 return self.snapshot()
             state = self.manager.state()
             self.sync(state)
+            selected = None if ids is None else set(ids)
+            if selected is not None and selected - self.entries.keys():
+                raise ValueError('Unknown dependency declarations: ' + ', '.join(sorted(selected - self.entries.keys())))
             with self.lock:
                 if self.running:
                     return self.snapshot()
                 self.running = True
-                pending = deepcopy([v for v in self.entries.values() if v['status'] != 'passed'])
+                pending = deepcopy([v for v in self.entries.values()
+                                    if v['status'] != 'passed' and (selected is None or v['id'] in selected)])
             from biopipe.plugins import process_context
             previous_cancel = getattr(process_context, 'cancel', None)
             process_context.cancel = self.cancel
@@ -288,7 +294,7 @@ if __name__ == '__main__':
     request, response = map(Path, sys.argv[1:])
     entries = json.loads(request.read_text(encoding='utf-8'))
     results = probe(entries)
-    log = Path(os.environ.get('BIOPIPE_DEPENDENCY_LOG', response.with_suffix('.log')))
+    log = io_path(os.environ.get('BIOPIPE_DEPENDENCY_LOG', response.with_suffix('.log')))
     log.parent.mkdir(parents=True, exist_ok=True)
     with log.open('a', encoding='utf-8') as handle:
         handle.write(json.dumps({'time': datetime.now(timezone.utc).isoformat(),

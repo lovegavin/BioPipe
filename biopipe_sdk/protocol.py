@@ -4,6 +4,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from .localization import Localization
+from .formats import DataFormats
 
 PROTOCOL_VERSION = 3
 
@@ -29,7 +30,8 @@ class Descriptor(BaseModel):
     """Canonical, versioned extension declaration; UI projections are separate."""
     model_config = ConfigDict(extra="forbid")
     protocol_version: Literal[3] = 3
-    protocol_revision: Literal['3.5'] | None = None
+    protocol_revision: Literal['3.5', '3.6'] | None = None
+    data_formats: DataFormats | None = None
     localization: Localization | None = None
     id: str = Field(pattern=r"^[A-Za-z_][A-Za-z0-9_.-]{0,79}$")
     version: str = Field(pattern=r"^\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?$")
@@ -286,8 +288,18 @@ def validate_declaration(value):
     if value.get('localization'):
         from .localization import validate_parameters as validate_language_parameters
         validate_language_parameters(value['localization'], value['parameters_schema'])
-        if value.get('protocol_revision') != '3.5':
+        if value.get('protocol_revision') not in {'3.5', '3.6'}:
             raise ValueError('Language packs require protocol_revision 3.5')
+    if value.get('data_formats'):
+        if value.get('protocol_revision') != '3.6':
+            raise ValueError('data_formats requires protocol_revision 3.6')
+        formats = DataFormats.model_validate(value['data_formats'])
+        count = 1 if value.get('inputs_arity') == '*' else value.get('inputs_arity', 0)
+        if len(formats.inputs) != (count if value['kind'] == 'operator' else 0):
+            raise ValueError('Declare one format capability per input port')
+        outputs = 1 if value.get('output_parameter') or value['kind'] == 'reader' else len(value.get('outputs', []))
+        if len(formats.outputs) != outputs:
+            raise ValueError('Declare one format capability per output port')
     resources, contracts = value['resources'], value['contracts']
     from .r_dependencies import validate_r
     validate_r(resources.get('r'))

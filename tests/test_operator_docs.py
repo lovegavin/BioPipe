@@ -34,6 +34,37 @@ def extension(tmp_path, *, unsafe=False):
     return path, markdown
 
 
+@pytest.mark.parametrize('nested_library', [False, True])
+def test_release_history_verifies_the_actual_library_root(tmp_path, nested_library):
+    from biopipe.registry import maintain
+    from scripts.record_bundled_history import record
+
+    release = tmp_path / 'verified-release'
+    seed = release / 'library/seed' if nested_library else release
+    operators = seed / 'src/task/step/steps'
+    operators.mkdir(parents=True)
+    (seed / 'src/reader/readers').mkdir(parents=True)
+    implementation, _ = extension(operators, unsafe=True)
+    implementation.write_text(implementation.read_text(encoding='utf-8').replace(
+        'class Answer(Step):', 'class Answer(Step):\n    provider = "lab-docs"'), encoding='utf-8')
+    built = maintain('build', root=seed, scope='packages')
+    assert not built['errors'], built
+    commit = 'a' * 40  # Synthetic provenance, never a shipped compatibility receipt.
+    (release / 'package-manifest.json').write_text(json.dumps({
+        'source_commit': commit, 'version': '1.0.0'}), encoding='utf-8')
+    history = tmp_path / 'history.json'
+    assert record(release, 'v1.0.0', commit, history) == 2
+    before = history.read_bytes()
+    assert record(release, 'v1.0.0', commit, history) == 2
+    assert history.read_bytes() == before
+    # An edited release must still fail closed; resolving its nested seed must
+    # not turn source verification into trusting only the manifest.
+    implementation.write_text(implementation.read_text(encoding='utf-8') + '\nCHANGED = True\n', encoding='utf-8')
+    with pytest.raises(ValueError, match='source differs'):
+        record(release, 'v1.0.0', commit, history)
+    assert history.read_bytes() == before
+
+
 def test_static_docs_search_lazy_sections_and_validation(tmp_path, monkeypatch):
     path, markdown = extension(tmp_path, unsafe=True)
     descriptor = compile_declaration(source_declarations(path, 'answer')[0], tmp_path)
@@ -68,6 +99,23 @@ def test_static_docs_search_lazy_sections_and_validation(tmp_path, monkeypatch):
     result = build(tmp_path / 'source')
     assert result['errors'] and 'inside' in result['errors'][0]['error']
     assert not (source_dir.parent / 'escape.md').exists()
+
+
+def test_documentation_loads_from_deep_install_without_importing_operator(tmp_path, monkeypatch):
+    from biopipe.bytecode import io_path
+    from biopipe.operator_docs import document_bytes
+    from types import SimpleNamespace
+    source, markdown = extension(tmp_path, unsafe=True)
+    descriptor = compile_declaration(source_declarations(source, 'answer')[0], tmp_path)
+    deep = tmp_path / 'installed'
+    while len(str(deep)) < 280:
+        deep /= 'documentation' * 3
+    io_path(deep).mkdir(parents=True)
+    io_path(deep / source.name).write_bytes(source.read_bytes())
+    io_path(deep / markdown.name).write_bytes(markdown.read_bytes())
+    monkeypatch.setattr('biopipe.library_location.source_root', lambda: deep)
+    manager = SimpleNamespace(directory=tmp_path / 'new-profile')
+    assert document_bytes(manager, {}, descriptor) == markdown.read_bytes()
 
 
 def test_documented_wheel_checks_integrity_and_only_docs_are_nonexecuting(tmp_path):

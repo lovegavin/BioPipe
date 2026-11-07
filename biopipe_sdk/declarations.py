@@ -167,7 +167,9 @@ def compile_declaration(value, root, *, _code_identity=None):
     if value.get('localization'):
         from .localization import compile_localization
         value['localization'] = compile_localization(source, value['localization'], value['parameters_schema'])
-        value['protocol_revision'] = '3.5'
+        value['protocol_revision'] = '3.6' if value.get('data_formats') else '3.5'
+    if value.get('data_formats'):
+        value['protocol_revision'] = '3.6'
     if is_image_icon(value.get('icon')):
         value['icon_image'] = image_data(icon_path(source.parent, value['icon']))
     else:

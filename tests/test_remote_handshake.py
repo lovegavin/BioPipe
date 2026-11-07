@@ -414,3 +414,14 @@ def test_runtime_identity_ignores_site_packages_mtime_drift():
     assert runtime_compatible({**base, 'python': ['/other', 1, 2]}, base) is False
     assert runtime_compatible({}, base) is False
     assert runtime_compatible(None, base) is False
+
+
+def test_readiness_capability_keeps_old_clients_but_rejects_old_servers(remote):
+    from biopipe.remote.handshake import validate_daemon_response
+    legacy = [name for name in CAPABILITIES if name != 'workflow_readiness']
+    response = remote.dispatch('handshake', request(required_capabilities=legacy))
+    assert 'workflow_readiness' in response['handshake']['capabilities']
+    response['handshake']['capabilities'] = legacy
+    with pytest.raises(HandshakeError, match='workflow_readiness') as error:
+        validate_daemon_response({'ok': True, 'value': response})
+    assert error.value.code == 'capability_missing'

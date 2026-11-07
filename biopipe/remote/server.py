@@ -133,6 +133,17 @@ class RemoteService:
         from src.web.parameters import freeze_graph
         from src.web.routes import prepare_interface
         service = self.service
+        if method == 'validate_environment':
+            from biopipe.readiness import inspect_declared_environment
+            ids = params.get('ids')
+            if not isinstance(ids, list) or any(not isinstance(key, str) for key in ids):
+                raise ValueError('ids must be an explicit list of declaration IDs')
+            scripts = params.get('scripts', {})
+            if not isinstance(scripts, dict):
+                raise ValueError('scripts must map node IDs to frozen script declarations')
+            graph = Graph.model_validate(params['graph']) if params.get('graph') else None
+            return inspect_declared_environment(service, ids, graph=graph, scripts=scripts,
+                                                repair=params.get('repair') is True)
         if method == 'resources':
             return service.resources()
         if method == 'pin_compatibility':
@@ -221,6 +232,13 @@ class RemoteService:
                         return service.details(record['id'])
                 graph.runtime['remote_request_id'] = request_id
                 graph.runtime['remote_request_digest'] = digest
+                from biopipe.readiness import required_ids, required_scripts, inspect_declared_environment
+                checked = inspect_declared_environment(service, required_ids(graph, self.graph_catalog(graph)),
+                                                       graph=graph, scripts=required_scripts(graph))
+                missing = [key for key, item in {**checked['entries'], **checked['scripts']}.items()
+                           if item.get('status') != 'passed']
+                if missing:
+                    raise ValueError('Execution dependencies are not ready: ' + ', '.join(missing))
                 return service.launch(graph)
             catalog = self.graph_catalog(graph)
             if method == 'prepare':

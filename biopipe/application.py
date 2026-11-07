@@ -43,6 +43,8 @@ class Application:
         self.viewers = ViewerService(self)
         from .operator_docs import OperatorDocs
         self.operator_docs = OperatorDocs(self.service.plugins)
+        from .readiness import ReadinessService
+        self.readiness = ReadinessService(self)
 
     def catalog_for(self, graph):
         return self.executions.catalog(graph) if self.executions.applies(graph) else self.service.graph_catalog(graph)
@@ -51,16 +53,31 @@ class Application:
         graph = Graph.model_validate(layout(graph)) if isinstance(graph, dict) else graph
         return self.executions.prepare(graph) if self.executions.applies(graph) else self.service.prepare_graph(graph)
 
-    def validate(self, graph, *, require_files=False):
+    def validate(self, graph, *, require_files=False, repair=False):
         graph = Graph.model_validate(layout(graph)) if isinstance(graph, dict) else graph
         result = (self.executions.validate(graph, require_files=require_files) if self.executions.applies(graph)
                   else self.service.validate_graph(graph, require_files=require_files))
-        return {**result, 'graph': graph.model_dump(mode='json')}
+        readiness = self.readiness.validate(graph, result, require_files=require_files, repair=repair)
+        return {**result, 'graph': graph.model_dump(mode='json'), 'readiness': readiness}
 
     def shutdown(self):
         self.service.dependencies.cancel.set()
         self.executions.shutdown()
         self.service.shutdown()
+
+    def environment_status(self):
+        """Describe the active service, not the shell that happened to call it."""
+        import platform
+        import sys
+        from . import __version__
+        from .environments import root
+        return {'version': __version__, 'python': sys.executable,
+                'python_version': platform.python_version(), 'system': platform.system(),
+                'workspace': str(self.service.root), 'data_dir': str(self.service.directory),
+                'application_root': str(self.service.settings.code_root or self.service.root),
+                'environment_root': str(root()),
+                'dependency_policy': 'explicit-route-preparation',
+                'resources': self.service.resources()}
 
 
 class WorkflowService:
@@ -162,7 +179,9 @@ class TaskService:
             graph = Graph.model_validate(layout(graph)) if isinstance(graph, dict) else graph
             return self._launch(graph)
 
-    def _launch(self, graph):
+    def _launch(self, graph, *, validated=False):
+        if not validated:
+            self.app.readiness.require_ready(self.app.validate(graph, require_files=True))
         return (self.app.executions.launch(graph) if self.app.executions.applies(graph)
                 else self.service.launch(graph))
 
@@ -179,7 +198,7 @@ class TaskService:
                 if node.kind == 'route':
                     retain_pins(node.route.graph, nodes[node.id].route.graph)
         retain_pins(original, prepared)
-        self.app.validate(prepared, require_files=True)
+        self.app.readiness.require_ready(self.app.validate(prepared, require_files=True))
         return prepared
 
     def submit(self, payload):
@@ -222,7 +241,7 @@ class TaskService:
                        'created_at': datetime.now(timezone.utc).isoformat()}
             atomic_json(path, receipt)
             try:
-                result = self._launch(prepared)
+                result = self._launch(prepared, validated=True)
             except Exception as error:
                 recovered = self._recover(request_key)
                 if recovered:

@@ -13,7 +13,7 @@ from biopipe.bytecode import io_path
 
 
 _SOURCE_KEYS = {"path", "dims", "labels", "args", "reader"}
-_STEP_KEYS = {"name", "inputs", "params", "context_params"}
+_STEP_KEYS = {"name", "inputs", "params", "context_params", "conversions"}
 _LABEL_STRINGS = {"builtin", "auto"}
 
 
@@ -135,6 +135,8 @@ def _validate_steps(steps: list) -> None:
                 f"{sorted(unknown)}. Allowed: {sorted(_STEP_KEYS)}"
             )
 
+        if not isinstance(spec.get("conversions", []), list):
+            raise ManifestError(f"Step {i}: conversions must be a list")
         inputs = spec.get("inputs", [])
         if not isinstance(inputs, list):
             raise ManifestError(

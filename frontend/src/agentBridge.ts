@@ -7,7 +7,14 @@ export type AgentState = {
   workspace: Workspace;
   connections: Record<string, string>;
   history: Record<string, {undo: number; redo: number}>;
+  document_ids?: string[]; updated_at?: string;
 };
+export type ChangePreview = {document_id: string; path: string[]; before: string; after: string;
+  before_exists: boolean; after_exists: boolean; before_truncated?: boolean; after_truncated?: boolean};
+export type CanvasEvent = {seq: number; time: string; type: string; actor: string; revision: number;
+  label?: string; transaction_id?: string; change_count?: number; changes?: ChangePreview[];
+  changes_truncated?: boolean; affected?: {document_id: string; nodes: string[]}[]};
+export type EventPage = {seq: number; next_cursor: number; revision: number; reset: boolean; has_more: boolean; events: CanvasEvent[]};
 export type Presence = {document_id: string; nodes: string[]; edges: string[]; inspected_node: string | null; focused_field: string; viewport?: unknown};
 export const signature = (value: unknown): string => JSON.stringify(value, (_key, item) =>
   item && typeof item === "object" && !Array.isArray(item)
@@ -37,18 +44,29 @@ export class CanvasBridge {
   private acknowledged: Workspace | null = null;
   private queue: Promise<unknown> = Promise.resolve();
   private stopped = false;
+  private cursor = 0;
   constructor(private capture: () => Workspace, private presence: () => Presence,
-              private receive: (value: AgentState) => void, private notify: (message: string) => void) {}
+              private receive: (value: AgentState) => void, private notify: (message: string) => void,
+              private activity?: (events: CanvasEvent[], reset: boolean) => void) {}
 
   async start() {
     const workspace = structuredClone(this.capture());
-    const state = await api.agent<AgentState>("/sessions", {workspace, name: workspace.documents.find(d => d.id === workspace.active_id)?.graph.name || "BioPipe Studio"});
+    const sessions = await api.agent<AgentState[]>("/sessions");
+    const ids = signature(workspace.documents.map(doc => doc.id).sort());
+    const previous = Array.isArray(sessions) ? sessions.filter(session => signature([...(session.document_ids || [])].sort()) === ids)
+      .sort((a, b) => (b.updated_at || '').localeCompare(a.updated_at || ''))[0] : undefined;
+    const state = previous ? await api.agent<AgentState>(`/sessions/${previous.id}`)
+      : await api.agent<AgentState>("/sessions", {workspace, name: workspace.documents.find(d => d.id === workspace.active_id)?.graph.name || "Operon"});
     if (this.stopped) return;
     this.state = state;
     this.acknowledged = workspace;
     if (signature(workspace) === signature(this.capture())) {
       this.receive(state);
       this.acknowledged = structuredClone(this.capture());
+    } else if (previous) {
+      const merged = recoverWorkspace(workspace, this.capture(), state.workspace);
+      this.receive({...state, workspace: merged});
+      this.acknowledged = structuredClone(state.workspace);
     }
     await this.publishPresence();
   }
@@ -60,7 +78,12 @@ export class CanvasBridge {
   }
 
   private async publishPresence() {
-    if (this.state) await api.agent(`/sessions/${this.state.id}/presence`, this.presence());
+    if (!this.state || this.stopped) return;
+    const presence = this.presence();
+    // A tab can be opened while connect, sync or event polling is in flight.
+    // The next tick registers it; do not send presence ahead of that revision.
+    if (!this.state.workspace.documents.some(doc => doc.id === presence.document_id)) return;
+    await api.agent(`/sessions/${this.state.id}/presence`, presence);
   }
 
   private async flushNow() {
@@ -104,24 +127,28 @@ export class CanvasBridge {
       if (!this.state || this.stopped) return;
       await this.flushNow();
       const captured = signature(this.capture());
-      const remote = await api.agent<AgentState>(`/sessions/${this.state.id}`);
-      if (remote.revision !== this.state.revision) {
+      const page = await api.agent<EventPage>(`/sessions/${this.state.id}/events?after=${this.cursor}&limit=50`);
+      if (page.revision !== this.state.revision || page.reset) {
+        const remote = await api.agent<AgentState>(`/sessions/${this.state.id}`);
         // Let flushNow resolve a concurrent local edit before replacing UI.
         if (captured !== signature(this.capture())) return;
         this.state = remote;
         this.receive(remote);
         this.acknowledged = structuredClone(this.capture());
       }
+      this.cursor = page.next_cursor;
+      this.activity?.(page.events, page.reset);
       await this.publishPresence();
     });
   }
 
-  undo(document: string, redo = false) {
+  undo(document: string, redo = false, transactionId?: string) {
     return this.serialized(async () => {
       await this.flushNow();
       if (!this.state) return;
       const state = await api.agent<AgentState>(`/sessions/${this.state.id}/undo`, {
         document_id: document, expected_revision: this.state.revision, redo,
+        ...(transactionId ? {transaction_id: transactionId} : {}),
       });
       this.state = state;
       this.receive(state);

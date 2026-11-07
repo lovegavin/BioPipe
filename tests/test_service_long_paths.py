@@ -69,6 +69,9 @@ def test_deep_profile_worker_outputs_and_api_readback(tmp_path, monkeypatch, hos
             time.sleep(.1)
         assert result['status'] == 'complete', result.get('error') or result
         service = app.state.service
+        dependency_log = io_path(root / '.studio/logs/dependency-checks.log')
+        assert dependency_log.is_file()
+        assert 'CsvReader' in dependency_log.read_text(encoding='utf-8')
         directory = service.jobs_dir / key
         assert result['progress']['percent'] == 100
         assert result['report'] and result['summary']['status'] == 'complete'

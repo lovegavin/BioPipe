@@ -18,7 +18,7 @@ from biopipe.bytecode import io_path
 def main():
     root = Path(__file__).resolve().parents[1]
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--desktop', type=Path, default=root / 'dist/BioPipe Studio')
+    parser.add_argument('--desktop', type=Path, default=root / 'dist/Operon Studio')
     parser.add_argument('--output', type=Path, default=root / 'dist/releases')
     parser.add_argument('--runtime', type=Path, help='Portable Python directory produced by build_runtime.py')
     parser.add_argument('--webview-bootstrapper', type=Path, help='Optional cached official Microsoft WebView2 bootstrapper; signature is verified')
@@ -27,11 +27,11 @@ def main():
     if not args.lite and (not args.runtime or not (args.runtime / 'biopipe-runtime.json').is_file()):
         parser.error('Full releases require --runtime from build_runtime.py; use --lite only for an environment-free package')
     version = tomllib.loads((root / 'pyproject.toml').read_text(encoding='utf-8'))['project']['version']
-    name = f'BioPipe-Studio-v{version}-Windows-x64' + ('-Lite' if args.lite else '')
+    name = f'Operon-Studio-v{version}-Windows-x64' + ('-Lite' if args.lite else '')
     destination = io_path(args.output.resolve() / name)
     if destination.exists():
         parser.error(f'Output already exists: {destination}')
-    if not (args.desktop / 'BioPipe Studio.exe').is_file():
+    if not (args.desktop / 'Operon Studio.exe').is_file():
         parser.error('Build the desktop host first.')
     destination.mkdir(parents=True)
 
@@ -40,9 +40,11 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
 
-    copy(args.desktop / 'BioPipe Studio.exe', 'BioPipe Studio.exe')
+    copy(args.desktop / 'Operon Studio.exe', 'Operon Studio.exe')
     if not args.lite:
         shutil.copytree(io_path(args.runtime), destination / 'runtime/python')
+        copy(root / 'scripts/bundled_paths.pth', 'runtime/python/Lib/site-packages/00_operon_paths.pth')
+        copy(root / 'scripts/bundled_imports.py', 'runtime/python/Lib/operon_import_paths.py')
         bootstrapper = destination / 'runtime/MicrosoftEdgeWebview2Setup.exe'
         url = 'https://go.microsoft.com/fwlink/p/?LinkId=2124703'
         if args.webview_bootstrapper:
@@ -75,9 +77,9 @@ def main():
     for name_ in ('release.json', 'pyproject.toml', 'README.md'):
         if (root / 'library' / name_).is_file():
             copy(root / 'library' / name_, Path('library') / name_)
-    for name_ in ('desktop_server.py', 'install_maintenance.py', 'run.py', 'diagnose_pins.py',
+    for name_ in ('desktop_server.py', 'install_maintenance.py', 'install_server.py', 'install_server.sh', 'run.py', 'diagnose_pins.py',
                   'accept_igv_handoff.py', 'open_igv_handoff.ps1',
-                  'verify_release_agent.py', 'verify_release_agent.md',
+                  'verify_release_agent.py', 'verify_release_agent.md', 'verify_operon_candidate.py', 'verify_server_cli.py',
                   'check_resources.py', 'provision_resources.py'):
         copy(root / 'scripts' / name_, Path('scripts') / name_)
     if not args.lite:
@@ -85,7 +87,8 @@ def main():
         # Use the shipped interpreter, never the packaging host's Python tag.
         subprocess.run([python, '-I', '-m', 'compileall', '-q', '-f',
                         '--invalidation-mode', 'unchecked-hash', '-s', str(destination),
-                        *[str(destination / p) for p in ('src', 'biopipe', 'biopipe_sdk', 'scripts', 'library/seed')]], check=True)
+                        *[str(destination / p) for p in ('src', 'biopipe', 'biopipe_sdk', 'scripts', 'library/seed',
+                                                       'runtime/python/Lib/operon_import_paths.py')]], check=True)
     shutil.copytree(root / 'docs', destination / 'docs')
     # Ship the small SDK examples referenced by the extension guides.
     shutil.copytree(root / 'examples', destination / 'examples',
@@ -108,125 +111,53 @@ def main():
         'backendRoot': '.', 'python': 'auto', 'entryPoint': 'scripts/desktop_server.py', 'frontend': 'frontend',
         'bundledRuntime': not args.lite,
     }, indent=2) + '\n', encoding='utf-8')
-    (destination / 'START_HERE.txt').write_text(f'''BioPipe Studio {version} - Windows x64
+    command = 'python -m biopipe' if args.lite else '"%~dp0runtime\\python\\python.exe" -I -m biopipe'
+    (destination / 'operon.cmd').write_text('@echo off\n' + command + ' %*\n', encoding='ascii')
+    (destination / 'START_HERE.txt').write_text(f"""Operon Studio {version} - Windows x64
 
-1. Extract this entire folder. Keep the executable and adjacent files together.
-2. Double-click BioPipe Studio.exe. An existing BioPipe environment is discovered
-   automatically, including remembered environments and registered Conda/Python.
-   If prompted, select your environment's python.exe; the choice is remembered.
-3. If this computer has no suitable environment, install Python 3.11 or 3.12 and
-   Microsoft Edge WebView2 Runtime as needed, then create/configure an environment:
-   python -m venv .venv
-   For Python 3.11 on Windows x64:
-   .venv\\Scripts\\python.exe -m pip install -c constraints-py311-windows.txt -e ".[agent]"
-   For Python 3.12 on Windows x64, use constraints-py312-windows.txt instead.
-4. Double-click BioPipe Studio.exe again.
+Use Operon_Setup.exe for installation. It owns its management Python and creates a
+new isolated profile; previous BioPipe installations and profiles are retained.
+Double-click the installed Operon Studio shortcut. First-time WebView2 setup
+may need an internet connection. Do not move individual installed files.
 
-Studio checks declared Reader and operator dependencies at startup and library
-refresh. Compatible dependencies share the runtime; version conflicts use private
-dependency directories and subprocesses with the same Python executable.
-Missing dependencies need internet access. Native packages may require supported
-Windows wheels or build tools; Library Management retains the exact error.
-The constraints cover core Studio, MCP and development tools. Optional analysis
-and native reader dependencies have separate requirements. See docs/installation.md.
-Existing environments may be selected with BIOPIPE_PYTHON or biopipe-desktop.json.
-To select an interpreter again, use BioPipe Studio.exe --select-runtime.
-The local runtime hint ~/.biopipe/runtime.json is never included in this package.
-Python and analysis dependencies are not bundled; .NET and the UI are bundled.
-User data and route registries are stored under ~/.biopipe/studio by default.
-CLI and MCP can start their own local service without a desktop window.
-Open Studio when the agent should inspect your selection or edit the live canvas.
-See docs/headless_api.md and docs/agent_api.md.
-There is no bundled AI service. Graph edits do not execute analyses.
-''', encoding='utf-8')
-    if not args.lite:
-        (destination / 'START_HERE.txt').write_text(f'''BioPipe Studio {version} - Windows x64 (bundled environment)
+The operator library remains independently versioned. Existing v3/v3.5 packages,
+.biopipe workflow bundles, Python imports and MCP identifiers stay compatible.
+Use operon.cmd for the bundled CLI or runtime/python/python.exe -I -m biopipe.
+Registration and startup read metadata; scientific dependencies are checked for
+the selected execution target at Validate/Run. Missing environments or packages
+require explicit Prepare environment; conflict isolation uses the same Python
+with private dependency directories and managed worker processes.
+The default Setup does not include PyTorch, Pandas, SciPy or plotting packages.
+NumPy remains the Form/memory/preview foundation. Local analysis dependencies
+are downloaded only after explicit preparation into profile-owned targets;
+the application runtime is never pip-upgraded in place. Remote-only routes do
+not prepare local analysis targets. First analysis preparation needs networking.
 
-1. Extract the entire archive to a folder where your account can read files.
-2. Double-click BioPipe Studio.exe. No Python or Conda installation is required.
-3. If WebView2 is missing, its official Microsoft bootstrapper installs it for
-   your account automatically. This one-time step requires internet access.
+Each workflow keeps frozen parameters.json and independent execution.json.
+Import Python/R/C/C++ file scripts, edit code or parameters, and export formatted
+YAML. Python literal extraction uses the original imported values as defaults.
+Type-safe representation conversions are shown on edges; semantic type changes
+require explicit operators. Agent edits are visible transactions with undo.
 
-The runtime/python folder contains the tested Python runtime and CPU dependencies.
-Keep it beside the executable. Python/Conda from another project is not modified.
-Studio checks declared operator/Reader dependencies once per session, keeps
-successful checks, and repairs missing dependencies in immutable target directories.
-Only conflicting operators use private dependencies and a subprocess with the
-same Python executable; compatible operators continue sharing the runtime.
-New dependencies need internet access. Existing bundled analyses work offline.
-User graphs, dependency targets and logs use the shared Studio profile.
-See docs/installation.md, docs/reader_extensions.md and docs/step_extensions.md.
-''', encoding='utf-8')
-    with (destination / 'START_HERE.txt').open('a', encoding='utf-8') as guide:
-        guide.write('''
-EXECUTION ENVIRONMENTS, TRANSFERS AND TASKS
-Use Execution settings to choose automatic placement or manual node targets.
-Local inputs and declared reference/companion files upload automatically when a
-stage runs on a server. Transfers support progress, verified resumption and reuse.
-Inputs already on the execution server remain there. Entirely remote workflows
-keep their results there; mixed stages transfer only required boundary outputs.
-Route operators run in one environment. Each saved workflow keeps its own
-execution.json beside its frozen parameters.json. The Tasks panel manages active
-jobs; per-host memory and CPU admission prevents overcommitting the shared pool.
-See docs/EXECUTION_ENVIRONMENTS.md for settings, recovery and known limits.
+Settings groups Servers, Outputs and viewers, Appearance, and Language.
+Open saved PNG/PDF/SVG figures from run history or configured specialist viewers.
+SSH connections reuse a registered server; installation is explicit maintenance.
+Computation, memory admission and streaming remain on the execution host.
 
-HI-C AND SSH SETUP
-Open Settings > Servers to configure connections; choose a target in the toolbar
-to browse server inputs. Ordinary SSH
-connections reuse the registered server installation and negotiate compatible
-interfaces, operator manifests and cached dependency readiness. They do not upload
-desktop code or install packages. For first installation or an intentional upgrade,
-use Settings > Servers > Server maintenance > Install / upgrade server; no preconfigured Python is
-required on Linux x86_64. Installation needs writable storage and outbound HTTPS.
-Existing manual environments remain supported. Refresh operators and dependencies
-is a separate maintenance action. See docs/SERVER_HANDSHAKE.md for cache rules.
-See docs/REMOTE_EXECUTION.md and docs/HIC.md for setup and supported workflows.
-
-HISTORICAL RESULTS AND SAVED FIGURES
-Run history provides View results and View logs separately from Load canvas.
-Plotting steps automatically save white-background PNG (300 DPI), PDF and SVG.
-Use Saved figures links to open the existing files; no extra export is required.
-Server originals stay on the server and are fetched only when opened. The small
-interactive data preview is not a publication export. See docs/PUBLICATION_FIGURES.md.
-
-APPLICATION SETTINGS AND SPECIALIST VIEWERS
-The toolbar gear groups Servers, Outputs and viewers, Appearance, and Language.
-Language, appearance and viewer preferences share the current profile's config.json.
-The library manager separates Manage library and Add operators; the large plus
-opens Add operators for both ordinary packages and saved/imported workflow operators.
-The interface supports English, Simplified Chinese and the system language.
-Optional v3.5 operator language packs are compatible with existing v3 packages.
-See docs/localization.md and examples/localized_operator for authoring details.
-Configure installed EXE/GUI JAR paths and default viewers by file extension once.
-In Results, Open uses that preference; the arrow offers alternative desktop apps
-and manual web viewers. Third-party graphical apps and licenses are not bundled.
-Outputs remain retained task files; remote handoff fetches only selected outputs
-and required index siblings. See docs/result_viewers.md for format requirements.
-The independent library extends Export results with HIC/Cooler, GenBank, tracks,
-networks and trees. Conversion requires the documented original metadata; it does
-not reconstruct missing chromosome sizes, annotations or molecular structures.
-''')
-        guide.write('''
-UPGRADING FROM 0.4.1 / OLDER PROTOCOLS
-Close the older Studio instance first. This desktop version automatically performs
-a one-time backed-up migration of supported built-in profiles before startup.
-Unfinished drafts remain editable; past jobs and their locks are not rewritten.
-External old-protocol operator wheels must be rebuilt with SDK 3.
-See docs/migration_v2.md for profile selection, extension conversion and restore.
-''')
-        if not args.lite:
-            guide.write('''For manual migration preview/apply (no system Python needed):
-  runtime\\python\\python.exe -I -m biopipe migrate
-  runtime\\python\\python.exe -I -m biopipe migrate --apply
-''')
-        else:
-            guide.write('For manual migration preview/apply, use the Python environment selected for Lite:\n  python -m biopipe migrate\n  python -m biopipe migrate --apply\n')
+For supported scope, acceptance procedures and remaining roadmap work, read
+  docs/OPERON_3_TEST_ACCEPTANCE.md
+  docs/V3_IMPLEMENTATION.md
+  docs/rebranding.md
+The release page records the validation completed for this exact build.
+""", encoding='utf-8')
     audit = audit_files((p for p in destination.rglob('*') if p.is_file()
                         and not {'THIRD_PARTY_NOTICES', 'runtime'}.intersection(p.relative_to(destination).parts)), destination)
     if audit['findings']:
         raise RuntimeError('Developer paths in release: ' + json.dumps(audit['findings']))
     commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
-    manifest = {'version': version, 'source_commit': commit, 'python_bundled': not args.lite, 'files': []}
+    runtime_mode = 'external' if args.lite else json.loads((args.runtime / 'biopipe-runtime.json').read_text(encoding='utf-8')).get('mode', 'bundled')
+    manifest = {'product': 'operon', 'version': version, 'runtime_mode': runtime_mode, 'source_commit': commit,
+                'source_dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True).strip()), 'python_bundled': not args.lite, 'files': []}
     for file in sorted(destination.rglob('*')):
         if file.is_file():
             manifest['files'].append({'path': file.relative_to(destination).as_posix(), 'bytes': file.stat().st_size,
@@ -236,7 +167,7 @@ See docs/migration_v2.md for profile selection, extension conversion and restore
     with zipfile.ZipFile(archive, 'x', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as output:
         for file in sorted(destination.rglob('*')):
             if file.is_file():
-                output.write(file, (Path('BioPipe Studio') / file.relative_to(destination)).as_posix())
+                output.write(file, (Path('Operon Studio') / file.relative_to(destination)).as_posix())
     with zipfile.ZipFile(archive) as check:
         assert check.testzip() is None
     print(json.dumps({'archive': str(archive), 'sha256': hashlib.sha256(archive.read_bytes()).hexdigest(), 'files': len(manifest['files'])}))

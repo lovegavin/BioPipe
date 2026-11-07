@@ -370,3 +370,44 @@ def test_published_v05_bundle_runs_in_a_new_profile_without_old_snapshots(tmp_pa
         assert job['status'] == 'complete', job.get('error')
         assert any('released' in u['reason'] for u in job['plugins']['bundled_updates'])
         assert node(import_bundle(original), 'pca').params['n_components'] == 2
+
+
+def test_published_v260_bundle_runs_in_a_fresh_profile_with_frozen_values(tmp_path):
+    # Exact identities from the checksum-verified public v2.6.0 Setup, also seen
+    # in the independent RC3 desktop export. No historical implementation runs.
+    pins = json.loads((ROOT / 'tests/fixtures/v260_released_pins.json').read_text(encoding='utf-8'))
+    (tmp_path / 'input.csv').write_text('a,b,c\n1,3,2\n2,6,5\n3,4,8\n4,9,7\n', encoding='utf-8')
+    app = create_app(Settings(tmp_path, tmp_path / 's', ROOT / 'frontend/dist', testing=True, code_root=ROOT))
+    with TestClient(app) as client:
+        bootstrap = client.get('/api/bootstrap').json()
+        client.headers['X-Studio-Token'] = bootstrap['token']
+        graph = app.state.service.prepare_graph(Graph.model_validate({
+            'name': 'Released v2.6 frozen PCA', 'base_dir': '.',
+            'memory': {'enabled': True, 'auto_spill': True, 'budget_mb': 64},
+            'nodes': [{'id': 'matrix', 'kind': 'source', 'position': {'x': 0, 'y': 0}, 'source': {'path': 'input.csv',
+                       'dims': ['sample', 'feature'], 'labels': {'sample': 'auto', 'feature': 'builtin'},
+                       'args': {'header': True}}},
+                      {'id': 'pca', 'kind': 'operator', 'operator': 'pca', 'position': {'x': 300, 'y': 0},
+                       'params': {'dim': 'feature', 'n_components': 2}}],
+            'edges': [{'id': 'input-pca', 'source': 'matrix', 'target': 'pca'}]}))
+        graph.plugin_lock = {key: pins[key] for key in graph.plugin_lock}
+        original = export_bundle(graph)
+        frozen_values = split_graph(graph)[1]
+        archives = list((app.state.service.plugins.directory / 'snapshots').glob('*.json'))
+        assert len(archives) == 1
+        assert pins['pca']['code_sha'] not in archives[0].read_text(encoding='utf-8')
+        imported = client.post('/api/workflows/import', content=original)
+        assert imported.status_code == 200, imported.text
+        prepared = client.post('/api/workflows/prepare', json=imported.json())
+        assert prepared.status_code == 200, prepared.text
+        assert split_graph(Graph.model_validate(prepared.json()))[1] == frozen_values
+        started = client.post('/api/jobs', json=imported.json())
+        assert started.status_code == 202, started.text
+        service = app.state.service
+        service.threads[started.json()['id']].join(timeout=40)
+        job = service.details(started.json()['id'])
+        assert job['status'] == 'complete', job.get('error')
+        assert {row['operator'] for row in job['plugins']['bundled_updates']} == set(graph.plugin_lock)
+        assert next(step for step in job['summary']['steps'] if step['name'] == 'pca')['params']['n_components'] == 2
+        assert (service.jobs_dir / job['id'] / 'parameters.json').is_file()
+        assert import_bundle(original).plugin_lock == graph.plugin_lock

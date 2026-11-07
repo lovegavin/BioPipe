@@ -69,7 +69,13 @@ def test_shared_services_permissions_frozen_values_and_artifacts(environment):
         assert client.get('/openapi.json').status_code == 404
         assert client.get('/health').status_code == 403
         assert client.get('/api/v1/workflows').status_code == 403
+        assert client.get('/api/v1/environment').status_code == 403
         read = auth(client, app, ['context'])
+        environment = client.get('/api/v1/environment', headers=read).json()
+        assert environment['python'] == sys.executable
+        assert environment['workspace'] == str(root.resolve())
+        assert environment['dependency_policy'] == 'explicit-route-preparation'
+        assert app.state.application.jobs.list() == []
         assert client.post('/api/v1/jobs', headers=read, json={'graph': graph(root)}).status_code == 403
         assert client.post('/api/v1/workflows', headers=read, json={'graph': graph(root)}).status_code == 403
         headers = auth(client, app, ['context', 'edit', 'run'])
@@ -77,6 +83,11 @@ def test_shared_services_permissions_frozen_values_and_artifacts(environment):
         assert client.get('/health').status_code == 200
         assert client.get('/api/agent/sessions').json() == []
         body = graph(root)
+        invalid_memory = deepcopy(body)
+        invalid_memory['memory']['process_limit_mb'] = None
+        invalid = client.post('/api/v1/workflows/validate', json={'graph': invalid_memory})
+        assert invalid.status_code == 422
+        assert 'process_limit_mb' in invalid.json()['message']
         prepared = client.post('/api/v1/workflows/prepare', json={'graph': body})
         assert prepared.status_code == 200, prepared.text
         saved = client.post('/api/v1/workflows', json={'graph': prepared.json()})
@@ -195,7 +206,7 @@ def test_unknown_submission_result_is_never_relaunched(environment, monkeypatch)
     root = environment
     app = create_headless_app(Settings(root, root / '.studio', root / 'no-ui', testing=True, code_root=ROOT))
     calls = []
-    def lost_result(prepared):
+    def lost_result(prepared, **kwargs):
         calls.append(prepared)
         raise OSError('Connection vanished after possible remote acceptance')
     with TestClient(app, base_url='http://127.0.0.1'):

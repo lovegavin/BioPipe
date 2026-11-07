@@ -12,10 +12,11 @@ export function runSignature(graph: Graph): string {
     plugin_lock: graph.plugin_lock || {},
     edges: graph.edges,
     nodes: graph.nodes.map(
-      ({ id, kind, operator, params, source, input_count, route, context_params }) => ({
+      ({ id, kind, operator, params, source, input_count, route, context_params, script }) => ({
         id,
         kind,
         operator: operator ?? null,
+        script: script ?? null,
         params,
         context_params: context_params || {},
         source: source ?? null,
@@ -41,7 +42,7 @@ export function normalizeGraph(value: Graph): Graph {
     !Array.isArray(value.nodes) ||
     !Array.isArray(value.edges)
   )
-    throw new Error(t("需要 BioPipe Studio 工作流 JSON。"));
+    throw new Error(t("需要 Operon 工作流 JSON。"));
   return {
     schema_version: value.schema_version,
     interface: value.interface,
@@ -58,7 +59,7 @@ export function normalizeGraph(value: Graph): Graph {
     },
     nodes: value.nodes.map((node) => ({
       ...node,
-      title: node.title || node.operator || t("输入数据"),
+      title: node.title || node.operator || node.script?.filename || t("输入数据"),
       params: node.params || {},
       input_count: node.input_count ?? 1,
     })),
@@ -177,6 +178,11 @@ export function specFor(
   catalog: Catalog,
 ): Operator | undefined {
   if (node.kind === "route" && node.route) return routeSpec(node.route);
+  if (node.kind === 'script' && node.script) return {
+    id: `script.${node.id}`, title: node.title || node.script.filename, category: 'data', description: '', icon: 'Code',
+    inputs_arity: Object.keys(node.script.inputs).length, outputs: Object.keys(node.script.outputs), output_parameter: null,
+    parameters: [], resources: {memory_modes: ['full'], supports_cuda: false},
+  };
   return catalog.operators.find((o) => o.id === node.operator);
 }
 export function routeSpec(route: RouteDefinition): Operator {
@@ -190,6 +196,7 @@ export function makeRouteNode(graph: Graph, route: RouteDefinition, position: {x
   return { ...node, kind: "route", route: clone(route) };
 }
 export function retainedOutputs(node: GraphNode, spec?: Operator): string[] {
+  if (node.kind === 'script') return [node.id];
   return node.kind === "source" ? [node.id] : node.kind === "route"
     ? Array.from({length: outputCount(node, spec)}, (_, i) => `${node.id}__out_${i + 1}`)
     : spec?.output_parameter ? [String(node.params.output || node.id)] : spec?.outputs || [];
@@ -216,6 +223,7 @@ export function displayTitle(node: GraphNode, spec?: Operator, reader?: ReaderSp
   return spec.title;
 }
 export function inputCount(node: GraphNode, spec?: Operator): number {
+  if (node.kind === 'script' && node.script) return Object.keys(node.script.inputs).length;
   return node.kind === "source"
     ? 0
     : spec?.inputs_arity === "*"
@@ -223,6 +231,7 @@ export function inputCount(node: GraphNode, spec?: Operator): number {
       : Number(spec?.inputs_arity ?? 1);
 }
 export function outputCount(node: GraphNode, spec?: Operator): number {
+  if (node.kind === 'script' && node.script) return Object.keys(node.script.outputs).length;
   return node.kind === "source" || spec?.output_parameter
     ? 1
     : spec?.outputs.length || 0;

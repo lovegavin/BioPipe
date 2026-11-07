@@ -1,13 +1,13 @@
 # Application and operator library
 
-BioPipe has two versioned products in one repository. Application releases use
-`vX.Y.Z`; operator releases use `library-vYYYY.M.D`. The coordinated 3.0.0
-release uses `v3.0.0` and `library-v3.0.0` for both products. Adding or correcting an
+Operon has two versioned products in one repository. Application releases use
+`vX.Y.Z`; operator releases use `library-v<library-version>`. Their version numbers
+do not need to match. Adding or correcting an
 operator does not require an EXE release or an application version change.
 
 | Owner | Source | Published artifact |
 | --- | --- | --- |
-| Application, engine, CLI, HTTP, MCP, desktop | `biopipe/`, `biopipe_sdk/`, `src/core/`, `src/task/`, `src/web/`, `frontend/`, `desktop/` | `biopipe_studio` wheel, Lite and Full desktop archives |
+| Application, engine, CLI, HTTP, MCP, desktop | `biopipe/`, `biopipe_sdk/`, `src/core/`, `src/task/`, `src/web/`, `frontend/`, `desktop/` | `biopipe_studio` wheel, Windows Setup, Linux server bundle |
 | Reference operators and Readers | `library/seed/src/task/step/steps/`, `library/seed/src/reader/readers/` | Independent native `.biopipe-library.zip` bundles |
 | Factory metadata and templates | `library/seed/biopipe/`, `library/seed/src/web/`, `library/seed/routes/` | `biopipe_builtin_library` seed wheel |
 
@@ -28,7 +28,7 @@ python -m biopipe registry check
 
 For a standalone installation, install the application wheel and optionally the
 separately versioned seed wheel. Neither wheel requires the other to be rebuilt.
-Lite and Full archives include `library/seed/` as an explicit offline seed so a
+Windows Setup and the server bundle include a separately versioned offline seed so a
 new user sees the reference library immediately. The seed is not part of the EXE
 or application wheel. User profiles keep their independent provider generations,
 disabled states and editable copies; an application update does not overwrite
@@ -42,6 +42,19 @@ The native bundle can be installed through Studio's library manager or the CLI.
 The seed wheel is for administrators building a new installation or updating its
 factory templates/isolated-environment recipes. It does not replace profile-owned
 provider versions.
+
+An unchanged refresh compares the editable factory copy with its installed seed
+and reuses the compiled registry. It does not rebuild provider wheels, reinstall
+them, precompile them again, or change workflow pins. Byte comparisons include
+parameter JSON and documentation, so an edit made before the first refresh is
+not missed. Once editable sources change, refresh uses the existing transactional
+snapshot/install path and detaches those providers from the factory library.
+Explicitly installed library bundles remain independently versioned as before.
+
+`main` contains the current application and the author's current library sources.
+Application fixes are merged there without replacing or rebuilding the library.
+The immutable `v3.0.1` application release retains the exact seed that was tested
+for its installer; newer library commits in `main` do not change that artifact.
 
 ## Compatibility
 

@@ -25,7 +25,11 @@ def freeze_graph(graph, catalog, root, *, bound=False, depth=0, input_roots=None
     result = graph.model_copy(deep=True)
     operators = {item["id"]: item for item in catalog["operators"]}
     for node in result.nodes:
-        if node.kind == "operator":
+        if node.kind == 'script':
+            from biopipe.script_operators import validate_script
+            node.script = validate_script(node.script)
+            node.params = _defaults(node.script, node.params)
+        elif node.kind == "operator":
             if node.operator not in operators:
                 from .graph import GraphError
                 raise GraphError(f"Missing operator definition: {node.operator}", node.id)

@@ -16,6 +16,7 @@
         "y": 140
       },
       "source": {
+        "reader": "PdbReader",
         "path": "examples/smoke_real_data/input/vhh_1mel.pdb",
         "dims": [
           "atom",
@@ -37,6 +38,7 @@
         "y": 360
       },
       "source": {
+        "reader": "FastaReader",
         "path": "examples/smoke_real_data/input/vhh.fasta",
         "dims": [
           "sequence",

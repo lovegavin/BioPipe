@@ -58,7 +58,9 @@ def test_esmfold_registers_native_and_export_results(tmp_path, monkeypatch):
         report = json.loads((ctx.out_dir / "steps/01_esmfold_predict.json").read_text())
         assert report["result_files"][0]["format"] == "pdb"
         assert Path(report["result_files"][0]["path"]) == path
-        assert report["result_files"][0]["bytes"] == len(PDB.encode())
+        # Native text writers use the platform newline convention; the receipt
+        # must describe the actual saved artifact, including CRLF on Windows.
+        assert report["result_files"][0]["bytes"] == path.stat().st_size
     finally:
         ctx.finalize()
 

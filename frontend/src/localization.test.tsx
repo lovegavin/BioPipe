@@ -8,6 +8,7 @@ import {displayTitle, runSignature} from './graph';
 import {ParameterField} from './Inspector';
 import {PluginPanel} from './PluginPanel';
 import {SettingsPage} from './SettingsPage';
+import {AgentPanel} from './AgentPanel';
 import type {Graph, Operator} from './types';
 
 afterEach(() => setLanguage('system'));
@@ -68,5 +69,16 @@ describe('language projections', () => {
     expect(html).toContain('Interface language'); expect(html).toContain('Server connection');
     expect(html).toContain('Outputs and viewers'); expect(html).toContain('English');
     setLanguage('zh-CN'); expect(t('设置')).toBe('设置');
+  });
+  it('brands MCP configuration as Operon while retaining an explicitly configured compatible runtime', () => {
+    setLanguage('en');
+    const fallback = renderToStaticMarkup(<AgentPanel onClose={()=>{}} onCopySelection={()=>{}}/>);
+    expect(fallback).toContain('Operon CLI');
+    expect(fallback).toContain('&quot;command&quot;: &quot;operon&quot;');
+    const configured = renderToStaticMarkup(<AgentPanel command={{command:'python',args:['-m','biopipe','mcp','--allow-run']}} onClose={()=>{}} onCopySelection={()=>{}}/>);
+    expect(configured).toContain('&quot;operon&quot;: {');
+    expect(configured).toContain('&quot;command&quot;: &quot;python&quot;');
+    expect(configured).toContain('&quot;biopipe&quot;');
+    expect(configured).toContain('The Python module name is retained for compatibility');
   });
 });

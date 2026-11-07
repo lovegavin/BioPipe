@@ -1,6 +1,12 @@
 import {t} from './i18n';
+import {importErrorMessage} from './importError';
 import type { Bootstrap, Graph, Job, Preview, ContractAnalysis, Workspace, SavedWorkflow, WorkflowSummary, RouteDefinition, DataSource } from "./types";
 import type { LibraryState, LibraryAction } from "./types";
+
+export type Readiness = {
+  status: 'ready' | 'blocked'; fingerprint: string; checked_at: string;
+  blocked: {target: string; id: string | null; status: string; message: string}[];
+};
 
 const base =
   (import.meta as ImportMeta & { env: { VITE_API_BASE?: string } }).env
@@ -39,7 +45,7 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
       ? value.detail.map((d: { msg: string }) => d.msg).join("；")
       : value.detail;
     throw new ApiError(
-      value.message || details || t("操作未完成，请重试。"),
+      importErrorMessage(value) || details || t("操作未完成，请重试。"),
       value.node_id,
       response.status,
       value.code,
@@ -49,6 +55,12 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
   return value as T;
 }
 export const api = {
+  catalogIfChanged: (generation?: string) => request<Bootstrap['catalog'] | null>(`/api/operators${generation ? '?generation=' + encodeURIComponent(generation) : ''}`),
+  inspectScript: (payload: {filename: string; code: string; script?: import('./types').ScriptSnapshot}) => request<{script: import('./types').ScriptSnapshot; candidates: {name: string; line: number; schema: Record<string, unknown>}[]}>('/api/scripts/inspect', payload),
+  extractScript: (payload: {script: import('./types').ScriptSnapshot; names: string[]}) => request<{script: import('./types').ScriptSnapshot; values: Record<string, unknown>; bindings: unknown}>('/api/scripts/extract', payload),
+  publishScript: (payload: {script: import('./types').ScriptSnapshot; operator_id: string; title: string; category: string; version?: string}) => request<{id: string; catalog: Bootstrap['catalog']}>('/api/scripts/publish', payload),
+  operatorSource: (id: string) => request<{available: boolean; code?: string; filename?: string; reason?: string}>(`/api/operators/${encodeURIComponent(id)}/source`),
+  prepareEnvironment: (graph: Graph) => request<{readiness: Readiness}>('/api/prepare-environment', graph),
   savePreferences: (value: Partial<import('./preferences').UiPreferences>, initialize = false) => {
     // Keep responses in edit order when users switch settings sections quickly.
     const result = preferencesWrite.catch(() => {}).then(() => request<import('./preferences').UiPreferences>(`/api/preferences?initialize=${initialize}`, value));
@@ -99,8 +111,8 @@ export const api = {
   workflows: () => request<WorkflowSummary[]>("/api/workflows"),
   workflow: (id: string) => request<SavedWorkflow>(`/api/workflows/${encodeURIComponent(id)}`),
   prepareWorkflow: (graph: Graph) => request<Graph>("/api/workflows/prepare", graph),
-  exportWorkflow: async (graph: Graph): Promise<Blob> => {
-    const response = await fetch(base + '/api/workflows/export', {
+  exportWorkflow: async (graph: Graph, format: 'bundle' | 'yaml' = 'bundle'): Promise<Blob> => {
+    const response = await fetch(base + (format === 'yaml' ? '/api/workflows/export-yaml' : '/api/workflows/export'), {
       method: 'POST', headers: {'X-Studio-Token': token, 'Content-Type': 'application/json'}, body: JSON.stringify(graph),
     });
     if (!response.ok) {
@@ -128,7 +140,7 @@ export const api = {
     return data;
   },
   validate: (graph: Graph) =>
-    request<{ valid: boolean; order: string[]; contracts: ContractAnalysis }>("/api/validate", graph),
+    request<{ valid: boolean; order: string[]; contracts: ContractAnalysis; readiness: Readiness }>("/api/validate", graph),
   contracts: (graph: Graph) => request<ContractAnalysis>("/api/contracts", graph),
   export: (graph: Graph) =>
     request<{ yaml: string; order: string[] }>("/api/export", graph),

@@ -24,14 +24,14 @@ def directories(root=ROOT):
     return {kind: root / relative for kind, relative in SOURCE_DIRS.items()}
 
 
-def snapshot_sources(root, staged):
+def snapshot_sources(root, staged=None):
     from biopipe.dropins import snapshot
     from .library_location import source_root
     root = source_root(root)
     digest = hashlib.sha256()
     for relative in [*SOURCE_DIRS.values(), "biopipe/builtin_packages.json"]:
         source = root / relative
-        target = staged / relative if source.is_dir() else (staged / relative).parent
+        target = (staged / relative if source.is_dir() else (staged / relative).parent) if staged is not None else None
         digest.update(relative.encode() + snapshot(source, target).encode())
     return digest.hexdigest()
 
@@ -117,15 +117,26 @@ def prepare(manager, current, temporary):
     if root is None:
         return {"wheels": [], "updated": [], "unchanged": [], "receipt": current.get("source_library")}
     from biopipe.bytecode import filesystem_path
-    staged = Path(filesystem_path(temporary / "source", resolve=False))
-    fingerprint = snapshot_sources(root, staged)
     previous = current.get("source_library") or {}
+    if manager.managed_sources and manager.manifest_only and not previous:
+        # An explicit refresh is not an installation. A pristine editable copy
+        # can keep the already indexed factory providers and their exact pins.
+        # Compare bytes (including JSON/docs), not a seed marker or file times:
+        # edits made before the first refresh must still enter the transaction.
+        if snapshot_sources(root) == snapshot_sources(ROOT):
+            return {"wheels": [], "updated": [],
+                    "unchanged": ["factory operator / Reader source directories"],
+                    "receipt": current.get("source_library")}
     needs_detach = manager.managed_sources and any(p.get('origin') == 'bundled' for p in current['packages'])
-    if previous.get("sha256") == fingerprint and not needs_detach:
+    if previous.get("sha256") and not needs_detach and previous['sha256'] == snapshot_sources(root):
         receipt = deepcopy(previous)
         if manager.managed_sources:
             receipt['root'] = root.relative_to(manager.directory.resolve()).as_posix()
         return {"wheels": [], "updated": [], "unchanged": ["operator / Reader source directories"], "receipt": receipt}
+    # Changed sources still get an immutable byte-for-byte snapshot. Hashing a
+    # no-op refresh must not copy thousands of files into a staging directory.
+    staged = Path(filesystem_path(temporary / "source", resolve=False))
+    fingerprint = snapshot_sources(root, staged)
     from biopipe.registry import scan_sources, package_manifest, read_json
     records, errors = scan_sources(staged)
     if errors:

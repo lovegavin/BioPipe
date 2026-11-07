@@ -52,9 +52,12 @@ export type ReaderSpec = { id: string; extensions: string[]; contracts: {output:
   parameters?: Parameter[];
   requires_siblings?: string[]; handles_compression?: boolean;
   file_input?: { dims?: string[]; labels?: Record<string, unknown>; compression?: string[]; companions?: string[][] } };
-export type Catalog = { schema_version: 1; contract_version?: number; operators: Operator[]; readers?: ReaderSpec[] };
+export type Catalog = { schema_version: 1; contract_version?: number; plugin_generation?: string; operators: Operator[]; readers?: ReaderSpec[] };
 export type InfoRule = { type?: string | string[]; items?: string | string[]; const?: unknown; enum?: unknown[]; optional?: boolean; min?: number; display?: string };
+export type FormatPort = {logical_type: string; representations: string[]; metadata?: Record<string, unknown>};
+export type ConversionPlan = {logical_type: string; source: FormatPort; target: FormatPort; representation: string | null; converters: {id: string; version: string; code_sha: string; source: string; target: string}[]};
 export type PortContract = {
+  data_format?: FormatPort;
   kind?: "form" | "file" | ("form" | "file")[];
   version?: number;
   ndim?: number;
@@ -69,7 +72,7 @@ export type PortContract = {
   reader?: string;
   info_open?: boolean;
 };
-export type ContractCheck = { id: string; source: string; target: string; status: "compatible" | "incompatible" | "unknown"; reasons: string[] };
+export type ContractCheck = { id: string; source: string; target: string; status: "compatible" | "incompatible" | "unknown"; reasons: string[]; conversion_plan?: ConversionPlan | null; format_unresolved?: boolean };
 export type NodeContracts = { inputs: (PortContract | null)[]; outputs: PortContract[] };
 export type ContractAnalysis = { version: number; nodes: Record<string, NodeContracts>; edges: ContractCheck[] };
 export type DataSource = {
@@ -80,10 +83,16 @@ export type DataSource = {
   labels: Record<string, unknown>;
   args: Record<string, unknown>;
 };
+export type ScriptSnapshot = {
+  language: 'python' | 'r' | 'c' | 'cpp'; code: string; filename: string; code_sha: string;
+  inputs: Record<string, {kind: 'file'; format: string}>; outputs: Record<string, {kind: 'file'; format: string}>;
+  parameters_schema: Record<string, unknown>; dependencies: string[];
+};
 export type GraphNode = {
   context_params?: Record<string, unknown>;
   id: string;
-  kind: "source" | "operator" | "route";
+  kind: "source" | "operator" | "route" | "script";
+  script?: ScriptSnapshot | null;
   route?: RouteDefinition | null;
   operator?: string | null;
   title: string;
@@ -93,6 +102,7 @@ export type GraphNode = {
   input_count: number;
 };
 export type GraphEdge = {
+  adaptation?: {mode: "auto" | "disabled" | "fixed"; converters: string[]} | null;
   id: string;
   source: string;
   target: string;

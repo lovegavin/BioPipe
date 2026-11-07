@@ -27,7 +27,7 @@ def wait_until(condition, seconds=60):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--executable", type=Path, default=ROOT / "dist/BioPipe Studio/BioPipe Studio.exe")
+    parser.add_argument("--executable", type=Path, default=ROOT / "dist/Operon Studio/Operon Studio.exe")
     executable = parser.parse_args().executable.resolve()
     profile = ROOT / ".verification" / ("desktop-lifecycle-" + datetime.now().strftime("%Y%m%d-%H%M%S"))
     profile.mkdir(parents=True)

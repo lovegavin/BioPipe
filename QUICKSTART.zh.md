@@ -1,5 +1,10 @@
 # BioPipe 快速开始（应用 2.6.0 + 算子库 4.0.4）
 
+> 此文保留原先固定版本的算子库演示。当前 **Operon 3.0.1** 请先按
+> [Windows 安装指南](docs/windows_setup.md) 或 [Windows/Linux 命令行安装指南](docs/command_line_installation.md)
+> 安装，再按[运行环境准备指南](docs/readiness.md)显式检查并准备所选路线的依赖。
+> 下文的安装路径、安装包名称和随包依赖描述仍对应 2.6.0。
+
 从一台干净的 Windows 电脑出发，大约五分钟完成：安装桌面应用、导入 4.0.4 算子库、
 在 **1MEL** 上跑通一个真实的 VHH/溶菌酶界面分析，并导出结果。
 

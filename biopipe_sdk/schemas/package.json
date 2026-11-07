@@ -1,5 +1,28 @@
 {
   "$defs": {
+    "DataFormats": {
+      "additionalProperties": false,
+      "properties": {
+        "inputs": {
+          "items": {
+            "$ref": "#/$defs/FormatPort"
+          },
+          "maxItems": 20,
+          "title": "Inputs",
+          "type": "array"
+        },
+        "outputs": {
+          "items": {
+            "$ref": "#/$defs/FormatPort"
+          },
+          "maxItems": 20,
+          "title": "Outputs",
+          "type": "array"
+        }
+      },
+      "title": "DataFormats",
+      "type": "object"
+    },
     "Descriptor": {
       "additionalProperties": false,
       "description": "Canonical, versioned extension declaration; UI projections are separate.",
@@ -13,7 +36,10 @@
         "protocol_revision": {
           "anyOf": [
             {
-              "const": "3.5",
+              "enum": [
+                "3.5",
+                "3.6"
+              ],
               "type": "string"
             },
             {
@@ -22,6 +48,17 @@
           ],
           "default": null,
           "title": "Protocol Revision"
+        },
+        "data_formats": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DataFormats"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "localization": {
           "anyOf": [
@@ -326,6 +363,36 @@
         "sha256"
       ],
       "title": "Documentation",
+      "type": "object"
+    },
+    "FormatPort": {
+      "additionalProperties": false,
+      "properties": {
+        "logical_type": {
+          "pattern": "^[a-z][a-z0-9_.-]{0,79}$",
+          "title": "Logical Type",
+          "type": "string"
+        },
+        "representations": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 16,
+          "minItems": 1,
+          "title": "Representations",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "logical_type",
+        "representations"
+      ],
+      "title": "FormatPort",
       "type": "object"
     },
     "Localization": {

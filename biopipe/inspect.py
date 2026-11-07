@@ -28,7 +28,13 @@ def inspect_source(path, reader_name=None, args=None, *, sample_rows=128):
         result['limitation'] = 'Metadata only; use this Reader in a managed workflow for payload inspection.'
         return result
     import numpy as np
-    import pandas as pd
+    try:
+        import pandas as pd
+    except ModuleNotFoundError as error:
+        if error.name != 'pandas':
+            raise
+        result['limitation'] = 'Metadata only in the management runtime; inspect table contents using the registered Reader in a prepared execution environment.'
+        return result
     from biopipe_sdk.protocol import validate_parameters
     options = validate_parameters(descriptor['parameters_schema'], args or {})
     frame = pd.read_csv(path, sep=options.get('sep', '\t' if descriptor['id'] == 'TsvReader' else ','),
