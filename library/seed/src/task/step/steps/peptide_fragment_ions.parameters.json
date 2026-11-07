@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "peptide_dim": {
+      "type": "string",
+      "title": "Peptide dimension",
+      "default": "peptide",
+      "x-ui-group": "Dimensions"
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field dimension",
+      "default": "field",
+      "x-ui-group": "Dimensions"
+    },
+    "ion_types": {
+      "type": "string",
+      "title": "Ion types",
+      "default": "b,y",
+      "x-ui-group": "Ions"
+    },
+    "max_charge": {
+      "type": "integer",
+      "title": "Maximum charge",
+      "default": 2,
+      "x-ui-group": "Ions",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "fragments",
+      "x-ui-group": "Output"
+    }
+  },
+  "additionalProperties": false
+}

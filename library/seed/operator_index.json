@@ -4540,6 +4540,26 @@
     "status": "generated"
   },
   {
+    "id": "peptide_fragment_ions",
+    "kind": "operator",
+    "title": "Peptide fragment ions",
+    "category": "Proteomics",
+    "version": "1.0.0",
+    "description": "Compute theoretical b/y fragment ion m/z values for peptides with charge 1..N.",
+    "doc": "src/task/step/steps/peptide_fragment_ions.PeptideFragmentIonsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "peptide_isotope_envelope",
+    "kind": "operator",
+    "title": "Peptide isotope envelope",
+    "category": "Proteomics",
+    "version": "1.0.0",
+    "description": "Compute the top theoretical isotope peaks (m/z, fraction, relative intensity) per peptide.",
+    "doc": "src/task/step/steps/peptide_isotope_envelope.PeptideIsotopeEnvelopeStep.md",
+    "status": "generated"
+  },
+  {
     "id": "peptide_mass",
     "kind": "operator",
     "title": "Peptide mass and m/z",
@@ -4547,6 +4567,16 @@
     "version": "1.0.0",
     "description": "Compute monoisotopic peptide masses from the sequences carried by a peptide Form and convert them to m/z for a given charge.",
     "doc": "src/task/step/steps/peptide_mass.PeptideMassStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "peptide_modified_mass",
+    "kind": "operator",
+    "title": "Modified peptide mass",
+    "category": "Proteomics",
+    "version": "1.0.0",
+    "description": "Compute unmodified and fixed-modification precursor masses for peptides.",
+    "doc": "src/task/step/steps/peptide_modified_mass.PeptideModifiedMassStep.md",
     "status": "generated"
   },
   {

@@ -1,0 +1,92 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "proteins": {}
+  },
+  "steps": [
+    {
+      "name": "protein_digest",
+      "inputs": [
+        "proteins"
+      ],
+      "params": {
+        "enzyme": "trypsin",
+        "missed_cleavages": 0,
+        "min_length": 8,
+        "max_length": 20,
+        "output": "peptides"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "peptide_fragment_ions",
+      "inputs": [
+        "peptides"
+      ],
+      "params": {
+        "ion_types": "b,y",
+        "max_charge": 2,
+        "output": "fragments"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "fragments"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "peptide_fragment_ions"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "peptide_modified_mass",
+      "inputs": [
+        "peptides"
+      ],
+      "params": {
+        "fixed_mods": "C:57.02146372",
+        "output": "modified"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "modified"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "peptide_modified_mass"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "peptide_isotope_envelope",
+      "inputs": [
+        "peptides"
+      ],
+      "params": {
+        "max_peaks": 4,
+        "charge": 1,
+        "output": "envelope"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "envelope"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "peptide_isotope_envelope"
+      },
+      "context_params": {}
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "peptide_dim": {
+      "type": "string",
+      "title": "Peptide dimension",
+      "default": "peptide",
+      "x-ui-group": "Dimensions"
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field dimension",
+      "default": "field",
+      "x-ui-group": "Dimensions"
+    },
+    "fixed_mods": {
+      "type": "string",
+      "title": "Fixed modifications",
+      "default": "C:57.02146372",
+      "x-ui-group": "Modifications"
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "modified",
+      "x-ui-group": "Output"
+    }
+  },
+  "additionalProperties": false
+}

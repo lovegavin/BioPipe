@@ -1,0 +1,32 @@
+name: Peptide MS/MS fragment ions and isotope envelopes
+sources:
+  proteins:
+    path: input/proteins.faa
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+parameters_file: parameters.json
+steps:
+- name: protein_digest
+  inputs:
+  - proteins
+- name: peptide_fragment_ions
+  inputs:
+  - peptides
+- name: export_results
+  inputs:
+  - fragments
+- name: peptide_modified_mass
+  inputs:
+  - peptides
+- name: export_results
+  inputs:
+  - modified
+- name: peptide_isotope_envelope
+  inputs:
+  - peptides
+- name: export_results
+  inputs:
+  - envelope

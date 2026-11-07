@@ -1,0 +1,20 @@
+{
+  "key": "peptide_msms",
+  "name": "Peptide MS/MS fragments and isotopes",
+  "description": "Theoretical b/y ions, isotope envelopes and modified peptide masses from a digested proteome.",
+  "tags": [
+    "proteomics",
+    "mass spectrometry",
+    "peptides"
+  ],
+  "inputs": [
+    "proteins.faa"
+  ],
+  "operators": [
+    "protein_digest",
+    "peptide_fragment_ions",
+    "peptide_modified_mass",
+    "peptide_isotope_envelope",
+    "export_results"
+  ]
+}

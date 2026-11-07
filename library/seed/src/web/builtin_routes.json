@@ -156,6 +156,11 @@
       "sha256": "91fd44d1538a72c3fd45b11b011d7e32ab3f647e0e17e5f70716d09107c8ea0b",
       "parameters_sha256": "987ef5fb59f65e0e8d413a811571709b7bb371f61c607aaa74ce1c6c8d34d3d0"
     },
+    "route_a0ecc82efbd1": {
+      "path": "routes/peptide_msms/task.yaml",
+      "sha256": "f42f842bce0f552a97f5718b807c7db06dc7de8bb38799d166b8904e2059c746",
+      "parameters_sha256": "26ef80d61888e445e61983fcc05be5fbd4f299bf1a6360a56a1fb29b84ab6f10"
+    },
     "route_4bf816613c56": {
       "path": "routes/primer_design_qc/task.yaml",
       "sha256": "23a04b3bba899843ea59588a45dc6babbf1a9b59e6951154101f79573a390915",
@@ -19514,6 +19519,377 @@
                 "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_a0ecc82efbd1",
+      "version": 1,
+      "name": "Peptide MS/MS fragments and isotopes",
+      "graph": {
+        "schema_version": 2,
+        "name": "Peptide MS/MS fragments and isotopes",
+        "base_dir": ".studio/builtin-inputs/peptide_msms",
+        "nodes": [
+          {
+            "id": "proteins",
+            "kind": "source",
+            "operator": null,
+            "title": "proteins",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/proteins.faa",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "protein_digest_1",
+            "kind": "operator",
+            "operator": "protein_digest",
+            "title": "Protein digest",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "enzyme": "trypsin",
+              "missed_cleavages": 0,
+              "min_length": 8,
+              "max_length": 20,
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "peptides"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "peptide_fragment_ions_2",
+            "kind": "operator",
+            "operator": "peptide_fragment_ions",
+            "title": "Peptide fragment ions",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "peptide_dim": "peptide",
+              "field_dim": "field",
+              "ion_types": "b,y",
+              "max_charge": 2,
+              "output": "fragments"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_3",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "peptide_fragment_ions",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "peptide_modified_mass_4",
+            "kind": "operator",
+            "operator": "peptide_modified_mass",
+            "title": "Modified peptide mass",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "peptide_dim": "peptide",
+              "field_dim": "field",
+              "fixed_mods": "C:57.02146372",
+              "output": "modified"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_5",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "peptide_modified_mass",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_2"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "peptide_isotope_envelope_6",
+            "kind": "operator",
+            "operator": "peptide_isotope_envelope",
+            "title": "Peptide isotope envelope",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "peptide_dim": "peptide",
+              "field_dim": "field",
+              "max_peaks": 4,
+              "charge": 1,
+              "output": "envelope"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_7",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "peptide_isotope_envelope",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_4"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "proteins-protein_digest_1-0",
+            "source": "proteins",
+            "target": "protein_digest_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "protein_digest_1-peptide_fragment_ions_2-0",
+            "source": "protein_digest_1",
+            "target": "peptide_fragment_ions_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "peptide_fragment_ions_2-export_results_3-0",
+            "source": "peptide_fragment_ions_2",
+            "target": "export_results_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "protein_digest_1-peptide_modified_mass_4-0",
+            "source": "protein_digest_1",
+            "target": "peptide_modified_mass_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "peptide_modified_mass_4-export_results_5-0",
+            "source": "peptide_modified_mass_4",
+            "target": "export_results_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "protein_digest_1-peptide_isotope_envelope_6-0",
+            "source": "protein_digest_1",
+            "target": "peptide_isotope_envelope_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "peptide_isotope_envelope_6-export_results_7-0",
+            "source": "peptide_isotope_envelope_6",
+            "target": "export_results_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "proteins",
+              "label": "proteins",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_3",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_5",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_7",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]
