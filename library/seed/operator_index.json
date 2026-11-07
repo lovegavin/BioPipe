@@ -6050,6 +6050,36 @@
     "status": "generated"
   },
   {
+    "id": "rna_structure_consensus",
+    "kind": "operator",
+    "title": "RNA 结构共识 (RNAsubopt 集合)",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Enumerate suboptimal structures with ViennaRNA RNAsubopt within an energy window, derive per-base-pair frequencies and a non-crossing consensus structure, and compare it with the minimum free energy structure.",
+    "doc": "src/task/step/steps/rna_structure_consensus.RnaStructureConsensusStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rna_structure_distance",
+    "kind": "operator",
+    "title": "RNA 二级结构距离 (RNAfold 双温度)",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Fold each RNA with ViennaRNA RNAfold at two temperatures and report the base-pair distance, shared and union pairs, Hamming distance and the normalised base-pair distance between the two structures.",
+    "doc": "src/task/step/steps/rna_structure_distance.RnaStructureDistanceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rna_structure_features",
+    "kind": "operator",
+    "title": "RNA 二级结构特征 (环与茎)",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Fold each RNA with ViennaRNA RNAfold and count base pairs, stems, the longest stem, hairpins, bulges, internal loops, multiloops, stacked pairs and unpaired positions.",
+    "doc": "src/task/step/steps/rna_structure_features.RnaStructureFeaturesStep.md",
+    "status": "generated"
+  },
+  {
     "id": "robinson_foulds",
     "kind": "operator",
     "title": "Robinson-Foulds distance",

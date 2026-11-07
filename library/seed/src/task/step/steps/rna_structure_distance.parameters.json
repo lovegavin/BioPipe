@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "rna_structure_distance",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "Sequence axis"
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "Position axis"
+    },
+    "dangles": {
+      "type": "integer",
+      "default": 2,
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "title": "Dangling ends"
+    },
+    "rnafold_path": {
+      "type": "string",
+      "default": "RNAfold",
+      "title": "RNAfold binary"
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "default": 600,
+      "minimum": 1,
+      "title": "Timeout (s)"
+    },
+    "sequence_output_dim": {
+      "type": "string",
+      "default": "pair",
+      "title": "Output sequence axis"
+    },
+    "output": {
+      "type": "string",
+      "default": "distances",
+      "title": "Output name"
+    },
+    "temperature_a": {
+      "type": "number",
+      "default": 37.0,
+      "minimum": 0.0,
+      "maximum": 100.0,
+      "title": "First temperature (C)"
+    },
+    "temperature_b": {
+      "type": "number",
+      "default": 50.0,
+      "minimum": 0.0,
+      "maximum": 100.0,
+      "title": "Second temperature (C)"
+    }
+  },
+  "required": [
+    "sequence_dim",
+    "position_dim",
+    "dangles",
+    "rnafold_path",
+    "timeout_seconds",
+    "sequence_output_dim",
+    "output",
+    "temperature_a",
+    "temperature_b"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "rna_structure_features",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "title": "Sequence axis"
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "title": "Position axis"
+    },
+    "temperature": {
+      "type": "number",
+      "default": 37.0,
+      "minimum": 0.0,
+      "maximum": 100.0,
+      "title": "Temperature (C)"
+    },
+    "rnafold_path": {
+      "type": "string",
+      "default": "RNAfold",
+      "title": "RNAfold binary"
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "default": 600,
+      "minimum": 1,
+      "title": "Timeout (s)"
+    },
+    "sequence_output_dim": {
+      "type": "string",
+      "default": "structure",
+      "title": "Output sequence axis"
+    },
+    "output": {
+      "type": "string",
+      "default": "features",
+      "title": "Output name"
+    },
+    "dangles": {
+      "type": "integer",
+      "default": 2,
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "title": "Dangling ends"
+    }
+  },
+  "required": [
+    "sequence_dim",
+    "position_dim",
+    "temperature",
+    "rnafold_path",
+    "timeout_seconds",
+    "sequence_output_dim",
+    "output",
+    "dangles"
+  ],
+  "additionalProperties": false
+}

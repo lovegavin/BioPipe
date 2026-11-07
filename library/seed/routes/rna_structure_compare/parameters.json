@@ -1,0 +1,79 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "trna": {}
+  },
+  "steps": [
+    {
+      "name": "rna_structure_distance",
+      "inputs": [
+        "trna"
+      ],
+      "params": {
+        "temperature_a": 37.0,
+        "temperature_b": 50.0,
+        "output": "distances"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "distances"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "rna_structure_distance"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "rna_structure_features",
+      "inputs": [
+        "trna"
+      ],
+      "params": {
+        "temperature": 37.0,
+        "output": "features"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "features"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "rna_structure_features"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "rna_structure_consensus",
+      "inputs": [
+        "trna"
+      ],
+      "params": {
+        "energy_window": 3.0,
+        "max_structures": 20,
+        "threshold": 0.5,
+        "output": "consensus"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "consensus"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "rna_structure_consensus"
+      },
+      "context_params": {}
+    }
+  ]
+}

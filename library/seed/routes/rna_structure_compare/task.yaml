@@ -1,0 +1,53 @@
+{
+  "name": "RNA secondary-structure comparison on E. coli tRNAs",
+  "sources": {
+    "trna": {
+      "path": "input/trna.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "rna_structure_distance",
+      "inputs": [
+        "trna"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "distances"
+      ]
+    },
+    {
+      "name": "rna_structure_features",
+      "inputs": [
+        "trna"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "features"
+      ]
+    },
+    {
+      "name": "rna_structure_consensus",
+      "inputs": [
+        "trna"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "consensus"
+      ]
+    }
+  ]
+}
