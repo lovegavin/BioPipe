@@ -1906,3 +1906,72 @@ this experiment.
   strand-aware.
 - Only chr22 is processed; the full 2.5 GB BAM is not bundled.
 - Depth is low (about 2x), so IDR recall is limited by data as well as algorithm.
+
+## Batch 24 — Hi-C pair QC (`hic_pair_qc`)
+
+**Data (real, official cooler test set — GM12878 MboI hg19)**
+
+| Input | Size | SHA-256 |
+|---|---|---|
+| `workdir/b24_route/input/gm12878.pairs.gz` | 1,066,265 B | `909637e9f061583a2d9be9273f03e87ab448c251d1ebabb3bf7fa66dcd59fa0a` |
+| `workdir/b24_route/input/hg19.chrom_sizes.txt` | 376 B | `996a373585807b82f1ff0919f3a37b0e3c674d904efd41e16a202630faf91405` |
+
+The pairs file is the 100,000-pair subsample shipped with cooler's test data
+(6-column pairs: `chrom1 pos1 strand1 chrom2 pos2 strand2`; cis 76,888,
+trans 23,112). Chromosome sizes were extracted from the companion
+`hg19.GM12878-MboI.matrix.2000kb.cool` (25 chromosomes).
+
+**Route (6 steps)**: `hic_pair_stats` → CSV, `hic_contact_matrix`
+(resolution 1 Mb, chr1) → CSV, `hic_distance_decay` (20 log bins) → CSV.
+
+**Results**
+
+| Metric | Value |
+|---|---|
+| total / cis / trans pairs | 100,000 / 76,888 / 23,112 |
+| cis fraction | 0.76888 |
+| chromosomes | 25 |
+| mean cis distance | 7,192,061.143338 bp |
+| chr1 contacts at 1 Mb | 2,123 bins, sum 6,830 |
+| decay bins / pairs | 20 bins (18 non-empty), 2,774 pairs |
+
+**Independent oracles**
+
+| Oracle | Comparison | Result |
+|---|---|---|
+| R 4.3.3 base script (independent parser + binning) | pair stats, chr1 matrix, 20 decay bins | all max abs **0**; matrix 2,123 rows identical, sum 6,830 |
+| cooler 0.10.4 (`cload pairs` → `dump --join`) | chr1 1 Mb matrix and decay recomputation | matrix row-for-row **0** diff, sum 6,830; decay max abs **0** |
+| pairtools 1.1.2 | not applicable | 6-column test pairs carry no `pair_type`; forcing a header yields cis 0 / trans 100,000, so it is recorded as a non-authoritative oracle instead of being used |
+
+**Three platforms**
+
+| Platform | Status | Elapsed | Export MD5 |
+|---|---|---|---|
+| WSL (Linux, py3.12) | 6/6 | 0.1386 s | stats `6e25db91…`, contacts `227bd8c1…`, decay `620df452…` |
+| srv (Linux, py3.11) | 6/6 | 0.5415 s | same three MD5 |
+| Windows (py3.12) | 6/6 | 0.1992 s | stats/contacts identical; decay text differs (`1f8655d1…`) but numeric max abs **0.0** |
+
+**Fixes made while building this batch**
+
+1. `definition` values must be literal data for `ast.literal_eval`; the three
+   operators initially referenced module-level `_ROWS`/`_FIELDS` constants and
+   `plugin refresh` rejected them — inlined as literal lists.
+2. Input port rules only accept a list or a parameter reference for `labels`;
+   `labels: {}` on the decay input was replaced by `labels: []`.
+3. The runtime catalog is served from the profile's *editable source root*
+   (`~/.biopipe/studio/workspace/.studio/plugins/library/sources/editable`),
+   and `seed_sources()` never overwrites an existing authoring tree; operator
+   changes must be copied there (or the plugin refreshed) before `--check`.
+4. A new `PairsFileReader` with the same `.pairs` extension shadowed the
+   existing `PairsReader` and broke the built-in `hic_pairs` route
+   (`输入输出契约不兼容：需要 file 类型数据`). The reader was dropped and the route
+   uses `PairsReader`, which already returns a `file` artifact with
+   representation `pairs`.
+
+**Limitations**: the pairs subsample is small (cis contacts per chromosome are
+thousands, not millions), so distance decay is estimated from 2,774 chr1 pairs
+and is reported at 1 Mb resolution only; no TAD/compartment analysis is claimed.
+
+**Registry/docs**: 795 operators / 106 readers / 7 packages / 48 routes,
+errors 0; docs 901 pages, changed 0, errors 0; portability 3,768 checked,
+6 pre-existing findings (4.0.5 docs in `C:\BioPipe` examples).
