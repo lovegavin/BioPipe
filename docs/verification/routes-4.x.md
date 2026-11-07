@@ -2819,3 +2819,88 @@ calls, and the operators fill missing dosages with the mean when present.
 `genotype_grm.csv` 54,864 B `a1cfbc2f62ca47debb93d90a11083006`,
 `genotype_pca_loadings.csv` 1,397,319 B `5547acd95188041907a87e254399bd68`.
 All three md5 values are identical on WSL, srv and Windows.
+
+## Batch 38 — Genome comparison (K-12 vs O157:H7)
+
+**Scope.** `genome_alignment_stats`, `genome_synteny_blocks` and
+`genome_rearrangement_summary` align two bacterial assemblies with minimap2,
+chain co-linear blocks in reference order and summarise order/strand changes.
+The route `genome_comparison` compares the K-12 MG1655 chromosome with the
+O157:H7 Sakai chromosome plus its two plasmids.
+
+**Data.**
+
+| Role | File | Size | SHA256 |
+| --- | --- | --- | --- |
+| Reference | `k12.fasta` (NC_000913.3) | 4,699,745 B | `53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4` |
+| Query | `o157.fasta` (NC_002695.2 + plasmids) | 5,664,775 B | `71c2e5c364293c9ba36fc2c7acbcaa75cd6884295fe06260ba198826a8b1ddd3` |
+
+**Route.** Six steps: stats, synteny blocks and rearrangement summary, each
+followed by `export_results`. Parameters: `preset=asm5`, `min_block=1000`,
+query gap 2 kb, reference gap 50 kb.
+
+**Results (WSL).**
+
+| Statistic | Value |
+| --- | --- |
+| alignments | 326 |
+| aligned bp | 4,085,838 |
+| query bp covered | 4,044,884 (72.30 %) |
+| reference bp covered | 4,063,573 (87.55 %) |
+| mean identity | 0.9846505499728575 |
+| longest alignment | 102,615 bp |
+| alignment N50 | 19,873 bp |
+
+Synteny: 120 blocks (113 forward, 7 reverse), largest block 333,996 bp.
+Rearrangement: 23 breakpoints, 7 inversion runs, 0 translocations, syntenic
+fraction 0.9978954133766439, largest block fraction 0.081745.
+
+**Oracles.**
+
+1. Independent PAF recomputation (separate parser and interval union) with the
+   same command and filters: all five statistics match to 5.6e-16.
+2. MUMmer 3.23 `nucmer` + `show-coords -rclT`: 571 alignments, 4,451,011 aligned
+   bp, weighted identity 98.0594 %. Aligned-bp ratio 0.918 (within the 15 %
+   aligner tolerance); identity gap 0.41 percentage points (minimap2 reports
+   alignment-block divergence).
+3. `mash dist` = 0.0227838 (ANI about 97.7 %), consistent with the alignment
+   identity.
+4. Orientation of chained blocks agrees with nucmer coordinates for 80 of 84
+   comparable blocks (95.2 %).
+
+**Cross-platform.**
+
+| Platform | Result | Time | Notes |
+| --- | --- | --- | --- |
+| WSL | 6/6 | 1.565 + 1.511 + 1.496 s | reference run |
+| srv | 6/6 | 3.708 + 3.487 + 3.542 s (10.7506 s total) | minimap2 2.28 in a dedicated env |
+| Windows | SKIP | — | no native minimap2: bioconda and conda-forge have no win-64 build and upstream releases are Unix-only |
+
+On srv, `genome_synteny_blocks.csv` (12,898 B `d593b7199a6a94231868a3c3ee9f507c`)
+and `genome_rearrangement_summary.csv` (274 B `2152824136914d69665194b3c41d5a6d`)
+are byte-identical to WSL. `genome_alignment_stats.csv` differs in md5 because of
+float text formatting; the maximum absolute difference is 5.6e-16
+(`mean_identity`). Windows still passes registry (837/106/7/62, errors 0), the
+unit tests (8 passed, 1 skipped: the test that requires a real minimap2 binary)
+and `run.py --check`; only execution is skipped.
+
+**Fixes during the batch.**
+
+- `rearrangement_summary` originally counted inversion runs as
+  `1 + strand switches`, which reported 15 instead of 7; the operator now counts
+  maximal runs of reverse blocks.
+- Breakpoints now also count chromosome/replicon changes, reference gaps above
+  50 kb and query backward jumps above 2 kb.
+- The oracle initially used `-x asm20` against the operator's `asm5` and
+  mis-parsed the PAF `de` tag (identity came out as 1.0); both were fixed before
+  the reported numbers.
+
+**Limitations.** `asm5` is intended for closely related assemblies; distant
+genomes need `asm10`/`asm20`. Identity is `1 - de` over alignment blocks, not a
+whole-genome base identity. Block chaining is heuristic (2 kb query gap, 50 kb
+reference gap), and multi-copy repeats or plasmid/chromosome cross-alignments
+are kept as separate blocks rather than resolved.
+
+**Artifacts.** `genome_alignment_stats.csv` 279 B `e266cd9c63f0d703d6ee4a505db8d1ea`,
+`genome_synteny_blocks.csv` 12,898 B `d593b7199a6a94231868a3c3ee9f507c`,
+`genome_rearrangement_summary.csv` 274 B `2152824136914d69665194b3c41d5a6d`.
