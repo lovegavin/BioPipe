@@ -1974,7 +1974,7 @@ and is reported at 1 Mb resolution only; no TAD/compartment analysis is claimed.
 
 **Registry/docs**: 795 operators / 106 readers / 7 packages / 48 routes,
 errors 0; docs 901 pages, changed 0, errors 0; portability 3,768 checked,
-6 pre-existing findings (4.0.5 docs in `C:\BioPipe` examples).
+6 pre-existing findings (4.0.5 docs and Windows installer examples).
 
 ## Batch 25 — VCF normalization, concatenation and merging (1000 Genomes chr22)
 
@@ -2346,3 +2346,49 @@ only rejects a divergent/oversized coefficient vector.
 **Limits.** Caliper is expressed in standard deviations of the propensity
 score, 1:1 greedy matching without replacement, ties resolved by row order,
 OLS standard error on the matched sample (not Abadie–Imbens), ATT only.
+
+
+## Batch 30 — Peptide MS/MS fragments, isotopes and modifications
+
+**Route.** `peptide_msms` (`library/seed/routes/peptide_msms/`):
+`protein_digest` (trypsin, 0 missed cleavages, 8-20 aa) -> `peptide_fragment_ions`
+(b/y, charge 1-2) -> `peptide_modified_mass` (fixed carbamidomethyl cysteine,
++57.02146372) -> `peptide_isotope_envelope` (4 peaks, charge 1), each followed by
+`export_results`.
+
+**Data.** `proteins.faa`, the first 20 proteins of the E. coli K-12 reference
+proteome, 7,717 B, SHA256
+`42e8d5cb17b3476559f3b59c441027a834ca0f2fcf099fe13a183cf105838ca7`.
+
+**Results (WSL).** 178 peptides; 8,264 fragment ions; 178 modified masses;
+712 envelope peaks (178 peptides x 4). Route elapsed 0.3036 s.
+
+| Export | Bytes | MD5 |
+| --- | --- | --- |
+| `peptide_fragment_ions.csv` | 701,494 | `1b71a0d12e2d4037fa6248de120d6c51` |
+| `peptide_modified_mass.csv` | 10,817 | `5cd673e4e096e558e45cf1e18fdc0e25` |
+| `peptide_isotope_envelope.csv` | 41,978 | `79b6d720f26ec6865b7320115b24cf92` |
+
+**Oracles.** pyteomics 4.7.5 `fragment_series` reproduces 8,264 b/y ions with
+max |dm/z| 5.36e-7. molmass 2026.11.1 computes the carbamidomethyl formula
+(+C2H3NO per cysteine) and reproduces 178 modified masses to 7.07e-8; its
+`Formula.spectrum()` reproduces the 712 envelope peaks to 1.19e-4 m/z and 1.35e-2
+in fraction. `pyteomics.fast_mass` silently ignores `fixed_mods`, so the
+modification oracle deliberately composes the elemental formula from
+`pyteomics.std_aa_comp` instead of reusing the operator's residue table.
+
+**Three platforms.** WSL total 0.3036 s; srv (Python 3.11, numpy 2.4.6) 0.6753 s;
+Windows 4.0.3 host 0.4031 s. WSL and Windows exports are byte-identical. The srv
+exports have the same row counts and agree numerically to 6.82e-13, but pandas
+float text formatting differs, so their MD5s differ (fragment 702,089 B
+`491746c8...`, isotope 42,002 B `56b14421...`, modified 10,813 B `bc1b30af...`).
+
+**Fixes.** `peptide_isotope_envelope` now bins peaks by nominal isotope number
+and takes the consecutive window starting at the monoisotopic peak; taking the
+four most probable peaks put a +1 or +2 peak first. `peptide_fragment_ions`,
+`peptide_modified_mass` and `peptide_isotope_envelope` are `run(self, ctx,
+inputs)` steps, matching the base class signature.
+
+**Limits.** b/y ions only; no a/x/c/z ions or neutral losses. Fixed
+modifications are residue-level mass shifts only. Isotope fractions assume
+natural abundances and ignore instrument resolution.
