@@ -1,0 +1,7 @@
+{
+  "key": "codon_usage_bias",
+  "title": "Codon usage bias of Escherichia coli K-12",
+  "summary": "ENC, GC3s, CAI and RSCU for 4,313 E. coli CDS against a 54-gene ribosomal reference.",
+  "organism": "Escherichia coli K-12 MG1655",
+  "steps": 6
+}

@@ -1160,6 +1160,16 @@
     "status": "generated"
   },
   {
+    "id": "codon_adaptation",
+    "kind": "operator",
+    "title": "Codon adaptation index",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Relative adaptiveness weighted CAI for each CDS against a reference CDS set.",
+    "doc": "src/task/step/steps/codon_adaptation.CodonAdaptationStep.md",
+    "status": "generated"
+  },
+  {
     "id": "codon_usage",
     "kind": "operator",
     "title": "Codon usage",
@@ -1167,6 +1177,16 @@
     "version": "1.0.0",
     "description": "Codon usage：接收 1 个输入，输出 Form；主要参数：序列维度、位置维度、Frame。",
     "doc": "src/task/step/steps/codon_usage.CodonUsageStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "codon_usage_bias",
+    "kind": "operator",
+    "title": "Codon usage bias",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Effective number of codons (Wright) and GC3s for each coding sequence.",
+    "doc": "src/task/step/steps/codon_usage_bias.CodonUsageBiasStep.md",
     "status": "generated"
   },
   {
@@ -5967,6 +5987,16 @@
     "version": "1.0.0",
     "description": "ROC curve points (FPR, TPR, threshold) for a binary target.",
     "doc": "src/task/step/steps/roc_curve.RocCurveStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "rscu_table",
+    "kind": "operator",
+    "title": "Relative synonymous codon usage",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Aggregate codon counts and RSCU across a coding sequence set.",
+    "doc": "src/task/step/steps/rscu_table.RscuTableStep.md",
     "status": "generated"
   },
   {

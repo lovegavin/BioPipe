@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "RSCU table",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "Sequence dimension",
+      "default": "sequence"
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "Position dimension",
+      "default": "position"
+    },
+    "output": {
+      "type": "string",
+      "default": "rscu"
+    }
+  },
+  "additionalProperties": false
+}

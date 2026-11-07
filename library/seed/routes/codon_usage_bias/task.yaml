@@ -1,0 +1,63 @@
+{
+  "name": "Codon usage bias on the E. coli K-12 coding set",
+  "sources": {
+    "cds": {
+      "path": "input/ecoli_cds.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    },
+    "reference": {
+      "path": "input/ribosomal_reference.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "codon_usage_bias",
+      "inputs": [
+        "cds"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "bias"
+      ]
+    },
+    {
+      "name": "codon_adaptation",
+      "inputs": [
+        "cds",
+        "reference"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "adaptation"
+      ]
+    },
+    {
+      "name": "rscu_table",
+      "inputs": [
+        "cds"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "rscu"
+      ]
+    }
+  ]
+}

@@ -26,6 +26,11 @@
       "sha256": "f4419972e650aefa52a3fda16b1cb054dca42885ca887eb2902c1c53124659f2",
       "parameters_sha256": "5f889ce7f7f62034902914a4ad4d45d462dd5547660949a31594e4bcbaede301"
     },
+    "route_7e99fd975e71": {
+      "path": "routes/codon_usage_bias/task.yaml",
+      "sha256": "13ffc64e96bc95d4006906f49e96931352feccf6b5081b5c6bd8ae97b8a277aa",
+      "parameters_sha256": "d355ac4a4dce6fa0b3bd8a7899d77fb5c87bcff71c1ec47607916a8329174a54"
+    },
     "route_cf7d79a424a3": {
       "path": "routes/ecoli_annotation/task.yaml",
       "sha256": "bc334c1025363fe77c807ea967540e821f19aa18f9aa10c1ff711faf5932cf89",
@@ -160,6 +165,11 @@
       "path": "routes/peptide_msms/task.yaml",
       "sha256": "f42f842bce0f552a97f5718b807c7db06dc7de8bb38799d166b8904e2059c746",
       "parameters_sha256": "26ef80d61888e445e61983fcc05be5fbd4f299bf1a6360a56a1fb29b84ab6f10"
+    },
+    "route_4b1925d81460": {
+      "path": "routes/phylo_comparative/task.yaml",
+      "sha256": "3f4ae49448de33f76ac357306496aab5eb149821d0c936b3c67e1a90bd2f0d59",
+      "parameters_sha256": "b66d84e15dc008b729334fb0cfe926a0ecc4aab149a7b1f2e6e2ef67355aefd0"
     },
     "route_4bf816613c56": {
       "path": "routes/primer_design_qc/task.yaml",
@@ -7961,6 +7971,488 @@
             },
             {
               "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_4b1925d81460",
+      "version": 1,
+      "name": "Phylogenetic signal and ancestral states",
+      "graph": {
+        "schema_version": 2,
+        "name": "Phylogenetic signal and ancestral states",
+        "base_dir": ".studio/builtin-inputs/phylo_comparative",
+        "nodes": [
+          {
+            "id": "alignment",
+            "kind": "source",
+            "operator": null,
+            "title": "alignment",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/ssu_aligned.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "traits",
+            "kind": "source",
+            "operator": null,
+            "title": "traits",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/gc_content.csv",
+              "dims": [
+                "sample",
+                "statistic"
+              ],
+              "labels": {
+                "sample": {
+                  "statistic": 0
+                },
+                "statistic": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "phylo_distance_matrix_1",
+            "kind": "operator",
+            "operator": "phylo_distance_matrix",
+            "title": "Phylogenetic distance matrix",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "model": "jc69",
+              "deletion": "complete",
+              "taxon_dim": "taxon",
+              "output": "distance_matrix"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "phylo_neighbor_joining_2",
+            "kind": "operator",
+            "operator": "phylo_neighbor_joining",
+            "title": "Neighbour-joining tree",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "taxon_dim": "taxon",
+              "taxon_b_dim": "taxon_b",
+              "node_dim": "node",
+              "field_dim": "field",
+              "output": "tree"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "phylo_lambda_3",
+            "kind": "operator",
+            "operator": "phylo_lambda",
+            "title": "phylo_lambda",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "node_dim": "node",
+              "field_dim": "field",
+              "sample_dim": "sample",
+              "statistic_dim": "statistic",
+              "value_field": "gc",
+              "output": "lambda"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "phylo_contrasts_4",
+            "kind": "operator",
+            "operator": "phylo_contrasts",
+            "title": "phylo_contrasts",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "node_dim": "node",
+              "field_dim": "field",
+              "sample_dim": "sample",
+              "statistic_dim": "statistic",
+              "value_field": "gc",
+              "output": "contrasts"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "phylo_ancestral_5",
+            "kind": "operator",
+            "operator": "phylo_ancestral",
+            "title": "phylo_ancestral",
+            "position": {
+              "x": 940.0,
+              "y": 520.0
+            },
+            "params": {
+              "node_dim": "node",
+              "field_dim": "field",
+              "sample_dim": "sample",
+              "statistic_dim": "statistic",
+              "value_field": "gc",
+              "output": "ancestral"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1230.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "phylo_lambda",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_7",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1230.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "phylo_contrasts",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_2"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_8",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 1230.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "phylo_ancestral",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "alignment-phylo_distance_matrix_1-0",
+            "source": "alignment",
+            "target": "phylo_distance_matrix_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_distance_matrix_1-phylo_neighbor_joining_2-0",
+            "source": "phylo_distance_matrix_1",
+            "target": "phylo_neighbor_joining_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_neighbor_joining_2-phylo_lambda_3-0",
+            "source": "phylo_neighbor_joining_2",
+            "target": "phylo_lambda_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "traits-phylo_lambda_3-1",
+            "source": "traits",
+            "target": "phylo_lambda_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "phylo_neighbor_joining_2-phylo_contrasts_4-0",
+            "source": "phylo_neighbor_joining_2",
+            "target": "phylo_contrasts_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "traits-phylo_contrasts_4-1",
+            "source": "traits",
+            "target": "phylo_contrasts_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "phylo_neighbor_joining_2-phylo_ancestral_5-0",
+            "source": "phylo_neighbor_joining_2",
+            "target": "phylo_ancestral_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "traits-phylo_ancestral_5-1",
+            "source": "traits",
+            "target": "phylo_ancestral_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "phylo_lambda_3-export_results_6-0",
+            "source": "phylo_lambda_3",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_contrasts_4-export_results_7-0",
+            "source": "phylo_contrasts_4",
+            "target": "export_results_7",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phylo_ancestral_5-export_results_8-0",
+            "source": "phylo_ancestral_5",
+            "target": "export_results_8",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": true
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "alignment",
+              "label": "alignment",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "traits",
+              "label": "traits",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "statistic"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_7",
               "handle": "out",
               "label": "Export results",
               "contract": {
@@ -16547,6 +17039,420 @@
             },
             {
               "node_id": "export_results_10",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_7e99fd975e71",
+      "version": 1,
+      "name": "Codon usage bias",
+      "graph": {
+        "schema_version": 2,
+        "name": "Codon usage bias",
+        "base_dir": ".studio/builtin-inputs/codon_usage_bias",
+        "nodes": [
+          {
+            "id": "cds",
+            "kind": "source",
+            "operator": null,
+            "title": "cds",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/ecoli_cds.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "reference",
+            "kind": "source",
+            "operator": null,
+            "title": "reference",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/ribosomal_reference.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "codon_usage_bias_1",
+            "kind": "operator",
+            "operator": "codon_usage_bias",
+            "title": "Codon usage bias",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "bias"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "codon_usage_bias",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "codon_adaptation_3",
+            "kind": "operator",
+            "operator": "codon_adaptation",
+            "title": "Codon adaptation index",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "adaptation"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "codon_adaptation",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "rscu_table_5",
+            "kind": "operator",
+            "operator": "rscu_table",
+            "title": "Relative synonymous codon usage",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "rscu"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "rscu_table",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "cds-codon_usage_bias_1-0",
+            "source": "cds",
+            "target": "codon_usage_bias_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "codon_usage_bias_1-export_results_2-0",
+            "source": "codon_usage_bias_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "cds-codon_adaptation_3-0",
+            "source": "cds",
+            "target": "codon_adaptation_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "reference-codon_adaptation_3-1",
+            "source": "reference",
+            "target": "codon_adaptation_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "codon_adaptation_3-export_results_4-0",
+            "source": "codon_adaptation_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "cds-rscu_table_5-0",
+            "source": "cds",
+            "target": "rscu_table_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "rscu_table_5-export_results_6-0",
+            "source": "rscu_table_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "cds",
+              "label": "cds",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "reference",
+              "label": "reference",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
               "handle": "out",
               "label": "Export results",
               "contract": {

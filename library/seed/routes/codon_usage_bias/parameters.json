@@ -1,0 +1,76 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "cds": {},
+    "reference": {}
+  },
+  "steps": [
+    {
+      "name": "codon_usage_bias",
+      "inputs": [
+        "cds"
+      ],
+      "params": {
+        "output": "bias"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "bias"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "codon_usage_bias"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "codon_adaptation",
+      "inputs": [
+        "cds",
+        "reference"
+      ],
+      "params": {
+        "output": "adaptation"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "adaptation"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "codon_adaptation"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "rscu_table",
+      "inputs": [
+        "cds"
+      ],
+      "params": {
+        "output": "rscu",
+        "sequence_dim": "sequence"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "rscu"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "rscu_table"
+      },
+      "context_params": {}
+    }
+  ]
+}
