@@ -92,7 +92,8 @@ jobs:
             build/library/*.whl
             build/library/SHA256SUMS-*.txt
             build/library/verification-*.json
-            build/library/Operon-Routes-*.zip
+            build/library/routes/*.operon.zip
+            build/library/routes/SHA256SUMS.txt
             build/library/Operon-Quickstart-*.zip
           if-no-files-found: error
   publish:
@@ -116,10 +117,11 @@ jobs:
           set -euo pipefail
           ls -l artifacts
           cat artifacts/SHA256SUMS-*.txt > artifacts/SHA256SUMS.txt
+          cat artifacts/routes/SHA256SUMS.txt >> artifacts/SHA256SUMS.txt
           sha256sum QUICKSTART.md QUICKSTART.zh.md >> artifacts/SHA256SUMS.txt
           cp install_dependencies.py install-dependencies.sh install-dependencies.ps1 artifacts/
           sha256sum install_dependencies.py install-dependencies.sh install-dependencies.ps1 >> artifacts/SHA256SUMS.txt
           gh release create "$GITHUB_REF_NAME" --verify-tag --latest=false \
             --title "Operon Operator Library v${GITHUB_REF_NAME#library-v}" \
             --notes-file "docs/releases/${GITHUB_REF_NAME}.md" \
-            artifacts/*.operon-library.zip artifacts/*.whl artifacts/*Routes*.zip artifacts/*Quickstart*.zip QUICKSTART.md QUICKSTART.zh.md install_dependencies.py install-dependencies.sh install-dependencies.ps1 artifacts/SHA256SUMS.txt artifacts/verification-*.json
+            artifacts/*.operon-library.zip artifacts/*.whl artifacts/routes/*.operon.zip artifacts/*Quickstart*.zip QUICKSTART.md QUICKSTART.zh.md install_dependencies.py install-dependencies.sh install-dependencies.ps1 artifacts/SHA256SUMS.txt artifacts/verification-*.json
