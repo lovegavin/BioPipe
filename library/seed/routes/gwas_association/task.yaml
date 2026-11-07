@@ -1,0 +1,67 @@
+{
+  "name": "GWAS association on chr22",
+  "sources": {
+    "genotypes": {
+      "path": "input/subset_snps.vcf.gz",
+      "dims": [
+        "file"
+      ],
+      "labels": {},
+      "reader": "VcfFileReader"
+    },
+    "phenotype": {
+      "path": "input/pheno.csv",
+      "dims": [
+        "sample",
+        "field"
+      ],
+      "labels": {
+        "sample": {
+          "field": 0
+        },
+        "field": "builtin"
+      },
+      "reader": "CsvReader"
+    }
+  },
+  "steps": [
+    {
+      "name": "gwas_association",
+      "inputs": [
+        "genotypes",
+        "phenotype"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "association"
+      ]
+    },
+    {
+      "name": "gwas_inflation",
+      "inputs": [
+        "association"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "inflation"
+      ]
+    },
+    {
+      "name": "gwas_top_hits",
+      "inputs": [
+        "association"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "hits"
+      ]
+    }
+  ],
+  "parameters_file": "parameters.json"
+}

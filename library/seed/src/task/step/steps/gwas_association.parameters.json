@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GWAS association testing",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "model": {
+      "type": "string",
+      "default": "linear",
+      "enum": [
+        "linear",
+        "logistic"
+      ],
+      "description": "Association model fitted for every variant."
+    },
+    "min_maf": {
+      "type": "number",
+      "default": 0.0,
+      "minimum": 0.0,
+      "maximum": 0.5,
+      "description": "Minimum minor allele frequency."
+    },
+    "max_variants": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Maximum number of variants to test (0 means all)."
+    },
+    "row_dim": {
+      "type": "string",
+      "default": "sample",
+      "description": "Dimension that labels phenotype rows."
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "description": "Dimension that labels phenotype columns."
+    },
+    "value_field": {
+      "type": "string",
+      "default": "value",
+      "description": "Phenotype column to model."
+    },
+    "output": {
+      "type": "string",
+      "default": "association",
+      "description": "Output parameter name."
+    }
+  },
+  "required": [
+    "model",
+    "min_maf",
+    "max_variants",
+    "row_dim",
+    "field_dim",
+    "value_field",
+    "output"
+  ]
+}

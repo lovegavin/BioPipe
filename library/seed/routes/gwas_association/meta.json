@@ -1,0 +1,6 @@
+{
+  "key": "gwas_association",
+  "title": "GWAS association on chr22",
+  "description": "Linear GWAS with genomic control and distance clumping on a 1000G chr22 panel.",
+  "mode": "real genotypes, synthetic phenotype"
+}

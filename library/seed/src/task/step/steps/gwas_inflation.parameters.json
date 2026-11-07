@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GWAS genomic inflation",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "description": "Dimension that labels association rows."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "description": "Dimension that labels association columns."
+    },
+    "output": {
+      "type": "string",
+      "default": "inflation",
+      "description": "Output parameter name."
+    }
+  },
+  "required": [
+    "variant_dim",
+    "statistic_dim",
+    "output"
+  ]
+}

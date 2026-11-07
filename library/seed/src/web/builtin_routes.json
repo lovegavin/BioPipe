@@ -101,6 +101,11 @@
       "sha256": "506bfa195cf9523de8fe6cc15ced7ce46bd2b94a07ec39f8c1fcc6950cd47407",
       "commit": "ab439ab9af3a36220941d6a8b27c580a268b7c95"
     },
+    "route_c04b86b6ff4a": {
+      "path": "routes/gwas_association/task.yaml",
+      "sha256": "f7650d84dc8300a8a44d01a41ce2ac9edd2b005154e699faf37e319dd4e6d661",
+      "parameters_sha256": "8f1e215749a0e1b2a1713297847c827223d2d2a6cde0bb452afa8143219c5d12"
+    },
     "route_a087d55ab488": {
       "path": "routes/gwas_meta_prs/task.yaml",
       "sha256": "b1718fd25d31b8a89fb849a2c2d95419479e36c697da348121835c04d945eb92",
@@ -24634,6 +24639,389 @@
             },
             {
               "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_c04b86b6ff4a",
+      "version": 1,
+      "name": "GWAS association on chr22",
+      "graph": {
+        "schema_version": 2,
+        "name": "GWAS association on chr22",
+        "base_dir": ".studio/builtin-inputs/gwas_association",
+        "nodes": [
+          {
+            "id": "genotypes",
+            "kind": "source",
+            "operator": null,
+            "title": "genotypes",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/subset_snps.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "phenotype",
+            "kind": "source",
+            "operator": null,
+            "title": "phenotype",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/pheno.csv",
+              "dims": [
+                "sample",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin",
+                "sample": {
+                  "field": 0
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "gwas_association_1",
+            "kind": "operator",
+            "operator": "gwas_association",
+            "title": "GWAS association testing",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "model": "linear",
+              "min_maf": 0.05,
+              "max_variants": 0,
+              "row_dim": "sample",
+              "field_dim": "field",
+              "value_field": "PHENO",
+              "output": "association"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "gwas_association",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "gwas_inflation_3",
+            "kind": "operator",
+            "operator": "gwas_inflation",
+            "title": "GWAS genomic inflation",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "variant_dim": "variant",
+              "statistic_dim": "statistic",
+              "output": "inflation"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "gwas_inflation",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "gwas_top_hits_5",
+            "kind": "operator",
+            "operator": "gwas_top_hits",
+            "title": "GWAS top hits",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "threshold": 0.001,
+              "clump_distance": 1000000,
+              "max_hits": 50,
+              "variant_dim": "variant",
+              "statistic_dim": "statistic",
+              "output": "hits"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "gwas_top_hits",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "genotypes-gwas_association_1-0",
+            "source": "genotypes",
+            "target": "gwas_association_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "phenotype-gwas_association_1-1",
+            "source": "phenotype",
+            "target": "gwas_association_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "gwas_association_1-export_results_2-0",
+            "source": "gwas_association_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gwas_association_1-gwas_inflation_3-0",
+            "source": "gwas_association_1",
+            "target": "gwas_inflation_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gwas_inflation_3-export_results_4-0",
+            "source": "gwas_inflation_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gwas_association_1-gwas_top_hits_5-0",
+            "source": "gwas_association_1",
+            "target": "gwas_top_hits_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "gwas_top_hits_5-export_results_6-0",
+            "source": "gwas_top_hits_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "genotypes",
+              "label": "genotypes",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "phenotype",
+              "label": "phenotype",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sample",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
               "handle": "out",
               "label": "Export results",
               "contract": {

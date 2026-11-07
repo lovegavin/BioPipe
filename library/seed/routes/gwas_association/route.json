@@ -1,0 +1,5 @@
+{
+  "key": "gwas_association",
+  "title": "GWAS association on chr22",
+  "description": "Linear GWAS on 1000G chr22 genotypes with a synthetic phenotype."
+}

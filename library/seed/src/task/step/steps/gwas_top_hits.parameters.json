@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GWAS top hits",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "threshold": {
+      "type": "number",
+      "default": 5e-08,
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "description": "P-value threshold for lead variants."
+    },
+    "clump_distance": {
+      "type": "integer",
+      "default": 1000000,
+      "minimum": 0,
+      "description": "Distance in bases used to clump nearby variants."
+    },
+    "max_hits": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Maximum number of lead variants (0 means all)."
+    },
+    "variant_dim": {
+      "type": "string",
+      "default": "variant",
+      "description": "Dimension that labels association rows."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "description": "Dimension that labels association columns."
+    },
+    "output": {
+      "type": "string",
+      "default": "hits",
+      "description": "Output parameter name."
+    }
+  },
+  "required": [
+    "threshold",
+    "clump_distance",
+    "max_hits",
+    "variant_dim",
+    "statistic_dim",
+    "output"
+  ]
+}

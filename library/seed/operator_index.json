@@ -2980,6 +2980,36 @@
     "status": "generated"
   },
   {
+    "id": "gwas_association",
+    "kind": "operator",
+    "title": "GWAS association testing",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Fit a per-variant additive linear or logistic model and report effect size, standard error and p-value.",
+    "doc": "src/task/step/steps/gwas_association.GwasAssociationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gwas_inflation",
+    "kind": "operator",
+    "title": "GWAS genomic inflation",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Compute the genomic control inflation factor and summary of the association p-values.",
+    "doc": "src/task/step/steps/gwas_inflation.GwasInflationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "gwas_top_hits",
+    "kind": "operator",
+    "title": "GWAS top hits",
+    "category": "Statistics",
+    "version": "1.0.0",
+    "description": "Select independent lead variants below a p-value threshold using distance-based clumping.",
+    "doc": "src/task/step/steps/gwas_top_hits.GwasTopHitsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "gwet_ac1",
     "kind": "operator",
     "title": "Gwet's AC1",

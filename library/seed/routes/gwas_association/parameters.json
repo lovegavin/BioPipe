@@ -1,0 +1,83 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "genotypes": {},
+    "phenotype": {}
+  },
+  "steps": [
+    {
+      "name": "gwas_association",
+      "inputs": [
+        "genotypes",
+        "phenotype"
+      ],
+      "params": {
+        "model": "linear",
+        "min_maf": 0.05,
+        "row_dim": "sample",
+        "field_dim": "field",
+        "value_field": "PHENO",
+        "output": "association"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "association"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "gwas_association"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "gwas_inflation",
+      "inputs": [
+        "association"
+      ],
+      "params": {
+        "output": "inflation"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "inflation"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "gwas_inflation"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "gwas_top_hits",
+      "inputs": [
+        "association"
+      ],
+      "params": {
+        "threshold": 0.001,
+        "clump_distance": 1000000,
+        "max_hits": 50,
+        "output": "hits"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "hits"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "gwas_top_hits"
+      },
+      "context_params": {}
+    }
+  ]
+}
