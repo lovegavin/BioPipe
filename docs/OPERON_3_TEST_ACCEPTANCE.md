@@ -1,5 +1,16 @@
 # Operon 3.0.0 Setup acceptance
 
+## RC8 compatibility follow-up
+
+RC8 adds verified official v2.6.0 bundled compatibility receipts and fixes the
+release recorder's split-library source lookup. Use a fresh installation/profile
+and the original archived v2.6.0 acceptance ZIP. Import, prepare and run it after
+explicit dependency preparation; compare the frozen parameter and memory values,
+check the new job's compatibility receipt, and retain the unchanged old ZIP. No
+manual repin or old profile copy is allowed. Reopen from the shortcut, repeat the
+run/CLI checks and verify clean exit and old-profile isolation. RC7 UI evidence
+may be retained for unchanged features; identify each candidate in the report.
+
 ## RC2 management-runtime changes
 
 ### RC4 follow-up gates

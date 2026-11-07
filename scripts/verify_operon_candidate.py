@@ -253,6 +253,32 @@ def main(argv=None):
                         analysis = json.loads((work / 'analysis-agent/backend-report.json').read_text(encoding='utf-8'))
                         assert analysis['passed'], analysis
                         check('Explicit dependency preparation and real CLI/MCP PCA/plot run', {'checks': len(analysis['checks'])})
+                        # Test the receipt shipped inside this package as well
+                        # as source CI. A fresh profile has no historical registry.
+                        from src.web.models import Graph
+                        from src.web.parameters import export_bundle, split_graph
+                        history = json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))
+                        old_pins = {key: entry['implementation'] for entry in history['packages']
+                                    if any(release['tag'] == 'v2.6.0' for release in entry['releases'])
+                                    for key in entry['operators']}
+                        legacy = json.loads((work / 'analysis-agent/prepared-graph.json').read_text(encoding='utf-8'))
+                        legacy['plugin_lock'] = {key: old_pins[key] for key in legacy['plugin_lock']}
+                        before = split_graph(Graph.model_validate(legacy))[1]
+                        archive = export_bundle(Graph.model_validate(legacy))
+                        restored = request('/api/workflows/import', archive, content_type='application/zip')
+                        prepared = request('/api/workflows/prepare', restored)
+                        assert split_graph(Graph.model_validate(prepared))[1] == before
+                        launched = request('/api/jobs', restored)
+                        deadline = time.monotonic() + 120
+                        while True:
+                            job = request('/api/jobs/' + launched['id'])
+                            if job['status'] not in {'queued', 'preparing', 'uploading', 'running', 'waiting_connection'}:
+                                break
+                            assert time.monotonic() < deadline, 'Released-pin job timed out'
+                            time.sleep(.2)
+                        assert job['status'] == 'complete', job
+                        assert {item['operator'] for item in job['plugins']['bundled_updates']} == set(legacy['plugin_lock'])
+                        check('Released v2.6 pins import and run with frozen values', {'job_id': launched['id']})
                         if runtime_mode == 'management':
                             assert not analysis_packages(), 'Dependency preparation modified the application runtime'
                             check('Application runtime remains analysis-free after preparation')

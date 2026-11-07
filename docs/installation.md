@@ -137,6 +137,15 @@ implementations, profiles or datasets. Commit it and include it in both the SDK
 wheel and desktop packages. Never generate trusted receipts from an unverified
 user extension or from an edited release folder.
 
+The recorder accepts both the historical flat layout and the split
+`library/seed` layout. Keep the application manifest at the extraction root; do
+not copy just the index without its matching library sources. Operon 3.0 includes
+verified v2.6.0 identities for both desktop and metadata-only server policies.
+An imported route keeps its frozen values and original archive; a new run records
+the compatible bundled update. Unknown wheel pins and version changes remain
+strict and require their original package. This does not silently upgrade third-party
+operators or rewrite archived job locks.
+
 Native dependencies without a compatible Windows wheel must be built and tested
 by the release maintainer, not by the recipient. Supply those artifacts with
 `build_runtime.py --wheelhouse <directory>`. The release's PLINK 2 wheel is built

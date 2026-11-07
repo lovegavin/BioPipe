@@ -1,10 +1,12 @@
-# BioPipe 3.0 implementation candidate
+# Operon 3.0 implementation scope
 
 This branch implements the first "authorable workflows and bidirectional
 collaboration" milestone of the agreed roadmap. Its application version is
 **3.0.0**. The operator wire major remains **3**; optional SDK **3.6** fields extend
 existing v3/v3.5 packages. The scientific library keeps its independent version.
-This is development source, not a published or installer-accepted release.
+The coverage below records the initial development milestone. Current release
+scope and acceptance status are maintained in [the 3.0 release notes](releases/v3.0.0.md)
+and the release's separate validation reports.
 
 ## Working paths
 
@@ -42,6 +44,10 @@ Read [readiness](readiness.md), [script operators](script_operators_v3.md),
 [collaboration](canvas_collaboration.md) and [portable packages](portable_packages_v3.md)
 for commands and constraints.
 
+The terminal/server interface also provides route-scoped environment status,
+check and explicit preparation. See [server CLI operation](server_cli.md) for a
+direct YAML run, machine-readable output, progress and error handling.
+
 ## Acceptance coverage
 
 The focused tests cover static registration, existing headless operations,
@@ -72,7 +78,7 @@ single unique-test count):
 | MCP/CLI preparation permissions and installed guides | 15 passed |
 | Independent bundled-runtime export | 2 passed |
 
-Computer-control initialization failed before UI inspection, so browser/native
+At that development checkpoint, computer-control initialization failed before UI inspection, so browser/native
 window acceptance was not performed. Component interaction tests and real HTTP/
 worker checks do not substitute for the later Setup double-click gate.
 
