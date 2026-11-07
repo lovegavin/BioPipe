@@ -529,12 +529,12 @@ only what the rename still needs outside that library release.
 
 ## 2.1 Status update (release preparation, 2026-11-07)
 
-- GitHub repository rename is complete ();  points at
-  the new URL and both  and  are pushed.
-- Tag  is pushed (annotated, commit ).
-- Release assets are built and validated in  (10 files,
-   passes for all 9 checksummed artefacts).
+- GitHub repository rename is complete (`lovegavin/Operon`); `origin` points at
+  the new URL and both `main` and `release/5.0` are pushed.
+- Tag `library-v5.0.0` is pushed (annotated, commit `3686fee8`).
+- Release assets are built and validated in `build/release-5.0.0/` (10 files;
+  `sha256sum -c SHA256SUMS.txt` passes for all 9 checksummed artefacts).
 - The GitHub Release itself is **not created yet**: the provided fine-grained
-  token returned  (it was masked in chat and has likely been
+  token returned `401 Unauthorized` (it was masked in chat and has likely been
   revoked). Creating the release needs a token with **Contents: Read and write**
   or a manual upload from the asset directory.
