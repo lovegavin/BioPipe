@@ -71,6 +71,11 @@
       "sha256": "d820ed06f7e7b88da224121a3f2c7948f14d09d950f1f3aef015fd2af7fb64fc",
       "parameters_sha256": "3af2662ced959f4bbb9ac235ae3745c0dba8618a3ae8c206a21ddc3e6f848810"
     },
+    "route_dcf39ebaadce": {
+      "path": "routes/go_semantic_similarity/task.yaml",
+      "sha256": "4522e10f7538d4aabfaaa46860d77b86227a775e6b98413ce0a4754b7f7cd3fc",
+      "parameters_sha256": "a108f7cd53dde9c10a8825d72373181f5469cde4e69475eb6f51b82c5759a8a3"
+    },
     "route_82aacd126ab1": {
       "path": "routes/golub_coexpression/task.yaml",
       "sha256": "9562f1da63f039c482f8fa7386a99bd55ab5f61511d26ae28d306f9fc3b0c9ae",
@@ -26850,6 +26855,455 @@
             },
             {
               "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_dcf39ebaadce",
+      "version": 1,
+      "name": "GO semantic similarity across EcoCyc annotations",
+      "graph": {
+        "schema_version": 2,
+        "name": "GO semantic similarity across EcoCyc annotations",
+        "base_dir": ".studio/builtin-inputs/go_semantic_similarity",
+        "nodes": [
+          {
+            "id": "genes",
+            "kind": "source",
+            "operator": null,
+            "title": "genes",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/gene_pairs.csv",
+              "dims": [
+                "pair",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pairs",
+            "kind": "source",
+            "operator": null,
+            "title": "pairs",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/pairs.csv",
+              "dims": [
+                "pair",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "terms",
+            "kind": "source",
+            "operator": null,
+            "title": "terms",
+            "position": {
+              "x": 70.0,
+              "y": 520.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/terms.csv",
+              "dims": [
+                "term",
+                "field"
+              ],
+              "labels": {
+                "field": "builtin"
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "go_ic_profile_1",
+            "kind": "operator",
+            "operator": "go_ic_profile",
+            "title": "GO information content profile",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
+              "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+              "aspect": "P",
+              "output": "profile",
+              "row_dim": "term",
+              "field_dim": "field",
+              "term_field": "term"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "go_ic_profile",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "go_term_similarity_3",
+            "kind": "operator",
+            "operator": "go_term_similarity",
+            "title": "GO term semantic similarity",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
+              "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+              "aspect": "P",
+              "output": "similarity",
+              "pair_dim": "pair",
+              "field_dim": "field",
+              "pair_field": "pair",
+              "term_a_field": "term_a",
+              "term_b_field": "term_b"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "go_term_similarity",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "go_gene_similarity_5",
+            "kind": "operator",
+            "operator": "go_gene_similarity",
+            "title": "GO gene semantic similarity",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
+              "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+              "aspect": "P",
+              "output": "genes_2",
+              "pair_dim": "pair",
+              "field_dim": "field",
+              "pair_field": "pair",
+              "gene_a_field": "gene_a",
+              "gene_b_field": "gene_b"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "go_gene_similarity",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "terms-go_ic_profile_1-0",
+            "source": "terms",
+            "target": "go_ic_profile_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "go_ic_profile_1-export_results_2-0",
+            "source": "go_ic_profile_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pairs-go_term_similarity_3-0",
+            "source": "pairs",
+            "target": "go_term_similarity_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "go_term_similarity_3-export_results_4-0",
+            "source": "go_term_similarity_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genes-go_gene_similarity_5-0",
+            "source": "genes",
+            "target": "go_gene_similarity_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "go_gene_similarity_5-export_results_6-0",
+            "source": "go_gene_similarity_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "genes",
+              "label": "genes",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "pair",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "pairs",
+              "label": "pairs",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "pair",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "terms",
+              "label": "terms",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "term",
+                  "field"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
               "handle": "out",
               "label": "Export results",
               "contract": {

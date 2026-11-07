@@ -1,0 +1,77 @@
+{
+  "name": "GO semantic similarity across EcoCyc annotations",
+  "sources": {
+    "terms": {
+      "path": "input/terms.csv",
+      "dims": [
+        "term",
+        "field"
+      ],
+      "labels": {
+        "field": "builtin"
+      },
+      "reader": "CsvReader"
+    },
+    "pairs": {
+      "path": "input/pairs.csv",
+      "dims": [
+        "pair",
+        "field"
+      ],
+      "labels": {
+        "field": "builtin"
+      },
+      "reader": "CsvReader"
+    },
+    "genes": {
+      "path": "input/gene_pairs.csv",
+      "dims": [
+        "pair",
+        "field"
+      ],
+      "labels": {
+        "field": "builtin"
+      },
+      "reader": "CsvReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "go_ic_profile",
+      "inputs": [
+        "terms"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "profile"
+      ]
+    },
+    {
+      "name": "go_term_similarity",
+      "inputs": [
+        "pairs"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "similarity"
+      ]
+    },
+    {
+      "name": "go_gene_similarity",
+      "inputs": [
+        "genes"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "genes"
+      ]
+    }
+  ]
+}

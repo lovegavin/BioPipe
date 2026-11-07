@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GO term semantic similarity",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "obo_path": {
+      "type": "string",
+      "default": "workdir/b40_route/input/go-basic.obo"
+    },
+    "gaf_path": {
+      "type": "string",
+      "default": "workdir/b40_route/input/ecocyc.gaf.gz"
+    },
+    "aspect": {
+      "type": "string",
+      "enum": [
+        "P",
+        "F",
+        "C",
+        "all"
+      ],
+      "default": "P"
+    },
+    "output": {
+      "type": "string",
+      "default": "go_term_similarity"
+    },
+    "pair_dim": {
+      "type": "string",
+      "default": "pair"
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "pair_field": {
+      "type": "string",
+      "default": "pair"
+    },
+    "term_a_field": {
+      "type": "string",
+      "default": "term_a"
+    },
+    "term_b_field": {
+      "type": "string",
+      "default": "term_b"
+    }
+  }
+}

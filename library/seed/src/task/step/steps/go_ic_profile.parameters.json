@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GO information content profile",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "obo_path": {
+      "type": "string",
+      "default": "workdir/b40_route/input/go-basic.obo"
+    },
+    "gaf_path": {
+      "type": "string",
+      "default": "workdir/b40_route/input/ecocyc.gaf.gz"
+    },
+    "aspect": {
+      "type": "string",
+      "enum": [
+        "P",
+        "F",
+        "C",
+        "all"
+      ],
+      "default": "P"
+    },
+    "output": {
+      "type": "string",
+      "default": "go_ic_profile"
+    },
+    "row_dim": {
+      "type": "string",
+      "default": "term"
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "term_field": {
+      "type": "string",
+      "default": "term"
+    }
+  }
+}

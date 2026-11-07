@@ -1,0 +1,89 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "terms": {},
+    "pairs": {},
+    "genes": {}
+  },
+  "steps": [
+    {
+      "name": "go_ic_profile",
+      "inputs": [
+        "terms"
+      ],
+      "params": {
+        "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
+        "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+        "aspect": "P",
+        "output": "profile",
+        "term_field": "term"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "profile"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "go_ic_profile"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "go_term_similarity",
+      "inputs": [
+        "pairs"
+      ],
+      "params": {
+        "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
+        "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+        "aspect": "P",
+        "output": "similarity",
+        "term_a_field": "term_a",
+        "term_b_field": "term_b"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "similarity"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "go_term_similarity"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "go_gene_similarity",
+      "inputs": [
+        "genes"
+      ],
+      "params": {
+        "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
+        "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+        "aspect": "P",
+        "output": "genes",
+        "gene_a_field": "gene_a",
+        "gene_b_field": "gene_b"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "genes"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "go_gene_similarity"
+      },
+      "context_params": {}
+    }
+  ]
+}

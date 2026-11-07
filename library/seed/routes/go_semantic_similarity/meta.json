@@ -1,0 +1,5 @@
+{
+  "key": "go_semantic_similarity",
+  "title": "GO semantic similarity across EcoCyc annotations",
+  "description": "GO information content, term similarity and gene best-match-average similarity."
+}

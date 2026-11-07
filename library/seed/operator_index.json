@@ -2800,6 +2800,36 @@
     "status": "generated"
   },
   {
+    "id": "go_gene_similarity",
+    "kind": "operator",
+    "title": "GO gene semantic similarity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Best-match-average Resnik similarity between gene pairs annotated with Gene Ontology terms.",
+    "doc": "src/task/step/steps/go_gene_similarity.GoGeneSimilarityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "go_ic_profile",
+    "kind": "operator",
+    "title": "GO information content profile",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Information content, annotated gene count and depth for GO terms in an annotation corpus.",
+    "doc": "src/task/step/steps/go_ic_profile.GoIcProfileStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "go_term_similarity",
+    "kind": "operator",
+    "title": "GO term semantic similarity",
+    "category": "Omics",
+    "version": "1.0.0",
+    "description": "Resnik, Lin and ancestor Jaccard similarity for GO term pairs using corpus information content.",
+    "doc": "src/task/step/steps/go_term_similarity.GoTermSimilarityStep.md",
+    "status": "generated"
+  },
+  {
     "id": "goldfeld_quandt",
     "kind": "operator",
     "title": "Goldfeld-Quandt test",
