@@ -3499,3 +3499,51 @@ All three platforms produced byte-identical CSVs
 - NGx falls back to Nx when `genome_size` is 0.
 - Custom bins must be strictly increasing and may end with 0 for an open bound.
 - The route exercises yeast only; E. coli remains a single-contig control input.
+
+## Batch 47 — FASTQ duplication, over-representation and GC (SRR001666)
+
+Route `fastq_composition_qc` runs three FASTQ composition operators on the
+first 200,000 reads of ENA SRR001666 (36 bp), the same subset as the
+read-preprocessing route.
+
+Input: `reads_1.fastq.gz` 8,291,336 B, sha256
+`5b512b0bd02c906186c48aa76d20b3ba4d6f3423a317671523c0d01005571586`.
+
+| step | WSL | srv | Windows |
+|---|---|---|---|
+| fastq_duplication_profile | 0.206 s | 0.422 s | 0.213 s |
+| fastq_overrepresented | 0.213 s | 0.396 s | 0.205 s |
+| fastq_gc_distribution | 0.262 s | 0.919 s | 0.288 s |
+
+Results (200,000 reads):
+
+| metric | value |
+|---|---|
+| unique sequences / deduplicated | 197,031 / 98.5155% |
+| duplication level 1 / 2 / 3 | 194,132 / 2,835 / 60 |
+| over-represented sequences (>= 0.1%) | 0 |
+| mean / median GC | 50.8126 / 50% |
+| GC standard deviation / mode | 10.0358 / 53% |
+
+Oracles:
+
+| oracle | scope | result |
+|---|---|---|
+| base R 4.3.3 independent parser | duplication levels, over-representation, GC histogram and summary | counts exact, mean/sd within 1e-5 of printed values |
+| FastQC 0.12.1 | duplication shape, absence of over-represented reads | same shape; deduplicated 98.689% differs because FastQC subsamples internally |
+
+FastQC is recorded as a sanity check only: its internal subsampling prevents an
+exact count comparison.
+
+Exports are byte-identical across WSL, srv and Windows:
+
+| file | bytes | md5 |
+|---|---|---|
+| fastq_duplication_profile.csv | 406 | cb2a7960ebc5691a09d42cafcd2a078f |
+| fastq_overrepresented.csv | 33 | 5283a61a3ce34d1d188c53a616585742 |
+| fastq_gc_distribution.csv | 1,460 | 25b365c3b797ff1deefceb6cf1e0c3a1 |
+
+Limitations: GC is computed over the whole read without quality filtering;
+over-representation uses exact sequence identity with an optional adapter list;
+the duplication table is global and cannot separate PCR from biological
+duplicates.
