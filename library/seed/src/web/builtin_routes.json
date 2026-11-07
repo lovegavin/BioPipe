@@ -1,6 +1,11 @@
 {
   "schema_version": 1,
   "sources": {
+    "route_2f047167e845": {
+      "path": "routes/assembly_ngx_qc/task.yaml",
+      "sha256": "4150ed7af5bc2011af255bf090c8e2dc0902d5367742568eb2f03c9c4f370e42",
+      "parameters_sha256": "2f2edfa9f1eca44c34b2354e86ad7ed83b7c185879310629506bdbeb49a87941"
+    },
     "route_7dbe8ad2cc0f": {
       "path": "routes/assembly_qc/task.yaml",
       "sha256": "c924cc266d719a13fe0f47f687d03f5087b414ef034266edb374995d0724ca0c",
@@ -4988,6 +4993,435 @@
                 "axis_info_open": false,
                 "ndim": 2,
                 "numeric": true
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_2f047167e845",
+      "version": 1,
+      "name": "Assembly completeness (NGx/auN) of S. cerevisiae S288C",
+      "graph": {
+        "schema_version": 2,
+        "name": "Assembly completeness (NGx/auN) of S. cerevisiae S288C",
+        "base_dir": ".studio/builtin-inputs/assembly_ngx_qc",
+        "nodes": [
+          {
+            "id": "ecoli",
+            "kind": "source",
+            "script": null,
+            "operator": null,
+            "title": "ecoli",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/ecoli.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "yeast",
+            "kind": "source",
+            "script": null,
+            "operator": null,
+            "title": "yeast",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/yeast.fna",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "assembly_ngx_metrics_1",
+            "kind": "operator",
+            "script": null,
+            "operator": "assembly_ngx_metrics",
+            "title": "Assembly NGx and auN metrics",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "genome_size": 12157105,
+              "x_values": "50,90",
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "metrics"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "assembly_ngx_metrics",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "assembly_ngx_curve_3",
+            "kind": "operator",
+            "script": null,
+            "operator": "assembly_ngx_curve",
+            "title": "Assembly Nx curve",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "genome_size": 12157105,
+              "step": 10,
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "curve"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "assembly_ngx_curve",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "assembly_length_bins_5",
+            "kind": "operator",
+            "script": null,
+            "operator": "assembly_length_bins",
+            "title": "Contig length bins",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "edges": "0,1000,5000,10000,25000,50000,100000,250000,500000,1000000,0",
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "bins"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "assembly_length_bins",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "adaptation": null,
+            "id": "yeast-assembly_ngx_metrics_1-0",
+            "source": "yeast",
+            "target": "assembly_ngx_metrics_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "assembly_ngx_metrics_1-export_results_2-0",
+            "source": "assembly_ngx_metrics_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "yeast-assembly_ngx_curve_3-0",
+            "source": "yeast",
+            "target": "assembly_ngx_curve_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "assembly_ngx_curve_3-export_results_4-0",
+            "source": "assembly_ngx_curve_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "yeast-assembly_length_bins_5-0",
+            "source": "yeast",
+            "target": "assembly_length_bins_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "assembly_length_bins_5-export_results_6-0",
+            "source": "assembly_length_bins_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {
+          "format": "biopipe.task",
+          "schema_version": 1
+        },
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "ecoli",
+              "label": "ecoli",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "yeast",
+              "label": "yeast",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

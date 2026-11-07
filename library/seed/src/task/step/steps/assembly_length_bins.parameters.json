@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Contig length bins parameters",
+  "type": "object",
+  "properties": {
+    "edges": {
+      "type": "string",
+      "default": "0,1000,5000,10000,25000,50000,100000,250000,500000,1000000,0"
+    },
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "minLength": 1
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "minLength": 1
+    },
+    "output": {
+      "type": "string",
+      "default": "bins",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "output"
+  ],
+  "additionalProperties": false
+}

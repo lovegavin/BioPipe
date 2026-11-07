@@ -1,0 +1,62 @@
+{
+  "format": "biopipe.task",
+  "schema_version": 1,
+  "name": "Assembly completeness (NGx/auN) of S. cerevisiae S288C",
+  "sources": {
+    "yeast": {
+      "reader": "FastaReader",
+      "path": "input/yeast.fna",
+      "dims": [
+        "sequence",
+        "position"
+      ]
+    },
+    "ecoli": {
+      "reader": "FastaReader",
+      "path": "input/ecoli.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ]
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "assembly_ngx_metrics",
+      "inputs": [
+        "yeast"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "metrics"
+      ]
+    },
+    {
+      "name": "assembly_ngx_curve",
+      "inputs": [
+        "yeast"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "curve"
+      ]
+    },
+    {
+      "name": "assembly_length_bins",
+      "inputs": [
+        "yeast"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "bins"
+      ]
+    }
+  ]
+}

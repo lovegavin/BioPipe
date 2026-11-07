@@ -1,0 +1,79 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "yeast": {},
+    "ecoli": {}
+  },
+  "steps": [
+    {
+      "name": "assembly_ngx_metrics",
+      "inputs": [
+        "yeast"
+      ],
+      "context_params": {},
+      "params": {
+        "genome_size": 12157105,
+        "x_values": "50,90",
+        "output": "metrics"
+      }
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "metrics"
+      ],
+      "context_params": {},
+      "params": {
+        "format": "csv",
+        "filename": "assembly_ngx_metrics"
+      }
+    },
+    {
+      "name": "assembly_ngx_curve",
+      "inputs": [
+        "yeast"
+      ],
+      "context_params": {},
+      "params": {
+        "genome_size": 12157105,
+        "step": 10,
+        "output": "curve"
+      }
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "curve"
+      ],
+      "context_params": {},
+      "params": {
+        "format": "csv",
+        "filename": "assembly_ngx_curve"
+      }
+    },
+    {
+      "name": "assembly_length_bins",
+      "inputs": [
+        "yeast"
+      ],
+      "context_params": {},
+      "params": {
+        "edges": "0,1000,5000,10000,25000,50000,100000,250000,500000,1000000,0",
+        "output": "bins"
+      }
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "bins"
+      ],
+      "context_params": {},
+      "params": {
+        "format": "csv",
+        "filename": "assembly_length_bins"
+      }
+    }
+  ]
+}

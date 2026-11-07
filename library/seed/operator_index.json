@@ -490,6 +490,36 @@
     "status": "generated"
   },
   {
+    "id": "assembly_length_bins",
+    "kind": "operator",
+    "title": "Contig length bins",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Bin assembly contigs by length and report counts and bases per bin.",
+    "doc": "src/task/step/steps/assembly_length_bins.AssemblyLengthBinsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "assembly_ngx_curve",
+    "kind": "operator",
+    "title": "Assembly Nx curve",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Compute the Nx curve (contig length threshold and cumulative coverage) for an assembly.",
+    "doc": "src/task/step/steps/assembly_ngx_curve.AssemblyNgxCurveStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "assembly_ngx_metrics",
+    "kind": "operator",
+    "title": "Assembly NGx and auN metrics",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Compute NGx/NAx thresholds, N50/L50 and area-under-the-Nx-curve metrics for a genome assembly.",
+    "doc": "src/task/step/steps/assembly_ngx_metrics.AssemblyNgxMetricsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "assembly_stats",
     "kind": "operator",
     "title": "Assembly quality metrics (QUAST)",

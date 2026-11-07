@@ -1,0 +1,10 @@
+{
+  "id": "assembly_ngx_qc",
+  "title": "Assembly NGx and length-profile QC",
+  "description": "NGx/auN metrics, cumulative Nx curves and contig length bins for a yeast assembly.",
+  "tags": [
+    "assembly",
+    "QC",
+    "NGx"
+  ]
+}

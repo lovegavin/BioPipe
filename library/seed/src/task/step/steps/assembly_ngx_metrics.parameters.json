@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Assembly NGx metrics parameters",
+  "type": "object",
+  "properties": {
+    "genome_size": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "x_values": {
+      "type": "string",
+      "default": "50,90"
+    },
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "minLength": 1
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "minLength": 1
+    },
+    "output": {
+      "type": "string",
+      "default": "metrics",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "output"
+  ],
+  "additionalProperties": false
+}
