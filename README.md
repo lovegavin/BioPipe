@@ -7,6 +7,17 @@ Windows and Linux also support [command-line installation](docs/command_line_ins
 
 ## Application and library releases
 
+Application maintenance continues on the existing `fix/3.0.1-installation`
+branch; the library is maintained separately on `library/main`. No combined
+branch is required. SDK 3.7 introduces explicit input/output format declarations
+and static migration for older extensions; declaration changes do not rewrite
+saved workflow parameter values.
+See the [SDK 3.7 static migration guide](docs/format_migration_v37.md) and
+[format contract specification](docs/data_formats.md) before upgrading extensions.
+New revision 3.7 operators require Operon 3.0.2 on the actual execution host,
+including a remote Linux server. Updating the desktop does not upgrade an older
+server. Existing v3, v3.5 and v3.6 libraries remain supported.
+
 The application and operator library have separate source ownership, versions and
 release artifacts. See [Application/library boundary](docs/application_library_boundary.md).
 Operators, Readers, their parameter JSON and route templates live in `library/seed/`.
@@ -19,10 +30,10 @@ AI agent through CLI or MCP. Operon itself does not supply an AI service.
 Existing `biopipe` Python modules, CLI commands, MCP tools and protocol identifiers
 remain compatible; see [rebranding and compatibility](docs/rebranding.md).
 
-The **v3.0.1 application candidate** and independently versioned **2026.11.6.1 operator library**
+The **v3.0.2 application candidate** and independently versioned **2026.11.6.1 operator library**
 share this repository. The reference library includes **717 operators, 101 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
-v3 / SDK 3.6**, separate parameter JSON and adjacent Markdown documentation.
+v3 / SDK 3.7**, separate parameter JSON and adjacent Markdown documentation.
 
 Operon 3.0 adds [editable workflow YAML](docs/workflow_yaml_v3.md),
 [workflow-local scripts](docs/script_operators_v3.md), [target readiness](docs/readiness.md),

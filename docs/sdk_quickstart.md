@@ -1,6 +1,6 @@
 # Write an operator in 30 minutes
 
-SDK 3.5 / protocol 3 (optional v3.5 language packs) uses **one implementation, its own parameter JSON and Markdown**.
+SDK 3.7 / protocol 3 uses **one implementation, its own parameter JSON and Markdown**.
 The Python class owns a literal `definition`; its JSON owns parameter types,
 defaults, constraints and form hints. The registry is a generated index.
 
@@ -36,6 +36,13 @@ Edit `definition` in `lab_scale/__init__.py`: stable namespaced ID, version, tit
 category, input/output contracts, resource capabilities and dependencies. Keep
 it literal: the maintenance tool reads the AST without importing your module.
 Keep the ID stable when changing the display title.
+
+The scaffold sets `protocol_revision: "3.7"` and explicit `data_formats` for every
+port. Its numeric example uses `logical_type: "form"` with
+`representations: ["form"]`. Keep both `inputs` and `outputs` arrays; use `[]`
+for a Reader's inputs or a report-only terminal's outputs. Declare additional
+representations only when the implementation actually supports them. See
+[format contracts and the native-array Reader bridge](data_formats.md).
 
 Edit `parameters.json` for calculation parameters. For example:
 

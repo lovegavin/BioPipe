@@ -135,6 +135,8 @@ def read_source(
     else:
         with _decompressed(path) as real_path:
             form = reader.read(real_path, dims, labels, **args)
+    from biopipe_sdk.native_array import reader_output
+    form = reader_output(form, getattr(reader, '_declaration', {}) or getattr(reader, 'definition', {}))
     from src.core.contracts import validate_form, validate_output, source_schema
     validate_form(form, reader.output_contract, f"reader {type(reader).__name__} output")
     validate_output(form, source_schema(reader.output_contract, dims), f"reader {type(reader).__name__} output")

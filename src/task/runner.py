@@ -63,12 +63,24 @@ def run(ctx: Context, steps: list[dict]) -> None:
                     forms = [_resolve(ctx, n, name) for n in names]
                 if spec.get("conversions"):
                     if stream is not None:
-                        raise StepError("A full-Form converter cannot adapt a streaming input")
-                    from biopipe.conversions import apply_step_conversions
-                    forms = apply_step_conversions(ctx, forms, spec["conversions"])
+                        from biopipe_sdk.native_array import validate_stream_format
+                        for conversion in spec['conversions']:
+                            plan = conversion['plan']
+                            if conversion['port'] != 0 or plan['converters'] or plan['representation'] != 'form':
+                                raise StepError("A full-Form converter cannot adapt a streaming input")
+                            validate_stream_format(stream, plan['source'])
+                            validate_stream_format(stream, plan['target'])
+                    else:
+                        from biopipe.conversions import apply_step_conversions
+                        forms = apply_step_conversions(ctx, forms, spec["conversions"])
                 requirements = [resolve(rule, ctx.step_params) for rule in (cls.input_contracts or [])]
                 schemas = []
                 if stream is not None:
+                    declaration = getattr(cls, '_declaration', {}) or getattr(cls, 'definition', {})
+                    input_formats = (declaration.get('data_formats') or {}).get('inputs', [])
+                    if input_formats:
+                        from biopipe_sdk.native_array import validate_stream_format
+                        validate_stream_format(stream, input_formats[0])
                     schema = describe_metadata(stream["metadata"], stream["shape"])
                     required = requirements[0] if requirements else None
                     result = compatible(schema, required)
@@ -86,6 +98,11 @@ def run(ctx: Context, steps: list[dict]) -> None:
                     schemas.append(schema)
                 else:
                     for port, form in enumerate(forms):
+                        declaration = getattr(cls, '_declaration', {}) or getattr(cls, 'definition', {})
+                        input_formats = (declaration.get('data_formats') or {}).get('inputs', [])
+                        if input_formats:
+                            from biopipe_sdk.native_array import reader_output
+                            reader_output(form, {'data_formats': {'outputs': [input_formats[min(port, len(input_formats)-1)]]}})
                         required = requirements[min(port, len(requirements) - 1)] if requirements else None
                         validate_form(form, required, f"{name} input {port + 1} ({names[port]})")
                         schemas.append(describe_form(form))
@@ -99,6 +116,11 @@ def run(ctx: Context, steps: list[dict]) -> None:
                         raise StepError(f"{name} contract: report operator cannot register a Form")
                     if declared_outputs and key not in declared_outputs:
                         raise StepError(f"{name} contract: undeclared output {key}")
+                    declaration = getattr(cls, '_declaration', {}) or getattr(cls, 'definition', {})
+                    format_outputs = (declaration.get('data_formats') or {}).get('outputs', [])
+                    if format_outputs and key in declared_outputs:
+                        from biopipe_sdk.native_array import reader_output
+                        reader_output(form, {'data_formats': {'outputs': [format_outputs[declared_outputs.index(key)]]}})
                     if cls.output_contract:
                         validate_output(form, expected, f"{name} output {key}")
                 ctx.output_validator = check_output

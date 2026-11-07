@@ -1,11 +1,14 @@
-# Operator protocol v3, v3.5 and v3.6
+# Operator protocol v3 with SDK 3.7
 
-The current SDK is 3.6.0. The wire major remains protocol 3. Operator IDs, numerical kernels,
+The current SDK is 3.7.0. The wire major remains protocol 3. Operator IDs, numerical kernels,
 Form contracts and resource protocols retain their existing meaning.
 
-SDK 3.6 adds optional `data_formats` declarations for logical types and physical
-representations. Existing v3 and v3.5 declarations keep their previous contract
-behavior; they do not silently opt into conversions. See [data formats](data_formats.md).
+New declarations use `protocol_revision: "3.7"` and must declare both
+`data_formats.inputs` and `data_formats.outputs`, including explicit empty arrays
+for Readers' inputs and report-only operators' outputs. Logical types and physical
+representations remain separate. Existing v3/v3.5/v3.6 declarations keep their
+previous contract behavior; they do not silently opt into conversions. See
+[data formats](data_formats.md) and [static migration](format_migration_v37.md).
 Workflow-local scripts can start without sidecar files and be promoted into this
 ordinary package protocol; see [script authoring](script_operators_v3.md).
 
@@ -49,7 +52,8 @@ examples. `biopipe plugin init` creates these files and an executable test.
 
 Add a literal `localization_file = "localization.json"` to the class. The SDK validates
 and embeds its display translations in the static registry, with
-`protocol_revision: "3.5"` and `minimum_sdk: "3.5.0"`. Existing v3 declarations
+`minimum_sdk: "3.5.0"`. New declarations retain `protocol_revision: "3.7"`;
+adding a language pack does not downgrade the format contract. Existing v3 declarations
 without this field remain valid and display their original language. Do not set
 `protocol_version` to a float or a string: it remains the integer `3`.
 

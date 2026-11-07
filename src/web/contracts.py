@@ -3,6 +3,7 @@ from collections import deque
 
 from src.core.contracts import VERSION, compatible, infer_output, resolve, source_schema, unknown
 from biopipe.file_formats import primary_ext
+from biopipe_sdk.formats import effective_formats
 
 
 def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), input_roots=None):
@@ -22,12 +23,15 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
     outgoing = {key: [] for key in nodes}
     degree = {key: 0 for key in nodes}
     ports, results = {}, []
+    explicit_format_nodes = set()
     for node in graph.nodes:
         if node.kind == "source":
             source = node.source
             schema = unknown()
             if source_overrides and node.id in source_overrides:
                 schema = source_overrides[node.id]
+                if schema.get('_format_explicit'):
+                    explicit_format_nodes.add(node.id)
             elif source:
                 schema.update(dims=source.dims, ndim=len(source.dims))
                 from .source_paths import source_candidates
@@ -44,7 +48,10 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
                         reader = delegates[0]
                     schema = source_schema(reader["contracts"]["output"], source.dims)
                     schema["reader"] = reader["id"]
-                    formats = reader.get("data_formats") or {}
+                    formats = effective_formats({**reader, 'kind': 'reader'})
+                    if reader.get('data_formats') is not None:
+                        explicit_format_nodes.add(node.id)
+                        schema['_format_explicit'] = True
                     if formats.get("outputs"):
                         schema["data_format"] = formats["outputs"][0]
             ports[node.id] = {"inputs": [], "outputs": [schema]}
@@ -63,7 +70,9 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
             count = node.input_count if spec["inputs_arity"] == "*" else spec["inputs_arity"]
             requirements = spec["contracts"]["inputs"] or []
             params = {**spec["runtime_defaults"], **node.params}
-            formats = spec.get("data_formats") or {}
+            formats = effective_formats(spec)
+            if spec.get('data_formats') is not None:
+                explicit_format_nodes.add(node.id)
             input_rules = [resolve(requirements[min(i, len(requirements)-1)], params) if requirements else None for i in range(count)]
             for index, rule in enumerate(input_rules):
                 if formats.get("inputs"):
@@ -104,7 +113,10 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
                 from biopipe.conversions import plan_conversion
                 source_format = inputs[index].get("data_format")
                 required_format = (ports[key]["inputs"][index] or {}).get("data_format")
-                if source_format is not None or required_format is not None or edge.adaptation is not None:
+                if (edge.source in explicit_format_nodes or edge.target in explicit_format_nodes
+                        or inputs[index].get('_format_explicit')
+                        or (ports[key]['inputs'][index] or {}).get('_format_explicit')
+                        or edge.adaptation is not None):
                     adapted = plan_conversion(source_format, required_format, edge.adaptation.model_dump() if edge.adaptation else None)
                     result["conversion_plan"] = adapted.get("conversion_plan")
                     if adapted["status"] != "compatible":
@@ -135,8 +147,10 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
                     schema = infer_output(spec["contracts"]["output"], inputs, {**spec["runtime_defaults"], **node.params}) if not invalid else unknown()
                 except (TypeError, ValueError, KeyError):
                     schema = unknown()
-                formats = (spec.get("data_formats") or {}).get("outputs", [])
-                ports[key]["outputs"] = [{**schema, **({"data_format": formats[i]} if i < len(formats) else {})}
+                formats = effective_formats(spec).get("outputs", [])
+                schema.pop('_format_explicit', None)
+                ports[key]["outputs"] = [{**schema, **({'_format_explicit': True} if spec.get('data_formats') is not None else {}),
+                                          **({"data_format": formats[i]} if i < len(formats) else {})}
                                           for i in range(len(ports[key]["outputs"]))]
         for target in outgoing[key]:
             degree[target] -= 1

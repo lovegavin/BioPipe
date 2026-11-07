@@ -126,6 +126,11 @@ def test_promoted_provider_static_package_and_real_worker(tmp_path, monkeypatch)
     manifest = check_source(project)
     descriptor = manifest['descriptors'][0]
     assert descriptor['id'] == 'lab.repeat_text'
+    assert descriptor['protocol_revision'] == '3.7'
+    assert descriptor['data_formats'] == {
+        'inputs': [{'logical_type': 'file_artifact', 'representations': ['file_artifact']}],
+        'outputs': [{'logical_type': 'file_artifact', 'representations': ['file_artifact']}],
+    }
     assert descriptor['parameters_schema']['properties']['threshold']['default'] == 3
     assert descriptor['documentation']
     assert exported['module'] not in sys.modules

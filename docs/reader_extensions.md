@@ -1,6 +1,9 @@
 # Add a Reader
 
 Readers use the same code + per-Reader parameter JSON + Markdown protocol as operators.
+SDK 3.7 Readers declare empty input formats and one explicit output format.
+For a no-copy native-array wrapper, see the
+[NativeArray example](../examples/sdk37_native_reader/README.md).
 Save this implementation as `npy_reader.py`:
 
 ```python
@@ -10,6 +13,9 @@ class NpyReader(Reader):
     parameters_file = "npy_reader.parameters.json"
     definition = {
         "protocol_version": 3, "id": "lab.npy", "version": "0.1.0",
+        "protocol_revision": "3.7",
+        "data_formats": {"inputs": [],
+                         "outputs": [{"logical_type": "form", "representations": ["form"]}]},
         "kind": "reader", "title": "NumPy matrix", "extensions": [".npy"],
         "contracts": {"version": 1, "inputs": [],
                       "output": {"numeric": True, "ndim": 2}},

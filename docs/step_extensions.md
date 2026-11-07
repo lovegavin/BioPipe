@@ -13,6 +13,10 @@ class Scale(Operator):
     parameters_file = "scale.parameters.json"
     definition = {
         "protocol_version": 3, "id": "lab.scale", "version": "0.1.0",
+        "protocol_revision": "3.7",
+        "data_formats": {
+            "inputs": [{"logical_type": "form", "representations": ["form"]}],
+            "outputs": [{"logical_type": "form", "representations": ["form"]}]},
         "kind": "operator", "title": "Scale matrix", "category": "data",
         "inputs_arity": 1, "output_parameter": "output",
         "contracts": {"version": 1, "inputs": [{"numeric": True, "ndim": 2}],

@@ -258,6 +258,14 @@ def execute_script(snapshot, values, inputs, output_dir, *, cancel=None, timeout
             'code_sha': snapshot['code_sha'], 'parameters': values}
 
 
+def _script_formats(snapshot):
+    """The script bridge exchanges declared files, never implicit Forms."""
+    return {'inputs': [{'logical_type': 'file_artifact', 'representations': ['file_artifact']}
+                       for _ in snapshot['inputs']],
+            'outputs': [{'logical_type': 'file_artifact', 'representations': ['file_artifact']}
+                        for _ in snapshot['outputs']]}
+
+
 def prepare_script_graph(graph, catalog):
     """Transient projection only. Never replace the saved script graph."""
     from src.web.models import Graph
@@ -275,6 +283,7 @@ def prepare_script_graph(graph, catalog):
         # file conversion or semantic type is invented here.
         output = next(iter(script['outputs'].values()))
         descriptor = {'id': name, 'title': node.title or script['filename'], 'description': 'Workflow-local script',
+                      'protocol_revision': '3.7', 'data_formats': _script_formats(script),
                       'runtime_defaults': {},
                       'inputs_arity': len(script['inputs']), 'outputs': [], 'output_parameter': 'output',
                       'parameters_schema': {'type': 'object', 'properties': {'script': {'type': 'object'}, 'values': script['parameters_schema']}, 'required': ['script', 'values'], 'additionalProperties': False},
@@ -319,7 +328,8 @@ def script_step_class(name, snapshot):
             return self.result
     ScriptStep.name = name
     ScriptStep._declaration = {
-        'protocol_version': 3, 'id': name, 'version': '1.0.0', 'kind': 'operator',
+        'protocol_version': 3, 'protocol_revision': '3.7', 'data_formats': _script_formats(snapshot),
+        'id': name, 'version': '1.0.0', 'kind': 'operator',
         'entry_point': __name__ + ':ScriptStep', 'title': snapshot['filename'],
         'description': 'Workflow-local file script', 'category': 'data',
         'parameters_schema': ScriptStep.parameters_schema,
@@ -378,7 +388,8 @@ def export_script_package(snapshot, directory, *, operator_id, title, category='
     module = 'biopipe_user_' + operator_id.replace('.', '_')
     package = module.replace('_', '-')
     output = next(iter(snapshot['outputs'].values()))
-    definition = {'protocol_version': 3, 'id': operator_id, 'version': version, 'kind': 'operator',
+    definition = {'protocol_version': 3, 'protocol_revision': '3.7', 'data_formats': _script_formats(snapshot),
+                  'id': operator_id, 'version': version, 'kind': 'operator',
                   'title': title.strip(), 'description': 'User-authored file script', 'category': category,
                   'contracts': {'version': 1, 'inputs': [_file_contract(p['format']) for p in snapshot['inputs'].values()],
                                 'output': {'mode': 'declare', 'schema': {**_file_contract(output['format']), 'labels': {}, 'axis_info': {}}}},

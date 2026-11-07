@@ -1,5 +1,12 @@
 # Application and operator library
 
+Application releases and the library use their existing independent branches.
+The current application maintenance branch is `fix/3.0.1-installation`; the
+library branch is `library/main`. A combined `main` is not a maintenance target.
+Application patches retain their tested factory seed. Compatibility is defined
+by SDK protocol revisions and validated declarations, not by merging both source
+trees. Published releases remain immutable.
+
 BioPipe has two versioned products in one repository. Application releases use
 `vX.Y.Z`; operator releases use `library-vYYYY.M.D`. Adding or correcting an
 operator does not require an EXE release or an application version change.

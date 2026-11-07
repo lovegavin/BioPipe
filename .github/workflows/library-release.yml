@@ -1,7 +1,7 @@
 name: Independent operator library
 on:
   push:
-    branches: ['main', 'library/**', 'maintenance/independent-library-releases']
+    branches: ['library/**', 'maintenance/independent-library-releases']
     tags: ['library-v*']
   pull_request:
     paths:

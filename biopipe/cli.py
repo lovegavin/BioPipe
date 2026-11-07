@@ -62,7 +62,9 @@ def parser():
     migrate.add_argument("--manifest", type=Path, help="Old descriptor JSON for Python source conversion")
     migrate.add_argument("--apply", action="store_true")
     registry = commands.add_parser("registry", help="Discover, validate and build repository indexes without a running Studio")
-    registry.add_argument("action", choices=["discover", "check", "build"])
+    registry.add_argument("action", choices=["discover", "check", "build", "formats"])
+    registry.add_argument("path", nargs='?', type=Path)
+    registry.add_argument("--apply", action='store_true', help='Apply reviewed static format proposals; default is inspection only')
     registry.add_argument("--source-ref")
     registry.add_argument("--route-root", action="append")
     registry.add_argument("--output-dir", type=Path)
@@ -231,6 +233,13 @@ def execute(args):
         return migrate(path=args.path, profile_dir=args.profile_dir, workspace=args.workspace,
                        data_dir=args.data_dir, manifest=args.manifest, apply=args.apply)
     if args.command == "registry":
+        if args.action == 'formats':
+            from .format_migration import migrate
+            if args.path is None:
+                raise ValueError('registry formats requires an explicit source directory')
+            return migrate(args.path, apply=args.apply)
+        if args.path is not None or args.apply:
+            raise ValueError('A source path and --apply are only valid for registry formats')
         from .registry import inventory, maintain
         if args.source_ref and args.action != "discover":
             raise ValueError("--source-ref is for static discovery only")
@@ -531,7 +540,9 @@ def main(argv=None):
         if result is not None:
             print(json.dumps(result, ensure_ascii=False, allow_nan=False, indent=None if args.compact else 2,
                              **({'separators': (',', ':')} if args.compact else {})))
-            if args.command == "registry" and (result["errors"] or (args.action == "check" and result["changed"])):
+            if args.command == 'registry' and args.action == 'formats' and result['review_required']:
+                raise SystemExit(2)
+            if args.command == "registry" and (result.get("errors") or (args.action == "check" and result["changed"])):
                 raise SystemExit(1)
             if args.command == 'workflow' and args.action == 'format' and args.check and result['changed']:
                 raise SystemExit(1)

@@ -16,12 +16,18 @@ from biopipe_sdk.formats import Adaptation, FormatPort
 def converter_registry():
     source = Path(__file__).with_name('converter_kernels.py')
     identity = hashlib.sha256(source.read_bytes()).hexdigest()
-    return [dict(id=key, version='1.0.0', code_sha=identity, logical_type='matrix',
+    entries = [dict(id=key, version='1.0.0', code_sha=identity, logical_type='matrix',
                  source=before, target=after, lossless=True, cost=cost,
                  dependencies=['numpy>=1.26'], portable={'module': 'converter_kernels.py', 'function': function})
             for key, before, after, cost, function in [
                 ('matrix.npy.write', 'numpy.ndarray', 'npy.memmap', 10, 'array_to_npy'),
                 ('matrix.npy.view', 'npy.memmap', 'numpy.ndarray', 1, 'mmap_to_array')]]
+    from biopipe_sdk import native_array
+    entries.append(dict(id='form.ndarray.wrap', version='1.0.0',
+        code_sha=hashlib.sha256(Path(native_array.__file__).read_bytes()).hexdigest(),
+        logical_type='form', source='native.ndarray', target='form', lossless=True,
+        cost=1, dependencies=['numpy>=1.26']))
+    return entries
 
 
 def plan_conversion(source, target, policy=None, *, registry=None):
@@ -84,17 +90,30 @@ def plan_conversion(source, target, policy=None, *, registry=None):
 def execute_conversion(form, plan, directory, *, buffer_bytes=65536, admit=None, checkpoint=lambda: None):
     """Preserve Form metadata; convert only the numeric data representation."""
     import numpy as np
-    from src.core import Form
+    from src.core import Form, FileArtifact
     from .converter_kernels import array_to_npy, mmap_to_array
+    declared = plan['source']['representations'][0]
+    if declared == 'native.ndarray':
+        from biopipe_sdk.native_array import as_form
+        form = as_form(form)
+    if declared == 'form' and not isinstance(form, Form):
+        raise ValueError('Declared Form representation requires an actual Form')
+    if declared == 'file_artifact' and not isinstance(form, FileArtifact):
+        raise ValueError('Declared file_artifact requires an actual FileArtifact')
     form.validate()
     if plan['logical_type'] == 'matrix' and (not isinstance(form, Form) or form.data.ndim != 2):
         raise ValueError('Matrix conversion requires an actual two-dimensional Form')
     if plan['logical_type'] == 'list' and isinstance(form, Form) and form.data.ndim != 1:
         raise ValueError('A matrix is not a logical list; insert an explicit operator')
-    if isinstance(form, Form) and form.data.dtype.hasobject:
+    if declared not in {'form', 'native.ndarray'} and isinstance(form, Form) and form.data.dtype.hasobject:
         raise ValueError('Object arrays cannot be automatically converted')
     actual = ('npy.memmap' if isinstance(form.data, np.memmap) else 'numpy.ndarray') if isinstance(form, Form) else form.info.get('representation')
-    declared = plan['source']['representations'][0]
+    if declared == 'form' and isinstance(form, Form):
+        actual = 'form'
+    elif declared == 'file_artifact' and isinstance(form, FileArtifact):
+        actual = 'file_artifact'
+    elif declared == 'native.ndarray' and isinstance(form, Form):
+        actual = 'native.ndarray'
     # A managed spill may have materialized an ndarray as a memmap already.
     if actual not in {declared, 'npy.memmap'}:
         raise ValueError('Runtime representation differs from the frozen source declaration')
@@ -116,6 +135,8 @@ def execute_conversion(form, plan, directory, *, buffer_bytes=65536, admit=None,
         if observed != value:
             raise ValueError(f'Runtime logical metadata mismatch: {key}')
     if actual == target:
+        return form
+    if target == 'form' and actual == 'native.ndarray':
         return form
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=True)

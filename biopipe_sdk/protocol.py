@@ -2,7 +2,7 @@
 from copy import deepcopy
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from .localization import Localization
 from .formats import DataFormats
 
@@ -28,9 +28,13 @@ class Documentation(BaseModel):
 
 class Descriptor(BaseModel):
     """Canonical, versioned extension declaration; UI projections are separate."""
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", json_schema_extra={
+        'allOf': [{'if': {'properties': {'protocol_revision': {'const': '3.7'}},
+                         'required': ['protocol_revision']},
+                   'then': {'required': ['data_formats'],
+                            'properties': {'data_formats': {'type': 'object', 'required': ['inputs', 'outputs']}}}}]})
     protocol_version: Literal[3] = 3
-    protocol_revision: Literal['3.5', '3.6'] | None = None
+    protocol_revision: Literal['3.5', '3.6', '3.7'] | None = None
     data_formats: DataFormats | None = None
     localization: Localization | None = None
     id: str = Field(pattern=r"^[A-Za-z_][A-Za-z0-9_.-]{0,79}$")
@@ -61,6 +65,21 @@ class Descriptor(BaseModel):
     preview: dict[str, Any] | None = None
     title_aliases: list[str] = Field(default_factory=list)
     title_parameter: dict[str, Any] | None = None
+
+    @model_validator(mode='after')
+    def explicit_formats_for_revision_37(self):
+        if self.protocol_revision == '3.7' and self.data_formats is None:
+            raise ValueError('protocol_revision 3.7 requires explicit input/output data_formats')
+        if self.protocol_revision == '3.7':
+            if not {'inputs', 'outputs'} <= self.data_formats.model_fields_set:
+                raise ValueError('protocol_revision 3.7 requires explicit inputs and outputs arrays')
+            count = 1 if self.inputs_arity == '*' else self.inputs_arity
+            if len(self.data_formats.inputs) != (count if self.kind == 'operator' else 0):
+                raise ValueError('Declare one format capability per input port')
+            outputs = 1 if self.output_parameter or self.kind == 'reader' else len(self.outputs)
+            if len(self.data_formats.outputs) != outputs:
+                raise ValueError('Declare one format capability per output port')
+        return self
 
     @field_validator('dependencies')
     @classmethod
@@ -288,11 +307,13 @@ def validate_declaration(value):
     if value.get('localization'):
         from .localization import validate_parameters as validate_language_parameters
         validate_language_parameters(value['localization'], value['parameters_schema'])
-        if value.get('protocol_revision') not in {'3.5', '3.6'}:
+        if value.get('protocol_revision') not in {'3.5', '3.6', '3.7'}:
             raise ValueError('Language packs require protocol_revision 3.5')
-    if value.get('data_formats'):
-        if value.get('protocol_revision') != '3.6':
-            raise ValueError('data_formats requires protocol_revision 3.6')
+    if value.get('protocol_revision') == '3.7' and value.get('data_formats') is None:
+        raise ValueError('protocol_revision 3.7 requires explicit input/output data_formats')
+    if value.get('data_formats') is not None:
+        if value.get('protocol_revision') not in {'3.6', '3.7'}:
+            raise ValueError('data_formats requires protocol_revision 3.6 or 3.7')
         formats = DataFormats.model_validate(value['data_formats'])
         count = 1 if value.get('inputs_arity') == '*' else value.get('inputs_arity', 0)
         if len(formats.inputs) != (count if value['kind'] == 'operator' else 0):

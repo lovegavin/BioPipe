@@ -7,6 +7,17 @@ Package code owns calculations and format decoding. Routes remain graph-based
 operators using their existing snapshot protocol; this change covers Python
 operators and readers, not a new route packaging format.
 
+## SDK 3.7 port declarations
+
+New operator and Reader definitions use `protocol_revision: "3.7"` and explicitly
+declare `data_formats.inputs` and `data_formats.outputs`. Package protocol stays
+integer `3`; parameter JSON, stable IDs, source pins and memory capabilities
+retain their existing meaning. The package validator rejects missing or
+arity-mismatched arrays for the new revision. Existing v3/v3.5/v3.6 packages
+remain supported rather than being silently rewritten during installation.
+See [operator protocol](operator_protocol.md), [format contracts](data_formats.md)
+and the [static migration tool](format_migration_v37.md).
+
 ## Preinstalled providers
 
 | Package | Entries | Purpose |

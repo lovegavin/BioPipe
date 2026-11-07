@@ -5,7 +5,7 @@ Lazy exports keep plugin discovery independent of engine import order.
 """
 from importlib import import_module
 
-__version__ = "3.6.0"
+__version__ = "3.7.0"
 from .protocol import PROTOCOL_VERSION
 _EXPORTS = {
     "publication_style": ("biopipe_sdk.figures", "publication_style"),
@@ -16,6 +16,7 @@ _EXPORTS = {
     "load_class": ("biopipe_sdk.declarations", "load_class"),
     "bind_class": ("biopipe_sdk.declarations", "bind_class"),
     "Form": ("src.core", "Form"),
+    "NativeArray": ("biopipe_sdk.native_array", "NativeArray"),
     "FileArtifact": ("src.core", "FileArtifact"),
     "Step": ("src.task.step.base", "Step"),
     "Reader": ("src.reader.base", "Reader"),

@@ -1,7 +1,12 @@
 # BioPipe SDK reference
 
-The supported import surface is `biopipe_sdk`. SDK version is `3.0.0`; descriptor/package protocol
+The supported import surface is `biopipe_sdk`. SDK version is `3.7.0`; descriptor/package protocol
 version is `3`. The SDK currently ships with the `biopipe-studio` distribution.
+
+New declarations set `protocol_revision: "3.7"` and provide explicit
+`data_formats.inputs` and `data_formats.outputs`. Existing revision-3 providers
+retain compatibility; use [static inspection/migration](format_migration_v37.md)
+to publish upgraded declarations deliberately.
 
 | Export | Use |
 | --- | --- |
@@ -9,6 +14,7 @@ version is `3`. The SDK currently ships with the `biopipe-studio` distribution.
 | `Step` | Advanced execution API: `run(ctx, inputs)`, `export(ctx)` and fixed outputs |
 | `Reader` | Implement `read(path, dims, labels, **args) -> Form` |
 | `Form` | Numeric tensor with named dimensions, labels, `info` and `axis_info` |
+| `NativeArray` | Explicit ndarray plus dims/labels/info/axis_info for the no-copy Reader-to-Form bridge |
 | `Context` | Current step parameters, Form registry, outputs and logging |
 | `port`, `param`, `MISSING` | Input contract constructors and parameter references |
 | `reader_contract` | Standard output declaration for a reader |

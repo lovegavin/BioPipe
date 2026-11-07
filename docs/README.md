@@ -17,6 +17,9 @@ trace it. See [Why Operon](../README.md#why-operon) for the five supports.
 
 ## Use Operon
 
+- [SDK 3.7 mandatory port formats and native Reader bridge](data_formats.md)
+- [Static format inspection and explicit legacy migration](format_migration_v37.md)
+
 - [Windows and Linux command-line installation](command_line_installation.md)
 - [Linux server and terminal quickstart](server_cli.md)
 - [3.0 implementation scope and validation](V3_IMPLEMENTATION.md)

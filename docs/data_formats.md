@@ -1,7 +1,9 @@
 # Logical types and representation adaptation
 
-BioPipe 3.0 introduces optional SDK 3.6 `data_formats` capabilities. The base
-protocol remains 3. Existing v3 and v3.5 declarations retain their existing
+SDK 3.7 requires explicit `data_formats` on new revision-3.7 declarations. Both
+input and output arrays must be present, even when empty. SDK 3.6 introduced
+these capabilities as optional; the base protocol remains 3. Existing v3,
+v3.5 and v3.6 declarations retain their existing
 contract path. New capabilities do not infer scientific semantics from extensions,
 array dimensions or Python coercions.
 
@@ -10,7 +12,7 @@ array dimensions or Python coercions.
 An operator's literal `definition` can include:
 
 ```python
-"protocol_revision": "3.6",
+"protocol_revision": "3.7",
 "data_formats": {
     "inputs": [{
         "logical_type": "matrix",
@@ -24,6 +26,36 @@ An operator's literal `definition` can include:
     }]
 }
 ```
+
+For an existing Form interface, declare `logical_type: "form"` and
+`representations: ["form"]`. For a file-backed interface use
+`logical_type: "file_artifact"` and `representations: ["file_artifact"]`.
+These container contracts do not assert a scientific matrix/list interpretation.
+The legacy port default `kind: "form"` remains a protocol guarantee; explicit
+`kind: ["form", "file"]` is polymorphic and cannot be narrowed automatically.
+See [static migration](format_migration_v37.md) for inspect/apply commands.
+
+## Native Reader to Form bridge
+
+A Reader may declare `logical_type: "form"` with
+`representations: ["native.ndarray"]` and return the SDK's `NativeArray`:
+
+```python
+from biopipe_sdk import NativeArray
+payload = NativeArray(array, ["sample", "feature"], labels,
+                      {"missing_code": float("nan")}, axis_info)
+```
+
+`array` must be an actual NumPy ndarray (including a memory map), and dimensions,
+labels, info and axis_info must be provided explicitly. Reader ingestion validates
+and wraps this payload without copying its data; `form.ndarray.wrap` is the
+registered adaptation. A Reader already returning Form keeps the same object.
+This does not turn arbitrary FASTQ/BAM/VCF files into matrices: file artifacts
+still require a registered parser or a scientifically meaningful operator.
+
+Run the [native Reader example](../examples/sdk37_native_reader/README.md) to
+verify a mapped NPY, metadata-preserving Form bridge and unchanged legacy
+`log_transform` operator. No library migration or external data is needed.
 
 Keep the existing `contracts` declaration. It describes axes, annotation fields,
 value constraints and transformations. `data_formats` adds logical type and

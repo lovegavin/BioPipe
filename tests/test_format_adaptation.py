@@ -205,3 +205,187 @@ def test_failed_converter_reservation_does_not_leak_or_underflow(tmp_path):
     with pytest.raises(MemoryBudgetError):
         apply_step_conversions(ctx, [form()], [{'port': 0, 'edge_id': 'e', 'plan': plan}])
     assert store.reserved == 0 and store.disk_bytes == 0
+
+
+def test_sdk37_requires_formats_and_preserves_legacy_model():
+    from biopipe.packages import bundled_entries
+    from biopipe_sdk.protocol import Descriptor, validate_declaration
+    descriptor = deepcopy(next(d for _, d in bundled_entries('operator') if d['id'] == 'pca'))
+    Descriptor.model_validate(descriptor)
+    descriptor['protocol_revision'] = '3.7'
+    descriptor.pop('data_formats', None)
+    with pytest.raises(ValueError, match='requires explicit'):
+        Descriptor.model_validate(descriptor)
+    descriptor['data_formats'] = {'inputs': [port('form', 'form')], 'outputs': [port('form', 'form')]}
+    validate_declaration(descriptor)
+    descriptor['data_formats']['inputs'] = []
+    with pytest.raises(ValueError, match='input port'):
+        validate_declaration(descriptor)
+
+
+def test_form_identity_keeps_payload_and_metadata_without_scratch(tmp_path):
+    original = form()
+    plan = plan_conversion(port('form', 'form'), port('form', 'form'))['conversion_plan']
+    assert execute_conversion(original, plan, tmp_path) is original
+    assert not list(tmp_path.iterdir())
+    assert plan_conversion(port('form', 'form'), port())['status'] == 'incompatible'
+
+
+def test_native_reader_form_bridge_runs_legacy_operator(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+    from biopipe_sdk.native_array import NativeArray
+    import src.reader as readers
+    from src.task import Context, run
+    original = form()
+    original.data[:] += 1
+    payload = NativeArray(original.data, original.dims, original.labels, original.info, original.axis_info)
+    reader = SimpleNamespace(parameters_schema={'type': 'object'}, handles_compression=True,
+        output_contract={'version': 1, 'numeric': True},
+        _declaration={'data_formats': {'outputs': [port('native.ndarray', 'form')]}},
+        read=lambda *a, **k: payload)
+    monkeypatch.setattr(readers, 'pick_reader', lambda *a: reader)
+    loaded = readers.read_source(tmp_path / 'synthetic.native', original.dims, original.labels)
+    assert loaded.data is original.data
+    assert loaded.axis_info == original.axis_info
+    plan = plan_conversion(port('native.ndarray', 'form'), port('form', 'form'))['conversion_plan']
+    assert execute_conversion(loaded, plan, tmp_path / 'scratch') is loaded
+    ctx = Context(tmp_path / 'task', {})
+    ctx['x'] = loaded
+    try:
+        run(ctx, [{'name': 'log_transform', 'inputs': ['x'], 'params': {'base': 2, 'pseudocount': 1, 'output': 'y'}}])
+        np.testing.assert_allclose(ctx['y'].data, np.log2(original.data + 1))
+    finally:
+        ctx.finalize()
+
+
+def test_native_bridge_requires_metadata_and_checks_reader_container():
+    from biopipe_sdk.native_array import NativeArray, as_form, reader_output
+    with pytest.raises(ValueError, match='explicit Form metadata'):
+        as_form(np.zeros((2, 2)))
+    with pytest.raises(Exception):
+        as_form(NativeArray(np.zeros((2, 2)), ['sample'], {}, {}, {}))
+    with pytest.raises(ValueError, match='different container'):
+        reader_output(object(), {'data_formats': {'outputs': [port('form', 'form')]}})
+    assert plan_conversion(port('native.ndarray', 'form'), port(logical_type='list'))['status'] == 'incompatible'
+
+
+def test_legacy_projection_is_read_only_and_does_not_invent_matrix_semantics():
+    from biopipe_sdk.formats import effective_formats
+    legacy = {'inputs_arity': 1, 'outputs': ['x'], 'contracts': {'inputs': [{'numeric': True}], 'output': {'mode': 'pca'}}}
+    before = deepcopy(legacy)
+    assert effective_formats(legacy)['inputs'][0]['logical_type'] == 'form'
+    assert effective_formats(legacy)['outputs'][0]['logical_type'] == 'form'
+    assert legacy == before
+    legacy['contracts']['inputs'] = [{}]
+    assert effective_formats(legacy)['inputs'][0]['logical_type'] == 'form'
+    legacy['contracts']['inputs'] = [{'kind': ['form', 'file']}]
+    assert effective_formats(legacy)['inputs'] == [None]
+
+
+def test_sdk37_requires_both_arrays_even_for_report():
+    from biopipe.packages import bundled_entries
+    from biopipe_sdk.protocol import Descriptor
+    descriptor = deepcopy(next(d for _, d in bundled_entries('operator') if d['id'] == 'pca'))
+    descriptor.update(protocol_revision='3.7', inputs_arity=0, outputs=[], output_parameter=None, data_formats={})
+    with pytest.raises(ValueError, match='inputs and outputs'):
+        Descriptor.model_validate(descriptor)
+    descriptor['data_formats'] = {'inputs': [], 'outputs': []}
+    Descriptor.model_validate(descriptor)
+
+
+def test_real_file_readers_project_file_artifact_not_form():
+    from biopipe.packages import bundled_entries
+    from biopipe_sdk.formats import effective_formats
+    readers = {d['id']: d for _, d in bundled_entries('reader')}
+    checked = []
+    for name, descriptor in readers.items():
+        if descriptor['contracts']['output'].get('kind') == 'file':
+            assert effective_formats(descriptor)['outputs'][0]['representations'] == ['file_artifact'], name
+            checked.append(name)
+    assert 'FastqReader' in checked
+
+
+@pytest.mark.parametrize('bad_output', [False, True])
+def test_direct_runner_checks_declared_input_and_output_containers(tmp_path, monkeypatch, bad_output):
+    from src.core import FileArtifact
+    from src.task import Context, STEPS, run
+    from src.task.step.base import Step
+    path = tmp_path / 'data.txt'
+    path.write_text('file data')
+    artifact = FileArtifact('txt', {'data': str(path)})
+    class Declared(Step):
+        name = 'declared_guard'
+        inputs_arity = 1
+        outputs = ['out']
+        parameters_schema = {'type': 'object'}
+        definition = {'data_formats': {'inputs': [port('form', 'form')], 'outputs': [port('form', 'form')]}}
+        def run(self, ctx, inputs):
+            ctx['out'] = artifact
+    monkeypatch.setitem(STEPS, Declared.name, Declared)
+    ctx = Context(tmp_path / 'run', {})
+    ctx['in'] = form() if bad_output else artifact
+    try:
+        with pytest.raises(ValueError, match='different container'):
+            run(ctx, [{'name': Declared.name, 'inputs': ['in'], 'params': {}}])
+    finally:
+        ctx.finalize()
+
+
+def test_nested_route_preserves_explicit_native_format_boundary(tmp_path):
+    from src.web.models import Graph, RouteDefinition
+    from src.web.contracts import analyze_graph
+    c = catalog()
+    c['readers'][0]['data_formats']['outputs'] = [port('form', 'form')]
+    c['operators'][0]['data_formats'] = {'inputs': [port('form', 'form')], 'outputs': [port('native.ndarray', 'form')]}
+    inner = graph().model_dump(mode='json')
+    inner['interface'] = {'version': 1, 'inputs': [{'node_id': 'data', 'label': 'Input', 'contract': {'ndim': 2}}],
+                          'outputs': [{'node_id': 'end', 'handle': 'out', 'label': 'Output', 'contract': {'ndim': 2}}]}
+    route = RouteDefinition(id='route_012345abcdef', name='Native route', version=1, graph=Graph.model_validate(inner))
+    c['operators'].append(dict(id='legacy', title='Legacy', inputs_arity=1, outputs=[], output_parameter=None,
+        parameters_schema={'type': 'object'}, runtime_defaults={},
+        contracts={'version': 1, 'inputs': [{'numeric': True, 'ndim': 2}], 'output': {'mode': 'report'}}))
+    outer = Graph.model_validate({'nodes': [
+        graph().model_dump(mode='json')['nodes'][0],
+        {'id': 'nested', 'kind': 'route', 'position': {'x': 100, 'y': 0}, 'route': route.model_dump(mode='json')},
+        {'id': 'old', 'kind': 'operator', 'operator': 'legacy', 'position': {'x': 200, 'y': 0}}],
+        'edges': [{'id': 'before', 'source': 'data', 'target': 'nested'},
+                  {'id': 'after', 'source': 'nested', 'sourceHandle': 'out-0', 'target': 'old'}]})
+    result = analyze_graph(outer, c, tmp_path)
+    boundary = next(e for e in result['edges'] if e['id'] == 'after')
+    assert boundary['conversion_plan']['converters'][0]['id'] == 'form.ndarray.wrap'
+
+
+def test_format_value_rejects_rank_and_storage_mismatch(tmp_path):
+    from biopipe_sdk.native_array import validate_format_value
+    from src.core import FileArtifact
+    path = tmp_path / 'data.txt'; path.write_text('x')
+    with pytest.raises(ValueError, match='container'):
+        validate_format_value(FileArtifact('txt', {'data': str(path)}),
+                              {'logical_type': 'form', 'representations': ['form', 'numpy.ndarray']})
+    with pytest.raises(ValueError, match='representation|mapped'):
+        validate_format_value(form(), port('npy.memmap'))
+    vector = Form(np.arange(3.), ['sample'], {'sample': {'a': 0, 'b': 1, 'c': 2}}, {'missing_code': float('nan')})
+    with pytest.raises(ValueError, match='logical type'):
+        validate_format_value(vector, port())
+    with pytest.raises(ValueError, match='metadata'):
+        validate_format_value(form(), port('form', 'form', dtype='float64'))
+
+
+def test_generic_form_identity_keeps_disk_reducer_streaming(tmp_path, monkeypatch):
+    from test_memory_runtime import context, events
+    from src.task import STEPS, run
+    cls = STEPS['describe']
+    declaration = deepcopy(getattr(cls, '_declaration', {}))
+    declaration['data_formats'] = {'inputs': [port('form', 'form')], 'outputs': []}
+    monkeypatch.setattr(cls, '_declaration', declaration, raising=False)
+    ctx = context(tmp_path, chunk_mb=.00001)
+    ctx['X'] = form()
+    ctx.forms.spill(ctx.forms.entry('X'), 'force_disk_stream')
+    plan = plan_conversion(port('form', 'form'), port('form', 'form'))['conversion_plan']
+    try:
+        run(ctx, [{'name': 'describe', 'inputs': ['X'],
+                   'conversions': [{'port': 0, 'edge_id': 'identity', 'plan': plan}]}])
+    finally:
+        ctx.finalize()
+    assert ctx.memory.report['plans'][0]['mode'] == 'stream'
+    assert not any(event['event'] == 'load' for event in events(ctx))

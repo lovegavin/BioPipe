@@ -25,6 +25,34 @@
     },
     "Descriptor": {
       "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "protocol_revision": {
+                "const": "3.7"
+              }
+            },
+            "required": [
+              "protocol_revision"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data_formats": {
+                "required": [
+                  "inputs",
+                  "outputs"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "data_formats"
+            ]
+          }
+        }
+      ],
       "description": "Canonical, versioned extension declaration; UI projections are separate.",
       "properties": {
         "protocol_version": {
@@ -38,7 +66,8 @@
             {
               "enum": [
                 "3.5",
-                "3.6"
+                "3.6",
+                "3.7"
               ],
               "type": "string"
             },

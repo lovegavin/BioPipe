@@ -79,7 +79,10 @@ class ArrayReader(Reader):
         return Form(data=data, dims=dims, labels=mapping, info={'missing_code': float('nan')})
 '''
     from src.core.contracts import port, reader_contract
-    declaration = dict(protocol_version=3, id=f'example.{module}', version='0.1.0',
+    format_port = {'logical_type': 'form', 'representations': ['form']}
+    declaration = dict(protocol_version=3, protocol_revision='3.7',
+                       data_formats={'inputs': [] if reader else [format_port], 'outputs': [format_port]},
+                       id=f'example.{module}', version='0.1.0',
                        kind='reader' if reader else 'operator', entry_point=f'{module}:{cls}',
                        title='Array reader' if reader else 'Scale matrix', category='data',
                        parameters_schema={'type': 'object', 'additionalProperties': False,
@@ -132,7 +135,7 @@ Run `biopipe plugin test .` from this project. The executable example is in test
 ''', encoding='utf-8')
     (path / 'README.md').write_text(f'''# {package}
 
-BioPipe SDK v3.1. Edit `{module}/parameters.json` for parameters and `{module}/__init__.md` for scientific guidance;
+Operon SDK v3.7. Edit `{module}/parameters.json` for parameters and `{module}/__init__.md` for scientific guidance;
 keep the operator definition with its implementation. Generated parameter tables come from JSON.
 
 Run `biopipe plugin check .`, `biopipe plugin test .`, then `biopipe plugin build .`.
