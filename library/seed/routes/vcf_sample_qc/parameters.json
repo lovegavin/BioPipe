@@ -1,0 +1,76 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "genotypes": {}
+  },
+  "steps": [
+    {
+      "name": "vcf_sample_stats",
+      "inputs": [
+        "genotypes"
+      ],
+      "params": {
+        "max_sites": 0,
+        "output": "sample_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "sample_stats"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "vcf_sample_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "vcf_site_missingness",
+      "inputs": [
+        "genotypes"
+      ],
+      "params": {
+        "max_sites": 0,
+        "output": "site_missingness"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "site_missingness"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "vcf_site_missingness"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "vcf_hardy_weinberg",
+      "inputs": [
+        "genotypes"
+      ],
+      "params": {
+        "max_sites": 0,
+        "output": "hwe"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "hwe"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "vcf_hardy_weinberg"
+      },
+      "context_params": {}
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "key": "vcf_sample_qc",
+  "title": "VCF sample and site quality control",
+  "description": "Call rate, genotype counts, transition/transversion ratio and Hardy-Weinberg exact tests on 1000 Genomes chr22 genotypes.",
+  "tags": [
+    "vcf",
+    "qc",
+    "genetics"
+  ]
+}

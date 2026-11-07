@@ -1,0 +1,11 @@
+{
+  "key": "vcf_sample_qc",
+  "title": "VCF sample and site quality control",
+  "description": "Per-sample genotype summaries, site missingness and exact Hardy-Weinberg tests for a 1000 Genomes chr22 subset.",
+  "tags": [
+    "vcf",
+    "qc",
+    "hardy-weinberg",
+    "ti-tv"
+  ]
+}

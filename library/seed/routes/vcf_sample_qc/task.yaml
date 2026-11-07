@@ -1,0 +1,52 @@
+{
+  "name": "VCF sample and site quality control",
+  "sources": {
+    "genotypes": {
+      "path": "input/subset_snps.vcf.gz",
+      "dims": [
+        "file"
+      ],
+      "labels": {},
+      "reader": "VcfFileReader"
+    }
+  },
+  "steps": [
+    {
+      "name": "vcf_sample_stats",
+      "inputs": [
+        "genotypes"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "sample_stats"
+      ]
+    },
+    {
+      "name": "vcf_site_missingness",
+      "inputs": [
+        "genotypes"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "site_missingness"
+      ]
+    },
+    {
+      "name": "vcf_hardy_weinberg",
+      "inputs": [
+        "genotypes"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "hwe"
+      ]
+    }
+  ],
+  "parameters_file": "parameters.json"
+}

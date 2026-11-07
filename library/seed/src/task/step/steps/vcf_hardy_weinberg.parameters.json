@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "max_sites": {
+      "type": "integer",
+      "default": 0,
+      "minimum": 0,
+      "description": "Read at most this many VCF records (0 reads the whole file)."
+    },
+    "output": {
+      "type": "string",
+      "default": "hwe",
+      "description": "Hardy-Weinberg table name; defaults to the operator name."
+    },
+    "midp": {
+      "type": "boolean",
+      "default": false,
+      "description": "Use the mid-p adjustment instead of the standard exact p-value."
+    }
+  },
+  "additionalProperties": false
+}

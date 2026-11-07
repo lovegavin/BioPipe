@@ -8240,6 +8240,16 @@
     "status": "generated"
   },
   {
+    "id": "vcf_hardy_weinberg",
+    "kind": "operator",
+    "title": "Hardy-Weinberg exact test",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Per-site exact Hardy-Weinberg test with observed and expected heterozygotes.",
+    "doc": "src/task/step/steps/vcf_hardy_weinberg.VcfHardyWeinbergStep.md",
+    "status": "generated"
+  },
+  {
     "id": "vcf_merge",
     "kind": "operator",
     "title": "vcf_merge",
@@ -8267,6 +8277,26 @@
     "version": "1.0.1",
     "description": "KING-robust between-family kinship coefficients between samples of a VCF (plink2 --make-king-table compatible).",
     "doc": "src/task/step/steps/vcf_relatedness.VcfRelatednessStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vcf_sample_stats",
+    "kind": "operator",
+    "title": "Per-sample VCF genotype statistics",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Per-sample call rate, genotype counts, heterozygosity ratio and Ti/Tv.",
+    "doc": "src/task/step/steps/vcf_sample_stats.VcfSampleStatsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "vcf_site_missingness",
+    "kind": "operator",
+    "title": "Per-site VCF call rate",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Per-site called and missing sample counts with the call rate.",
+    "doc": "src/task/step/steps/vcf_site_missingness.VcfSiteMissingnessStep.md",
     "status": "generated"
   },
   {

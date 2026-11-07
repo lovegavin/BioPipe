@@ -340,6 +340,11 @@
       "path": "routes/vcf_normalization/task.yaml",
       "sha256": "5485c50e070828a3705043d524d240b322a8220b2c18d6639abcf8f91214d109",
       "parameters_sha256": "85af13f0eaad4f96537f9f1b2d22520ffa8ab78e67d727f7f8e32700a788d589"
+    },
+    "route_26613d5d7df9": {
+      "path": "routes/vcf_sample_qc/task.yaml",
+      "sha256": "3baea066d0231843f6f7df1c8c199cbeaab375e17e23b368d03a2e1852972175",
+      "parameters_sha256": "4338f3a67f1cfed0f00f97afa2324d9665bc43dc5f144fc42d2809afb89c3545"
     }
   },
   "routes": [
@@ -3122,6 +3127,327 @@
                 },
                 "info_open": false,
                 "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_26613d5d7df9",
+      "version": 1,
+      "name": "VCF sample and site quality control",
+      "graph": {
+        "schema_version": 2,
+        "name": "VCF sample and site quality control",
+        "base_dir": ".studio/builtin-inputs/vcf_sample_qc",
+        "nodes": [
+          {
+            "id": "genotypes",
+            "kind": "source",
+            "script": null,
+            "operator": null,
+            "title": "genotypes",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "VcfFileReader",
+              "path": "input/subset_snps.vcf.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "vcf_sample_stats_1",
+            "kind": "operator",
+            "script": null,
+            "operator": "vcf_sample_stats",
+            "title": "Per-sample VCF genotype statistics",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "max_sites": 0,
+              "output": "sample_stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "vcf_sample_stats",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "vcf_site_missingness_3",
+            "kind": "operator",
+            "script": null,
+            "operator": "vcf_site_missingness",
+            "title": "Per-site VCF call rate",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "max_sites": 0,
+              "output": "site_missingness"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "vcf_site_missingness",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "vcf_hardy_weinberg_5",
+            "kind": "operator",
+            "script": null,
+            "operator": "vcf_hardy_weinberg",
+            "title": "Hardy-Weinberg exact test",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "max_sites": 0,
+              "output": "hwe",
+              "midp": false
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "script": null,
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "vcf_hardy_weinberg",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "adaptation": null,
+            "id": "genotypes-vcf_sample_stats_1-0",
+            "source": "genotypes",
+            "target": "vcf_sample_stats_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "vcf_sample_stats_1-export_results_2-0",
+            "source": "vcf_sample_stats_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "genotypes-vcf_site_missingness_3-0",
+            "source": "genotypes",
+            "target": "vcf_site_missingness_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "vcf_site_missingness_3-export_results_4-0",
+            "source": "vcf_site_missingness_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "genotypes-vcf_hardy_weinberg_5-0",
+            "source": "genotypes",
+            "target": "vcf_hardy_weinberg_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "adaptation": null,
+            "id": "vcf_hardy_weinberg_5-export_results_6-0",
+            "source": "vcf_hardy_weinberg_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "genotypes",
+              "label": "genotypes",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "vcf"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
                 "parallel": []
               }
             }
