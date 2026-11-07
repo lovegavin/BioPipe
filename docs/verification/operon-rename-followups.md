@@ -526,3 +526,15 @@ The 5.0.0 library compatibility evidence is in
 `docs/verification/operon-5.0.0-compatibility.md`. This report deliberately does
 not repeat the 946-file `data_formats` trial or the registry counts; it covers
 only what the rename still needs outside that library release.
+
+## 2.1 Status update (release preparation, 2026-11-07)
+
+- GitHub repository rename is complete ();  points at
+  the new URL and both  and  are pushed.
+- Tag  is pushed (annotated, commit ).
+- Release assets are built and validated in  (10 files,
+   passes for all 9 checksummed artefacts).
+- The GitHub Release itself is **not created yet**: the provided fine-grained
+  token returned  (it was masked in chat and has likely been
+  revoked). Creating the release needs a token with **Contents: Read and write**
+  or a manual upload from the asset directory.
