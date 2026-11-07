@@ -3431,3 +3431,71 @@ All three exports are byte-identical across platforms.
 - Multiallelic records and non-ACGT alleles are skipped.
 - This subset has no missing genotypes, so call-rate handling is exercised by
   unit tests rather than by the route.
+
+## Batch 46 — Assembly NGx and length-profile QC
+
+**Status:** PASS (WSL, srv) / PASS (Windows), 6/6 steps.
+
+### Data
+
+| file | bytes | sha256 |
+|---|---|---|
+| `yeast.fna` (S. cerevisiae S288C, 17 contigs) | 12,310,392 | `fe42735d3e6242f8c40b457a232940e34ef15eb4502717e54a34ed118face4c1` |
+| `ecoli.fasta` (E. coli K-12, 1 contig) | 4,699,745 | `53bb6a51b6e92139ced1e38f74b7938781027c52200922ff03718c2237d23bb4` |
+
+Genome sizes: yeast 12,157,105 bp; E. coli 4,641,652 bp.
+
+### Steps
+
+1. `assembly_ngx_metrics` (yeast, genome_size=12157105) -> export CSV.
+2. `assembly_ngx_curve` (step=10) -> export CSV.
+3. `assembly_length_bins` (default edges) -> export CSV.
+
+### Results
+
+| metric | value |
+|---|---|
+| total length / contigs | 12,157,105 bp / 17 |
+| N50 / NG50 | 924,431 / 924,431 bp |
+| L50 | 6 |
+| N90 / NG90 | 439,888 / 439,888 bp |
+| auN / auNG | 904,609.4998252462 |
+
+Bins: 1 contig 50-99 kb, 1 at 100-249 kb, 3 at 250-499 kb, 8 at 500-999 kb,
+4 at >=1 Mb; no contig below 50 kb.
+
+### Oracle
+
+| oracle | scope | result |
+|---|---|---|
+| QUAST 5.2.0 | N50/NG50/L50/N90/auN/auNG/contigs/total | exact; auN differs by 1.7e-4 because QUAST prints one decimal |
+| base R 4.3.3 (independent parser) | metrics, 10-step Nx curve, 10 length bins | max abs 1.2e-10 |
+
+`workdir/b46_oracle.json`: `passed: true`, curve max abs 0.0, bins max abs 0.0.
+
+### Three platforms
+
+| platform | steps | elapsed (s) | exports md5 |
+|---|---|---|---|
+| WSL | 6/6 | 0.005 + 0.002 + 0.005 + 0.001 + 0.006 + 0.001 | `22302592…` / `84bdc20d…` / `78db6ce7…` |
+| srv | 6/6 | 0.010 + 0.021 + 0.010 + 0.002 + 0.018 + 0.003 | same |
+| Windows | 6/6 | 0.007 + 0.003 + 0.014 + 0.003 + 0.006 + 0.010 | same |
+
+All three platforms produced byte-identical CSVs
+(`assembly_ngx_metrics.csv` 212 B, `assembly_ngx_curve.csv` 601 B,
+`assembly_length_bins.csv` 331 B).
+
+### Fixes
+
+- Operator definitions were normalised to the Descriptor schema: `kind`,
+  `protocol_version`, a `resources` block and sequence representation metadata;
+  `tags`/`license` removed from the literal definition.
+- Route steps are named by operator id; only the export step name
+  (`export_results`) is shared, and `parameters.json` distinguishes the three
+  exports by filename.
+
+### Limitations
+
+- NGx falls back to Nx when `genome_size` is 0.
+- Custom bins must be strictly increasing and may end with 0 for an open bound.
+- The route exercises yeast only; E. coli remains a single-contig control input.
