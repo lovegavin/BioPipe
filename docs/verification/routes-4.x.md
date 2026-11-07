@@ -3379,3 +3379,55 @@ each exported to CSV.
 * Duplicate status comes from the BAM flag; duplicates are not re-marked.
 * Read lengths above `max_length` (default 1000) are folded into one row; none
   occur in this dataset.
+## Batch 45 — VCF sample and site quality control (1000 Genomes chr22)
+
+### Data
+
+| File | Source | Size | SHA256 |
+| --- | --- | --- | --- |
+| `subset_snps.vcf.gz` | 1000 Genomes phase 3, chr22:17,000,515-18,000,000, 50 GBR samples, biallelic SNPs | 541,728 B | `57c1870b83244ae3ba74880f89a1ef69b508bfecad50e8bc998e233a2d060c05` |
+
+28,522 biallelic SNP sites, 50 samples, no missing genotypes. Genotypes are
+real; no synthetic values are used.
+
+### Route
+
+`vcf_sample_stats` -> export, `vcf_site_missingness` -> export,
+`vcf_hardy_weinberg` -> export (6 steps, route key `vcf_sample_qc`).
+
+### Results (WSL)
+
+| Operator | Rows | Key values |
+| --- | --- | --- |
+| `vcf_sample_stats` | 50 | HG00096: 28,522 called, 791 het, 27,074 hom-ref, 657 hom-alt, het/hom 0.028524, Ti/Tv 2.284431; mean het 962.1 |
+| `vcf_site_missingness` | 28,522 | every site call rate 1.0 |
+| `vcf_hardy_weinberg` | 28,522 | median p 1.0, min p 6.08e-09, 4 sites p < 1e-6, 147 sites p < 0.05 |
+
+### Oracles
+
+| Oracle | Command | Result |
+| --- | --- | --- |
+| plink2 2.00a6 | `--missing --het --hardy --freq --set-all-var-ids @:#` | missing/called/het counts exact (0); site missingness 0; HWE observed het exact, expected het 5.33e-15, p max 4.89e-7 |
+| base R 4.3.3 | independent VCF parser and Wigginton exact test | sample counts exact; Ti/Tv 8.9e-16; HWE observed 0, expected 5.33e-15, p max 5.0e-16 |
+| bcftools 1.19 | `bcftools stats` | TSTV ts 19,838 / tv 8,684 / 2.28, matching per-sample Ti/Tv 2.284431 |
+
+The base R implementation matches the operator and plink2; an early R draft
+compared genotype indices against the ALT base and was discarded.
+
+### Three platforms
+
+| Platform | Steps | Total | Export md5 |
+| --- | --- | --- | --- |
+| WSL | 6/6 | 2.308 s | `d83c279a` / `9d5876f2` / `42b61ad6` |
+| srv (venv python 3.11) | 6/6 | 4.55 s (2.289 + 0.990 + 1.154) | identical |
+| Windows (py 3.12) | 6/6 | 2.82 s (1.185 + 0.737 + 0.836) | identical |
+
+All three exports are byte-identical across platforms.
+
+### Notes
+
+- The exact test assumes unrelated individuals and biallelic SNPs; no mid-p
+  adjustment.
+- Multiallelic records and non-ACGT alleles are skipped.
+- This subset has no missing genotypes, so call-rate handling is exercised by
+  unit tests rather than by the route.
