@@ -4,8 +4,8 @@ import type { Graph, InfoRule, PortContract } from "./types";
 // Position, selection and memory-budget edits cannot change port compatibility.
 export function contractSignature(graph: Graph): string {
   return JSON.stringify({ base_dir: graph.base_dir, edges: graph.edges,
-    nodes: graph.nodes.map(({ id, kind, operator, params, source, input_count, route }) =>
-      ({ id, kind, operator, params, source, input_count, route })) });
+    nodes: graph.nodes.map(({ id, kind, operator, params, source, input_count, route, script }) =>
+      ({ id, kind, operator, params, source, input_count, route, script })) });
 }
 export function infoRuleLabel(rule: InfoRule): string {
   const type = rule.items ? `array<${Array.isArray(rule.items) ? rule.items.join(" | ") : rule.items}>` : Array.isArray(rule.type) ? rule.type.join(" | ") : rule.type || t("待确认");
@@ -15,6 +15,10 @@ export function infoRuleLabel(rule: InfoRule): string {
 export function contractRows(contract: PortContract | null): [string, string][] {
   if (!contract) return [[t("契约"), t("尚未声明，运行时检查数据结构")]];
   const rows: [string, string][] = [];
+  if (contract.data_format) {
+    rows.push(["type", contract.data_format.logical_type]);
+    rows.push(["format", contract.data_format.representations.join(" | ")]);
+  }
   if (contract.reader) rows.push(["reader", contract.reader]);
   if (contract.kind === "file") rows.push(["storage", t("磁盘文件")]);
   else rows.push(["dims", contract.dims?.length ? contract.dims.join(" × ") : contract.ndim ? `${contract.ndim}D` : t("由输入确定")]);

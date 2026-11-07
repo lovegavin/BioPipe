@@ -135,7 +135,7 @@ def normalize_numbers(raw, catalog):
 
 def build_routes(root, catalog, previous, route_roots=None):
     from src.web.graph import import_manifest
-    from src.web.models import RouteDefinition
+    from src.web.models import Graph, RouteDefinition
     from src.web.routes import prepare_interface, check_interface
     old = {r["id"]: r for r in previous.get("routes", [])}
     routes, sources, errors, ids, names = [], {}, [], set(), set()
@@ -182,6 +182,15 @@ def build_routes(root, catalog, previous, route_roots=None):
             check_interface(graph, catalog)
             body = graph.model_dump(mode="json")
             before = old.get(identifier)
+            if before:
+                # Additive graph defaults must not rewrite a library produced by
+                # an older compatible application or bump every route version.
+                try:
+                    equivalent = Graph.model_validate(before["graph"]).model_dump(mode="json") == body
+                except ValueError:
+                    equivalent = False
+                if equivalent:
+                    body = deepcopy(before["graph"])
             version = (before["version"] + int(before["graph"] != body)) if before else 1
             record = {"id": identifier, "version": version, "name": name, "graph": body}
             RouteDefinition.model_validate(record)

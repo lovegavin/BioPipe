@@ -117,17 +117,18 @@ directories. Convert older declarations to v3 and validate them before exporting
 
 Source refresh updates the **active profile**, not the checked-in JSON manifests.
 Maintainers still run `biopipe registry build` before committing/publishing source
-changes. Declare algorithm dependencies on the Reader/Step class as literal
-`dependencies = ["package>=version"]` and, optionally,
-`dependency_imports = ["module_name"]`. Refresh reads those declarations before
-importing source and prepares missing compatible dependencies automatically.
+changes. Declare algorithm dependencies in the Reader/Step's literal `definition`
+as `dependencies: ["package>=version"]` and, optionally,
+`dependency_imports: ["module_name"]`. Refresh reads these declarations without
+importing source or preparing scientific dependencies.
 Undeclared imports cannot be installed reliably; scan failures leave the active
 library intact. Wheel projects must also use standard `project.dependencies`.
 See the [dependency contract](operator_protocol.md#dependency-declarations).
 
-Startup and completed library changes check dependency readiness for enabled
-entries. Passed results remain cached for the session, while **Repair dependencies**
-retries failures. The manager displays status and error details and writes
+In 3.0, workflow validation checks readiness only for required entries on the
+selected execution hosts. Installation is a separate explicit action. Startup and
+library changes leave new entries unchecked. Passed results remain cached for the
+session, while **Repair dependencies** retries failures. The manager displays status and error details and writes
 `logs/dependencies.jsonl` under the resolved data directory. Compatible entries
 share dependencies; conflicting entries use private dependency directories and
 subprocesses with the same Python executable.

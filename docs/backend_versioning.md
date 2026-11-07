@@ -8,7 +8,7 @@ numbers below remain unchanged; they do not prescribe future software versions.
 | Axis | Source of truth | Published tag | When it changes |
 | --- | --- | --- | --- |
 | Application | `pyproject.toml`, `biopipe/__init__.py` | `vX.Y.Z` | Engine, service, frontend/host integration or application fixes |
-| Operator library | `library/release.json` | `library-vYYYY.M.D[.N]` | Operators, Readers, guides, defaults, helpers or resource declarations |
+| Operator library | `library/release.json` | `library-v<library-version>` | Operators, Readers, guides, defaults, helpers or resource declarations |
 | Provider/operator | v3 provider and literal declaration | Inside the library/wheel | Executable or contract version changes |
 | Protocol/SDK | protocol schemas and SDK | Explicit SDK release | Authoring/runtime contract changes |
 
@@ -26,15 +26,20 @@ Do not retroactively rename published versions or tags.
 - A library that needs new runtime features declares a tested minimum application
   version. Publish that application separately before depending on it.
 
-## Coordinated 3.0.0 release
+## Current application and historical backend labels
 
-BioPipe 3.0.0 and BioPipe Operator Library v3.0.0 are released together. Both
-products use version `3.0.0`, published as annotated tags `v3.0.0` and
-`library-v3.0.0`. The library declares `minimum_application` and
-`build_application` `2.4.1` (the oldest supported application) while its own
-version is `3.0.0`. This is a coordinated milestone, not a new
-versioning rule: later operator-only changes continue to use the library
-release process.
+The reconciled `main` application is Operon **3.0.1**, matching the published
+application version. The library keeps its own version in `library/release.json`;
+its expansion history does not determine the application version. Earlier backend
+3.0/4.0 labels used on the library development branch are historical labels, not
+newer Operon desktop builds. The original
+[backend 3.0 milestone notes](releases/backend-v3.0.0-historical.md) are retained
+separately from the [Operon 3.0 application notes](releases/v3.0.0.md).
+
+The application release tag and its tested library seed remain immutable. `main`
+can contain newer library sources and compatible maintenance fixes without
+silently replacing a previously published installer. Library authors continue to
+declare and verify `minimum_application` and `build_application` independently.
 
 ## Library rules
 

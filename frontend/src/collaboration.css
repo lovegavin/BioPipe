@@ -1,0 +1,19 @@
+.collaboration-activity{position:absolute;right:18px;bottom:72px;z-index:12;max-width:calc(100% - 36px)}
+.collaboration-toggle{box-shadow:0 3px 12px #00000012;background:var(--surface-elevated);border:1px solid var(--border,#ddd);border-radius:10px;font-size:12px}
+.collaboration-actor{opacity:.65;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.collaboration-popover{position:absolute;right:0;bottom:42px;width:380px;max-width:calc(100vw - 70px);background:var(--surface-elevated);border:1px solid var(--border,#ddd);box-shadow:0 12px 48px #0003;border-radius:14px;overflow:hidden}
+.collaboration-popover>header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border,#ddd);font-size:13px}
+.collaboration-list{max-height:min(48vh,480px);overflow:auto;overscroll-behavior:contain}
+.collaboration-list article{padding:12px 14px;border-bottom:1px solid var(--border,#ddd)}
+.collaboration-entry{display:flex;justify-content:space-between;gap:10px;font-size:12px}
+.collaboration-entry time{opacity:.55;font-size:11px}
+.collaboration-summary,.collaboration-path{display:block;padding:4px 0;border:0;background:none;text-align:left;color:inherit;font:inherit;font-size:12px;cursor:pointer;overflow-wrap:anywhere}
+.collaboration-entry-actions{display:flex;gap:12px;margin-top:5px}
+.collaboration-entry-actions .text-button{font-size:11px}
+.collaboration-diff{margin-top:8px;font-size:11px}
+.collaboration-diff pre{margin:2px 0;padding:6px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;border-radius:4px}
+.collaboration-diff .diff-removed{background:#e7505012;color:var(--text-primary);border-left:2px solid #d86c6c}
+.collaboration-diff .diff-added{background:#6594e818;color:var(--text-primary);border-left:2px solid #719adc}
+.collaboration-diff span{opacity:.6;font-size:10px}
+.collaboration-empty{padding:12px 14px;opacity:.55;font-size:12px}
+.react-flow__node.is-agent-modified{outline:2px solid #8c8ac7;outline-offset:5px;border-radius:12px}

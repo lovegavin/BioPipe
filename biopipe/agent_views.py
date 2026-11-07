@@ -20,13 +20,15 @@ def job_view(job, view='brief'):
     return result
 
 
-def wait_job(client, job, timeout=30, *, view='brief'):
+def wait_job(client, job, timeout=30, *, view='brief', on_update=None):
     if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or not math.isfinite(timeout) or timeout < 0:
         raise ValueError('timeout must be a finite non-negative number')
     job_view(job, view)  # Validate before any polling.
     deadline = time.monotonic() + timeout if timeout else None
     receipt = {key: job[key] for key in ('request_id', 'reused') if key in job}
     path = '/v1/jobs/' + quote(job['id'], safe='') + '?view=brief'
+    if on_update:
+        on_update(job)
     while job['status'] in ACTIVE:
         remaining = deadline - time.monotonic() if deadline is not None else .5
         if remaining <= 0:
@@ -35,6 +37,8 @@ def wait_job(client, job, timeout=30, *, view='brief'):
             return job_view({**job, **receipt, 'wait_timed_out': True}, view)
         time.sleep(min(.5, remaining))
         job = client.request(path)
+        if on_update:
+            on_update(job)
     if view == 'full':
         job = client.request('/v1/jobs/' + quote(job['id'], safe=''))
     return job_view({**job, **receipt}, view)

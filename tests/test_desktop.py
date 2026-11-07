@@ -100,6 +100,23 @@ main()
             process.stdin.write('start\n')
             process.stdin.flush()
             deadline = time.monotonic() + 30
+            url = None
+            while not url and time.monotonic() < deadline:
+                assert process.poll() is None, log_path.read_text(encoding='utf-8')
+                for line in log_path.read_text(encoding='utf-8').splitlines():
+                    if line.startswith('BIOPIPE_READY '):
+                        url = json.loads(line.split(' ', 1)[1])['url']
+                if not url:
+                    time.sleep(.05)
+            assert url, log_path.read_text(encoding='utf-8')
+            # 3.0 startup must not install. Exercise cancellation only after an
+            # explicit preparation request through the real desktop endpoint.
+            assert not pid_file.exists()
+            with httpx.Client(base_url=url, trust_env=False, timeout=10) as client:
+                token = client.get('/api/bootstrap').json()['token']
+                requested = client.post('/api/plugins/dependencies', headers={'X-Studio-Token': token})
+                assert requested.status_code == 200, requested.text
+            deadline = time.monotonic() + 30
             while not pid_file.exists() and time.monotonic() < deadline:
                 assert process.poll() is None, log_path.read_text(encoding='utf-8')
                 time.sleep(.05)

@@ -66,9 +66,19 @@ def mount_control(app, application, bridge):
     def capabilities(request: Request):
         authorize(request)
         return {'api_version': 1, 'operator_protocol': 3, 'headless': bool(getattr(app.state, 'headless', False)),
-                'capabilities': ['workflows', 'tasks', 'artifacts', 'operator-docs', 'canvas-sessions', 'agent-guides', 'brief-views', 'result-viewers'],
+                'capabilities': ['workflows', 'tasks', 'artifacts', 'operator-docs', 'canvas-sessions', 'agent-guides', 'brief-views', 'result-viewers', 'workflow-readiness', 'explicit-environment-preparation', 'transaction-diffs'],
                 'guides_href': '/api/v1/guides', 'openapi_href': '/api/v1/openapi.json',
                 'permission_scopes': ['context', 'edit', 'run', 'plugins']}
+
+    @app.post('/api/v1/workflows/prepare-environment')
+    def prepare_environment(request: Request, payload: GraphRequest):
+        authorize(request, 'plugins')
+        return application.validate(payload.graph, require_files=False, repair=True)
+
+    @app.get('/api/v1/environment')
+    def environment_status(request: Request):
+        authorize(request)
+        return application.environment_status()
 
     @app.get('/api/v1/guides')
     def guides(request: Request):

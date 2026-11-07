@@ -59,7 +59,7 @@ class Client:
             from .headless import ensure_service
             available = ensure_service(directory, workspace=workspace, require_api=require_api)
         if not available:
-            raise ClientError("No running BioPipe service found in this profile. Start biopipe serve or BioPipe Studio.", "not_connected")
+            raise ClientError("No running Operon service found in this profile. Start operon serve or open Operon.", "not_connected")
         # Servers in one profile share the session command store. Select any live
         # endpoint unless the caller explicitly chooses an instance.
         self.instance = available[-1]
@@ -80,7 +80,7 @@ class Client:
         try:
             value = response.json()
         except ValueError:
-            raise ClientError("Studio returned an invalid response")
+            raise ClientError("Operon returned an invalid response")
         if not response.is_success:
             raise ClientError(value.get("message") or str(value.get("detail", response.status_code)),
                               value.get("code", "request_failed"), value.get("details"))
@@ -92,7 +92,7 @@ class Client:
                 "instance_id": self.instance.get("instance_id") if self.instance else ""}
 
     def restart(self):
-        """Re-discover the live bridge after Studio restarted and re-authenticate.
+        """Re-discover the live bridge after Operon restarted and re-authenticate.
 
         A restart publishes a new discovery record with a new instance id, secret
         and connection table. The previous token is unknown to it, and posting to
@@ -101,7 +101,7 @@ class Client:
         """
         available = instances(self.directory)
         if not available:
-            raise ClientError("No running BioPipe service found in this profile. Start biopipe serve or BioPipe Studio.", "not_connected")
+            raise ClientError("No running Operon service found in this profile. Start operon serve or open Operon.", "not_connected")
         previous = self.instance.get("url") if self.instance else ""
         same = [value for value in available if value.get("url") == previous]
         self.instance = (same or available)[-1]
@@ -111,15 +111,19 @@ class Client:
 
     def request(self, path, payload=None):
         route = '/api' + path if path.startswith('/v1/') else '/api/agent' + path
+        preparation = path == '/v1/workflows/prepare-environment'
+        timeout = 1800 if preparation else 660 if path == '/plugins/install' else 120
         response = self.http.get(route) if payload is None else self.http.post(
-            route, json=payload, timeout=660 if path == "/plugins/install" else 120)
-        if response.status_code == 403:
+            route, json=payload, timeout=timeout)
+        # Preparation is an explicit mutation. Do not transparently replay it;
+        # in particular, denied install scope must not become an auto-upgrade.
+        if response.status_code == 403 and not preparation:
             try:
                 self.restart()
             except (ClientError, httpx.HTTPError):
                 return self.decode(response)
             response = self.http.get(route) if payload is None else self.http.post(
-                route, json=payload, timeout=660 if path == "/plugins/install" else 120)
+                route, json=payload, timeout=timeout)
         return self.decode(response)
 
     def download(self, path, destination, payload=None):

@@ -17,6 +17,17 @@ from biopipe.wire import Wire
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def prepare_dependencies(manager, ids=None):
+    """Installation registers source only; explicit environment setup owns pip."""
+    from biopipe.dependencies import DependencySession
+    ids = ids or [d['id'] for d in manager.state()['descriptors'] if d['id'].startswith('test.')]
+    result = DependencySession(manager).check(repair=True, ids=ids)
+    selected = {entry['id']: entry for entry in result['entries'] if entry['id'] in ids}
+    assert set(selected) == set(ids)
+    assert all(entry['status'] == 'passed' for entry in selected.values()), selected
+    return result
+
+
 def provider(tmp_path, name, version, body):
     from biopipe.dropins import single_file_wheel
     path = tmp_path / (name + '.py')
@@ -122,6 +133,8 @@ def installed(tmp_path, monkeypatch):
     isolated = provider(tmp_path, 'test-isolated', '2', ISOLATED)
     streaming = provider(tmp_path, 'test-stream', '2', STREAM)
     manager.install_many([shared, isolated, streaming])
+    assert not manager.state().get('shared_paths')
+    prepare_dependencies(manager)
     return manager
 
 
@@ -178,6 +191,7 @@ def test_transport_obeys_disk_quota_and_keeps_traceback(installed, tmp_path):
 def test_isolated_disk_reader_stages_larger_than_budget_then_streams(installed, tmp_path):
     reader = provider(tmp_path, 'test-reader', '2', READER)
     installed.install(reader)
+    prepare_dependencies(installed, ['test.reader'])
     run = tmp_path / 'reader-run'
     run.mkdir()
     data = np.arange(256 * 1024, dtype=np.float64).reshape(256, 1024)
@@ -205,6 +219,7 @@ def test_isolated_disk_reader_stages_larger_than_budget_then_streams(installed, 
 def test_failed_child_preserves_traceback_and_exits(installed, tmp_path):
     bad = provider(tmp_path, 'test-error', '2', REPORT.replace('test.shared', 'test.error').replace("ctx.log('shared version ' + dep.VERSION)", "raise ValueError('isolation-synthetic-failure')"))
     installed.install(bad)
+    prepare_dependencies(installed, ['test.error'])
     result, summary, _ = worker(installed, tmp_path / 'error', [{'name': 'test.error', 'inputs': []}])
     assert result.returncode != 0 and 'isolation-synthetic-failure' in summary['error']
     assert 'Traceback' in result.stdout + result.stderr
@@ -223,6 +238,7 @@ def test_one_source_file_can_keep_compatible_class_shared(installed, tmp_path):
         'class Scale(Step):\n    dependencies = ["biopipe-test-dependency==2"]')
     write_extension(source, 'BIOPIPE_PLUGIN = {"name": "test-mixed"}\n' + shared + '\n' + isolated)
     installed.install(single_file_wheel(source, tmp_path / 'mixed-wheel'))
+    prepare_dependencies(installed, ['test.mixed_shared', 'test.mixed_scale'])
     descriptors = {d['id']: d for d in installed.state()['descriptors']}
     assert descriptors['test.mixed_shared']['execution']['mode'] == 'shared'
     assert descriptors['test.mixed_scale']['execution']['mode'] == 'isolated'
@@ -243,9 +259,10 @@ def test_session_probes_selected_targets_and_retains_passed_status(installed, mo
         return inspect_entries(state, entries, directory)
     monkeypatch.setattr('biopipe.targets.inspect_entries', inspect)
     session = DependencySession(installed)
-    first = session.check(repair=False)
+    ids = [d['id'] for d in installed.state()['descriptors'] if d['id'].startswith('test.')]
+    first = session.check(repair=False, ids=ids)
     assert all(e['status'] == 'passed' for e in first['entries'] if e['id'].startswith('test.'))
-    session.check(repair=False)
+    session.check(repair=False, ids=ids)
     assert all(not key.startswith('test.') for call in calls[1:] for key in call)
 
 
@@ -258,6 +275,7 @@ def test_desktop_cancel_stops_isolated_child_and_preserves_logs(installed, tmp_p
     slow = provider(tmp_path, 'test-slow', '2', REPORT.replace('test.shared', 'test.slow').replace(
         "ctx.log('shared version ' + dep.VERSION)", "ctx.log('child-ready'); __import__('time').sleep(60)"))
     installed.install(slow)
+    prepare_dependencies(installed, ['test.slow'])
     app = create_app(Settings(tmp_path, installed.directory.parent, ROOT / 'frontend/dist', testing=True, code_root=ROOT))
     with TestClient(app) as client:
         client.headers['X-Studio-Token'] = client.get('/api/bootstrap').json()['token']
@@ -287,7 +305,7 @@ def test_desktop_cancel_stops_isolated_child_and_preserves_logs(installed, tmp_p
         assert not list(directory.glob('output/runs/*/ipc-*'))
 
 
-def test_transitive_conflict_isolated_and_unavailable_package_rolls_back(installed, tmp_path):
+def test_transitive_conflict_and_failed_preparation_preserves_registration(installed, tmp_path):
     from biopipe.dropins import single_file_wheel
     write_wheel({'biopipe_test_transitive.py': b'VALUE = 2\n'}, 'biopipe-test-transitive', '1',
                 ['biopipe-test-dependency==2'], tmp_path / 'wheels')
@@ -295,16 +313,23 @@ def test_transitive_conflict_isolated_and_unavailable_package_rolls_back(install
     write_extension(source, 'BIOPIPE_PLUGIN = {"name": "test-transitive", "dependencies": ["biopipe-test-transitive==1"]}\n'
                       + REPORT.replace('test.shared', 'test.transitive'))
     installed.install(single_file_wheel(source, tmp_path / 'transitive-wheel'))
+    prepare_dependencies(installed, ['test.transitive'])
     state = installed.state()
     assert next(d for d in state['descriptors'] if d['id'] == 'test.transitive')['execution']['mode'] == 'isolated'
     result, summary, _ = worker(installed, tmp_path / 'transitive-run', [{'name': 'test.transitive', 'inputs': []}])
     assert result.returncode == 0, result.stdout + result.stderr
     exported = json.loads((tmp_path / 'transitive-run/output' / summary['steps'][0]['export_path']).read_text())
     assert exported['version'] == '2'
-    original = installed.registry.read_bytes()
     source.write_text(source.read_text().replace('biopipe-test-transitive==1', 'biopipe-no-such-test-distribution==0'))
-    with pytest.raises(ValueError, match='No matching distribution|Could not find a version'):
-        installed.install(single_file_wheel(source, tmp_path / 'missing-wheel'))
+    # An unavailable dependency does not prevent static registration. An
+    # explicitly requested repair must fail without publishing broken targets.
+    installed.install(single_file_wheel(source, tmp_path / 'missing-wheel'))
+    original = installed.registry.read_bytes()
+    from biopipe.dependencies import DependencySession
+    checked = DependencySession(installed).check(repair=True, ids=['test.transitive'])
+    entry = next(e for e in checked['entries'] if e['id'] == 'test.transitive')
+    assert entry['status'] == 'failed'
+    assert 'No matching distribution' in entry['error'] or 'Could not find a version' in entry['error']
     assert installed.registry.read_bytes() == original
 
 

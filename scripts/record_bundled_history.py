@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT))
 
 def record(source, release, commit, output):
     from biopipe.packages import bundled_state
+    from biopipe.library_location import source_root
     from biopipe_sdk.declarations import DeclarationCompiler
     if not re.fullmatch(r'[a-f0-9]{40}', commit):
         raise ValueError('Use the full verified release commit')
@@ -24,7 +25,9 @@ def record(source, release, commit, output):
     # Desktop/source and metadata-only server startup have distinct artifact
     # fingerprints. Record both exact shipped policies, never an ID-only match.
     states = [bundled_state(source, manifest_only=policy) for policy in (False, True)]
-    compiler = DeclarationCompiler(source)
+    # The release manifest belongs to the application root. Since the library
+    # split, implementation bytes live in its seed, just as bundled_state reads.
+    compiler = DeclarationCompiler(source_root(source))
     output = Path(output)
     data = json.loads(output.read_text(encoding='utf-8')) if output.exists() else {'schema_version': 1, 'packages': []}
     if data.get('schema_version') != 1:

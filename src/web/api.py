@@ -48,11 +48,10 @@ def create_app(settings=None):
         if not settings.testing:
             from biopipe.runtime import remember_runtime
             remember_runtime()
-            app.state.check_dependencies()
         yield
         bridge.close()
         application.shutdown()
-    app = FastAPI(title="BioPipe Studio", version=__version__, lifespan=lifespan)
+    app = FastAPI(title="Operon Studio", version=__version__, lifespan=lifespan)
     app.state.service, app.state.token = service, token
     app.state.application = application
     from biopipe.bridge import Bridge
@@ -60,6 +59,8 @@ def create_app(settings=None):
     app.state.bridge = bridge
     from .plugin_api import mount_plugins
     mount_plugins(app, service)
+    from .script_api import mount_scripts
+    mount_scripts(app, service)
     from .preferences import mount_preferences
     mount_preferences(app, service)
     from .remote_api import mount_remote
@@ -91,8 +92,7 @@ def create_app(settings=None):
             if not hmac.compare_digest(request.headers.get("x-studio-token", ""), token):
                 return JSONResponse({"message": "本地会话已更新，请刷新页面。"}, status_code=403)
         try:
-            if service.refresh_catalog() and not settings.testing:
-                app.state.check_dependencies_if_idle()
+            await asyncio.to_thread(service.refresh_catalog)
             response = await call_next(request)
         except Exception:
             logging.exception("studio request failure", extra={"request_id": request_id})
@@ -118,7 +118,8 @@ def create_app(settings=None):
 
     @app.exception_handler(ValueError)
     async def invalid_value(request, exc):
-        return JSONResponse({"code": "invalid_request", "message": str(exc)}, status_code=422)
+        return JSONResponse({"code": getattr(exc, "code", "invalid_request"), "message": str(exc),
+                             "details": getattr(exc, "details", None)}, status_code=422)
 
     @app.get("/health")
     @app.get("/ready")
@@ -165,10 +166,23 @@ def create_app(settings=None):
         prepared = Graph.model_validate(prepare_workflow(graph))
         return Response(export_bundle(prepared), media_type="application/zip")
 
+    @app.post('/api/workflows/export-yaml')
+    def export_public_yaml(graph: Graph):
+        from biopipe.workflow_archive import export_archive
+        staging = service.directory / 'staging'
+        staging.mkdir(exist_ok=True)
+        return Response(export_archive(prepare(graph), staging), media_type='application/zip')
+
     @app.post("/api/workflows/import")
     async def import_workflow(request: Request):
         try:
-            return import_bundle(await request.body()).model_dump(mode="json")
+            data = await request.body()
+            from biopipe.workflow_archive import is_workflow_archive, import_archive
+            if is_workflow_archive(data):
+                staging = service.directory / 'staging'
+                staging.mkdir(exist_ok=True)
+                return import_archive(data, staging, settings.root)
+            return import_bundle(data).model_dump(mode="json")
         except ValueError as exc:
             raise GraphError(str(exc)) from exc
 
@@ -205,12 +219,17 @@ def create_app(settings=None):
         return service.routes.manage_item(payload.key, payload.action)
 
     @app.get("/api/operators")
-    def operators():
-        return catalog
+    def operators(generation: str | None = None):
+        # Poll the generation without transferring/rendering the full library.
+        return None if generation and generation == catalog.get('plugin_generation') else catalog
 
     @app.post("/api/validate")
     def validate(graph: Graph):
-        return executions.validate(graph) if executions.applies(graph) else service.validate_graph(graph)
+        return application.validate(graph, require_files=True)
+
+    @app.post('/api/prepare-environment')
+    def prepare_environment(graph: Graph):
+        return application.validate(graph, require_files=False, repair=True)
 
     @app.post("/api/contracts")
     def contracts(graph: Graph):
@@ -233,6 +252,15 @@ def create_app(settings=None):
         try:
             import_root = settings.code_root or settings.root
             raw = yaml.safe_load(payload.text)
+            if isinstance(raw, dict) and raw.get('format') == 'biopipe.workflow':
+                from biopipe.workflow_spec import parse, compile_spec, WorkflowError
+                try:
+                    directory = project_path(settings.root, '.', payload.base_dir)
+                except GraphError as error:
+                    raise WorkflowError(f'The YAML project base directory must be inside the current workspace: {settings.root}. '
+                                        'Copy the complete YAML project there and select its relative directory, '
+                                        'or import a complete workflow ZIP.') from error
+                return compile_spec(parse(payload.text), directory)
             sources = raw.get('sources') if isinstance(raw, dict) else None
             if isinstance(sources, dict) and sources:
                 from .graph import input_path

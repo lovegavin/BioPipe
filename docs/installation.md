@@ -36,11 +36,12 @@ Windows job object (attached before execution) or a POSIX process group. Cancel
 and timeout clean up that group even if the installer parent already exited.
 This prevents inherited output pipes from trapping the dependency worker during
 shutdown. No process is selected by executable name.
-Provider and dependency bytecode compilation runs in a separate, owned process
+Dependency bytecode compilation runs in a separate, owned process
 using the selected Python interpreter. Directory scanning and even a single
 large source compilation can be cancelled during shutdown; neither runs inside
 the backend's dependency thread. Compilation must finish before a target receipt
-or registry generation is published. Cancelled work is not marked ready.
+is published. Cancelled work is not marked ready. Provider registration in 3.0
+uses static declarations and does not import or precompile the provider.
 Both checked and immutable hash modes retain relative filenames in bytecode.
 
 If a desktop backend is still closing after three seconds, its log records the
@@ -71,11 +72,17 @@ operators. Input arrays are mapped from disk and metadata survives the boundary.
 
 ### Dependency state
 
-At startup Studio reads declarations from the registry without rescanning source.
+At startup Studio reads declarations from the registry without rescanning source
+or starting scientific dependency checks. Installing or refreshing a library only
+registers its verified declarations. Use **Check execution environment** on the
+current workflow; it checks the chosen targets without installing packages.
+Explicitly choose **Install dependencies for this workflow** to repair missing
+requirements. The Run action performs a read-only check if needed and refuses a
+blocked environment. See [readiness](readiness.md).
 Checks run outside the UI process. States are `unchecked`, `checking`, `installing`,
 `passed` and `failed`. Successful checks are held in memory until shutdown, not
-loaded as trusted results from disk on the next launch. Library installation,
-refresh and **Repair dependencies** retry only entries that have not passed.
+loaded as trusted results from disk on the next launch. Validation and explicit
+**Repair dependencies** retry only relevant entries that have not passed.
 A changed implementation or changed declaration becomes a new unchecked entry.
 Disabled operators are excluded until enabled again.
 
@@ -129,6 +136,15 @@ package manifest. It does not import the historical operators. The generated
 implementations, profiles or datasets. Commit it and include it in both the SDK
 wheel and desktop packages. Never generate trusted receipts from an unverified
 user extension or from an edited release folder.
+
+The recorder accepts both the historical flat layout and the split
+`library/seed` layout. Keep the application manifest at the extraction root; do
+not copy just the index without its matching library sources. Operon 3.0 includes
+verified v2.6.0 identities for both desktop and metadata-only server policies.
+An imported route keeps its frozen values and original archive; a new run records
+the compatible bundled update. Unknown wheel pins and version changes remain
+strict and require their original package. This does not silently upgrade third-party
+operators or rewrite archived job locks.
 
 Native dependencies without a compatible Windows wheel must be built and tested
 by the release maintainer, not by the recipient. Supply those artifacts with

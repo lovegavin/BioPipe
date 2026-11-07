@@ -1,24 +1,33 @@
 # Documentation
 
-BioPipe prepares reproducible analysis results from raw data and hands artifacts
+Operon, formerly BioPipe, prepares reproducible analysis results from raw data and hands artifacts
 to specialist tools for interactive interpretation and figure refinement. It
 supports visual editing, human-agent collaboration and unattended execution.
-BioPipe does not supply an AI model or require a desktop for computation.
+Operon does not supply an AI model or require a desktop for computation.
 
 
 ## Core value
 
-BioPipe is not a code generator. It is a contract-first analysis platform: a large,
+Operon is a contract-first analysis platform: a large,
 maintainable, validated operator and Reader library lets an agent call a verified
 analysis instead of writing analysis code. That avoids implementation logic errors
 and the token cost of regenerating the same method. The library is the product;
 visual workflows, the application API, CLI and MCP are ways to discover, compose and
-trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
+trace it. See [Why Operon](../README.md#why-operon) for the five supports.
 
-## Use BioPipe
+## Use Operon
 
 - [Quick start: install, import the operator library, run the example](../QUICKSTART.md)
   ([中文](../QUICKSTART.zh.md))
+- [Windows and Linux command-line installation](command_line_installation.md)
+- [Linux server and terminal quickstart](server_cli.md)
+- [3.0 implementation scope and validation](V3_IMPLEMENTATION.md)
+- [Operon naming and compatibility](rebranding.md)
+- [Operon 3.0 Setup acceptance](OPERON_3_TEST_ACCEPTANCE.md)
+- [Public workflow YAML and templates](workflow_yaml_v3.md)
+- [Script operators, parameter extraction and promotion](script_operators_v3.md)
+- [Selected-target readiness and explicit preparation](readiness.md)
+- [Standalone packages and export boundaries](portable_packages_v3.md)
 - [End-to-end quick start](quickstart_full_flow.md)
 - [Installation and dependencies](installation.md)
 - [Windows Setup and isolated installations](windows_setup.md)
@@ -37,6 +46,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 
 ## Automate and integrate
 
+- [Bidirectional activity, transaction diffs and conditional undo](canvas_collaboration.md)
 - [Three-layer agent operating guide](agent_operations.md)
 - [Third-party API tutorial and runnable client](api_quickstart.md)
 - [Application API, headless CLI and MCP](headless_api.md)
@@ -56,6 +66,7 @@ trace it. See [Why BioPipe](../README.md#why-biopipe) for the five supports.
 
 ## Extend and maintain
 
+- [SDK 3.6 logical types, representations and conversion plans](data_formats.md)
 - [SDK quickstart](sdk_quickstart.md) and [SDK reference](sdk_reference.md)
 - [Operator protocol](operator_protocol.md) and [package protocol](package_protocol.md)
 - [Reader extensions](reader_extensions.md) and [step extensions](step_extensions.md)

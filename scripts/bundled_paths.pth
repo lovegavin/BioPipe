@@ -1,0 +1,4 @@
+# Private Windows runtime only. Resolve imports with native long-path aliases
+# before other .pth files load native wheels. Keep sys.path and host policy intact.
+# FileFinder raises ImportError for non-directories, so ZIP/custom hooks still run.
+import operon_import_paths

@@ -21,12 +21,43 @@ CLI: `biopipe --session <session> graph apply commands.json --document <document
 --expected-revision <revision> --request-id edit-001` (one command line).
 
 4. On revision_conflict reread context and reconcile the user's changes. Reuse a
-   request ID only for an identical retry. `biopipe_undo` reverses one transaction;
-   it does not reverse an executed analysis or delete output files.
+   request ID only for an identical retry. The receipt contains transaction_id;
+   retries return the same ID without applying the edit twice. `biopipe_undo`
+   accepts that transaction_id to reverse its fields while preserving unrelated
+   later human changes. An overlapping later edit returns undo_conflict. Never
+   resolve it by restoring an obsolete full graph. Undo does not reverse an
+   executed analysis or delete output files.
 5. Run separately, only when authorized. `biopipe_run` requires run scope.
 
 No open window? Use the workflow guide. Never fabricate a canvas session.
 
-`biopipe_open` defaults to `mode="replace"` in 2.x. Use `mode="append"` when
+`biopipe_open` defaults to `mode="replace"`. Use `mode="append"` when
 opening a separate workflow tab, and `document_id` plus the current revision
 when intentionally replacing an existing document. Never replace unrelated work.
+
+## Follow changes without reloading the graph
+
+Use `biopipe_events(session_id, after=cursor, limit=20)` for bounded user/agent
+events, actor identities and short before/after previews. Continue at
+`next_cursor`, not `seq` (the stream head). `has_more` means another page remains;
+deduplicate by event seq. On `reset=true`, reread current context/graph because
+retained history has a gap; do not reconstruct state from incomplete deltas.
+Selection events change UI state, not the scientific graph revision.
+
+For a relevant transaction only, call `biopipe_transaction_diff(session_id,
+transaction_id, offset=0, limit=20)`. Continue at next_offset; previews mark
+truncated values. Retrieve current source/node values when full content is
+needed, never use a truncated preview as replacement code. Studio's Activity
+panel shows the same changes and supports conditional Undo this edit.
+
+CLI equivalents (one line each):
+
+```text
+biopipe --session <session> events get --after <cursor> --limit 20
+biopipe --session <session> graph diff --transaction-id <id> --limit 20
+biopipe --session <session> graph undo --document <document> --expected-revision <current> --transaction-id <id>
+```
+
+Code/parameter edits, event reads and undo never launch computation or repair
+dependencies. Environment installation uses the workflow guide's explicit
+prepare-environment action; job submission remains separate.

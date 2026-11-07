@@ -1,4 +1,4 @@
-"""Real CLI/MCP acceptance against an explicit, already running BioPipe instance.
+"""Real CLI/MCP acceptance against an explicit, already running Operon instance.
 
 Never creates a canvas session or fabricates selection. Canvas phases require a
 real desktop window. Keep each release variant in its own synthetic profile.
@@ -111,7 +111,7 @@ class Acceptance:
     def fixture(self):
         source = self.workspace / 'release-agent-input.csv'
         source.write_text('geneA,geneB,geneC\n1,3,5\n2,6,10\n3,9,15\n4,12,20\n', encoding='utf-8')
-        return {'schema_version': 2, 'name': 'BioPipe release agent acceptance', 'base_dir': '.',
+        return {'schema_version': 2, 'name': 'Operon release agent acceptance', 'base_dir': '.',
                 'memory': {'enabled': True, 'auto_spill': True, 'budget_mb': 64, 'process_limit_mb': 768,
                            'chunk_mb': .01, 'io_buffer_kb': 4, 'keep': ['input', 'pcs']},
                 'nodes': [
@@ -167,6 +167,12 @@ class Acceptance:
         self.state.update(workflow_id=saved['id'], expected_version=2, graph=changed['graph'],
                           request_id='release-agent-' + hashlib.sha256(str(self.evidence).encode()).hexdigest()[:20],
                           backend_instance=self.instance)
+        if self.args.prepare_environment:
+            # Explicit acceptance flag grants installation, separately from run.
+            async with self.mcp('--allow-plugins') as session:
+                prepared = await self.call(session, 'biopipe_workflow_prepare_environment', {'graph': changed['graph']})
+                assert prepared['readiness']['status'] == 'ready', prepared
+                self.check('Explicit route dependency preparation', prepared['readiness'])
         async with self.mcp('--allow-run') as session:
             job = await self.call(session, 'biopipe_submit', self.request())
             assert job['status'] in {'queued', 'preparing', 'running', 'uploading'}
@@ -278,7 +284,7 @@ class Acceptance:
                             {'op': 'add_node', 'node': {'id': 'agent_diagnostic', 'kind': 'operator', 'operator': 'describe',
                              'title': 'Agent diagnostic', 'position': {'x': 720, 'y': 350}, 'params': {}}},
                             {'op': 'connect', 'edge': {'id': 'agent-branch', 'source': 'pca', 'target': 'agent_diagnostic'}},
-                            {'op': 'configure', 'patch': {'name': 'BioPipe release — Agent batch'}}]
+                            {'op': 'configure', 'patch': {'name': 'Operon release — Agent batch'}}]
                 before_jobs = {job['id'] for job in self.cli('jobs', 'list')}
                 applied = await self.call(session, 'biopipe_apply', {'session_id': selected, 'document_id': canvas['document_id'],
                     'expected_revision': snapshot['revision'], 'commands': commands, 'request_id': 'release-batch-' + str(snapshot['revision'])})
@@ -311,7 +317,9 @@ def main():
     parser.add_argument('--instance', required=True)
     parser.add_argument('--evidence', type=Path, required=True)
     parser.add_argument('--session')
-    parser.add_argument('--version', default='2.0.4')
+    parser.add_argument('--version', default='3.0.0')
+    parser.add_argument('--prepare-environment', action='store_true',
+                        help='Explicitly authorize installing only this synthetic route dependencies before backend acceptance')
     parser.add_argument('--allow-headless', action='store_true', help='Development smoke only; never label this an EXE UI test')
     args = parser.parse_args()
     try:

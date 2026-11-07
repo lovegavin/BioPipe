@@ -1,7 +1,13 @@
-# Operator protocol v3 and v3.5
+# Operator protocol v3, v3.5 and v3.6
 
-The current SDK is 3.5.0. The wire major remains protocol 3. Operator IDs, numerical kernels,
+The current SDK is 3.6.0. The wire major remains protocol 3. Operator IDs, numerical kernels,
 Form contracts and resource protocols retain their existing meaning.
+
+SDK 3.6 adds optional `data_formats` declarations for logical types and physical
+representations. Existing v3 and v3.5 declarations keep their previous contract
+behavior; they do not silently opt into conversions. See [data formats](data_formats.md).
+Workflow-local scripts can start without sidecar files and be promoted into this
+ordinary package protocol; see [script authoring](script_operators_v3.md).
 
 ## Authoring unit: code + its own parameter JSON + Markdown
 

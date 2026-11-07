@@ -114,6 +114,38 @@ def test_missing_executable_and_failed_python_dependencies_exclude_hosts():
     assert targets(planner.make_plan(workflow, [missing])) == {"align": SSH}
 
 
+def test_validation_placement_defers_missing_tools_and_dependencies_but_not_host_capabilities():
+    workflow = graph([source(location=SSH), operator('align', 'align')], [('input', 'align')],
+                     mode='manual', kind='ssh', profile_id='compute')
+    info = host(SSH, 'linux', [spec('align', ['linux'], ['bwa'])], tools={},
+                readers=[reader(['linux'])], dependencies={'entries': [
+                    {'id': 'align', 'status': 'failed'}, {'id': 'CsvReader', 'status': 'failed'}]})
+    with pytest.raises(GraphError, match='Missing executable'):
+        planner.make_plan(workflow, [info])
+    plan = planner.make_plan(workflow, [info], validation_only=True)
+    assert plan['validation_only'] and targets(plan) == {'align': SSH}
+    assert '_validation_only' not in info
+    # Validation does not turn Windows into Linux or make an offline host real.
+    with pytest.raises(GraphError, match='requires linux'):
+        planner.make_plan(workflow, [{**info, 'system': 'windows'}], validation_only=True)
+    with pytest.raises(GraphError, match='Input environment is unavailable'):
+        planner.make_plan(workflow, [], validation_only=True)
+    pin = implementation()
+    workflow.plugin_lock = {'align': pin}
+    info['catalog']['operators'][0]['implementation'] = {**pin, 'sha256': 'wrong-code'}
+    with pytest.raises(GraphError, match='pinned implementation'):
+        planner.make_plan(workflow, [info], validation_only=True)
+
+
+def test_validation_auto_prefers_already_compatible_host_but_manual_can_prepare_selected_host():
+    workflow = graph([operator('step')], mode='auto')
+    failed = host(dependencies={'entries': [{'id': 'portable', 'status': 'failed'}]})
+    ready = host(SSH, 'linux', dependencies={'entries': [{'id': 'portable', 'status': 'passed'}]})
+    assert targets(planner.make_plan(workflow, [failed, ready], validation_only=True)) == {'step': SSH}
+    workflow.runtime['execution']['mode'] = 'manual'
+    assert targets(planner.make_plan(workflow, [failed, ready], validation_only=True)) == {'step': LOCAL}
+
+
 def test_absent_operator_is_not_silently_replaced():
     workflow = graph([operator("custom", "not_installed")], mode="auto")
     with pytest.raises(GraphError, match="not_installed is not installed"):

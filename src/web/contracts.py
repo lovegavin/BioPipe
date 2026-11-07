@@ -6,6 +6,9 @@ from biopipe.file_formats import primary_ext
 
 
 def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), input_roots=None):
+    if any(node.kind == "script" for node in graph.nodes):
+        from biopipe.script_operators import prepare_script_graph
+        graph, catalog = prepare_script_graph(graph, catalog)
     source_overrides = {**graph.runtime.get("exchange_contracts", {}), **(source_overrides or {})}
     from .graph import GraphError, project_path
     from .routes import check_interface, require_route, port_index
@@ -41,6 +44,9 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
                         reader = delegates[0]
                     schema = source_schema(reader["contracts"]["output"], source.dims)
                     schema["reader"] = reader["id"]
+                    formats = reader.get("data_formats") or {}
+                    if formats.get("outputs"):
+                        schema["data_format"] = formats["outputs"][0]
             ports[node.id] = {"inputs": [], "outputs": [schema]}
         elif node.kind == "route":
             route = require_route(node)
@@ -57,8 +63,12 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
             count = node.input_count if spec["inputs_arity"] == "*" else spec["inputs_arity"]
             requirements = spec["contracts"]["inputs"] or []
             params = {**spec["runtime_defaults"], **node.params}
-            ports[node.id] = {"inputs": [resolve(requirements[min(i, len(requirements)-1)], params) if requirements else None
-                                         for i in range(count)],
+            formats = spec.get("data_formats") or {}
+            input_rules = [resolve(requirements[min(i, len(requirements)-1)], params) if requirements else None for i in range(count)]
+            for index, rule in enumerate(input_rules):
+                if formats.get("inputs"):
+                    input_rules[index] = {**(rule or {}), "data_format": formats["inputs"][min(index, len(formats["inputs"])-1)]}
+            ports[node.id] = {"inputs": input_rules,
                               "outputs": [unknown() for _ in range(1 if spec["output_parameter"] else len(spec["outputs"]))]}
     edge_ids = set()
     for edge in graph.edges:
@@ -91,6 +101,17 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
                     result = compatible(inputs[index], ports[key]["inputs"][index])
                 except (TypeError, ValueError, KeyError):
                     result = {"status": "unknown", "reasons": ["请完善算子参数后检查契约"]}
+                from biopipe.conversions import plan_conversion
+                source_format = inputs[index].get("data_format")
+                required_format = (ports[key]["inputs"][index] or {}).get("data_format")
+                if source_format is not None or required_format is not None or edge.adaptation is not None:
+                    adapted = plan_conversion(source_format, required_format, edge.adaptation.model_dump() if edge.adaptation else None)
+                    result["conversion_plan"] = adapted.get("conversion_plan")
+                    if adapted["status"] != "compatible":
+                        result["status"] = "incompatible" if adapted["status"] == "incompatible" else result["status"]
+                        result["format_unresolved"] = adapted["status"] == "unknown"
+                        result["reasons"] += adapted["reasons"]
+                        if result["status"] == "compatible": result["status"] = "unknown"
                 invalid |= result["status"] == "incompatible"
                 results.append({"id": edge.id, "source": edge.source, "target": key, **result})
             if node.kind == "route":
@@ -114,7 +135,9 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
                     schema = infer_output(spec["contracts"]["output"], inputs, {**spec["runtime_defaults"], **node.params}) if not invalid else unknown()
                 except (TypeError, ValueError, KeyError):
                     schema = unknown()
-                ports[key]["outputs"] = [schema for _ in ports[key]["outputs"]]
+                formats = (spec.get("data_formats") or {}).get("outputs", [])
+                ports[key]["outputs"] = [{**schema, **({"data_format": formats[i]} if i < len(formats) else {})}
+                                          for i in range(len(ports[key]["outputs"]))]
         for target in outgoing[key]:
             degree[target] -= 1
             if degree[target] == 0:

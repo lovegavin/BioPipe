@@ -110,7 +110,7 @@ class Bridge:
         @app.post("/api/agent/sessions")
         def create_session(request: Request, payload: dict):
             self.actor(request, "edit")
-            return hub.create(payload["workspace"], payload.get("name", "BioPipe Studio"))
+            return hub.create(payload["workspace"], payload.get("name", "Operon"))
 
         @app.get("/api/agent/sessions/{session}")
         def snapshot(session: str, request: Request):
@@ -149,12 +149,18 @@ class Bridge:
 
         @app.post("/api/agent/sessions/{session}/undo")
         def undo(session: str, request: Request, payload: dict):
-            return hub.undo(session, payload["document_id"], payload["expected_revision"], payload.get("redo", False), self.actor(request, "edit"))
+            return hub.undo(session, payload["document_id"], payload["expected_revision"], payload.get("redo", False), self.actor(request, "edit"),
+                            transaction_id=payload.get('transaction_id'))
 
         @app.get("/api/agent/sessions/{session}/events")
-        def events(session: str, request: Request, after: int = 0):
+        def events(session: str, request: Request, after: int = 0, limit: int = 50):
             self.actor(request, "context")
-            return hub.events(session, after)
+            return hub.events(session, after, limit)
+
+        @app.get('/api/agent/sessions/{session}/transactions/{transaction_id}')
+        def diff(session: str, transaction_id: str, request: Request, offset: int = 0, limit: int = 20):
+            self.actor(request, 'context')
+            return hub.diff(session, transaction_id, offset, limit)
 
         @app.get("/api/agent/sessions/{session}/stream")
         async def stream(session: str, request: Request, after: int = 0):
@@ -170,7 +176,7 @@ class Bridge:
                     result = hub.events(session, cursor)
                     if result["events"] or result["reset"]:
                         yield "data: " + json.dumps(result, ensure_ascii=False) + "\n\n"
-                        cursor = result["seq"]
+                        cursor = result['next_cursor']
                     else:
                         yield ": heartbeat\n\n"
                     await asyncio.sleep(.35)

@@ -17,7 +17,8 @@ internal static class InstallFiles
     internal static readonly JsonSerializerOptions Json = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true, WriteIndented = true };
     internal static readonly byte[] FooterMagic = Encoding.ASCII.GetBytes("BIOPIPE-SETUP-V1");
-    internal const string Owner = "BioPipe.Studio.Install.v1";
+    internal const string Owner = "Operon.Studio.Install.v1";
+    internal const string PayloadRoot = "Operon Studio/";
 
     [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern bool GetDiskFreeSpace(string root, out uint sectorsPerCluster,
@@ -134,10 +135,10 @@ internal static class InstallFiles
         foreach (var entry in archive.Entries)
         {
             token.ThrowIfCancellationRequested();
-            if (!entry.FullName.StartsWith("BioPipe Studio/", StringComparison.Ordinal)) throw new InvalidDataException("安装包目录无效。");
+            if (!entry.FullName.StartsWith(PayloadRoot, StringComparison.Ordinal)) throw new InvalidDataException("安装包目录无效。");
             if (((entry.ExternalAttributes >> 16) & 0xf000) == 0xa000 || (entry.ExternalAttributes & 0x400) != 0)
                 throw new InvalidDataException("安装包不能包含符号链接。");
-            var relative = entry.FullName[15..];
+            var relative = entry.FullName[PayloadRoot.Length..];
             if (relative.Length == 0) continue;
             bool directory = relative.EndsWith('/');
             var target = Inside(stage, directory ? relative[..^1] : relative);
@@ -150,7 +151,7 @@ internal static class InstallFiles
             using var output = new FileStream(target, FileMode.CreateNew, FileAccess.Write, FileShare.None);
             await input.CopyToAsync(output, token);
             if (output.Length != entry.Length) throw new InvalidDataException("安装文件长度无效。");
-            if (count % 100 == 0) progress.Report(new("正在安装 BioPipe 和运行环境…", 15 + (int)(total * 60 / spec.UnpackedBytes)));
+            if (count % 100 == 0) progress.Report(new("正在安装 Operon 和运行环境…", 15 + (int)(total * 60 / spec.UnpackedBytes)));
         }
         if (count != spec.Files || total != spec.UnpackedBytes) throw new InvalidDataException("安装包文件清单不完整。");
     }
@@ -170,7 +171,7 @@ internal static class InstallFiles
                 Hash(path) != item.GetProperty("sha256").GetString())
                 throw new InvalidDataException("安装文件损坏：" + Path.GetFileName(path));
         }
-        foreach (var required in new[] { "BioPipe Studio.exe", "runtime/python/python.exe", "scripts/install_maintenance.py", "frontend/index.html" })
+        foreach (var required in new[] { "Operon Studio.exe", "runtime/python/python.exe", "scripts/install_maintenance.py", "frontend/index.html" })
             if (!seen.Contains(Inside(directory, required))) throw new InvalidDataException("安装包缺少组件：" + required);
     }
 

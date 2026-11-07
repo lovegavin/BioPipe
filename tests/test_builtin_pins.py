@@ -229,11 +229,12 @@ def test_nested_declaration_pins_share_code_identity_without_old_snapshots(tmp_p
     assert graph.nodes[0].route.graph.plugin_lock['pca'] == old
 
 
+@pytest.mark.parametrize('release', ['v0.8.3', 'v2.6.0'])
 @pytest.mark.parametrize('variant', [0, 1])
-def test_known_v083_receipts_resolve_in_a_fresh_profile(tmp_path, variant):
+def test_known_release_receipts_resolve_in_a_fresh_profile(tmp_path, variant, release):
     records = [p for p in json.loads((ROOT / 'biopipe/bundled_history.json').read_text(encoding='utf-8'))['packages']
-               if any(release['tag'] == 'v0.8.3' for release in p['releases'])]
-    # v0.8.3 ships both source-sensitive desktop and manifest-only server
+               if any(item['tag'] == release for item in p['releases'])]
+    # Releases ship both source-sensitive desktop and manifest-only server
     # fingerprints. Both are exact known identities, not an ID-only fallback.
     names = {record['implementation']['package'] for record in records}
     assert len(names) == 7

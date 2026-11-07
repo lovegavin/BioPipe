@@ -1,5 +1,11 @@
 # BioPipe Quick Start (application 2.6.0 + operator library 4.0.4)
 
+> This is the original, version-pinned library walkthrough. For the current
+> **Operon 3.0.1** application, use the [Windows Setup guide](docs/windows_setup.md)
+> or [Windows/Linux CLI installer](docs/command_line_installation.md), then
+> explicitly [check and prepare the selected workflow environment](docs/readiness.md).
+> Installation paths, installer names and bundled dependencies below describe 2.6.0.
+
 From a clean Windows machine to an exported, biologically meaningful result in
 about five minutes: install the desktop application, import operator library
 4.0.4, and run a real VHH/lysozyme interface analysis on **1MEL**.

@@ -14,6 +14,7 @@ import { OperatorArtwork, OperatorPreview } from "./OperatorArtwork";
 import { OperatorIcon } from "./icons";
 import { HelpTip } from "./HelpTip";
 import {ExecutionSettings} from './ExecutionSettings';
+import {OperatorSource, ScriptInspector, scriptParameters} from './ScriptInspector';
 import {defaultTarget, executionConfig, groupParameters, nodeTarget, targetFromKey, targetKey, targetLabel} from './execution';
 import { api } from "./api";
 import { inputAccept, makeReaderNode, renameSourceDimensions, readerForSource, rePointSource } from "./readerInput";
@@ -223,6 +224,7 @@ export function Inspector({
   localSystem,
   onExecution = () => {},
   onFileLocation = () => {},
+  onCatalog,
 }: {
   graph: Graph;
   catalog: Catalog;
@@ -244,6 +246,7 @@ export function Inspector({
   localSystem?: string;
   onExecution?: (patch: Partial<ExecutionConfig>) => void;
   onFileLocation?: (key: string, target: TargetRef) => void;
+  onCatalog?: (catalog: Catalog, createdId?: string) => void;
 }) {
   const node = graph.nodes.find((n) => n.id === nodeId),
     spec = node ? specFor(node, catalog) : undefined;
@@ -253,6 +256,8 @@ export function Inspector({
     if (content.current) content.current.scrollTop = 0;
   }, [node?.id, settings]);
   const [uploading, setUploading] = useState(false);
+  const [nodeView, setNodeView] = useState<{id: string | null; mode: 'code' | 'parameters'}>({id: null, mode: 'parameters'});
+  const view = nodeView.id === nodeId ? nodeView.mode : node?.kind === 'script' ? 'code' : 'parameters';
   const memory = graph.memory;
   const automaticPercent = automaticMemoryFraction == null ? undefined : automaticMemoryFraction * 100;
   const reader = node?.source ? readerForSource(catalog, node.source) : undefined;
@@ -437,7 +442,19 @@ export function Inspector({
                 onChange={(e) => onNode(node.id, { title: e.target.value })}
               />
             </label>
-            {node.kind === "source" && node.source ? (
+            <div className="inspector-view-tabs" role="tablist" aria-label={t('节点视图')}>
+              {(['parameters', 'code'] as const).map(mode => <button key={mode} role="tab" aria-selected={view === mode}
+                onClick={() => setNodeView({id: node.id, mode})}>{mode === 'code' ? t('代码') : t('参数')}</button>)}
+            </div>
+            {view === 'code' ? node.kind === 'script' && node.script
+              ? <ScriptInspector key={node.id} node={node} disabled={busy} onNode={onNode} catalog={catalog} onCatalog={onCatalog}/>
+              : <OperatorSource key={node.id} id={node.kind === 'route' ? undefined : node.kind === 'source' ? reader?.id : node.operator || undefined} route={node.kind === 'route' ? node.route?.graph : undefined}/>
+              : node.kind === 'script' && node.script ? <>
+                <ParameterGroups parameters={scriptParameters(node.script)} renderField={field => <ParameterField key={`${node.id}:${field.key}`} field={field}
+                  value={node.params[field.key]} disabled={busy} onChange={value => param(field.key, value)}/>}/>
+                {!scriptParameters(node.script).length && <p className="helper">{t('尚无参数，可在代码视图选择提取。')}</p>}
+                <details className="advanced"><summary>{t('完整参数 JSON')}</summary><JsonField label={t('算子参数')} value={node.params} disabled={busy} onChange={params => onNode(node.id, {params})}/></details>
+              </> : node.kind === "source" && node.source ? (
               <>
                 <label className="field"><span>Reader</span>
                   <select aria-label={t("选择 Reader")} value={node.source.reader || ''} disabled={busy || uploading}

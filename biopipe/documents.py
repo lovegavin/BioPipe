@@ -7,6 +7,7 @@ from copy import deepcopy
 from collections import deque
 from datetime import datetime, timezone
 import json
+import logging
 from pathlib import Path
 import time
 import uuid
@@ -14,6 +15,7 @@ import uuid
 from src.web.models import Graph, Workspace
 from src.web.storage import FileLock, atomic_json
 from src.web.contracts import analyze_graph
+from .document_changes import changes, compensate, preview
 
 
 class CommandError(ValueError):
@@ -91,9 +93,10 @@ class DocumentHub:
         if workspace:
             value["workspace"] = deepcopy(state["workspace"])
         value["history"] = {key: {"undo": len(item["past"]), "redo": len(item["future"])} for key, item in state["history"].items()}
+        value['document_ids'] = [doc['id'] for doc in state['workspace']['documents']]
         return value
 
-    def create(self, workspace, name="BioPipe Studio"):
+    def create(self, workspace, name="Operon"):
         workspace = Workspace.model_validate(workspace).model_dump(mode="json")
         state = {"id": uuid.uuid4().hex, "name": str(name)[:100], "revision": 0, "ui_revision": 0,
                  "seq": 0, "events": [], "updated_at": now(), "presence": {}, "history": {}, "receipts": {},
@@ -140,28 +143,41 @@ class DocumentHub:
             self.save(state)
             return self.public(state, workspace=False)
 
-    def _commit(self, state, workspace, actor, label, record=True):
+    def _commit(self, state, workspace, actor, label, record=True, transaction_id=None, related_transaction=None):
+        transaction_id = transaction_id or uuid.uuid4().hex
         previous = {doc["id"]: doc for doc in state["workspace"]["documents"]}
         changed = set(previous) != {doc["id"] for doc in workspace["documents"]} or any(
             doc["id"] not in previous or previous[doc["id"]]["graph"] != doc["graph"] for doc in workspace["documents"])
-        if record:
-            for doc in workspace["documents"]:
-                old = previous.get(doc["id"])
-                if old and old["graph"] != doc["graph"]:
+        deltas = []
+        for doc in workspace['documents']:
+            old = previous.get(doc['id'])
+            delta = changes(old['graph'] if old else {}, doc['graph'])
+            if delta:
+                deltas.extend({'document_id': doc['id'], **item} for item in delta)
+                if record and old:
                     history = state["history"].setdefault(doc["id"], {"past": [], "future": []})
-                    history["past"] = [*history["past"][-29:], {"graph": deepcopy(old["graph"]), "actor": actor, "label": label}]
+                    history["past"] = [*history["past"][-29:], {"graph": deepcopy(old["graph"]),
+                        "changes": delta, "actor": actor, "label": label, "transaction_id": transaction_id}]
                     history["future"] = []
+        for key in previous.keys() - {doc['id'] for doc in workspace['documents']}:
+            deltas.append({'document_id': key, 'path': ['document'], 'before_exists': True,
+                           'after_exists': False, 'before': {'name': previous[key]['graph']['name']}, 'after': None})
         state["workspace"] = workspace
         if changed:
             state["revision"] += 1
         else:
             state["ui_revision"] += 1
         state["updated_at"] = now()
-        self.event(state, "graph.changed" if changed else "view.changed", actor, label=label)
-        # Keep the legacy startup workspace usable by desktop and older builds.
-        self.service.routes.save_workspace(Workspace.model_validate(workspace))
+        self.event(state, "graph.changed" if changed else "view.changed", actor, label=label,
+                   transaction_id=transaction_id, related_transaction=related_transaction, changes=deltas)
+        # Authoritative graph, history, receipts and events share one atomic save.
         self.save(state)
-        return self.public(state)
+        # Keep the legacy startup workspace usable by desktop and older builds.
+        try:
+            self.service.routes.save_workspace(Workspace.model_validate(workspace))
+        except OSError:
+            logging.getLogger(__name__).exception('Could not mirror committed canvas; session remains authoritative')
+        return {**self.public(state), 'transaction_id': transaction_id}
 
     def sync(self, session, workspace, revision):
         workspace = Workspace.model_validate(workspace).model_dump(mode="json")
@@ -220,7 +236,8 @@ class DocumentHub:
                 receipt = state["receipts"][request_id]
                 if receipt["commands"] != commands or receipt["document"] != document or receipt["actor"] != actor:
                     raise CommandError("idempotency_conflict", "Request ID already used for different edits", 409)
-                return self.public(state)
+                return {**self.public(state), 'transaction_id': receipt.get('transaction_id'),
+                        'document_id': document, 'replayed': True}
             self.expect(state, revision)
             workspace = deepcopy(state["workspace"])
             doc = next((d for d in workspace["documents"] if d["id"] == document), None)
@@ -267,10 +284,13 @@ class DocumentHub:
                 raise CommandError("incompatible_contract", "Edit creates incompatible connections", details=incompatible)
             doc["graph"] = model.model_dump(mode="json")
             state["connections"][actor] = now()
+            transaction_id = uuid.uuid4().hex
             if request_id:
-                state["receipts"][request_id] = {"commands": commands, "document": document, "actor": actor}
+                state["receipts"][request_id] = {"commands": commands, "document": document, "actor": actor,
+                                               'transaction_id': transaction_id}
                 state["receipts"] = dict(list(state["receipts"].items())[-100:])
-            result = self._commit(state, workspace, actor, "Agent edit")
+            result = self._commit(state, workspace, actor, "Agent edit" if actor != 'user' else 'Edit canvas',
+                                  transaction_id=transaction_id)
             result["document_id"] = document
             return result
 
@@ -300,10 +320,9 @@ class DocumentHub:
             state["presence"] = {"document_id": doc["id"], "nodes": [], "edges": []}
             result = self._commit(state, workspace, actor, label)
             result["document_id"] = doc["id"]
-            result["revision"] = result.get("ui_revision", result.get("revision"))
             return result
 
-    def undo(self, session, document, revision, redo=False, actor="user"):
+    def undo(self, session, document, revision, redo=False, actor="user", transaction_id=None):
         with self.lock:
             state = self.load(session)
             self.expect(state, revision)
@@ -315,12 +334,62 @@ class DocumentHub:
             source, target = ("future", "past") if redo else ("past", "future")
             if not history[source]:
                 raise CommandError("empty_history", "No edit to undo/redo", 409)
-            history[target].append({"graph": doc["graph"], "actor": actor, "label": source})
-            doc["graph"] = history[source].pop()["graph"]
-            return self._commit(state, workspace, actor, "Redo" if redo else "Undo", record=False)
+            index = next((i for i, item in enumerate(history[source]) if item.get('transaction_id') == transaction_id), None) if transaction_id else len(history[source]) - 1
+            if index is None:
+                raise CommandError('transaction_not_found', 'Transaction is not available in this history', 404)
+            item = history[source][index]
+            if 'changes' in item:
+                graph, conflicts = compensate(doc['graph'], item['changes'], redo=redo)
+                if conflicts:
+                    raise CommandError('undo_conflict', 'Later edits overlap this transaction; read the current values before reverting.',
+                                       409, {'transaction_id': item.get('transaction_id'), 'paths': conflicts})
+                model = Graph.model_validate(graph)
+                ids = {node.id for node in model.nodes}
+                if any(edge.source not in ids or edge.target not in ids for edge in model.edges):
+                    raise CommandError('undo_conflict', 'Later connections still reference a node created by this transaction', 409)
+                layout(graph)  # Never commit a cycle after compensation.
+                doc['graph'] = graph
+                history[target].append(deepcopy(item))
+            else:
+                # Old histories lack field preconditions: only their latest entry is safe.
+                if index != len(history[source]) - 1:
+                    raise CommandError('undo_conflict', 'Legacy history only supports undoing the latest edit', 409)
+                history[target].append({'graph': doc['graph'], 'actor': actor, 'label': source})
+                doc['graph'] = item['graph']
+            history[source].pop(index)
+            return self._commit(state, workspace, actor, 'Redo' if redo else 'Undo', record=False,
+                                related_transaction=item.get('transaction_id'))
 
-    def events(self, session, after):
+    def events(self, session, after, limit=50):
+        if after < 0 or not 1 <= limit <= 100:
+            raise CommandError('invalid_cursor', 'after must be nonnegative and limit must be 1–100')
         with self.lock:
             state = self.load(session)
-            events = [event for event in state["events"] if event["seq"] > after]
-            return {"seq": state["seq"], "reset": bool(state["events"] and after < state["events"][0]["seq"] - 1), "events": events}
+            retained = state['events']
+            reset = bool(after > state['seq'] or (retained and after < retained[0]['seq'] - 1))
+            selected = [event for event in retained if event['seq'] > after][:limit]
+            events = []
+            for event in selected:
+                delta = event.get('changes', [])
+                events.append({**{k: v for k, v in event.items() if k != 'changes'},
+                               'change_count': len(delta), 'changes': [preview(item, 160) for item in delta[:8]],
+                               'changes_truncated': len(delta) > 8,
+                               'affected': [{'document_id': doc, 'nodes': sorted({item['path'][1] for item in delta
+                                    if item['document_id'] == doc and len(item['path']) > 1 and item['path'][0] == 'nodes'})[:100]}
+                                    for doc in sorted({item['document_id'] for item in delta})]})
+            cursor = selected[-1]['seq'] if selected else state['seq']
+            return {'seq': state['seq'], 'next_cursor': cursor, 'has_more': cursor < state['seq'],
+                    'revision': state['revision'], 'reset': reset, 'events': events}
+
+    def diff(self, session, transaction_id, offset=0, limit=20):
+        if offset < 0 or not 1 <= limit <= 50:
+            raise CommandError('invalid_cursor', 'offset must be nonnegative and limit must be 1–50')
+        with self.lock:
+            state = self.load(session)
+            event = next((e for e in state['events'] if e.get('transaction_id') == transaction_id), None)
+            if event is None:
+                raise CommandError('history_expired', 'Diff is no longer retained; re-read the current document', 410)
+            delta = event.get('changes', [])
+            return {'transaction_id': transaction_id, 'actor': event['actor'], 'revision': event['revision'],
+                    'total': len(delta), 'offset': offset, 'next_offset': min(offset + limit, len(delta)),
+                    'changes': [preview(item, 1600) for item in delta[offset:offset + limit]]}

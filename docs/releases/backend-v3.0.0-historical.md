@@ -1,0 +1,81 @@
+# Historical BioPipe backend 3.0 milestone
+
+These original notes describe the earlier backend/library development milestone.
+They do not describe the Operon Studio v3.0.0 installer. See [application notes](v3.0.0.md)
+and [current versioning rules](../backend_versioning.md).
+
+---
+
+# BioPipe 3.0.0
+
+Backend version: 3.0.0 (operators 717, Readers 101).
+
+Coordinated release with **BioPipe Operator Library v3.0.0**. The application and
+the reference operator library are separate products, but this milestone aligns
+both on version `3.0.0` (`v3.0.0` and `library-v3.0.0`).
+
+This release is based on BioPipe Studio 2.4.1 and operator library 2026.11.5.2.
+It retains the unified Settings page, desktop-first result viewers and domain
+exports (HIC/Cooler, GenBank, BED/bedGraph, GraphML, Newick) shipped there.
+
+## Operator library integration
+
+- File-producing operators now register their original output files through
+  `ctx.artifact_path(...)`: Boltz (single and complex confidence), ColabFold,
+  OpenFold, ESMFold, ESM-3 folding, Flye assembly, Vina docking poses,
+  LigandMPNN side-chain packing and PDBQT preparation. `export_results` can reuse
+  those files for `native`, `pdb` and `cif` exports without a new writer.
+- Sequence-code Forms carry `info.sequences`, and `FastaReader` exposes the same
+  information, so `export_results(format="fasta")` works from a sequence Form.
+- This release does not modify `export_results`; it includes the 2026.11.5.2
+  implementation (domain exports) unchanged and keeps it the single output boundary.
+
+## Engine fixes
+
+- The isolated-environment proxy now carries `inputs_arity`,
+  `parameters_schema`, `output_parameter`, `outputs` and the declaration, so
+  runner arity, parameter and contract validation apply to proxied operators.
+- When a named isolated environment is not provisioned, the loader falls back to
+  the shared interpreter; the operator then reports its real import error instead
+  of a misleading arity failure.
+- Remote artifact previews now use the same 20-row default as local previews.
+- `sequence_liability_scan` includes the affected residue in exported liability
+  sites (previously a `KeyError` during export).
+- `nmds` filters scikit-learn `MDS` keywords against the installed signature, so
+  versions that removed `init` no longer raise `TypeError`.
+- The example plugin used by package tests accepts BioPipe 3.x (`<4`).
+
+## Compatibility
+
+- Protocol v3 is unchanged.
+- Frontend Studio remains at its published **2.4.1** release; this repository does
+  not modify `frontend/`.
+- Operator IDs, parameter schemas and saved workflow values are unchanged.
+- `library/release.json` declares `minimum_application` and
+  `build_application` `2.4.1`: the library is built and verified against the
+  oldest supported application, while its own version is `3.0.0`.
+
+## Validation
+
+- Focused operator/export/viewer suites: 140 passed, 23 skipped
+  (optional model, viewer and database gates).
+- Export-contract suite: 28 passed.
+- Full offline suite: **2857 passed, 222 skipped, 0 failed** (28m32s).
+- Packaging group: 68 passed.
+- Registry: 717 operators, 101 Readers, 7 packages, 24 routes, no errors.
+
+## Limits
+
+- A PDB or FASTA file that was *uploaded* is read into a Form; without a
+  file-source or Reader `FileArtifact`, its bytes are not re-exported natively.
+  File-producing operators register files; `export_results` never reconstructs
+  PDB from a tensor.
+- Design operators that return `info.sequences` support FASTA conversion; only
+  producers that register an original FASTA reuse it byte-for-byte.
+- Large weights, databases and external binaries keep their existing resource
+  declarations and are not downloaded by this release.
+- Optional real-model gates: ESM-IF checkpoint tests skip when the installed
+  `esm` package is ESM-3 (shadowing `fair-esm`) or `torch_scatter` is ABI-
+  incompatible with the installed torch; the DockQ oracle skips when the released
+  CLI was built against NumPy 1.x. The operators report the concrete error at run
+  time instead of failing contract tests.

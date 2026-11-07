@@ -8,7 +8,7 @@ from .client import Client, data_directory
 def create_server(client):
     from mcp.server.fastmcp import FastMCP
     from .guidance import guide, instructions
-    server = FastMCP("BioPipe", instructions=instructions())
+    server = FastMCP("Operon", instructions=instructions())
 
     @server.tool()
     def biopipe_guide(topic: str = 'start', if_sha256: str | None = None) -> dict:
@@ -63,10 +63,24 @@ def create_server(client):
 
     @server.tool()
     def biopipe_workflow_prepare(graph: dict, require_files: bool = True) -> dict:
-        """Freeze parameter defaults and validate contracts/files without starting computation. Returns the prepared graph."""
+        """Freeze defaults and validate contracts/files/environment without running or installing dependencies.
+
+        Returns the prepared graph and readiness. Inspect blocked entries before submission;
+        environment repair requires the separate, explicitly authorized prepare_environment tool.
+        """
         prepared = client.request('/v1/workflows/prepare', {'graph': graph})
         checked = client.request('/v1/workflows/validate', {'graph': prepared, 'require_files': require_files})
         return {**checked, 'graph': prepared}
+
+    @server.tool()
+    def biopipe_workflow_prepare_environment(graph: dict) -> dict:
+        """Explicitly install/repair dependencies for this route's selected environments; requires --allow-plugins.
+
+        Call only when the user authorized environment installation/repair. Validation and running
+        never grant this permission. Checks only this route, returns readiness, and does not run a job.
+        A transport timeout is not proof installation failed: reconnect and validate before retrying.
+        """
+        return client.request('/v1/workflows/prepare-environment', {'graph': graph})
 
     @server.tool()
     def biopipe_submit(request_id: str, graph: dict | None = None, workflow_id: str | None = None,
@@ -133,7 +147,10 @@ def create_server(client):
 
     @server.tool()
     def biopipe_validate(graph: dict) -> dict:
-        """Validate a complete route without running it. Missing node positions are automatically laid out."""
+        """Validate a complete route without running it or installing dependencies. Check readiness before running.
+
+        Missing node positions are automatically laid out.
+        """
         return client.request("/validate", {"graph": graph})
 
     @server.tool()
@@ -185,14 +202,33 @@ def create_server(client):
         return status
 
     @server.tool()
-    def biopipe_undo(session_id: str, document_id: str, expected_revision: int, redo: bool = False) -> dict:
-        """Undo or redo one transaction in the shared user/agent edit history."""
-        return client.request(f"/sessions/{session_id}/undo", {"document_id": document_id, "expected_revision": expected_revision, "redo": redo})
+    def biopipe_undo(session_id: str, document_id: str, expected_revision: int, redo: bool = False,
+                     transaction_id: str | None = None) -> dict:
+        """Undo/redo the latest edit, or a named transaction without erasing later unrelated edits.
+
+        Overlapping later edits return undo_conflict; re-read them before choosing a new edit.
+        Editing undo does not cancel a running job.
+        """
+        return client.request(f"/sessions/{session_id}/undo", {"document_id": document_id, "expected_revision": expected_revision,
+                              "redo": redo, 'transaction_id': transaction_id})
 
     @server.tool()
-    def biopipe_events(session_id: str, after: int = 0) -> dict:
-        """Read semantic changes since an event cursor. If reset=true, re-read context."""
-        return client.request(f"/sessions/{session_id}/events?after={after}")
+    def biopipe_events(session_id: str, after: int = 0, limit: int = 20) -> dict:
+        """Read bounded human/agent changes and short before/after previews. Continue at next_cursor.
+
+        If reset=true, re-read graph/context; seq is the head, not a pagination cursor.
+        Read transaction_diff only for needed details. Selection events do not change graph revision.
+        """
+        return client.request(f"/sessions/{session_id}/events?" + urlencode({'after': after, 'limit': limit}))
+
+    @server.tool()
+    def biopipe_transaction_diff(session_id: str, transaction_id: str, offset: int = 0, limit: int = 20) -> dict:
+        """Read one edit's paginated code/parameter/edge differences, with truncation marked.
+
+        Long values are previews: fetch the current node/source separately rather than treating them as replacement text.
+        """
+        return client.request(f"/sessions/{session_id}/transactions/" + quote(transaction_id, safe='') + '?'
+                              + urlencode({'offset': offset, 'limit': limit}))
 
     @server.tool()
     def biopipe_run(session_id: str, document_id: str, expected_revision: int, request_id: str | None = None) -> dict:

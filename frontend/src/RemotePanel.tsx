@@ -42,10 +42,10 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose, embed
     const guidance = ['操作未完成，请重试。', t('操作未完成，请重试。')].includes(message) ? '' : message;
     if (issue.code === 'server_not_installed') {
       setMaintenance(true);
-      setError(profile.environment === 'managed' ? t("未找到 BioPipe 服务端，请先安装服务端。") : t("未找到 BioPipe 服务端，请检查 BioPipe 目录与 Python 路径。"));
+      setError(profile.environment === 'managed' ? t("未找到 Operon 服务端，请先安装服务端。") : t("未找到 Operon 服务端，请检查 Operon 目录与 Python 路径。"));
     } else if (['server_incompatible', 'handshake_incompatible', 'capability_missing'].includes(issue.code || '')) {
       setMaintenance(true);
-      setError(guidance || (profile.environment === 'managed' ? t("服务端不兼容，请安装 / 升级服务端后重试。") : t("服务端不兼容，请升级指定环境中的 BioPipe 后重试。")));
+      setError(guidance || (profile.environment === 'managed' ? t("服务端不兼容，请安装 / 升级服务端后重试。") : t("服务端不兼容，请升级指定环境中的 Operon 后重试。")));
     } else if (issue.code === 'handshake_required') {
       setMaintenance(true);
       setError(guidance || t("此服务端需要一次性升级后重新连接。"));
@@ -92,9 +92,9 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose, embed
           {field(t("名称"), 'name', t("计算服务器"))}{field(t("主机"), 'host', 'server.example.org')}
           {field(t("用户名"), 'username')}<label className="field"><span>{t("端口")}</span><input type="number" min={1} max={65535} required disabled={!!busy} value={profile.port} onChange={e => edit({port: Number(e.target.value)})}/></label>
           <label className="field"><span>{t("服务器环境")}</span><select disabled={!!busy} value={profile.environment || 'existing'} onChange={e => edit({environment: e.target.value as RemoteProfile['environment']})}>
-            <option value="managed">{t("已安装的 BioPipe 服务端")}</option><option value="existing">{t("手动指定环境")}</option></select></label>
-          {profile.environment === 'managed' ? field(t("安装目录 · 可选"), 'managed_root', t("服务器用户目录下的标准位置")) : <>{field(t("BioPipe 目录"), 'app_dir', '/opt/biopipe')}{field('Python', 'python', 'python3')}</>}
-          {field(t("运行目录"), 'workspace', profile.environment === 'managed' ? t("安装目录下自动创建") : '/srv/biopipe-work')}
+            <option value="managed">{t("已安装的 Operon 服务端")}</option><option value="existing">{t("手动指定环境")}</option></select></label>
+          {profile.environment === 'managed' ? field(t("安装目录 · 可选"), 'managed_root', t("服务器用户目录下的标准位置")) : <>{field(t("Operon 目录"), 'app_dir', '/opt/operon')}{field('Python', 'python', 'python3')}</>}
+          {field(t("运行目录"), 'workspace', profile.environment === 'managed' ? t("安装目录下自动创建") : '/srv/operon-work')}
           <label className="field"><span>{t("认证方式")}</span><select disabled={!!busy} value={profile.auth} onChange={e => edit({auth: e.target.value as RemoteProfile['auth']})}>
             <option value="password">{t("密码")}</option><option value="key">{t("私钥文件")}</option><option value="agent">SSH Agent</option></select></label>
           {profile.auth === 'password' && <label className="field wide"><span>{t("密码 · 仅本次会话")}</span><input autoComplete="new-password" type="password" disabled={!!busy} value={password} onChange={e => setPassword(e.target.value)}/></label>}
@@ -114,7 +114,7 @@ export function RemotePanel({servers, active, onUpdate, onSelect, onClose, embed
         {error && <p role="alert" className="field-error">{error}</p>}
         {!!setup.length && <details className="remote-setup" open={busy === 'install'}><summary>{busy === 'install' ? setup[setup.length - 1] : t("服务端安装记录")}</summary><pre role="log" aria-live="polite">{setup.join('\n')}</pre></details>}
         {selected?.connected && <div className="remote-connected" aria-label={t("服务端状态")}>
-          <div className="remote-status-heading"><span className="status-dot complete"/><strong title={info?.python}>{info ? `BioPipe ${info.version}` : t("已连接")}</strong><span>{info?.system}</span>
+          <div className="remote-status-heading"><span className="status-dot complete"/><strong title={info?.python}>{info ? `Operon ${info.version}` : t("已连接")}</strong><span>{info?.system}</span>
             <button type="button" className="subtle-button" disabled={!!busy || !!trust} onClick={() => void refresh()}>{busy === 'refresh' ? <><CircleNotch className="spin" size={14}/>{t("刷新中")}</> : t("刷新算子与依赖")}</button></div>
           {info && <div className="remote-status-counts"><span>{t("算子")} {info.catalog.operators.length}</span>
             {info.dependencies && <span>{t("依赖")} {info.dependencies.entries.filter(entry => entry.status === 'passed').length}/{info.dependencies.entries.length} {t("已通过")}{info.dependencies.running ? t(" · 检查中") : ''}</span>}

@@ -1,5 +1,30 @@
 {
   "$defs": {
+    "Adaptation": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "disabled",
+            "fixed"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "converters": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 4,
+          "title": "Converters",
+          "type": "array"
+        }
+      },
+      "title": "Adaptation",
+      "type": "object"
+    },
     "ExecutionTarget": {
       "additionalProperties": false,
       "properties": {
@@ -119,6 +144,17 @@
     "GraphEdge": {
       "additionalProperties": false,
       "properties": {
+        "adaptation": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Adaptation"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "id": {
           "maxLength": 200,
           "title": "Id",
@@ -167,10 +203,24 @@
           "enum": [
             "source",
             "operator",
-            "route"
+            "route",
+            "script"
           ],
           "title": "Kind",
           "type": "string"
+        },
+        "script": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Script"
         },
         "operator": {
           "anyOf": [

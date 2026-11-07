@@ -9,9 +9,48 @@ import pytest
 from src.web.profile import resolve_profile
 
 
-def identity(root, value='a' * 32):
+def identity(root, value='a' * 32, **extra):
     root.mkdir(parents=True, exist_ok=True)
-    (root / 'biopipe-install.json').write_text(json.dumps({'schema_version': 1, 'isolated': True, 'profile_id': value}))
+    (root / 'biopipe-install.json').write_text(json.dumps({'schema_version': 1, 'isolated': True, 'profile_id': value, **extra}))
+
+
+@pytest.mark.parametrize('product,namespace', [('operon', '.operon'), ('biopipe', '.biopipe'), (None, '.biopipe')])
+def test_product_marker_owns_its_profile_without_adopting_other_product_state(tmp_path, monkeypatch, product, namespace):
+    install, home = tmp_path / 'relocated install', tmp_path / 'home'
+    identity(install, **({'product': product} if product else {}))
+    for older in ('.operon', '.biopipe'):
+        path = home / older / 'profiles' / ('b' * 32) / 'workflow.json'
+        path.parent.mkdir(parents=True)
+        path.write_bytes(b'original saved route')
+    legacy = home / '.biopipe/studio/runtime.json'
+    legacy.parent.mkdir(parents=True); legacy.write_bytes(b'legacy runtime identity')
+    before = {path: path.read_bytes() for path in home.rglob('*') if path.is_file()}
+    expected = home / namespace / 'profiles' / ('a' * 32)
+    result = resolve_profile(install, home=home, environ={'BIOPIPE_STUDIO_HOME': str(legacy.parent)})
+    assert result.profile_dir == expected and result.workspace == expected / 'workspace'
+    assert result.data_dir == expected / 'workspace/.studio'
+    assert not expected.exists() and all(path.read_bytes() == value for path, value in before.items())
+    # A direct bundled CLI start resolves through the interpreter's installation marker.
+    python = install / 'runtime/python/python.exe'
+    monkeypatch.setattr(sys, 'executable', str(python))
+    assert resolve_profile(python.parent / 'Lib/site-packages', home=home, environ={}) == result
+    with pytest.raises(ValueError, match='own profile'):
+        resolve_profile(install, home=home, profile_dir=home / '.biopipe/studio')
+
+
+@pytest.mark.parametrize('product', ['unknown', '../biopipe', '.operon', 'Operon', '', None, [], {}])
+def test_unknown_product_fails_before_profile_creation_or_environment_mutation(tmp_path, monkeypatch, product):
+    from biopipe.installation import configure_environment
+    import os
+    identity(tmp_path, product=product)
+    monkeypatch.setenv('BIOPIPE_STUDIO_HOME', 'keep-this-existing-override')
+    monkeypatch.setenv('PYTHONPATH', 'keep-existing-python-path')
+    original = dict(os.environ)
+    with pytest.raises(ValueError, match='Unknown installation product'):
+        resolve_profile(tmp_path, home=tmp_path / 'home', environ={})
+    with pytest.raises(ValueError, match='Unknown installation product'):
+        configure_environment(tmp_path)
+    assert dict(os.environ) == original and not (tmp_path / 'home').exists()
 
 
 def test_isolated_profile_ignores_old_profiles_environment_and_cwd(tmp_path, monkeypatch):

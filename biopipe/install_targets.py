@@ -128,6 +128,21 @@ def probe_entry(request):
     return result
 
 
+def _validate_host_requirements(records):
+    """Check host API compatibility from metadata, before staging any code."""
+    from packaging.requirements import Requirement
+    from biopipe import __version__ as host_version
+    for entry in records:
+        for text in entry['dependencies']:
+            requirement = Requirement(text)
+            if canonicalize_name(requirement.name) != 'biopipe-studio':
+                continue
+            if requirement.marker and not requirement.marker.evaluate():
+                continue
+            if requirement.url or not requirement.specifier.contains(host_version, prereleases=True):
+                raise ValueError(f'Operator requires an incompatible BioPipe SDK: {text}')
+
+
 def install(manager, current, packages, generation, *, dependencies=()):
     # One discovery-policy-aware factory snapshot per transaction. Repeating a
     # filesystem-backed bundled_state() for every entry made large library
@@ -140,12 +155,12 @@ def install(manager, current, packages, generation, *, dependencies=()):
     Path(filesystem_path(environment)).mkdir(parents=True)
     code = environment / 'code'
     wheels = [p for p in packages if p.get('origin') != 'bundled']
+    wheel_records = {p['name']: wheel_entries(manager.directory / p['wheel']) for p in wheels}
+    for records in wheel_records.values():
+        _validate_host_requirements(records)
     if wheels:
         invoke([], 'pip', ['install', '--disable-pip-version-check', '--no-deps', '--no-compile', '--target', filesystem_path(code),
                            *[_wheel_argument(manager.directory / p['wheel']) for p in wheels]], environment, timeout=600)
-    if wheels:
-        from biopipe.bytecode import precompile
-        precompile(code)
     descriptors = [deepcopy(d) for d in bundled['descriptors'] if any(p['name'] == d['distribution'] and p.get('origin') == 'bundled' for p in packages)]
     old = {d['id']: d for d in current['descriptors']}
     # Existing successful isolation choices remain pinned. Dependency repair
@@ -161,40 +176,32 @@ def install(manager, current, packages, generation, *, dependencies=()):
         if (current.get('runtime_protocol') == 1 and previous_package.get('sha256') == package['sha256']):
             descriptors.extend(deepcopy(d) for d in current['descriptors'] if d['distribution'] == package['name'])
             continue
-        from collections import defaultdict
-        groups = defaultdict(list)
-        for entry in wheel_entries(manager.directory / package['wheel']):
-            expected = entry.get('expected', {})
-            previous = old.get(expected.get('id'), {})
+        records = []
+        for entry in wheel_records[package['name']]:
+            # wheel_entries verifies static declarations, code hashes and
+            # sidecars. Importing the implementation here would execute user
+            # top-level code and force scientific dependencies at registration.
+            descriptor = deepcopy(entry['expected'])
+            previous = old.get(descriptor['id'], {})
             from packaging.requirements import Requirement
             declared = {v for v in entry['dependencies'] if canonicalize_name(Requirement(v).name) != 'biopipe-studio'}
-            reuse = bool(previous and declared == set(previous.get('dependencies', [])))
-            # An unchanged optional declaration can remain not-ready; repairing
-            # that Reader must not block unrelated entries during source refresh.
-            execution = deepcopy(previous.get('execution', {'mode': 'shared'})) if reuse else builder.prepare(entry['dependencies'])
-            paths = execution.get('paths', []) if execution['mode'] == 'isolated' else builder.shared
-            groups[tuple(paths)].append((entry, execution, reuse))
-        records = []
-        for paths, group in groups.items():
-            with tempfile.TemporaryDirectory(prefix='entry-', dir=builder.staging) as tmp:
-                request, response = Path(tmp) / 'in.json', Path(tmp) / 'out.json'
-                request.write_text(json.dumps([e for e, _, _ in group]), encoding='utf-8')
-                invoke([code, *[manager.directory / p for p in paths]], 'biopipe.install_targets', [request, response], tmp)
-                found_groups = json.loads(response.read_text(encoding='utf-8'))
-            for (_, execution, reuse), found in zip(group, found_groups, strict=True):
-                for descriptor in found:
-                    if not reuse:
-                        execution = builder.prepare(descriptor['dependencies'])
-                    if descriptor['id'] in bundled_owners and bundled_owners[descriptor['id']] != package['name']:
-                        raise ValueError(f'Plugin shadows a built-in: {descriptor["id"]}')
-                    if '.' not in descriptor['id'] and package['name'] not in bundled_names:
-                        raise ValueError('Plugin IDs must be namespaced')
-                    descriptor.update(distribution=package['name'], package_version=package['version'], origin='wheel', execution=execution,
-                                      implementation={k: package[k] for k in ('version', 'sha256')})
-                    descriptor['implementation'].update(package=package['name'], code_sha=descriptor['code_sha'], declaration_sha=descriptor['declaration_sha'])
-                    if package.get('execution_sha'):
-                        descriptor['implementation']['execution_sha'] = package['execution_sha']
-                    records.append(descriptor)
+            reuse = bool(previous and previous.get('code_sha') == descriptor['code_sha']
+                         and declared == set(previous.get('dependencies', [])))
+            execution = deepcopy(previous.get('execution', {'mode': 'shared'})) if reuse else {'mode': 'shared'}
+            from biopipe_sdk.dependencies import requirements
+            from biopipe_sdk.declarations import declaration_hash
+            descriptor['dependencies'] = requirements(sorted(declared))
+            descriptor['declaration_sha'] = declaration_hash(descriptor)
+            if descriptor['id'] in bundled_owners and bundled_owners[descriptor['id']] != package['name']:
+                raise ValueError(f'Plugin shadows a built-in: {descriptor["id"]}')
+            if '.' not in descriptor['id'] and package['name'] not in bundled_names:
+                raise ValueError('Plugin IDs must be namespaced')
+            descriptor.update(distribution=package['name'], package_version=package['version'], origin='wheel', execution=execution,
+                              implementation={k: package[k] for k in ('version', 'sha256')})
+            descriptor['implementation'].update(package=package['name'], code_sha=descriptor['code_sha'], declaration_sha=descriptor['declaration_sha'])
+            if package.get('execution_sha'):
+                descriptor['implementation']['execution_sha'] = package['execution_sha']
+            records.append(descriptor)
         owned = {key for key, owner in bundled_owners.items() if owner == package['name']}
         if not owned <= {d['id'] for d in records}:
             raise ValueError('Replacement package must preserve its bundled IDs')
@@ -204,6 +211,12 @@ def install(manager, current, packages, generation, *, dependencies=()):
     ids = [d['id'] for d in descriptors]
     if len(ids) != len(set(ids)):
         raise ValueError('Two packages declare the same ID')
+    if wheels:
+        # Bytecode compilation parses the installed source without importing it
+        # or preparing scientific dependencies. Never leave immutable workers
+        # recompiling plugin code on every run.
+        from biopipe.bytecode import precompile
+        precompile(code)
     if dependencies:
         # Legacy API: dependency-only installs remain a single request. The
         # session API uses repair_entries for individual operator requirements.

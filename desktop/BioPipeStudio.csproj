@@ -5,8 +5,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>BioPipe Studio</AssemblyName>
-    <Version>2.6.0</Version>
+    <AssemblyName>Operon Studio</AssemblyName>
+    <Product>Operon Studio</Product>
+    <Title>Operon Studio</Title>
+    <Version>3.0.1</Version>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>

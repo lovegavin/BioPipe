@@ -19,7 +19,7 @@ def _io_path(path):
 def _markdown_path(root, descriptor):
     module = descriptor['entry_point'].split(':')[0].replace('.', '/')
     source = root / (module + '.py')
-    if not source.is_file():
+    if not _io_path(source).is_file():
         source = root / module / '__init__.py'
     return source.parent / descriptor['documentation']['path']
 

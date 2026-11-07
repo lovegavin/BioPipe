@@ -39,20 +39,23 @@ def source_files(path):
             yield from source_files(child)
 
 
-def snapshot(source, target):
-    """Hash the bytes actually staged, so an editor cannot change a pending install."""
+def snapshot(source, target=None):
+    """Hash source bytes; optionally stage the exact bytes of a pending install."""
+    from contextlib import nullcontext
     from biopipe.bytecode import filesystem_path
     source = Path(filesystem_path(source, resolve=False))
-    target = Path(filesystem_path(target, resolve=False))
+    target = Path(filesystem_path(target, resolve=False)) if target is not None else None
     digest = hashlib.sha256()
     for path in source_files(source):
         relative = path.relative_to(source) if source.is_dir() else Path(source.name)
-        destination = target / relative
-        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination = target / relative if target is not None else None
+        if destination is not None:
+            destination.parent.mkdir(parents=True, exist_ok=True)
         file_hash = hashlib.sha256()
-        with path.open("rb") as reader, destination.open("wb") as writer:
+        with path.open("rb") as reader, (destination.open("wb") if destination is not None else nullcontext()) as writer:
             while block := reader.read(1024 * 1024):
-                writer.write(block)
+                if writer is not None:
+                    writer.write(block)
                 file_hash.update(block)
         digest.update(relative.as_posix().encode("utf-8") + b"\0" + file_hash.digest())
     return digest.hexdigest()
@@ -286,6 +289,15 @@ def metadata_candidate(state, package, records, *, version=None):
         before = old[d['id']]
         from biopipe_sdk.dependencies import requirements
         d['dependencies'] = requirements(d.get('dependencies', []))
+        # Registration separates host API compatibility from scientific deps.
+        # Keep that same normalization when deciding whether JSON-only changes
+        # can reuse the installed code instead of rebuilding its wheel.
+        from biopipe.install_targets import _validate_host_requirements
+        from packaging.requirements import Requirement
+        from packaging.utils import canonicalize_name
+        _validate_host_requirements([d])
+        d['dependencies'] = [text for text in d['dependencies']
+                             if canonicalize_name(Requirement(text).name) != 'biopipe-studio']
         if any(d.get(k, []) != before.get(k, []) for k in EXECUTION_KEYS):
             return None
     return replace_declarations(state, records)

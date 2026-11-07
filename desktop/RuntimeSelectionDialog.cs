@@ -6,7 +6,7 @@ internal sealed class RuntimeSelectionDialog : Form
 
     public RuntimeSelectionDialog(string install, string diagnostic)
     {
-        Text = "BioPipe Studio · Python 环境";
+        Text = "Operon Studio · Python 环境";
         Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         StartPosition = FormStartPosition.CenterScreen;
         ClientSize = new Size(620, 340);

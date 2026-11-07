@@ -1,0 +1,9 @@
+{
+  "format": "biopipe.workflow-parameters",
+  "schema_version": 1,
+  "steps": {
+    "generate": {"params": {}},
+    "branch_a": {"params": {}},
+    "branch_b": {"params": {}}
+  }
+}

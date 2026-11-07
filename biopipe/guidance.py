@@ -10,6 +10,7 @@ TOPICS = {
     'operators': ('Find an operator', 'Search summaries; fetch schemas or selected documentation only.'),
     'canvas': ('Edit a canvas', 'Read selection, apply one transaction and undo safely.'),
     'workflow': ('Prepare and run a workflow', 'Reuse a saved route or prepare a new one without a window.'),
+    'server': ('Use a server or terminal', 'Select a runtime, validate YAML, prepare dependencies and monitor batch jobs.'),
     'jobs': ('Monitor and recover jobs', 'Wait, inspect bounded logs and retry without duplicate work.'),
     'results': ('Use analysis results', 'Inspect result metadata and open retained native files.'),
     'api': ('Connect another application', 'Discover the local API, authenticate and hand off native artifacts.'),
