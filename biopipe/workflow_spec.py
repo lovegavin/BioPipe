@@ -19,6 +19,33 @@ class WorkflowError(ValueError):
     code = 'invalid_workflow'
 
 
+class WorkflowResourceError(WorkflowError):
+    code = 'workflow_resource_error'
+
+    def __init__(self, path, directory, reason, explanation):
+        directory = Path(directory).resolve()
+        resource = Path(path).relative_to(directory).as_posix()
+        self.details = {'resource': resource, 'directory': str(directory), 'reason': reason}
+        super().__init__(f'Workflow file "{resource}": {explanation}. '
+                         f'Expected project base directory: {directory}. '
+                         'Keep the YAML and its referenced JSON/script files together; '
+                         'select their project base directory and retry. For GUI import, '
+                         'place the project inside the workspace or import a complete workflow ZIP.')
+
+
+def _resource_text(path, directory):
+    try:
+        if path.is_dir():
+            raise WorkflowResourceError(path, directory, 'not_file', 'a directory was selected instead of a file')
+        return path.read_text(encoding='utf-8-sig')
+    except FileNotFoundError as error:
+        raise WorkflowResourceError(path, directory, 'missing', 'file not found') from error
+    except UnicodeError as error:
+        raise WorkflowResourceError(path, directory, 'encoding', 'the file must be UTF-8 text') from error
+    except OSError as error:
+        raise WorkflowResourceError(path, directory, 'unreadable', 'cannot read this file; check access permissions') from error
+
+
 class WorkflowLoader(yaml.SafeLoader):
     # YAML 1.2 booleans: sample IDs "on" and "off" must remain strings.
     yaml_implicit_resolvers = {
@@ -68,7 +95,7 @@ def parse(text):
     return value
 
 
-def _json(path):
+def _json(path, directory):
     def pairs(items):
         result = {}
         for key, value in items:
@@ -76,8 +103,13 @@ def _json(path):
                 raise WorkflowError(f'Duplicate JSON key: {key}')
             result[key] = value
         return result
-    return json.loads(path.read_text(encoding='utf-8-sig'), object_pairs_hook=pairs,
-                      parse_constant=lambda value: (_ for _ in ()).throw(WorkflowError(f'Invalid JSON constant {value}')))
+    text = _resource_text(path, directory)
+    try:
+        return json.loads(text, object_pairs_hook=pairs,
+                          parse_constant=lambda value: (_ for _ in ()).throw(WorkflowError(f'Invalid JSON constant {value}')))
+    except json.JSONDecodeError as error:
+        raise WorkflowResourceError(path, directory, 'invalid_json',
+                                    f'invalid JSON at line {error.lineno}, column {error.colno}') from error
 
 
 def _sidecar(spec, key, directory, default):
@@ -87,7 +119,7 @@ def _sidecar(spec, key, directory, default):
         value = spec[key + '_file']
         if not isinstance(value, str) or not value:
             raise WorkflowError(f'{key}_file must be a path')
-        return _json(resolve_resource(directory, value))
+        return _json(resolve_resource(directory, value), directory)
     return deepcopy(spec.get(key, default))
 
 
@@ -168,8 +200,13 @@ def compile_spec(spec, directory):
         _mapping(vals, {'params', 'context_params', 'route'}, f'step parameters {key}')
         payload = deepcopy(step[kind])
         if kind == 'script' and isinstance(payload, str):
-            from .script_operators import inspect_script
-            payload = inspect_script(resolve_resource(directory, payload))
+            from .script_operators import inspect_source
+            path = resolve_resource(directory, payload)
+            try:
+                payload = inspect_source(path.name, _resource_text(path, directory))
+            except SyntaxError as error:
+                raise WorkflowResourceError(path, directory, 'invalid_script',
+                                            f'invalid script syntax at line {error.lineno}, column {error.offset}') from error
         elif kind == 'script':
             from .script_operators import validate_script
             payload = validate_script(payload)
@@ -229,13 +266,13 @@ def compile_spec(spec, directory):
              'runtime': runtime, 'manifest_extra': execution.get('manifest_extra', {}),
              'interface': execution.get('interface')}
     if 'lock_file' in spec:
-        lock = _json(resolve_resource(directory, spec['lock_file']))
+        lock = _json(resolve_resource(directory, spec['lock_file']), directory)
         _mapping(lock, {'format', 'schema_version', 'plugin_lock'}, 'lock', ('format', 'schema_version', 'plugin_lock'))
         if lock['format'] != 'biopipe.workflow-lock' or lock['schema_version'] != 1:
             raise WorkflowError('Unsupported lock schema')
         graph['plugin_lock'] = lock['plugin_lock']
     if 'ui_file' in spec:
-        ui = _json(resolve_resource(directory, spec['ui_file']))
+        ui = _json(resolve_resource(directory, spec['ui_file']), directory)
         _mapping(ui, {'positions'}, 'ui')
         if not isinstance(ui.get('positions', {}), dict) or set(ui.get('positions', {})) - set(degree):
             raise WorkflowError('UI positions reference missing nodes')
@@ -248,12 +285,12 @@ def compile_spec(spec, directory):
 
 def load_workflow(path):
     path = Path(path).resolve()
-    return compile_spec(parse(path.read_text(encoding='utf-8-sig')), path.parent)
+    return compile_spec(parse(_resource_text(path, path.parent)), path.parent)
 
 
 def format_workflow(path, *, check=False):
     path = Path(path).resolve()
-    original = path.read_text(encoding='utf-8-sig')
+    original = _resource_text(path, path.parent)
     spec = parse(original)
     compile_spec(spec, path.parent)
     text = yaml.safe_dump(spec, sort_keys=False, allow_unicode=True)

@@ -5,6 +5,13 @@ Windows application, a tested Python runtime and the reference library seed.
 There is no Python selector or Lite/Full decision. Setup installs for the current
 Windows user and creates desktop and Start menu shortcuts.
 
+For unattended installation use `Operon_Setup.exe --quiet --install-dir DIRECTORY
+--result report.json`. See [command-line installation](command_line_installation.md)
+for waiting correctly in PowerShell, exit codes, results and Linux server setup.
+Populated unmanaged destinations automatically use a safe `Operon` child folder.
+After an error or cancellation, the same window allows changing the directory
+and retrying. The busy action button displays **Installing** visibly.
+
 The default 3.0 candidate includes a **management runtime**, not a complete
 scientific environment. It contains HTTP/MCP/SSH management dependencies and
 NumPy for Form, the memory store and bounded previews. It excludes PyTorch,

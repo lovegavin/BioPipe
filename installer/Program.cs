@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace BioPipe.Setup;
 
@@ -8,14 +10,36 @@ internal static class Program
     [STAThread]
     private static int Main(string[] args)
     {
-        ApplicationConfiguration.Initialize();
+        bool unattended = args.Contains("--quiet") || args.Contains("--cli");
+        if (unattended || args.Contains("--help") || args.Contains("-h")) SetupConsole.Attach();
+        if (args.Contains("--help") || args.Contains("-h"))
+        {
+            Console.WriteLine("""
+                Operon Setup
+                Operon_Setup.exe [--install] [--install-dir DIRECTORY]
+                Operon_Setup.exe --quiet --install-dir DIRECTORY [--result FILE.json] [--no-register]
+                Operon_Setup.exe --uninstall --quiet --install-dir ACTUAL_DIRECTORY [--result FILE.json]
+
+                --cli             Alias for --quiet; no windows or application launch.
+                --result FILE     Save the same JSON result printed to stdout.
+                --no-register     Do not create shortcuts or Windows uninstall registration.
+                --payload ZIP     Use a local payload matching this installer's embedded checksum.
+                --help, -h        Show this help without installing.
+
+                Progress goes to stderr; the final result is JSON on stdout.
+                Exit codes: 0 success, 1 installation failure/cancellation, 2 invalid arguments.
+                An occupied, unmanaged destination uses an Operon child directory. The result
+                reports the actual directory. Existing user files and profiles are preserved.
+                """);
+            return 0;
+        }
         string? resultFile = null;
         try
         {
             var values = new Dictionary<string, string>(); var flags = new HashSet<string>();
             for (int i = 0; i < args.Length; i++)
             {
-                if (args[i] is "--quiet" or "--uninstall" or "--no-register" or "--uninstall-worker") flags.Add(args[i]);
+                if (args[i] is "--quiet" or "--cli" or "--install" or "--uninstall" or "--no-register" or "--uninstall-worker") flags.Add(args[i]);
                 else if (args[i] is "--install-dir" or "--payload" or "--result")
                 {
                     var key = args[i];
@@ -25,6 +49,7 @@ internal static class Program
                 else throw new ArgumentException("未知安装参数：" + args[i]);
             }
             values.TryGetValue("--result", out resultFile);
+            if (flags.Contains("--install") && flags.Contains("--uninstall")) throw new ArgumentException("Choose --install or --uninstall, not both.");
             var spec = InstallFiles.EmbeddedSpec();
             var options = new InstallOptions(values.GetValueOrDefault("--install-dir") ?? Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Operon Studio"),
@@ -32,7 +57,7 @@ internal static class Program
             bool uninstall = flags.Contains("--uninstall");
             // A running executable cannot remove itself. Only copy this small
             // helper when invoked from the installation that is being removed.
-            if (uninstall && !flags.Contains("--uninstall-worker") &&
+            if (uninstall && !unattended && !flags.Contains("--uninstall-worker") &&
                 string.Equals(Path.GetDirectoryName(Environment.ProcessPath), Path.GetFullPath(options.InstallDir), StringComparison.OrdinalIgnoreCase))
             {
                 var folder = Path.Combine(Path.GetTempPath(), "Operon-Uninstall-" + Guid.NewGuid().ToString("N"));
@@ -40,33 +65,77 @@ internal static class Program
                 File.Copy(Environment.ProcessPath!, helper);
                 var start = new ProcessStartInfo(helper) { UseShellExecute = false, CreateNoWindow = true };
                 foreach (var arg in args) start.ArgumentList.Add(arg);
-                start.ArgumentList.Add("--uninstall-worker"); Process.Start(start); return 0;
+                start.ArgumentList.Add("--uninstall-worker");
+                using var worker = Process.Start(start) ?? throw new IOException("Could not start the uninstall worker.");
+                return 0;
             }
-            if (flags.Contains("--quiet"))
+            if (unattended)
             {
-                var engine = new InstallEngine(spec, new Progress<InstallProgress>());
+                var engine = new InstallEngine(spec, new SetupConsole.Progress());
+                using var cancellation = new CancellationTokenSource();
+                ConsoleCancelEventHandler stop = (_, e) => { e.Cancel = true; cancellation.Cancel(); };
+                Console.CancelKeyPress += stop;
                 try
                 {
-                    var result = uninstall ? engine.Uninstall(options.InstallDir) : engine.Install(options, CancellationToken.None).GetAwaiter().GetResult();
-                    if (resultFile is not null) InstallFiles.AtomicJson(Path.GetFullPath(resultFile), result);
-                    return 0;
+                    if (!uninstall) options = options with { InstallDir = InstallEngine.ResolveDestination(options.InstallDir) };
+                    var result = uninstall ? engine.Uninstall(options.InstallDir) : engine.Install(options, cancellation.Token).GetAwaiter().GetResult();
+                    return SetupConsole.Result(result, resultFile) ? 0 : 1;
                 }
                 catch (Exception error)
                 {
-                    if (resultFile is not null) InstallFiles.AtomicJson(Path.GetFullPath(resultFile),
-                        new InstallResult("failed", options.InstallDir, null, null, engine.LogPath, error.Message));
+                    var result = new InstallResult("failed", options.InstallDir, null, null, engine.LogPath, error.Message);
+                    SetupConsole.Result(result, resultFile);
                     return 1;
                 }
+                finally { Console.CancelKeyPress -= stop; }
             }
+            ApplicationConfiguration.Initialize();
             using var window = new SetupWindow(spec, options, uninstall, resultFile);
             Application.Run(window); return window.ExitCode;
         }
         catch (Exception error)
         {
-            if (resultFile is not null) InstallFiles.AtomicJson(Path.GetFullPath(resultFile), new { status = "failed", message = error.Message });
-            if (!args.Contains("--quiet")) MessageBox.Show(error.Message, "Operon Setup", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return 1;
+            if (unattended) SetupConsole.Result(new { status = "failed", message = error.Message }, resultFile);
+            else MessageBox.Show(error.Message, "Operon Setup", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return error is ArgumentException ? 2 : 1;
         }
+    }
+}
+
+internal static class SetupConsole
+{
+    internal static bool Result<T>(T result, string? resultFile)
+    {
+        try
+        {
+            if (resultFile is not null)
+            {
+                var path = Path.GetFullPath(resultFile);
+                Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+                InstallFiles.AtomicJson(path, result);
+            }
+        }
+        catch (Exception error)
+        {
+            Console.WriteLine(JsonSerializer.Serialize(new { status = "failed",
+                message = "Could not save the result file: " + error.Message, installationResult = result }, InstallFiles.Json));
+            return false;
+        }
+        Console.WriteLine(JsonSerializer.Serialize(result, InstallFiles.Json));
+        return true;
+    }
+    [DllImport("kernel32.dll")] private static extern bool AttachConsole(uint processId);
+    [DllImport("kernel32.dll")] private static extern IntPtr GetStdHandle(int which);
+    internal static void Attach()
+    {
+        var output = GetStdHandle(-11);
+        if (output == IntPtr.Zero || output == new IntPtr(-1)) AttachConsole(uint.MaxValue);
+        Console.SetOut(new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)) { AutoFlush = true });
+        Console.SetError(new StreamWriter(Console.OpenStandardError(), new UTF8Encoding(false)) { AutoFlush = true });
+    }
+    internal sealed class Progress : IProgress<InstallProgress>
+    {
+        public void Report(InstallProgress value) => Console.Error.WriteLine($"[{value.Percent}%] {value.Message}");
     }
 }
 
@@ -79,9 +148,9 @@ internal sealed class SetupWindow : Form
     private readonly TextBox destination = new();
     private readonly Label state = new();
     private readonly ProgressBar progress = new();
-    private readonly Button action = new(), cancel = new(), browse = new();
+    private readonly Button action = new SetupActionButton(), cancel = new(), browse = new();
     private readonly LinkLabel logs = new();
-    private readonly CancellationTokenSource cancellation = new();
+    private CancellationTokenSource? cancellation;
     private InstallResult? completed;
     private bool running;
     internal int ExitCode { get; private set; } = 1;
@@ -110,10 +179,11 @@ internal sealed class SetupWindow : Form
         engine = new InstallEngine(spec, new Progress<InstallProgress>(value => { state.Text = value.Message; progress.Value = Math.Clamp(value.Percent, 0, 100); }));
         logs.LinkClicked += (_, _) => { Process.Start(new ProcessStartInfo(engine.LogPath) { UseShellExecute = true }); };
         cancel.SetBounds(370, 327, 104, 40); cancel.Text = "取消";
-        cancel.Click += (_, _) => { if (running) { cancellation.Cancel(); cancel.Enabled = false; state.Text = "正在安全停止，请稍候…"; } else Close(); };
+        cancel.Click += (_, _) => { if (running) { cancellation?.Cancel(); cancel.Enabled = false; state.Text = "正在安全停止，请稍候…"; } else Close(); };
         action.SetBounds(486, 327, 110, 40); action.Text = uninstall ? "卸载" : "安装";
         action.BackColor = Color.FromArgb(35, 35, 39); action.ForeColor = Color.White; action.FlatStyle = FlatStyle.Flat;
         action.Click += async (_, _) => {
+            if (running) return;
             if (completed is not null)
             {
                 if (completed.Executable is not null)
@@ -123,25 +193,66 @@ internal sealed class SetupWindow : Form
                 }
                 Close(); return;
             }
-            running = true; action.Enabled = browse.Enabled = false; destination.ReadOnly = true; logs.Visible = true;
+            running = true; action.Text = uninstall ? "卸载中…" : "安装中…";
+            action.Enabled = browse.Enabled = false; destination.ReadOnly = true; logs.Visible = true;
+            progress.Value = 0; cancel.Text = "取消"; cancel.Enabled = true;
+            cancellation = new CancellationTokenSource();
             try
             {
-                var target = destination.Text;
+                var target = uninstall ? destination.Text : InstallEngine.ResolveDestination(destination.Text);
+                destination.Text = target;
                 completed = await Task.Run(async () => uninstall ? engine.Uninstall(target) :
                     await engine.Install(options with { InstallDir = target }, cancellation.Token));
-                if (resultFile is not null) InstallFiles.AtomicJson(Path.GetFullPath(resultFile), completed);
+                destination.Text = completed.InstallDir;
                 ExitCode = 0; action.Text = uninstall ? "完成" : "打开 Operon"; action.Enabled = true; cancel.Text = "关闭"; cancel.Enabled = true;
+                SaveResult(completed);
             }
             catch (Exception error)
             {
-                state.Text = error is OperationCanceledException ? "安装已取消。原有软件与用户档案已保留。" : "安装未完成，请查看日志。";
-                if (resultFile is not null) InstallFiles.AtomicJson(Path.GetFullPath(resultFile), new InstallResult("failed", destination.Text, null, null, engine.LogPath, error.Message));
+                state.Text = error is OperationCanceledException ? "安装已取消。可修改目录后重试，原有文件已保留。" : "安装未完成。可修改目录后重试，详情见日志。";
+                SaveResult(new InstallResult("failed", destination.Text, null, null, engine.LogPath, error.Message));
                 if (error is not OperationCanceledException) MessageBox.Show(this, error.Message, "Operon Setup", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                cancel.Text = "关闭"; cancel.Enabled = true;
             }
-            finally { running = false; }
+            finally
+            {
+                running = false; cancellation.Dispose(); cancellation = null;
+                if (completed is null)
+                {
+                    action.Text = uninstall ? "重试卸载" : "重新安装"; action.Enabled = true;
+                    browse.Enabled = !uninstall; destination.ReadOnly = uninstall;
+                    cancel.Text = "关闭"; cancel.Enabled = true;
+                }
+            }
         };
         Controls.AddRange([title, subtitle, label, destination, browse, state, progress, logs, cancel, action]);
-        FormClosing += (_, e) => { if (running) { e.Cancel = true; cancellation.Cancel(); cancel.Enabled = false; } };
+        FormClosing += (_, e) => { if (running) { e.Cancel = true; cancellation?.Cancel(); cancel.Enabled = false; } };
+    }
+
+    private void SaveResult(InstallResult result)
+    {
+        if (resultFile is null) return;
+        try
+        {
+            var path = Path.GetFullPath(resultFile);
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            InstallFiles.AtomicJson(path, result);
+        }
+        catch (Exception error)
+        {
+            MessageBox.Show(this, "结果文件未保存：" + error.Message + "\n安装状态可在窗口及日志中查看。",
+                "Operon Setup", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+    }
+}
+
+internal sealed class SetupActionButton : Button
+{
+    protected override void OnPaint(PaintEventArgs e)
+    {
+        if (Enabled) { base.OnPaint(e); return; }
+        // WinForms' themed disabled text is almost invisible on a dark flat button.
+        e.Graphics.Clear(Color.FromArgb(224, 225, 229));
+        TextRenderer.DrawText(e.Graphics, Text, Font, ClientRectangle, Color.FromArgb(65, 66, 72),
+            TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine);
     }
 }

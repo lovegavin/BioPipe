@@ -72,6 +72,46 @@ internal sealed class InstallEngine
     private void Report(string message, int percent) { Log(message); progress.Report(new(message, percent)); }
     private static string ReceiptPath(string root) => Path.Combine(root, "installation.json");
 
+    // Resolve without modifying anything. Both UI and unattended installation
+    // use this policy; ownership validation is repeated under the install lease.
+    internal static string ResolveDestination(string selected)
+    {
+        if (string.IsNullOrWhiteSpace(selected)) throw new ArgumentException("请选择安装目录。");
+        var root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(selected.Trim()));
+        InstallFiles.NoLinks(root);
+        if (File.Exists(root)) throw new IOException("安装位置是文件，请选择文件夹。");
+        if (Available(root)) return root;
+        for (int suffix = 1; ; suffix++)
+        {
+            var child = Path.Combine(root, suffix == 1 ? "Operon" : $"Operon-{suffix}");
+            InstallFiles.NoLinks(child);
+            if (Available(child)) return child;
+        }
+    }
+
+    private static bool Available(string root)
+    {
+        if (File.Exists(root)) return false;
+        if (!Directory.Exists(root) || !Directory.EnumerateFileSystemEntries(root).Any()) return true;
+        bool Owned(string path)
+        {
+            if (!File.Exists(path)) return false;
+            using var value = JsonDocument.Parse(File.ReadAllText(path));
+            return value.RootElement.ValueKind == JsonValueKind.Object &&
+                value.RootElement.TryGetProperty("owner", out var owner) &&
+                owner.ValueKind == JsonValueKind.String && owner.GetString() == InstallFiles.Owner;
+        }
+        bool marker;
+        try { marker = Owned(Path.Combine(root, ".biopipe-setup.json")); }
+        catch (JsonException) { marker = false; }
+        bool receipt;
+        try { receipt = Owned(ReceiptPath(root)); }
+        catch (JsonException) when (!marker) { return false; }
+        if (!marker && !receipt) return false;
+        ReadReceipt(root); // Corrupt owned receipts never become an overwrite request.
+        return true;
+    }
+
     private static InstallReceipt? ReadReceipt(string root)
     {
         InstallFiles.NoLinks(root);
@@ -163,7 +203,7 @@ internal sealed class InstallEngine
 
     internal async Task<InstallResult> Install(InstallOptions options, CancellationToken token)
     {
-        string root = Path.GetFullPath(options.InstallDir).TrimEnd(Path.DirectorySeparatorChar);
+        string root = ResolveDestination(options.InstallDir);
         using var installLease = new InstallLease("Local\\BioPipeSetup-" + InstallLease.Identity(root));
         InstallFiles.NoLinks(root);
         var old = ReadReceipt(root);

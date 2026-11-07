@@ -5,6 +5,15 @@ format, not a new execution engine: it compiles into the same Graph used by
 Studio, the application API and MCP. Existing graph JSON and route ZIP remain
 accepted.
 
+In Studio, put the complete YAML project inside the selected workspace and set
+the import dialog's **base directory** to the folder containing the YAML, JSON
+sidecars and scripts. Importing a YAML file alone cannot upload its neighboring
+files. A complete workflow ZIP is another supported transfer method. CLI import
+resolves sidecars relative to the YAML file automatically. Missing, unreadable or
+malformed sidecars return a validation error naming the file and expected project
+directory; correct the location or file and retry. Failed imports do not modify
+frozen values or start a task.
+
 ```sh
 biopipe workflow init ./analysis --template csv-pca
 biopipe workflow lint ./analysis/workflow.yaml

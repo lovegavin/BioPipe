@@ -14,6 +14,11 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install -e ".[dev]"
       - run: python -m pytest tests/test_dependency_processes.py tests/test_bytecode_cancel.py tests/test_remote_install_readiness.py tests/test_remote_provision.py tests/test_remote_slow_catalog.py -q
+      - run: bash -n scripts/install_server.sh
+      - run: python -m pytest tests/test_server_setup.py tests/test_workflow_import_errors.py tests/test_workflow_spec_v3.py -q
+        env:
+          OPERON_TEST_SERVER_INSTALL: '1'
+          OPERON_TEST_SERVER_BOOTSTRAP: '1'
   check:
     runs-on: windows-latest
     env:
@@ -35,10 +40,16 @@ jobs:
         working-directory: frontend
       - run: npm run build
         working-directory: frontend
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: dotnet run --project tests/native_setup/SetupTests.csproj -- "${{ runner.temp }}/operon-native-setup"
+      - run: dotnet build installer/BioPipeSetup.csproj -v quiet
       # Source-library refresh probes HDF5 and sklearn classes as well as the SDK.
       - run: python -m pip install -c constraints-py311-windows.txt -e ".[analysis,agent,dev]" "h5py>=3.10" "scikit-learn>=1.4" "biopython>=1.81" "hictkpy>=1.4,<2"
       - run: python -m pytest tests/test_agent_guidance.py tests/test_agent_canvas_loop.py tests/test_artifact_remote.py tests/test_environments.py tests/test_dependencies.py tests/test_dependency_processes.py tests/test_bytecode_cancel.py tests/test_smoke_route.py -q
       - run: python -m pytest tests/test_optional_library_imports.py tests/test_resource_downloads.py tests/test_remote_handshake.py -q
+      - run: python -m pytest tests/test_server_setup.py tests/test_workflow_import_errors.py tests/test_workflow_spec_v3.py tests/test_setup_wrapper.py -q
       - run: python -m biopipe registry check
       - run: python scripts/build_operator_docs.py --check
       - run: python -m pytest tests/test_manifest_v3.py tests/test_contracts.py tests/test_protocol_v2.py tests/test_sdk_agent.py tests/test_builtin_pins.py tests/test_route_parameters.py tests/test_desktop.py -q

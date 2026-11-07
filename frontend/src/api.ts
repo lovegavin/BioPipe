@@ -1,4 +1,5 @@
 import {t} from './i18n';
+import {importErrorMessage} from './importError';
 import type { Bootstrap, Graph, Job, Preview, ContractAnalysis, Workspace, SavedWorkflow, WorkflowSummary, RouteDefinition, DataSource } from "./types";
 import type { LibraryState, LibraryAction } from "./types";
 
@@ -44,7 +45,7 @@ async function request<T>(path: string, body?: unknown): Promise<T> {
       ? value.detail.map((d: { msg: string }) => d.msg).join("；")
       : value.detail;
     throw new ApiError(
-      value.message || details || t("操作未完成，请重试。"),
+      importErrorMessage(value) || details || t("操作未完成，请重试。"),
       value.node_id,
       response.status,
       value.code,

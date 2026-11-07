@@ -3,6 +3,7 @@
 Windows users can install **Operon_Setup.exe**, which includes its own Python
 for management, Form/memory infrastructure and agent interfaces, and creates a fresh isolated profile. Scientific dependencies are prepared explicitly for the chosen route/host; PyTorch, Pandas, SciPy and plotting packages are not bundled by default. Existing profiles and analysis files remain
 available for explicit import. See [Windows Setup](docs/windows_setup.md).
+Windows and Linux also support [command-line installation](docs/command_line_installation.md).
 
 ## Application and library releases
 
@@ -18,7 +19,7 @@ AI agent through CLI or MCP. Operon itself does not supply an AI service.
 Existing `biopipe` Python modules, CLI commands, MCP tools and protocol identifiers
 remain compatible; see [rebranding and compatibility](docs/rebranding.md).
 
-The **v3.0.0 application candidate** and independently versioned **2026.11.6.1 operator library**
+The **v3.0.1 application candidate** and independently versioned **2026.11.6.1 operator library**
 share this repository. The reference library includes **717 operators, 101 Readers, seven
 provider packages and 24 route templates**. Operators and Readers use **protocol
 v3 / SDK 3.6**, separate parameter JSON and adjacent Markdown documentation.

@@ -118,7 +118,8 @@ def create_app(settings=None):
 
     @app.exception_handler(ValueError)
     async def invalid_value(request, exc):
-        return JSONResponse({"code": "invalid_request", "message": str(exc)}, status_code=422)
+        return JSONResponse({"code": getattr(exc, "code", "invalid_request"), "message": str(exc),
+                             "details": getattr(exc, "details", None)}, status_code=422)
 
     @app.get("/health")
     @app.get("/ready")
@@ -252,8 +253,13 @@ def create_app(settings=None):
             import_root = settings.code_root or settings.root
             raw = yaml.safe_load(payload.text)
             if isinstance(raw, dict) and raw.get('format') == 'biopipe.workflow':
-                from biopipe.workflow_spec import parse, compile_spec
-                directory = project_path(settings.root, '.', payload.base_dir)
+                from biopipe.workflow_spec import parse, compile_spec, WorkflowError
+                try:
+                    directory = project_path(settings.root, '.', payload.base_dir)
+                except GraphError as error:
+                    raise WorkflowError(f'The YAML project base directory must be inside the current workspace: {settings.root}. '
+                                        'Copy the complete YAML project there and select its relative directory, '
+                                        'or import a complete workflow ZIP.') from error
                 return compile_spec(parse(payload.text), directory)
             sources = raw.get('sources') if isinstance(raw, dict) else None
             if isinstance(sources, dict) and sources:

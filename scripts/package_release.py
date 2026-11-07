@@ -75,7 +75,7 @@ def main():
     for name_ in ('release.json', 'pyproject.toml', 'README.md'):
         if (root / 'library' / name_).is_file():
             copy(root / 'library' / name_, Path('library') / name_)
-    for name_ in ('desktop_server.py', 'install_maintenance.py', 'run.py', 'diagnose_pins.py',
+    for name_ in ('desktop_server.py', 'install_maintenance.py', 'install_server.py', 'install_server.sh', 'run.py', 'diagnose_pins.py',
                   'accept_igv_handoff.py', 'open_igv_handoff.ps1',
                   'verify_release_agent.py', 'verify_release_agent.md', 'verify_operon_candidate.py', 'verify_server_cli.py',
                   'check_resources.py', 'provision_resources.py'):

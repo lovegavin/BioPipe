@@ -54,6 +54,21 @@ var engine = new InstallEngine(spec, new Progress<InstallProgress>(), Path.GetRe
 Check(Path.IsPathFullyQualified(engine.LogPath), "installer report path depends on child cwd");
 Check(File.Exists(engine.LogPath), "log link has no file before the first install action");
 Check(InstallFiles.Owner == "Operon.Studio.Install.v1", "new installer owns the old product");
+var occupied = Path.Combine(root, "chosen-parent"); Directory.CreateDirectory(occupied);
+var untouched = Path.Combine(occupied, "research.txt"); File.WriteAllText(untouched, "keep my files");
+Check(InstallEngine.ResolveDestination(occupied) == Path.Combine(occupied, "Operon"), "nonempty parent not redirected");
+Directory.CreateDirectory(Path.Combine(occupied, "Operon"));
+File.WriteAllText(Path.Combine(occupied, "Operon", "notes.txt"), "keep child files");
+File.WriteAllText(Path.Combine(occupied, "Operon-2"), "occupied file");
+Check(InstallEngine.ResolveDestination(occupied) == Path.Combine(occupied, "Operon-3"), "child collision overwrites user files");
+var ownedChild = Path.Combine(occupied, "Operon-3"); Directory.CreateDirectory(ownedChild);
+File.WriteAllText(Path.Combine(ownedChild, ".biopipe-setup.json"), "{\"owner\":\"" + InstallFiles.Owner + "\"}");
+Check(InstallEngine.ResolveDestination(occupied) == ownedChild, "repeat parent does not reuse owned child");
+Check(InstallEngine.ResolveDestination(ownedChild) == ownedChild, "owned install was nested again");
+Check(File.ReadAllText(untouched) == "keep my files" && File.ReadAllText(Path.Combine(occupied, "Operon-2")) == "occupied file", "destination resolution changed files");
+File.WriteAllText(Path.Combine(ownedChild, "installation.json"), "not-json");
+try { InstallEngine.ResolveDestination(occupied); throw new Exception("accepted corrupt owned receipt"); }
+catch (System.Text.Json.JsonException) { checks++; }
 var legacyRoot = Path.Combine(root, "legacy-biopipe"); Directory.CreateDirectory(legacyRoot);
 var legacyReceipt = "{\"owner\":\"BioPipe.Studio.Install.v1\",\"version\":\"2.6.0\",\"current\":\"versions/old\",\"profile\":\"unused\",\"versions\":[\"versions/old\"],\"shortcuts\":{},\"uninstallKey\":null}";
 File.WriteAllText(Path.Combine(legacyRoot, "installation.json"), legacyReceipt);

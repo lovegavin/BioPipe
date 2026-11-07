@@ -17,6 +17,7 @@ trace it. See [Why Operon](../README.md#why-operon) for the five supports.
 
 ## Use Operon
 
+- [Windows and Linux command-line installation](command_line_installation.md)
 - [Linux server and terminal quickstart](server_cli.md)
 - [3.0 implementation scope and validation](V3_IMPLEMENTATION.md)
 - [Operon naming and compatibility](rebranding.md)

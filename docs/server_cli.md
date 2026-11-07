@@ -7,6 +7,11 @@ a display server, WebView, the Windows application, or an AI model.
 
 ## Install once, choose an environment
 
+For unattended setup with a private runtime, optional Python bootstrap, destination
+selection and a server registration document, use the
+[command-line installer](command_line_installation.md#linux-server). The manual
+source/wheel procedure below remains available for administrator-managed Python.
+
 Use Python 3.11 or newer. Install into a dedicated environment owned by your user,
 not the cluster's system Python. For a source release, from its extracted folder:
 

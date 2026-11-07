@@ -61,7 +61,8 @@ def create_headless_app(settings):
 
     @app.exception_handler(ValueError)
     async def invalid(request, error):
-        return JSONResponse({'code': 'invalid_request', 'message': str(error)}, status_code=422)
+        return JSONResponse({'code': getattr(error, 'code', 'invalid_request'), 'message': str(error),
+                             'details': getattr(error, 'details', None)}, status_code=422)
 
     from biopipe.remote.client import RemoteError, HostKeyRequired
     @app.exception_handler(RemoteError)

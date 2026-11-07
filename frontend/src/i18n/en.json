@@ -1,4 +1,11 @@
 {
+  "脚本语法有误": "Invalid script syntax",
+  "文件不存在": "File not found",
+  "此路径是文件夹": "This path is a directory",
+  "文件须为 UTF-8 编码": "The file must be UTF-8 text",
+  "JSON 格式有误": "Invalid JSON",
+  "文件不可读，请检查权限": "Cannot read the file; check access permissions",
+  "无法导入 {file}：{reason}。当前项目目录：{directory}。请将 YAML 和配套文件放在工作区的同一项目目录，修改导入基础目录后重试，或导入完整路线 ZIP。": "Cannot import {file}: {reason}. Current project directory: {directory}. Keep the YAML and referenced files together inside the workspace, correct the import base directory and retry, or import a complete workflow ZIP.",
   " · {v0} 等待": " · {v0} waiting",
   " · {v0}/{v1} 步": " · {v0}/{v1} steps",
   " · 也接受同名列": " · also accepts matching column names",
