@@ -87,11 +87,18 @@ def prepare_interface(graph, catalog, root, *, input_roots=None):
     analysis = analyze_graph(result, catalog, root, input_roots=input_roots)
     old = result.interface
     previous_inputs = {p.node_id: p for p in old.inputs} if old else {}
+    def persisted_contract(value):
+        schema = deepcopy(value)
+        # Legacy projections are runtime capabilities, not author declarations.
+        # Persisting them would spuriously version unchanged library routes.
+        if not schema.get('_format_explicit'):
+            schema.pop('data_format', None)
+        return schema
     inputs = []
     for node in result.nodes:
         if node.kind == "source":
             previous = previous_inputs.get(node.id)
-            schema = deepcopy(analysis["nodes"][node.id]["outputs"][0])
+            schema = persisted_contract(analysis["nodes"][node.id]["outputs"][0])
             schema.pop("reader", None)
             schema["labels"] = [{"dim": dim, "values": labels} for dim, labels in schema.get("labels", {}).items() if labels]
             schema["parallel"] = [{"dim": dim, "fields": fields} for dim, fields in schema.pop("axis_info", {}).items() if fields]
@@ -113,7 +120,7 @@ def prepare_interface(graph, catalog, root, *, input_roots=None):
         node_ports = analysis["nodes"].get(port.node_id, {}).get("outputs", [])
         index = port_index(port.handle)
         if index < len(node_ports):
-            outputs.append(port.model_copy(update={"contract": deepcopy(node_ports[index])}))
+            outputs.append(port.model_copy(update={"contract": persisted_contract(node_ports[index])}))
     result.schema_version = 2
     result.interface = RouteInterface(inputs=inputs, outputs=outputs)
     return result

@@ -353,6 +353,21 @@ def test_nested_route_preserves_explicit_native_format_boundary(tmp_path):
     result = analyze_graph(outer, c, tmp_path)
     boundary = next(e for e in result['edges'] if e['id'] == 'after')
     assert boundary['conversion_plan']['converters'][0]['id'] == 'form.ndarray.wrap'
+    assert next(e for e in result['edges'] if e['id'] == 'before')['status'] == 'compatible'
+
+
+def test_legacy_route_interface_does_not_persist_inferred_formats(tmp_path):
+    from src.web.routes import prepare_interface
+    c = catalog()
+    for descriptor in c['readers'] + c['operators']:
+        descriptor.pop('data_formats', None)
+    prepared = prepare_interface(graph(), c, tmp_path)
+    for boundary in [*prepared.interface.inputs, *prepared.interface.outputs]:
+        assert 'data_format' not in boundary.contract
+    c = catalog()
+    explicit = prepare_interface(graph(), c, tmp_path)
+    assert explicit.interface.inputs[0].contract['_format_explicit']
+    assert explicit.interface.inputs[0].contract['data_format']
 
 
 def test_format_value_rejects_rank_and_storage_mismatch(tmp_path):

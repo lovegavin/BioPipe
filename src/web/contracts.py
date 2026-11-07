@@ -61,7 +61,14 @@ def analyze_graph(graph, catalog, root, *, source_overrides=None, ancestry=(), i
                 raise GraphError("路线不能递归调用自身。", node.id)
             check_interface(route.graph, catalog)
             interface = route.graph.interface
-            ports[node.id] = {"inputs": [port.contract or None for port in interface.inputs],
+            route_inputs = []
+            for port in interface.inputs:
+                rule = dict(port.contract or {})
+                if 'data_format' not in rule:
+                    projected = effective_formats({'inputs_arity': 1, 'contracts': {'inputs': [rule]}})
+                    rule['data_format'] = projected['inputs'][0]
+                route_inputs.append(rule)
+            ports[node.id] = {"inputs": route_inputs,
                               "outputs": [unknown() for _ in interface.outputs]}
         else:
             spec = registry.get(node.operator)
