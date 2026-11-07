@@ -48,7 +48,7 @@ jobs:
             python -m build --wheel --outdir .release-wheel .
             python -m pip install .release-wheel/operon_studio-${version}-py3-none-any.whl
           fi
-          if ! python -c 'import operon' >/dev/null 2>&1; then
+          if ! python -I -c 'import operon' >/dev/null 2>&1; then
             echo "Installed application wheel does not provide the operon package; rebuilding from this checkout."
             python -m pip install build
             python -m build --wheel --outdir .release-wheel .
