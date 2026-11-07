@@ -1,7 +1,7 @@
-# Operon Quick Start (Studio 3.0.2 + Operator Library 5.0.1)
+# Operon Quick Start (Studio 3.0.2 + Operator Library 5.0.2)
 
 From a clean Windows machine to an exported, biologically meaningful result in
-about five minutes: install Operon Studio 3.0.2, import operator library 5.0.1,
+about five minutes: install Operon Studio 3.0.2, import operator library 5.0.2,
 and run a real VHH/lysozyme interface analysis on **1MEL**.
 
 Operon runs locally. It does not upload your data and does not require a
@@ -12,14 +12,14 @@ separate Python installation.
 | Component | Version |
 | --- | --- |
 | Desktop application / frontend | **3.0.2** |
-| Operator library (backend) | **5.0.1** (867 operators, 108 Readers, 7 packages, 72 routes) |
+| Operator library (backend) | **5.0.2** (867 operators, 108 Readers, 7 packages, 72 routes) |
 | Protocol | v3 |
 | Minimum application | 3.0.2 |
 
 The application and the library upgrade independently: upgrading the application
 never overwrites an imported library. The example below lives in the source
 repository under `examples/quickstart/`; `QUICKSTART.md` and `QUICKSTART.zh.md`
-ship both standalone and inside `Operon-Quickstart-v5.0.1.zip`.
+ship both standalone and inside `Operon-Quickstart-v5.0.2.zip`.
 
 ## 1. Install Operon Studio 3.0.2
 
@@ -41,14 +41,14 @@ preparation needs internet access.
 
 Supported: 64-bit Windows 10 / 11.
 
-## 2. Import Operator Library 5.0.1
+## 2. Import Operator Library 5.0.2
 
-1. From the [library-v5.0.1 release](https://github.com/lovegavin/Operon/releases/tag/library-v5.0.1)
+1. From the [library-v5.0.2 release](https://github.com/lovegavin/Operon/releases/tag/library-v5.0.2)
    download the package for your platform:
-   - Windows: `Operon-Library-v5.0.1-Windows.operon-library.zip`
-   - Linux: `Operon-Library-v5.0.1-Linux.operon-library.zip`
+   - Windows: `Operon-Library-v5.0.2-Windows.operon-library.zip`
+   - Linux: `Operon-Library-v5.0.2-Linux.operon-library.zip`
 2. In Studio open **Operator Library → Import package** and select the zip.
-3. The panel shows **5.0.1** when done. Import is transactional: a failure keeps
+3. The panel shows **5.0.2** when done. Import is transactional: a failure keeps
    the previous library.
 4. The platform must match; a mismatch reports
    `Library source does not match wheel`.
@@ -57,14 +57,14 @@ Supported: 64-bit Windows 10 / 11.
 > `.biopipe-library.zip` archives, but installation routing is strict: only
 > `.operon-library.zip` bundles (`format: "operon.library"`) install end to end.
 > A legacy archive passes the picker and then fails installation, so use the
-> 5.0.1 asset above. That gap is recorded in
+> 5.0.2 asset above. That gap is recorded in
 > [docs/verification/operon-5.0.0-compatibility.md](docs/verification/operon-5.0.0-compatibility.md).
 
 From an installed Python environment:
 
 ```bash
 operon --profile-dir <profile> plugin install \
-  Operon-Library-v5.0.1-Windows.operon-library.zip
+  Operon-Library-v5.0.2-Windows.operon-library.zip
 ```
 
 Verify the registry:
@@ -143,7 +143,7 @@ profile. Paste a block like this into your agent client:
 - Restart the client after editing; the `operon_*` tools appear next session.
 
 Verify the connection with `operon_status()`, `operon_sessions()` and
-`operon_context(session_id)`: a response with the workspace and the 5.0.1
+`operon_context(session_id)`: a response with the workspace and the 5.0.2
 registry means the connection works.
 
 ## 5. Option: a remote Linux server
@@ -160,7 +160,7 @@ Studio. On the agent path, use `operon_remote_status()`,
 
 ## 6. Expected results and self-check
 
-Verified with library 5.0.1 on 1MEL:
+Verified with library 5.0.2 on 1MEL:
 
 | Metric | Value |
 | --- | --- |
@@ -191,8 +191,8 @@ print("OK", i.residue.iloc[0], l.liability.iloc[0])
 | Symptom | Cause and fix |
 | --- | --- |
 | Agent has no `operon_*` tools | MCP configuration not active; check the command path and `--allow-run`, then restart the client. |
-| `Missing operator definition: export_results` | The workspace has no loaded library; import 5.0.1 in Studio, or point `--profile-dir` at a profile that has it. |
-| `Library source does not match wheel` | Wrong platform package; use the Windows or Linux 5.0.1 zip. The old library is kept. |
+| `Missing operator definition: export_results` | The workspace has no loaded library; import 5.0.2 in Studio, or point `--profile-dir` at a profile that has it. |
+| `Library source does not match wheel` | Wrong platform package; use the Windows or Linux 5.0.2 zip. The old library is kept. |
 | `The selected execution environment is not ready` | Prepare dependencies explicitly for this route, then Validate again. Nothing is installed by Validate or Run. |
 | Server installation fails | Read `managed-v1/setup-<digest>.log`; check SSH, disk and outbound HTTPS. |
 | Jobs stay `queued` | A long-running Studio may hold a stale memory snapshot; fully restart it. |
@@ -203,7 +203,7 @@ logs under the profile's `logs/`, server logs at
 
 ## 8. Next steps
 
-- 72 built-in routes in the 5.0.1 library: **File → Open route**.
+- 72 built-in routes in the 5.0.2 library: **File → Open route**.
 - Parameters, ports and errors: select a node and open **Inspector** and the run log.
 - Protocol and extensions: `docs/operator_protocol.md`,
   `docs/step_extensions.md`.

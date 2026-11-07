@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import tempfile
+import zipfile
 from pathlib import Path
 import sys
 
@@ -78,11 +79,14 @@ def main() -> int:
     readme += [f"| {name} | routes/{key}.operon.zip |" for key, name, _ in sorted(written)]
     readme_text = "\n".join(readme) + "\n"
 
-    (routes_dir / "README.md").write_text(readme_text, encoding="utf-8")
-    (routes_dir / "SHA256SUMS.txt").write_text("\n".join(checksums) + "\n", encoding="utf-8")
-    print(json.dumps({"version": version, "routes": len(written),
-                      "directory": str(routes_dir),
-                      "bytes": sum(t.stat().st_size for _, _, t in written)}, indent=2))
+    archive = args.output / f"Operon-Routes-v{version}.zip"
+    with zipfile.ZipFile(archive, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
+        bundle.writestr("README.md", readme_text)
+        bundle.writestr("SHA256SUMS.txt", "\n".join(checksums) + "\n")
+        for _, _, target in sorted(written):
+            bundle.write(target, f"routes/{target.name}")
+    print(json.dumps({"version": version, "routes": len(written), "archive": str(archive),
+                      "bytes": archive.stat().st_size}, indent=2))
     return 0
 
 

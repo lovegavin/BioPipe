@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "operon-builtin-library"
-version = "5.0.1"
+version = "5.0.2"
 description = "Independent Operon reference operators, Readers and route templates"
 requires-python = ">=3.11"
 
