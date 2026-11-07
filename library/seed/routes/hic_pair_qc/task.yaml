@@ -1,0 +1,35 @@
+name: Hi-C pair QC and contact binning
+sources:
+  pairs:
+    path: input/gm12878.pairs.gz
+    dims:
+    - file
+    labels: {}
+    reader: PairsReader
+  sizes:
+    path: input/hg19.chrom_sizes.txt
+    dims:
+    - file
+    labels: {}
+    reader: TsvFileReader
+parameters_file: parameters.json
+steps:
+- name: hic_pair_stats
+  inputs:
+  - pairs
+- name: export_results
+  inputs:
+  - stats
+- name: hic_contact_matrix
+  inputs:
+  - pairs
+  - sizes
+- name: export_results
+  inputs:
+  - contacts
+- name: hic_distance_decay
+  inputs:
+  - contacts
+- name: export_results
+  inputs:
+  - decay

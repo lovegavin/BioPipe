@@ -1,0 +1,10 @@
+{
+  "reference": "hg19",
+  "assay": "Hi-C",
+  "cell_line": "GM12878",
+  "archive": "open2c/cooler test data (hg19.GM12878-MboI.pairs.subsample.sorted.txt.gz)",
+  "sha256": {
+    "gm12878.pairs.gz": "909637e9f061583a2d9be9273f03e87ab448c251d1ebabb3bf7fa66dcd59fa0a",
+    "hg19.chrom_sizes.txt": "996a373585807b82f1ff0919f3a37b0e3c674d904efd41e16a202630faf91405"
+  }
+}

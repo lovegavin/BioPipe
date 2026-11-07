@@ -2870,6 +2870,36 @@
     "status": "generated"
   },
   {
+    "id": "hic_contact_matrix",
+    "kind": "operator",
+    "title": "hic_contact_matrix",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Bin cis Hi-C pairs into a long-form contact table at a fixed resolution.",
+    "doc": "src/task/step/steps/hic_contact_matrix.HicContactMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "hic_distance_decay",
+    "kind": "operator",
+    "title": "hic_distance_decay",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Aggregate contact counts by genomic distance into a decay curve.",
+    "doc": "src/task/step/steps/hic_distance_decay.HicDistanceDecayStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "hic_pair_stats",
+    "kind": "operator",
+    "title": "hic_pair_stats",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Count cis and trans contacts in a Hi-C pairs file.",
+    "doc": "src/task/step/steps/hic_pair_stats.HicPairStatsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "hierarchical_clustering",
     "kind": "operator",
     "title": "Hierarchical clustering",

@@ -1,0 +1,24 @@
+{
+  "type": "object",
+  "properties": {
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic"
+    },
+    "value_dim": {
+      "type": "string",
+      "default": "value"
+    },
+    "max_pairs": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "stats"
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

@@ -86,6 +86,11 @@
       "sha256": "0518a68132dcf833bc5f59fe90c1245a4f70798b67603c3b7d3437b0a463b93e",
       "parameters_sha256": "574b295ca08dd38fb92dc9fb1766168f2f7a262cc7f2a57553b444fc7cc9c09c"
     },
+    "route_577b311a7067": {
+      "path": "routes/hic_pair_qc/task.yaml",
+      "sha256": "4cf978f269f4554213bc532ea7eca67571e43c167a497dc999b0164de4a2e4f6",
+      "parameters_sha256": "5145aef971c0cb933234f3f02abf3e4536f5d504495a97f830bafc3bb006cb03"
+    },
     "route_240979c8e1c4": {
       "path": "routes/hic_pairs/task.yaml",
       "sha256": "64336290654cdbad26aeb2eb428f9840fdad5473ba7617540864f994ff42ba90",
@@ -8417,6 +8422,377 @@
                 },
                 "info_open": false,
                 "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_577b311a7067",
+      "version": 1,
+      "name": "Hi-C pair QC and contact binning",
+      "graph": {
+        "schema_version": 2,
+        "name": "Hi-C pair QC and contact binning",
+        "base_dir": ".studio/builtin-inputs/hic_pair_qc",
+        "nodes": [
+          {
+            "id": "pairs",
+            "kind": "source",
+            "operator": null,
+            "title": "pairs",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "PairsReader",
+              "path": "input/gm12878.pairs.gz",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "sizes",
+            "kind": "source",
+            "operator": null,
+            "title": "sizes",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "TsvFileReader",
+              "path": "input/hg19.chrom_sizes.txt",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "hic_pair_stats_1",
+            "kind": "operator",
+            "operator": "hic_pair_stats",
+            "title": "hic_pair_stats",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "statistic_dim": "statistic",
+              "value_dim": "value",
+              "max_pairs": 0,
+              "output": "stats"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "hic_pair_stats",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "hic_contact_matrix_3",
+            "kind": "operator",
+            "operator": "hic_contact_matrix",
+            "title": "hic_contact_matrix",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "contact_dim": "contact",
+              "field_dim": "field",
+              "resolution": 1000000,
+              "chromosome": "chr1",
+              "include_trans": false,
+              "max_pairs": 0,
+              "output": "contacts"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "hic_contacts_chr1",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "hic_distance_decay_5",
+            "kind": "operator",
+            "operator": "hic_distance_decay",
+            "title": "hic_distance_decay",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "contact_dim": "contact",
+              "field_dim": "field",
+              "distance_dim": "distance_bin",
+              "statistic_dim": "statistic",
+              "n_bins": 20,
+              "max_distance": 0,
+              "output": "decay"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "hic_decay",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "pairs-hic_pair_stats_1-0",
+            "source": "pairs",
+            "target": "hic_pair_stats_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "hic_pair_stats_1-export_results_2-0",
+            "source": "hic_pair_stats_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pairs-hic_contact_matrix_3-0",
+            "source": "pairs",
+            "target": "hic_contact_matrix_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "sizes-hic_contact_matrix_3-1",
+            "source": "sizes",
+            "target": "hic_contact_matrix_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "hic_contact_matrix_3-export_results_4-0",
+            "source": "hic_contact_matrix_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "hic_contact_matrix_3-hic_distance_decay_5-0",
+            "source": "hic_contact_matrix_3",
+            "target": "hic_distance_decay_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "hic_distance_decay_5-export_results_6-0",
+            "source": "hic_distance_decay_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "pairs",
+              "label": "pairs",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "pairs"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "sizes",
+              "label": "sizes",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "tsv"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
                 "parallel": []
               }
             }

@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "contact_dim": {
+      "type": "string",
+      "default": "contact"
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "resolution": {
+      "type": "integer",
+      "minimum": 1000,
+      "default": 1000000
+    },
+    "chromosome": {
+      "type": "string",
+      "default": ""
+    },
+    "include_trans": {
+      "type": "boolean",
+      "default": false
+    },
+    "max_pairs": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "contacts"
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

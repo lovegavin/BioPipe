@@ -1,0 +1,37 @@
+{
+  "type": "object",
+  "properties": {
+    "contact_dim": {
+      "type": "string",
+      "default": "contact"
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field"
+    },
+    "distance_dim": {
+      "type": "string",
+      "default": "distance_bin"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic"
+    },
+    "n_bins": {
+      "type": "integer",
+      "minimum": 2,
+      "default": 20
+    },
+    "max_distance": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "output": {
+      "type": "string",
+      "default": "decay"
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

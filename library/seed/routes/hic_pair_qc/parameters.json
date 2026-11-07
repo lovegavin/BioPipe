@@ -1,0 +1,47 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "pairs": {},
+    "sizes": {}
+  },
+  "steps": [
+    {
+      "name": "hic_pair_stats",
+      "inputs": ["pairs"],
+      "params": {"output": "stats"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["stats"],
+      "params": {"format": "csv", "filename": "hic_pair_stats"},
+      "context_params": {}
+    },
+    {
+      "name": "hic_contact_matrix",
+      "inputs": ["pairs", "sizes"],
+      "params": {"output": "contacts", "resolution": 1000000, "chromosome": "chr1"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["contacts"],
+      "params": {"format": "csv", "filename": "hic_contacts_chr1"},
+      "context_params": {}
+    },
+    {
+      "name": "hic_distance_decay",
+      "inputs": ["contacts"],
+      "params": {"output": "decay", "n_bins": 20, "max_distance": 0},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["decay"],
+      "params": {"format": "csv", "filename": "hic_decay"},
+      "context_params": {}
+    }
+  ]
+}
