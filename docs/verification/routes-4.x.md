@@ -2216,3 +2216,86 @@ All three platforms produce byte-identical exports.
 - A280 of a 1 mg/ml solution uses the average-residue molecular weight; EMBOSS
   reports monoisotopic-based values, so only the molar coefficients are compared.
 - The instability index is defined only for the 20 standard residues.
+
+
+## Batch 28 — Tree rooting, pruning and balance (`tree_manipulation`)
+
+Three operators extend the phylogeny group with tree manipulation on the
+node x field tree Form produced by `phylo_neighbor_joining`:
+
+- `tree_root_midpoint` — re-root the tree at the midpoint of the longest
+  tip-to-tip path, splitting an edge when the midpoint falls inside it.
+- `tree_prune_tips` — drop named tips, remove empty internal nodes, collapse
+  unary nodes and promote a single remaining child to the root.
+- `tree_balance` — Sackin index, Colless index (binary trees only), cherries
+  and tip/internal counts.
+
+### Data
+
+`workdir/b28_route/input/ssu_aligned.fasta` — 24 aligned SSU rRNA sequences
+from the Rfam RF00177 seed alignment used in Batch 17 (1,980 columns,
+sha256 `6df770ce70b0e6e6dac180266929c5f61d2929cb93c846fc4809d18945772c44`).
+Complete-deletion trimming leaves 1,396 sites; JC69 distances have mean
+0.2782382923563276.
+
+### Route
+
+`tree_manipulation` (11 steps): `phylo_distance_matrix` -> `phylo_neighbor_joining`
+-> `tree_root_midpoint` -> `tree_prune_tips` (three tips) -> `tree_balance`
+(rooted) -> `tree_balance` (pruned) -> five `export_results` steps (Newick for
+the NJ, rooted and pruned trees; CSV for both balance tables).
+
+### Results
+
+| Step | Result |
+| --- | --- |
+| `phylo_distance_matrix` | 24 x 24 JC69, mean 0.2782382923563276 |
+| `phylo_neighbor_joining` | 24 tips, 23 internal nodes |
+| `tree_root_midpoint` | diameter 0.386862862812, 24 tips, 23 internal |
+| `tree_prune_tips` | 24 -> 21 tips, three removed |
+| `tree_balance` rooted | sackin 121, cherries 10, colless 27, normalized 0.1067193675889328 |
+| `tree_balance` pruned | sackin 101, cherries 8, colless 23, normalized 0.12105263157894737 |
+
+### Oracles
+
+| Implementation | Scope | Result |
+| --- | --- | --- |
+| dendropy 5.1.3 | rooted and pruned Newick | sackin, colless and cherries: absolute difference 0 on all values |
+| R ape 5.8.1 | rooted and pruned Newick | `dist.topo` 0 for both trees; `2 x max(root-to-tip)` = 0.386862862812 vs cophenetic diameter 0.386862862814 (2e-12); cophenetic max difference 1.2743e-8 (float32 branch lengths) |
+
+The ape check deliberately does not use `root(midpoint = TRUE)` (ape has no
+such argument): topology is compared with `dist.topo`, and the midpoint
+property with the diameter identity and cophenetic distances.
+
+### Three platforms
+
+| Platform | Steps | `total_elapsed` | Newick md5 (`nj` / `rooted` / `pruned`) | CSV md5 (`rooted` / `pruned`) |
+| --- | --- | --- | --- | --- |
+| WSL (3.12) | 11/11 | 0.077 s | `9516b49d` / `4bc31130` / `a5c5c0e0` | `6fe6a4d4` / `9da14912` |
+| srv (3.11) | 11/11 | 0.374 s | `9516b49d` / `4bc31130` / `a5c5c0e0` | `6fe6a4d4` / `9da14912` |
+| Windows (3.12) | 11/11 | 0.165 s | `9516b49d` / `4bc31130` / `a5c5c0e0` | `6fe6a4d4` / `9da14912` |
+
+All five exports are byte-identical across the three platforms after the Newick
+writer fix below.
+
+### Fixes
+
+- Midpoint re-rooting could leave the previous root as a unary internal node,
+  which made the rooted tree look non-binary (24 internal nodes, no Colless
+  index). A `suppress_unary` pass now merges unary nodes and adds the removed
+  edge length to the child.
+- Tree operators returned a Form without `info.newick`, so the Newick export
+  rejected the result as a distance matrix. Both operators now attach the
+  serialized tree before validation.
+- `_export_domain.write_newick` used `write_text`, which produced CRLF on
+  Windows and changed the exported bytes. It now writes UTF-8 bytes with LF,
+  with a regression test in `tests/test_extension390.py`.
+
+### Limits
+
+- Branch lengths are stored as float32 in the tree Form, so cophenetic
+  distances agree with R only to about 1e-8.
+- Colless and normalized Colless are only defined for binary trees; polytomies
+  report those two values as NaN and set `binary: false`.
+- When several tip pairs share the maximum distance, the midpoint is taken from
+  the first pair in tree order, matching the documented tie-break.
