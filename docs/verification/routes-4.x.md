@@ -3066,3 +3066,87 @@ point formatting: `go_term_similarity` max abs 2.78e-17 and
 - The route samples 300 terms and 300 pairs for runtime, not the full ontology.
 - Gene similarity is best-match average over the annotated terms; isoforms and
   multi-domain proteins are not modelled.
+
+## Batch 41 — Flux balance analysis of the E. coli core model
+
+Date: 2026-11-07. Operator Library 4.0.5 tree, registry 846 operators / 107 readers / 65 routes.
+
+### Data
+
+| Input | Size | SHA256 |
+| --- | --- | --- |
+| `e_coli_core.xml` (BiGG) | 707,166 B | `b4db506aeed0e434c1f5f1fdd35feda0dfe5d82badcfda0e9d1342335ab31116` |
+
+The reconstruction contains 95 reactions, 72 metabolites and 137 genes. It is the
+published BiGG small model, downloaded from <http://bigg.ucsd.edu/models/e_coli_core>.
+
+### Steps and WSL timings
+
+| Step | Operator | Seconds |
+| --- | --- | --- |
+| 1 | `fba_flux_distribution` | 0.190 |
+| 2 | `export_results` | 0.002 |
+| 3 | `fba_gene_knockout` | 0.228 |
+| 4 | `export_results` | 0.001 |
+| 5 | `fba_flux_variability` | 0.297 |
+| 6 | `export_results` | 0.001 |
+
+Total elapsed 0.72 s on WSL; maximum RSS below 300 MB.
+
+### Results
+
+* Maximum growth rate 0.8739215069684304 h^-1; 53 of 95 reactions carry flux.
+* Phosphofructokinase R_PFK carries 7.477381962160283 mmol gDW^-1 h^-1
+  (8.556 times the growth rate); R_PFL is inactive under aerobic conditions.
+* Seven genes are essential: b0720, b1136, b1779, b2415, b2416, b2779, b2926.
+* Flux variability at 90% of maximum growth: R_PFK ranges from 1.1717 to
+  25.2906 mmol gDW^-1 h^-1, confirming a strongly degenerate optimum.
+
+### Oracle comparison
+
+| Oracle | Metric | Difference |
+| --- | --- | --- |
+| cobra 0.32.1 | growth rate | 8.9e-16 |
+| cobra 0.32.1 | knockout growth, 137 genes | max 4.5e-15 |
+| cobra 0.32.1 | essential gene set | identical, 7 of 7 |
+| cobra 0.32.1 | flux inside FVA bounds | 0 of 95 outside |
+| cobra 0.32.1 | FVA at 90%, 95 reactions | low 2.8e-13, high 1.0e-12 |
+| GLPK 5.0 (`glpsol`) | growth rate | 3.2e-11 |
+| GLPK 5.0 (`glpsol`) | 7 knockout growth rates | max 7.8e-13 |
+| GLPK 5.0 (`glpsol`) | FVA on 8 reactions | max 4.1e-9 |
+
+cobra reports `infeasible` growth for the deletions of b2415 and b2416; both are
+recorded as zero growth, which is the biological reading of a lethal knockout.
+
+### Three-platform comparison
+
+| Platform | Total elapsed | `fba_flux_distribution.csv` | `fba_gene_knockout.csv` | `fba_flux_variability.csv` |
+| --- | --- | --- | --- | --- |
+| WSL | 0.72 s | `4541153184…` | `3cff3990…` | `2248473d…` |
+| srv | 3.4443 s | `4541153184…` | `3cff3990…` | `2248473d…` |
+| Windows | 33.8671 s | `4541153184…` | `3cff3990…` | `2248473d…` |
+
+All three CSV files are byte-identical across platforms. Windows pays a one-off
+SciPy import cost (33.2 s of the 33.9 s total).
+
+### Fixes made in this batch
+
+1. `solve()` ignored the objective override used by flux variability analysis, so
+   the growth constraint made every LP infeasible. Added a `weights` argument and
+   solved the min/max problems with the reaction vector as objective.
+2. `gene_bounds()` treated the target gene as the only active gene, deleting all
+   other reactions; it now removes only the target gene from the active set.
+3. SBML gene identifiers are in `fbc:id`, while the user-facing name is
+   `fbc:label`; both are parsed and mapped for GPR evaluation.
+4. Deletions that make the LP infeasible are reported as zero growth instead of
+   aborting the step.
+
+### Limitations
+
+* The BiGG core model is small; it is not a genome-scale reconstruction.
+* Only the default biomass objective is optimised; no parsimonious FBA and no
+  thermodynamic constraints.
+* GPR rules are evaluated as boolean gate logic only; no expression or
+  regulatory data are used.
+* Degenerate optima mean individual fluxes are not unique; the variability
+  interval, not a single flux vector, is the comparable quantity.
