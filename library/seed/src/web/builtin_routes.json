@@ -166,6 +166,11 @@
       "sha256": "2591e4f30580c51add61ea97682ba56561a0bec3fc003c314f61f0c8b61e1992",
       "parameters_sha256": "411cd7a4aded391f035700c55289f25edaa23bf35481d5e0acff02b0bfbed107"
     },
+    "route_d058e79f505c": {
+      "path": "routes/proteomics_qc/task.yaml",
+      "sha256": "4629af95f9aecc04351661f975eb5337c573b2326d438447f2c6c04925322183",
+      "parameters_sha256": "33da081b6553d8c3bf592fde6943e2c533467fc5d2cb972fb04b43ed4bb1a8b2"
+    },
     "route_76a068a2f86e": {
       "path": "routes/prs_harmonize_qc/task.yaml",
       "sha256": "1a8bf5770a9340f72492838a67bb773275c1c0a5588bd32ef5cfa2b8ed6f7b1a",
@@ -20304,6 +20309,356 @@
             },
             {
               "node_id": "export_results_8",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_d058e79f505c",
+      "version": 1,
+      "name": "Proteomics digest and coverage",
+      "graph": {
+        "schema_version": 2,
+        "name": "Proteomics digest and coverage",
+        "base_dir": ".studio/builtin-inputs/proteomics_qc",
+        "nodes": [
+          {
+            "id": "proteins",
+            "kind": "source",
+            "operator": null,
+            "title": "proteins",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/protein.faa",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "protein_digest_1",
+            "kind": "operator",
+            "operator": "protein_digest",
+            "title": "Protein digest",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "enzyme": "trypsin",
+              "missed_cleavages": 0,
+              "min_length": 6,
+              "max_length": 50,
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "output": "peptides"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "protein_digest",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "peptide_mass_3",
+            "kind": "operator",
+            "operator": "peptide_mass",
+            "title": "Peptide mass and m/z",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "peptide_dim": "peptide",
+              "field_dim": "field",
+              "charge": 2,
+              "output": "masses"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "peptide_mass",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "peptide_coverage_5",
+            "kind": "operator",
+            "operator": "peptide_coverage",
+            "title": "Peptide coverage",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "peptide_dim": "peptide",
+              "field_dim": "field",
+              "output": "coverage"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "peptide_coverage",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "proteins-protein_digest_1-0",
+            "source": "proteins",
+            "target": "protein_digest_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "protein_digest_1-export_results_2-0",
+            "source": "protein_digest_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "protein_digest_1-peptide_mass_3-0",
+            "source": "protein_digest_1",
+            "target": "peptide_mass_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "peptide_mass_3-export_results_4-0",
+            "source": "peptide_mass_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "proteins-peptide_coverage_5-0",
+            "source": "proteins",
+            "target": "peptide_coverage_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "protein_digest_1-peptide_coverage_5-1",
+            "source": "protein_digest_1",
+            "target": "peptide_coverage_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "peptide_coverage_5-export_results_6-0",
+            "source": "peptide_coverage_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "proteins",
+              "label": "proteins",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
               "handle": "out",
               "label": "Export results",
               "contract": {

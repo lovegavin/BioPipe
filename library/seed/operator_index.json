@@ -4530,6 +4530,26 @@
     "status": "generated"
   },
   {
+    "id": "peptide_coverage",
+    "kind": "operator",
+    "title": "Peptide coverage",
+    "category": "Proteomics",
+    "version": "1.0.0",
+    "description": "Merge peptide intervals per protein and report covered residues, coverage fractions and peptide counts.",
+    "doc": "src/task/step/steps/peptide_coverage.PeptideCoverageStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "peptide_mass",
+    "kind": "operator",
+    "title": "Peptide mass and m/z",
+    "category": "Proteomics",
+    "version": "1.0.0",
+    "description": "Compute monoisotopic peptide masses from the sequences carried by a peptide Form and convert them to m/z for a given charge.",
+    "doc": "src/task/step/steps/peptide_mass.PeptideMassStep.md",
+    "status": "generated"
+  },
+  {
     "id": "peptide_qvalue",
     "kind": "operator",
     "title": "Peptide q-values",
@@ -4827,6 +4847,16 @@
     "version": "1.0.0",
     "description": "Translate PROSITE-like patterns (letters, x, [sets], {exclusions}) into regular expressions and report hit counts and positions.",
     "doc": "src/task/step/steps/prosite_scan.PrositeScanStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "protein_digest",
+    "kind": "operator",
+    "title": "Protein digest",
+    "category": "Proteomics",
+    "version": "1.0.0",
+    "description": "Digest a protein FASTA with a site-specific protease using the standard cleavage rule (K/R unless followed by P) and report peptide coordinates, missed cleavages and monoisotopic masses.",
+    "doc": "src/task/step/steps/protein_digest.ProteinDigestStep.md",
     "status": "generated"
   },
   {

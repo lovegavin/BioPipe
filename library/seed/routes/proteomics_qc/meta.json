@@ -1,0 +1,14 @@
+{
+  "key": "proteomics_qc",
+  "title": "Proteomics digest and coverage",
+  "summary": "Trypsin digestion of the E. coli K-12 proteome with peptide monoisotopic mass and protein coverage QC.",
+  "tags": [
+    "proteomics",
+    "digest",
+    "mass",
+    "coverage",
+    "qc"
+  ],
+  "difficulty": "intro",
+  "estimated_seconds": 5
+}

@@ -1,0 +1,30 @@
+name: E. coli proteome digest, peptide mass and coverage
+sources:
+  proteins:
+    path: input/protein.faa
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+parameters_file: parameters.json
+steps:
+- name: protein_digest
+  inputs:
+  - proteins
+- name: export_results
+  inputs:
+  - peptides
+- name: peptide_mass
+  inputs:
+  - peptides
+- name: export_results
+  inputs:
+  - masses
+- name: peptide_coverage
+  inputs:
+  - proteins
+  - peptides
+- name: export_results
+  inputs:
+  - coverage

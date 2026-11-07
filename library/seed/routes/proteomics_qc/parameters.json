@@ -1,0 +1,80 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "proteins": {}
+  },
+  "steps": [
+    {
+      "name": "protein_digest",
+      "inputs": [
+        "proteins"
+      ],
+      "params": {
+        "enzyme": "trypsin",
+        "missed_cleavages": 0,
+        "min_length": 6,
+        "max_length": 50,
+        "output": "peptides"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "peptides"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "protein_digest"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "peptide_mass",
+      "inputs": [
+        "peptides"
+      ],
+      "params": {
+        "peptide_dim": "peptide",
+        "charge": 2,
+        "output": "masses"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "masses"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "peptide_mass"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "peptide_coverage",
+      "inputs": [
+        "proteins",
+        "peptides"
+      ],
+      "params": {
+        "output": "coverage"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "coverage"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "peptide_coverage"
+      },
+      "context_params": {}
+    }
+  ]
+}
