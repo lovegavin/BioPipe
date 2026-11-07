@@ -2299,3 +2299,50 @@ writer fix below.
   report those two values as NaN and set `binary: false`.
 - When several tip pairs share the maximum distance, the midpoint is taken from
   the first pair in tree order, matching the documented tie-break.
+
+## Batch 29 — Lalonde propensity-score matching and balance
+
+**Data.** `MatchIt::lalonde` (R package MatchIt 4.8.2): 614 observations,
+185 treated, 429 control, outcome `re78`, covariates
+`age, educ, black, hispan, married, nodegree, re74, re75`.
+Input `workdir/b29_route/input/lalonde.csv`, sha256
+`274e610279fe5e5b57a50073b0124af9d602beb1a07cb3da4f09a7acb3393602`.
+
+**Route** (`lalonde_psm`, builtin `library/seed/routes/lalonde_psm`):
+
+| # | step | result |
+|---|------|--------|
+| 1 | `propensity_score` | AUC 0.874227, 7 IRLS iterations, scores 0.00908–0.85315 |
+| 2 | `psm_match` | 113 pairs, 72 treated unmatched, caliper 0.058063 (0.2 x SD 0.290313) |
+| 3 | `psm_balance` | max abs SMD 1.667719 → 0.148668 |
+| 4 | `psm_effect` | ATT 1571.744454, SE 981.867698, t 1.600770, p 0.109428, CI [-352.680870, 3496.169779] |
+| 5–8 | `export_results` | propensity/matched/balance/effect CSV |
+
+**Oracle** — R MatchIt 4.8.2 with `distance = ps`, `caliper = 0.2`,
+`std.caliper = TRUE`, `method = "nearest"`, plus coefficients from `glm()` and
+SMDs recomputed in base R (cobalt 5.0.0 and Matching 4.10.15 installed).
+
+| quantity | BioPipe | R | difference |
+|---|---|---|---|
+| pairs | 113 | 113 | 0 |
+| propensity score | — | `predict(glm)` | max abs 3.14e-9 |
+| logit | — | — | max abs 5.55e-16 |
+| ATT | 1571.7444544 | 1571.7444544 | 9.09e-13 |
+| SMD before | — | — | max abs 1.67e-16 |
+| SMD after | — | — | max abs 6.94e-17 |
+| max abs SMD after | 0.1486684550 | 0.1486684550 | 0 |
+| caliper | 0.0580626745 | 0.0580626745 | 0 |
+
+**Three platforms.** WSL 8/8, elapsed 0.016 s, wall 1.02 s, MaxRSS 143,708 KB;
+srv 8/8, 0.128 s; Windows 8/8, 0.027 s. `effect.csv` and `balance.csv` are
+byte-identical on all three; `propensity.csv` and `matched.csv` differ only in
+float text (srv max abs 6.39e-13, Windows 2.50e-13 vs WSL).
+
+**Fixes.** The route manifest needed the canonical
+`biopipe.task-parameters` format (`format`, `schema_version`, `params`,
+`sources`, `steps[].params`); the operator IRLS accepts non-separated data and
+only rejects a divergent/oversized coefficient vector.
+
+**Limits.** Caliper is expressed in standard deviations of the propensity
+score, 1:1 greedy matching without replacement, ties resolved by row order,
+OLS standard error on the matched sample (not Abadie–Imbens), ATT only.
