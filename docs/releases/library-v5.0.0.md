@@ -14,7 +14,7 @@ Released: 2026-11-07
 | Packages / builtin routes | 7 / 72 |
 
 Library v5.0.0 is the first release of the renamed project. It declares
-operator protocol v3 with SDK 3.7 explicit port formats: 969 of 974
+operator protocol v3 with SDK 3.7 explicit port formats: 970 of 975
 descriptors carry `protocol_revision: "3.7"`, the five polymorphic operators
 stay on the supported legacy revision, and the static registry validates all
 72 builtin routes.
@@ -33,7 +33,7 @@ stay on the supported legacy revision, and the static registry validates all
 
 Library 5.0.0 targets Studio 3.0.2 and uses SDK 3.7 explicit port formats.
 
-- 969 of 974 descriptors declare `protocol_revision: "3.7"` with
+- 970 of 975 descriptors declare `protocol_revision: "3.7"` with
   `data_formats.inputs/outputs` (862 operators and 107 Readers).
 - `analyze_contacts`, `export_results`, `order_axis`, `select` and
   `sequence_stats` remain on the supported legacy revision: their Form/file
@@ -60,6 +60,21 @@ rename are still accepted on read:
   picker; new packages use `.operon-library.zip`.
 - Saved routes and jobs are not rewritten; new files are written with the
   `operon.*` identifier.
+
+## License
+
+Operon and the Operator Library are licensed under the Apache License,
+Version 2.0. The repository `LICENSE` and `NOTICE` carry the full text and the
+copyright notice; bundled third-party components keep their own licenses in
+`THIRD_PARTY_NOTICES/` (frontend dependencies, the LGPL-3.0 pgenlib Windows
+runtime, and the Microsoft .NET/WebView2 runtime notices).
+
+The Studio frontend and installer parts of the distribution are owned by the
+frontend release; their README license statement and package metadata are being
+aligned to Apache-2.0 separately (see
+`docs/verification/operon-5.0.0-license-audit.md`). Library bundles produced by
+this tag contain the operator sources and packages; the Apache-2.0 terms in the
+repository `LICENSE` apply to them.
 
 ## Assets
 

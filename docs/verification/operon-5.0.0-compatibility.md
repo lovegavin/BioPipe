@@ -9,7 +9,7 @@
 
 Operon 5.0.0 targets **Studio 3.0.2 / SDK 3.7.0**. `protocol_version` stays the
 integer `3`; the additive `protocol_revision: "3.7"` marker plus explicit
-`data_formats.inputs/outputs` is now declared on 969 of the 974 bundled
+`data_formats.inputs/outputs` is now declared on 970 of the 975 bundled
 descriptors (862 operators and 107 Readers). The five generic operators that
 the SDK migration tool leaves for human review (`analyze_contacts`,
 `export_results`, `order_axis`, `select`, `sequence_stats`) stay on their
@@ -119,7 +119,7 @@ below; enabling them requires a wildcard/union port capability in the SDK.
 ## What 5.0.0 actually claims
 
 - Base protocol: v3, unchanged; SDK 3.7 accepts it.
-- Explicit SDK 3.7 port formats: enabled on 969 descriptors.
+- Explicit SDK 3.7 port formats: enabled on 970 descriptors.
 - Legacy revisions retained for five polymorphic generic operators, with a
   documented coexistence rule so mixed graphs remain valid.
 - v3.5 localization: supported by the SDK but not enabled in this library
@@ -208,7 +208,7 @@ Studio 3.0.2 ships SDK 3.7 and the static migration command
 ### What was applied
 
 - `operon registry formats library/seed --apply` added
-  `protocol_revision: "3.7"` and explicit `data_formats.inputs/outputs` to 969
+  `protocol_revision: "3.7"` and explicit `data_formats.inputs/outputs` to 970
   files (862 operators and 107 Readers). The scanner reported no unclassified
   items; five generic operators stayed legacy by design.
 - Rebuilding routes first exposed 51 route-contract failures of the form
