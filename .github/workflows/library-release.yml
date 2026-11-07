@@ -54,7 +54,7 @@ jobs:
             python -m build --wheel --outdir .release-wheel .
             python -m pip install --force-reinstall .release-wheel/operon_studio-${version}-py3-none-any.whl
           fi
-          python -m pip install pytest h5py scikit-learn biopython rdkit
+          python -m pip install pytest h5py scikit-learn biopython rdkit pandas scipy statsmodels matplotlib
           python -m pip install "torch>=2.0" --index-url https://download.pytorch.org/whl/cpu
       - name: Validate release rules
         run: python -I -m pytest tests/test_library_release.py -q --import-mode=importlib
