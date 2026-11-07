@@ -32,6 +32,9 @@ Updating a source checkout is distinct from installing a newer operator library.
   route version; old values remain intact. This is a post-release main fix.
 - Make the native-artifact receipt regression assertion respect platform line
   endings by checking the byte count of the file actually saved on disk.
+- Name `PdbReader` and `FastaReader` explicitly in the reference/quickstart route.
+  Adding another Reader for a shared extension must not change the chosen
+  interpretation or make a saved example depend on suffix guessing.
 
 ## Focused local verification
 
@@ -42,6 +45,8 @@ Updating a source checkout is distinct from installing a newer operator library.
   repeated, rather than rerunning the passing suites.
 - Route-index compatibility regressions: **2 passed**. Both unchanged legacy
   serialization and actual parameter changes are covered.
+- Reference route validation and example-input checks: **2 passed** after
+  making the Reader choice explicit for the expanded library.
 - Frontend operator presentation, contracts, refresh, graph, import diagnostics,
   agent bridge and add-operator suites: **45 passed** across seven files. The
   presentation suite was repeated after the icon fix.
