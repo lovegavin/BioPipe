@@ -147,3 +147,14 @@ def test_balance_polytomy_has_no_colless():
     names = set(out.labels["statistic"])
     assert names == {"n_tips", "n_internal", "sackin", "cherries"}
     assert out.info["binary"] is False
+
+
+def test_newick_export_uses_lf_line_endings(tmp_path):
+    from types import SimpleNamespace
+    from src.task.step.steps._export_domain import write_newick
+
+    target = tmp_path / "tree.nwk"
+    write_newick(str(target), SimpleNamespace(info={"newick": "((A:1,B:1):1,C:2);"}))
+    raw = target.read_bytes()
+    assert raw.endswith(b";\n")
+    assert b"\r" not in raw

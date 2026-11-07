@@ -101,5 +101,5 @@ def write_newick(path, form):
     if not isinstance(text, str) or not text.strip().endswith(';'):
         raise StepError('Newick export requires a complete tree in info.newick; a distance matrix is not a tree')
     Phylo.read(io.StringIO(text), 'newick')
-    io_path(path).write_text(text.strip() + '\n', encoding='utf-8')
+    io_path(path).write_bytes((text.strip() + '\n').encode('utf-8'))
     return {'tree_source': 'info.newick'}
