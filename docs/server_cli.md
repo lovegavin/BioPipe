@@ -143,6 +143,15 @@ Concurrent submissions queue when host capacity is unavailable. A ready validati
 is not a capacity reservation. A full-memory operator does not become streaming
 because it runs on a server. See [execution and retained task state](headless_api.md).
 
+Linux container headroom respects each visible cgroup/parent hard limit and the
+host's available memory. Its startup estimate includes only clean inactive file
+cache, excluding dirty/writeback pages, shared memory and active cache; unknown
+statistics fall back to raw charged usage. This prevents dependency downloads
+from making an otherwise idle container appear full. It is an estimate, not a
+reservation or permission to exceed the container limit. The existing 90% budget,
+frozen host snapshot and emergency spill remain in effect. Counter definitions
+come from the [Linux cgroup documentation](https://docs.kernel.org/admin-guide/cgroup-v2.html#memory).
+
 ## Let desktops reuse this server
 
 After verifying a Linux installation, register it once with the installed Python:

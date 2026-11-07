@@ -4,11 +4,31 @@ import re
 import sys
 
 
+def _clean_inactive_cache(directory, kind):
+    """Estimate reclaimable file pages, never swap/anonymous or dirty pages.
+
+    memory.current includes page cache populated by package installation. Only
+    count the clean inactive file portion, bounded by non-shmem file bytes.
+    v1 total_* counters include descendants, like the hierarchical usage charge.
+    Missing/old counters retain the conservative raw-usage calculation.
+    """
+    try:
+        stats = dict(line.split() for line in (directory/'memory.stat').read_text().splitlines())
+        names = ('file', 'inactive_file', 'shmem', 'file_dirty', 'file_writeback') if kind == 'cgroup2' else (
+            'total_cache', 'total_inactive_file', 'total_shmem', 'total_dirty', 'total_writeback')
+        file, inactive, shmem, dirty, writeback = (int(stats[name]) for name in names)
+        if min(file, inactive, shmem, dirty, writeback) < 0:
+            return 0
+        return max(0, min(inactive, max(0, file-shmem))-dirty-writeback)
+    except (OSError, ValueError, KeyError):
+        return 0
+
+
 def cgroup_available(host_available, membership, mountinfo):
     """Respect this process's cgroup and every visible parent hard limit.
 
-    Subtract charged usage conservatively, including page cache. Do not count
-    swap or assume that cached pages can all be reclaimed by an operator.
+    Subtract charged usage after the clean inactive file-cache estimate. Never
+    count swap, active cache, shared memory or pages awaiting disk writeback.
     """
     groups = {}
     for line in membership.splitlines():
@@ -34,7 +54,8 @@ def cgroup_available(host_available, membership, mountinfo):
             if limit_text != 'max':
                 limit = int(limit_text)
                 usage = int((current/usage_name).read_text().strip())
-                available = min(available, max(0, limit-usage))
+                reclaimable = min(usage, _clean_inactive_cache(current, kind))
+                available = min(available, max(0, limit-usage+reclaimable))
             if current == mount: break
             current = current.parent
     return available
