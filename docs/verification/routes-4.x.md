@@ -2686,3 +2686,68 @@ All four CSV files are byte-identical across the three platforms; registry
   an oracle.
 - Circular fragment coordinates may exceed the sequence length (the caller
   wraps them); GC for wrapped fragments is computed on the concatenated span.
+
+## Batch 35 — CTCF PWM construction and scanning on chr22
+
+### Data
+
+| Source | File | Size | SHA256 | Notes |
+| --- | --- | --- | --- | --- |
+| JASPAR MA0139.1 (CTCF) | `counts.csv` | 333 B | `94d7924446f0efcf5abb35a20ec3e4401764447ae8ed44918c9e5cf3353f839c` | 19 positions, 17,310 sites |
+| 1000 Genomes chr22 (GRCh37) | `chr22_200kb.fasta` | 203,359 B | `b2b82d4315f9f28ef6d16d9016be98cbcc023113055c2807181411c0e5fe363e` | chr22:23,000,000-23,200,000, 200,000 bp, 0 N |
+
+The window is the densest 200 kb bin of GM12878 CTCF IDR peaks on chr22
+(ENCODE ENCSR000AKB / ENCFF002CDP, hg19, 17 peaks in window).
+
+### Route
+
+`pwm_scan_chr22` (6 steps): `pwm_from_counts` (pseudocount 0.5, uniform
+background) -> `export_results`; `pwm_information` -> `export_results`;
+`pwm_scan` (both strands, minimum score 8.0) -> `export_results`.
+
+### Results
+
+- PWM consensus `TGGCCACCAGGGGGCGCTA`, total information 17.0983 bits.
+- 68 hits; best score 24.6903 at window position 53,381 (+, score 24.6903),
+  second best 21.2224.
+
+### Oracles
+
+| Oracle | Version | Comparison | Result |
+| --- | --- | --- | --- |
+| Biopython `motifs` | 1.88 | PWM scores / information content / hit set | 4.57e-07 / 6.67e-08 max abs; 68 vs 68 hits, 0 one-sided; best identical |
+| base R implementation | 4.3.3 | Hit set / scores (forward and reverse coordinates) | 68 vs 68, 0 one-sided, 7.64e-07 max abs; best identical |
+| ENCODE GM12878 CTCF IDR peaks | ENCFF002CDP | Fraction of hits inside IDR peaks | 19/68 = 27.94% vs 3.42% random (5,000 draws, seed 7) = 8.17x |
+| ENCODE GM12878 ATAC peaks | Batch 8 route peaks | Fraction of hits inside peaks | 8.82% vs 4.08% random = 2.16x |
+
+### Three platforms
+
+| Platform | Steps | Total elapsed | Export MD5 |
+| --- | --- | --- | --- |
+| WSL (Python 3.12) | 6/6 | 1.0474 s | `ba06245a` / `68e08b04` / `71190ee8` |
+| srv (Python 3.11) | 6/6 | 4.0424 s (`pwm_scan` 3.996 s) | same |
+| Windows (Python 3.12) | 6/6 | 1.2932 s (`pwm_scan` 1.284 s) | same |
+
+### Fixes and decisions
+
+- Definitions needed `resources.memory_modes = ["full"]` and
+  `supports_cuda = false`; input port `parallel` must be `[]` (an integer entry
+  makes the contract reader call `.get` on an int).
+- Form inputs must come from `FastaReader`; `FastaFileReader` returns a file
+  artifact and fails the contract check.
+- `task.yaml` must declare `parameters_file`, otherwise step parameters
+  (output names, `min_score`) are silently ignored.
+- `read_pwm` must accept negative log-odds; a shared counts validator rejected
+  them.
+- The first window (chr22:17.0-17.2 Mb) contained no GM12878 CTCF peaks, so the
+  enrichment test was inconclusive; the route now uses the densest CTCF window
+  at 23.0-23.2 Mb.
+- MOODS-python was probed as a third oracle but returned no hits at 1.0-10.0
+  thresholds with the same 4-wide matrix, so it is not used.
+
+### Limitations
+
+- One motif and one 200 kb window; not a genome-wide scan.
+- Uniform background and pseudocount 0.5 follow the oracle convention; a
+  different background changes the score scale.
+- The enrichment baseline is a 5,000-draw Monte Carlo with a fixed seed.
