@@ -74,7 +74,7 @@
     "route_dcf39ebaadce": {
       "path": "routes/go_semantic_similarity/task.yaml",
       "sha256": "4522e10f7538d4aabfaaa46860d77b86227a775e6b98413ce0a4754b7f7cd3fc",
-      "parameters_sha256": "a108f7cd53dde9c10a8825d72373181f5469cde4e69475eb6f51b82c5759a8a3"
+      "parameters_sha256": "91591fd3a06a246ab88a3b6130ccbb17b8c661b8e692742c7677246e811c68ef"
     },
     "route_82aacd126ab1": {
       "path": "routes/golub_coexpression/task.yaml",
@@ -26881,7 +26881,7 @@
     },
     {
       "id": "route_dcf39ebaadce",
-      "version": 1,
+      "version": 2,
       "name": "GO semantic similarity across EcoCyc annotations",
       "graph": {
         "schema_version": 2,
@@ -26979,8 +26979,8 @@
               "y": 100.0
             },
             "params": {
-              "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
-              "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+              "obo_path": "workdir/b40_route/input/go-basic.obo",
+              "gaf_path": "workdir/b40_route/input/ecocyc.gaf.gz",
               "aspect": "P",
               "output": "profile",
               "row_dim": "term",
@@ -27027,8 +27027,8 @@
               "y": 310.0
             },
             "params": {
-              "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
-              "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+              "obo_path": "workdir/b40_route/input/go-basic.obo",
+              "gaf_path": "workdir/b40_route/input/ecocyc.gaf.gz",
               "aspect": "P",
               "output": "similarity",
               "pair_dim": "pair",
@@ -27077,8 +27077,8 @@
               "y": 520.0
             },
             "params": {
-              "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
-              "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+              "obo_path": "workdir/b40_route/input/go-basic.obo",
+              "gaf_path": "workdir/b40_route/input/ecocyc.gaf.gz",
               "aspect": "P",
               "output": "genes_2",
               "pair_dim": "pair",

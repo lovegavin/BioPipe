@@ -14,8 +14,8 @@
         "terms"
       ],
       "params": {
-        "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
-        "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+        "obo_path": "workdir/b40_route/input/go-basic.obo",
+        "gaf_path": "workdir/b40_route/input/ecocyc.gaf.gz",
         "aspect": "P",
         "output": "profile",
         "term_field": "term"
@@ -39,8 +39,8 @@
         "pairs"
       ],
       "params": {
-        "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
-        "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+        "obo_path": "workdir/b40_route/input/go-basic.obo",
+        "gaf_path": "workdir/b40_route/input/ecocyc.gaf.gz",
         "aspect": "P",
         "output": "similarity",
         "term_a_field": "term_a",
@@ -65,8 +65,8 @@
         "genes"
       ],
       "params": {
-        "obo_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/go-basic.obo",
-        "gaf_path": "/home/gavin/BioPipe-4.0/workdir/b40_prep/ecocyc.gaf.gz",
+        "obo_path": "workdir/b40_route/input/go-basic.obo",
+        "gaf_path": "workdir/b40_route/input/ecocyc.gaf.gz",
         "aspect": "P",
         "output": "genes",
         "gene_a_field": "gene_a",
