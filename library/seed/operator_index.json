@@ -4640,6 +4640,26 @@
     "status": "generated"
   },
   {
+    "id": "phylo_ancestral",
+    "kind": "operator",
+    "title": "phylo_ancestral",
+    "category": "Phylogenetics",
+    "version": "1.0.0",
+    "description": "REML ancestral states for a continuous trait on a tree.",
+    "doc": "src/task/step/steps/phylo_ancestral.PhyloAncestralStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "phylo_contrasts",
+    "kind": "operator",
+    "title": "phylo_contrasts",
+    "category": "Phylogenetics",
+    "version": "1.0.0",
+    "description": "Felsenstein independent contrasts for a continuous trait.",
+    "doc": "src/task/step/steps/phylo_contrasts.PhyloContrastsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "phylo_distance_matrix",
     "kind": "operator",
     "title": "Phylogenetic distance matrix",
@@ -4647,6 +4667,16 @@
     "version": "1.0.0",
     "description": "Compute pairwise p-distance, JC69 or K2P distances from aligned sequences, with complete or pairwise gap deletion.",
     "doc": "src/task/step/steps/phylo_distance_matrix.PhyloDistanceMatrixStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "phylo_lambda",
+    "kind": "operator",
+    "title": "phylo_lambda",
+    "category": "Phylogenetics",
+    "version": "1.0.0",
+    "description": "Maximum-likelihood Pagel's lambda for a continuous trait.",
+    "doc": "src/task/step/steps/phylo_lambda.PhyloLambdaStep.md",
     "status": "generated"
   },
   {

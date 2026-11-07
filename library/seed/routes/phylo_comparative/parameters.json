@@ -1,0 +1,102 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "alignment": {},
+    "traits": {}
+  },
+  "steps": [
+    {
+      "name": "phylo_distance_matrix",
+      "inputs": [
+        "alignment"
+      ],
+      "params": {
+        "model": "jc69",
+        "deletion": "complete",
+        "output": "distance_matrix"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "phylo_neighbor_joining",
+      "inputs": [
+        "distance_matrix"
+      ],
+      "params": {
+        "output": "tree"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "phylo_lambda",
+      "inputs": [
+        "tree",
+        "traits"
+      ],
+      "params": {
+        "value_field": "gc",
+        "output": "lambda"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "phylo_contrasts",
+      "inputs": [
+        "tree",
+        "traits"
+      ],
+      "params": {
+        "value_field": "gc",
+        "output": "contrasts"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "phylo_ancestral",
+      "inputs": [
+        "tree",
+        "traits"
+      ],
+      "params": {
+        "value_field": "gc",
+        "output": "ancestral"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "lambda"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "phylo_lambda"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "contrasts"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "phylo_contrasts"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "ancestral"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "phylo_ancestral"
+      },
+      "context_params": {}
+    }
+  ]
+}

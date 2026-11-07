@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "node_dim": {
+      "type": "string",
+      "title": "Node dim",
+      "default": "node",
+      "description": "Axis holding tree nodes."
+    },
+    "field_dim": {
+      "type": "string",
+      "title": "Field dim",
+      "default": "field",
+      "description": "Axis holding tree table columns."
+    },
+    "sample_dim": {
+      "type": "string",
+      "title": "Sample dim",
+      "default": "sample",
+      "description": "Axis holding trait samples."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "title": "Statistic dim",
+      "default": "statistic",
+      "description": "Axis holding trait columns."
+    },
+    "value_field": {
+      "type": "string",
+      "title": "Trait column",
+      "default": "gc",
+      "description": "Trait column to analyse."
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "lambda",
+      "description": "Name of the output form."
+    }
+  },
+  "additionalProperties": false
+}

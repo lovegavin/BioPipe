@@ -1,0 +1,87 @@
+{
+  "name": "Phylogenetic signal and ancestral states on an SSU rRNA tree",
+  "sources": {
+    "alignment": {
+      "path": "input/ssu_aligned.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    },
+    "traits": {
+      "path": "input/gc_content.csv",
+      "dims": [
+        "sample",
+        "statistic"
+      ],
+      "labels": {
+        "sample": {
+          "statistic": 0
+        },
+        "statistic": "builtin"
+      },
+      "reader": "CsvReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "phylo_distance_matrix",
+      "inputs": [
+        "alignment"
+      ]
+    },
+    {
+      "name": "phylo_neighbor_joining",
+      "inputs": [
+        "distance_matrix"
+      ]
+    },
+    {
+      "name": "phylo_lambda",
+      "inputs": [
+        "tree",
+        "traits"
+      ]
+    },
+    {
+      "name": "phylo_contrasts",
+      "inputs": [
+        "tree",
+        "traits"
+      ]
+    },
+    {
+      "name": "phylo_ancestral",
+      "inputs": [
+        "tree",
+        "traits"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "lambda"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "contrasts"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "ancestral"
+      ]
+    }
+  ],
+  "runtime": {
+    "memory": {
+      "enabled": true
+    }
+  }
+}

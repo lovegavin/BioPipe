@@ -1,0 +1,10 @@
+{
+  "key": "phylo_comparative",
+  "name": "Phylogenetic signal and ancestral states",
+  "description": "Pagel's lambda, Felsenstein contrasts and REML ancestral states on an SSU rRNA tree.",
+  "tags": [
+    "phylogenetics",
+    "comparative-methods",
+    "rrna"
+  ]
+}
