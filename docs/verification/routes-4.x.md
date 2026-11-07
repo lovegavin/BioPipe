@@ -3547,3 +3547,63 @@ Limitations: GC is computed over the whole read without quality filtering;
 over-representation uses exact sequence identity with an optional adapter list;
 the duplication table is global and cannot separate PCR from biological
 duplicates.
+
+## Batch 48 - liftOver intervals, variants and chain coverage
+
+Commit 92e3a5a8 (operators and route) on branch release/4.x, 2026-11-07.
+Registry at verification time: 867 operators / 108 readers / 7 packages / 72 routes, errors 0.
+
+### Data
+
+| Input | Size | SHA256 |
+| --- | --- | --- |
+| `hg19ToHg38.over.chain.gz` (UCSC, 1,278 chains) | 227,698 B | 5c0598e500ceb5a78c73086929e8ef993aec309bcafb595139b53d440b125a1d |
+| `truth.vcf.gz` (1000G/GA4GH chr22 truth, first 500 records) | 30,805 B | 3479819a02009dca99eac878a6280bd674c27c829c4c44f8830e49e484a457f8 |
+| `intervals.bed` (REF spans of those 500 records) | 500 rows | b8fa22c598cde0b7db5553f3a238e6b910ca55f95f7a2ce0d8f821a2185806f1 |
+
+### Route
+
+`library/seed/routes/liftover_intervals` (6 steps, WSL total 0.1792 s):
+`liftover_intervals` 0.0656 s, export, `liftover_variants` 0.0518 s, export,
+`chain_coverage_summary`, export. Windows total 0.30 s, srv total 0.83 s.
+
+### Results
+
+| Step | Result |
+| --- | --- |
+| liftover_intervals | 500 intervals, 500 mapped, 0 unmapped |
+| liftover_variants | 846 records, 806 mapped, 40 unmapped, 0 reverse-complemented |
+| chain_coverage_summary | 1,278 chains over 93 chromosomes, 2,896,953,941 covered bp |
+
+Exports: `lifted_intervals.mapped.bed` 24,500 B, `lifted_intervals.unmapped.bed` 0 B,
+`lifted_variants.mapped.vcf` 391,359 B, `lifted_variants.unmapped.vcf` 25,078 B,
+`chain_coverage_summary.csv` 5,721 B (93 rows).
+
+### Oracle: CrossMap 0.7.3 (independent chain implementation)
+
+- BED: 500/500 mapped; sorted output is line-identical to CrossMap.
+- VCF: 806/806 shared positions match exactly; 0 only in our output, 8 only in CrossMap.
+  All 8 are indels with REF > 1 bp whose last base falls on a chain block boundary:
+  the anchor base maps (same as CrossMap), but the interval end maps to a gap, so the
+  operator conservatively reports the record as unmapped. This is documented strict
+  semantics, not a coordinate error.
+- UCSC liftOver 31,034,648 B binary was downloaded but the run was replaced by CrossMap
+  because the resumed download was still incomplete (17.5 MB) at verification time.
+
+### Three-platform byte identity
+
+| Export | MD5 (WSL = srv = Windows) |
+| --- | --- |
+| chain_coverage_summary.csv | 7c7150c56a27b0ca7c8224704da28130 |
+| lifted_intervals.mapped.bed | 2d062cf0b782b11ca043a2b2f524525a |
+| lifted_intervals.unmapped.bed | d41d8cd98f00b204e9800998ecf8427e (empty) |
+| lifted_variants.mapped.vcf | 9e67481a75be782202f4102e56bfa39d |
+| lifted_variants.unmapped.vcf | 0bea829c6ace105255be23e3a2756302 |
+
+### Limits
+
+- Intervals are mapped only when both endpoints map inside the same chain and block
+  neighbourhood; split liftovers across chains are not reported.
+- Chain coverage counts the target-side reference covered by aligned blocks; it does
+  not model source-side gaps.
+- The chain file is hg19 to hg38; custom chains must use the same 11-column UCSC format.
