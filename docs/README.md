@@ -1,6 +1,6 @@
 # Documentation
 
-Operon, formerly Operon, prepares reproducible analysis results from raw data and hands artifacts
+Operon, formerly BioPipe, prepares reproducible analysis results from raw data and hands artifacts
 to specialist tools for interactive interpretation and figure refinement. It
 supports visual editing, human-agent collaboration and unattended execution.
 Operon does not supply an AI model or require a desktop for computation.
@@ -68,7 +68,7 @@ trace it. See [Why Operon](../README.md#why-operon) for the five supports.
 
 ## Extend and maintain
 
-- [SDK 3.6 logical types, representations and conversion plans](data_formats.md)
+- [SDK 3.6/3.7 logical types, representations and conversion plans](data_formats.md)
 - [SDK quickstart](sdk_quickstart.md) and [SDK reference](sdk_reference.md)
 - [Operator protocol](operator_protocol.md) and [package protocol](package_protocol.md)
 - [Reader extensions](reader_extensions.md) and [step extensions](step_extensions.md)

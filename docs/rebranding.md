@@ -13,7 +13,7 @@ meaning of a saved scientific workflow or an installed operator ID.
 | MCP names | Existing `operon_*` tools and resource identifiers remain valid |
 | HTTP routes and authentication | Existing application/agent API paths and scopes remain valid |
 | Saved formats | `operon.workflow`, parameter/execution sidecars, plugin IDs and implementation pins retain their wire identifiers |
-| Operator protocol | Base major 3; existing v3/v3.5 packages remain accepted; optional SDK 3.6 format capabilities are independent of the product name |
+| Operator protocol | Base major 3; existing v3/v3.5 packages remain accepted; optional SDK 3.6 and 3.7 format capabilities are independent of the product name |
 | Previous evidence and documentation | Historical release names, filenames, URLs and log records retain their original spelling |
 
 Do not rename a plugin ID, Python import or JSON discriminator merely to make it
