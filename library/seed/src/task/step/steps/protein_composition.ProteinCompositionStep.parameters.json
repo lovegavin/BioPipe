@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "minLength": 1,
+      "description": "Dimension holding protein labels."
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "minLength": 1,
+      "description": "Dimension holding residue positions."
+    },
+    "residue_dim": {
+      "type": "string",
+      "default": "residue",
+      "minLength": 1,
+      "description": "Name of the amino-acid dimension in the output."
+    },
+    "output": {
+      "type": "string",
+      "default": "composition",
+      "minLength": 1,
+      "description": "Name of the output Form."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

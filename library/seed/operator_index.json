@@ -4850,6 +4850,16 @@
     "status": "generated"
   },
   {
+    "id": "protein_composition",
+    "kind": "operator",
+    "title": "Protein amino-acid composition",
+    "category": "Proteomics",
+    "version": "1.0.0",
+    "description": "Counts the 20 standard amino acids for every protein sequence.",
+    "doc": "src/task/step/steps/protein_composition.ProteinCompositionStep.md",
+    "status": "generated"
+  },
+  {
     "id": "protein_digest",
     "kind": "operator",
     "title": "Protein digest",
@@ -4857,6 +4867,26 @@
     "version": "1.0.0",
     "description": "Digest a protein FASTA with a site-specific protease using the standard cleavage rule (K/R unless followed by P) and report peptide coordinates, missed cleavages and monoisotopic masses.",
     "doc": "src/task/step/steps/protein_digest.ProteinDigestStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "protein_extinction",
+    "kind": "operator",
+    "title": "Protein A280 extinction coefficients",
+    "category": "Proteomics",
+    "version": "1.0.0",
+    "description": "Computes molar extinction coefficients and A280 (1 mg/ml) from Trp, Tyr and cystine.",
+    "doc": "src/task/step/steps/protein_extinction.ProteinExtinctionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "protein_instability",
+    "kind": "operator",
+    "title": "Protein instability index",
+    "category": "Proteomics",
+    "version": "1.0.0",
+    "description": "Computes the Guruprasad 1990 instability index (values above 40 indicate instability).",
+    "doc": "src/task/step/steps/protein_instability.ProteinInstabilityStep.md",
     "status": "generated"
   },
   {

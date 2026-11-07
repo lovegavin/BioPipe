@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "default": "sequence",
+      "minLength": 1,
+      "description": "Dimension holding protein labels."
+    },
+    "position_dim": {
+      "type": "string",
+      "default": "position",
+      "minLength": 1,
+      "description": "Dimension holding residue positions."
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "minLength": 1,
+      "description": "Name of the statistic dimension in the output."
+    },
+    "stable_cutoff": {
+      "type": "number",
+      "default": 40.0,
+      "exclusiveMinimum": 0,
+      "description": "Instability index at or below which a protein is called stable."
+    },
+    "output": {
+      "type": "string",
+      "default": "instability",
+      "minLength": 1,
+      "description": "Name of the output Form."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

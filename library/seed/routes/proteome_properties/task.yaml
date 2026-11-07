@@ -1,0 +1,29 @@
+name: E. coli proteome composition, extinction and stability
+sources:
+  proteins:
+    path: input/protein.faa
+    dims:
+    - sequence
+    - position
+    labels: {}
+    reader: FastaReader
+parameters_file: parameters.json
+steps:
+- name: protein_composition
+  inputs:
+  - proteins
+- name: export_results
+  inputs:
+  - composition
+- name: protein_extinction
+  inputs:
+  - proteins
+- name: export_results
+  inputs:
+  - extinction
+- name: protein_instability
+  inputs:
+  - proteins
+- name: export_results
+  inputs:
+  - instability

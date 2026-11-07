@@ -1,0 +1,46 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "proteins": {}
+  },
+  "steps": [
+    {
+      "name": "protein_composition",
+      "inputs": ["proteins"],
+      "params": {"output": "composition"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["composition"],
+      "params": {"format": "csv", "filename": "protein_composition"},
+      "context_params": {}
+    },
+    {
+      "name": "protein_extinction",
+      "inputs": ["proteins"],
+      "params": {"output": "extinction"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["extinction"],
+      "params": {"format": "csv", "filename": "protein_extinction"},
+      "context_params": {}
+    },
+    {
+      "name": "protein_instability",
+      "inputs": ["proteins"],
+      "params": {"output": "instability"},
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": ["instability"],
+      "params": {"format": "csv", "filename": "protein_instability"},
+      "context_params": {}
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+"""A280 extinction coefficients of protein sequences."""
+from __future__ import annotations
+
+import numpy as np
+
+from src.core import Form
+from src.task.context import Context
+from src.task.step.base import Step
+
+from ._protein_qc_utils import prepare_sequences, extinction_coefficients
+
+
+class ProteinExtinctionStep(Step):
+    provider = 'biopipe-core'
+    parameters_file = 'protein_extinction.ProteinExtinctionStep.parameters.json'
+    definition = {
+        'protocol_version': 3,
+        'id': 'protein_extinction',
+        'version': '1.0.0',
+        'kind': 'operator',
+        'title': 'Protein A280 extinction coefficients',
+        'category': 'Proteomics',
+        'contracts': {
+            'version': 1,
+            'inputs': [{
+                'version': 1,
+                'numeric': True,
+                'info': {'representation': {'type': 'string', 'const': 'sequence_codes'},
+                         'alphabet': {'type': 'string', 'const': 'protein'},
+                         'missing_code': {'type': ['number', 'null']}},
+                'dims': [{'param': 'sequence_dim', 'default': 'sequence'},
+                         {'param': 'position_dim', 'default': 'position'}],
+                'labels': [],
+                'parallel': [],
+                'ndim': 2,
+            }],
+            'output': {'mode': 'declare',
+                       'schema': {'ndim': 2, 'numeric': True, 'info_open': False,
+                                  'axis_info_open': False,
+                                  'info': {'missing_code': {'type': ['number', 'null']}}}},
+        },
+        'resources': {'memory_modes': ['full'], 'supports_cuda': False,
+                      'estimate': 'estimate_memory'},
+        'inputs_arity': 1,
+        'outputs': [],
+        'output_parameter': 'output',
+        'description': 'Computes molar extinction coefficients and A280 (1 mg/ml) from Trp, Tyr and cystine.',
+    }
+
+    def run(self, ctx: Context, inputs) -> None:
+        form = inputs[0]
+        seq_dim = ctx.step_params.get("sequence_dim", "sequence")
+        pos_dim = ctx.step_params.get("position_dim", "position")
+        stat_dim = ctx.step_params.get("statistic_dim", "statistic")
+        out_name = ctx.step_params.get("output", self.name)
+        names, sequences, skipped = prepare_sequences(
+            form, seq_dim, pos_dim, "protein_extinction")
+        rows = []
+        for seq in sequences:
+            reduced, cystine, a280 = extinction_coefficients(seq)
+            rows.append([float(reduced), float(cystine), float(a280)])
+        data = np.asarray(rows, dtype=np.float32)
+        out = Form(
+            data=data,
+            dims=[seq_dim, stat_dim],
+            labels={seq_dim: {name: index for index, name in enumerate(names)},
+                    stat_dim: {"molar_reduced": 0, "molar_cystine": 1, "a280_1mg_ml": 2}},
+            info={"missing_code": np.nan, "skipped_unsupported": skipped},
+        )
+        out.validate()
+        ctx[out_name] = out
+        self._export_data = {
+            "n_proteins": len(sequences),
+            "skipped_unsupported": skipped,
+            "statistics": ["molar_reduced", "molar_cystine", "a280_1mg_ml"],
+        }
+
+    @classmethod
+    def estimate_memory(cls, inputs, params, profiles):
+        return (4 * 1024 * 1024, 1024 * 1024)
+
+    def export(self, ctx: Context) -> dict:
+        return getattr(self, "_export_data", {})
