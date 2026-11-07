@@ -1,0 +1,83 @@
+{
+  "name": "Tree manipulation on an SSU rRNA neighbour-joining tree",
+  "sources": {
+    "alignment": {
+      "path": "input/ssu_aligned.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "phylo_distance_matrix",
+      "inputs": [
+        "alignment"
+      ]
+    },
+    {
+      "name": "phylo_neighbor_joining",
+      "inputs": [
+        "dm"
+      ]
+    },
+    {
+      "name": "tree_root_midpoint",
+      "inputs": [
+        "nj_tree"
+      ]
+    },
+    {
+      "name": "tree_prune_tips",
+      "inputs": [
+        "rooted"
+      ]
+    },
+    {
+      "name": "tree_balance",
+      "inputs": [
+        "rooted"
+      ]
+    },
+    {
+      "name": "tree_balance",
+      "inputs": [
+        "pruned"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "nj_tree"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "rooted"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pruned"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "balance"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "balance_pruned"
+      ]
+    }
+  ]
+}

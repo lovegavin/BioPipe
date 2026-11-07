@@ -1,0 +1,128 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "alignment": {}
+  },
+  "steps": [
+    {
+      "name": "phylo_distance_matrix",
+      "inputs": [
+        "alignment"
+      ],
+      "params": {
+        "model": "jc69",
+        "deletion": "complete",
+        "output": "dm"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "phylo_neighbor_joining",
+      "inputs": [
+        "dm"
+      ],
+      "params": {
+        "output": "nj_tree"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "tree_root_midpoint",
+      "inputs": [
+        "nj_tree"
+      ],
+      "params": {
+        "output": "rooted"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "tree_prune_tips",
+      "inputs": [
+        "rooted"
+      ],
+      "params": {
+        "tips": "AY138309.1/1-1552,GU260705.1/11747-13300,CP001634.1/1770527-1772065",
+        "output": "pruned"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "tree_balance",
+      "inputs": [
+        "rooted"
+      ],
+      "params": {
+        "output": "balance"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "tree_balance",
+      "inputs": [
+        "pruned"
+      ],
+      "params": {
+        "output": "balance_pruned"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "nj_tree"
+      ],
+      "params": {
+        "format": "newick",
+        "filename": "tree_nj"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "rooted"
+      ],
+      "params": {
+        "format": "newick",
+        "filename": "tree_rooted"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "pruned"
+      ],
+      "params": {
+        "format": "newick",
+        "filename": "tree_pruned"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "balance"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "balance_rooted"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "balance_pruned"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "balance_pruned"
+      },
+      "context_params": {}
+    }
+  ]
+}

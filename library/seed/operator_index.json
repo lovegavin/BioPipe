@@ -7480,6 +7480,36 @@
     "status": "generated"
   },
   {
+    "id": "tree_balance",
+    "kind": "operator",
+    "title": "Tree shape statistics",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Summarise the shape of a rooted tree: Sackin index, Colless index and normalised Colless (bifurcating trees only), cherry count and tip/internal node counts.",
+    "doc": "src/task/step/steps/tree_balance.TreeBalanceStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tree_prune_tips",
+    "kind": "operator",
+    "title": "Prune tree tips",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Remove the named tips from a rooted tree, drop internal nodes that lose every child and merge the two edges of any node left with a single child.",
+    "doc": "src/task/step/steps/tree_prune_tips.TreePruneTipsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "tree_root_midpoint",
+    "kind": "operator",
+    "title": "Midpoint root a tree",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Root the tree at the midpoint of its longest tip-to-tip path. When the midpoint falls inside an edge a new root node splits that edge into two lengths whose sum is preserved.",
+    "doc": "src/task/step/steps/tree_root_midpoint.TreeRootMidpointStep.md",
+    "status": "generated"
+  },
+  {
     "id": "trnascan_se",
     "kind": "operator",
     "title": "tRNAscan-SE tRNA genes",

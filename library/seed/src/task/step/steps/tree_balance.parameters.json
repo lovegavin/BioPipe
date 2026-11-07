@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "tree_balance",
+  "type": "object",
+  "properties": {
+    "node_dim": {
+      "type": "string",
+      "default": "node",
+      "minLength": 1
+    },
+    "field_dim": {
+      "type": "string",
+      "default": "field",
+      "minLength": 1
+    },
+    "output": {
+      "type": "string",
+      "default": "tree",
+      "minLength": 1
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic",
+      "minLength": 1
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

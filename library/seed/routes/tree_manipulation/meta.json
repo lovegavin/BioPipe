@@ -1,0 +1,14 @@
+{
+  "key": "tree_manipulation",
+  "name": "Tree manipulation (midpoint rooting, pruning, balance)",
+  "description": "Root, prune and summarise a phylogenetic tree built from a real SSU rRNA alignment.",
+  "category": "Phylogenetics",
+  "operators": [
+    "phylo_distance_matrix",
+    "phylo_neighbor_joining",
+    "tree_root_midpoint",
+    "tree_prune_tips",
+    "tree_balance"
+  ],
+  "oracle": "dendropy 5.1.3; R ape 5.8.1"
+}
