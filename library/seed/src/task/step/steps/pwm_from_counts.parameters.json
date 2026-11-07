@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "position_dim": {
+      "type": "string",
+      "title": "Position dimension",
+      "default": "position",
+      "description": "Dimension holding motif positions."
+    },
+    "base_dim": {
+      "type": "string",
+      "title": "Base dimension",
+      "default": "base",
+      "description": "Dimension holding A/C/G/T columns."
+    },
+    "pseudocount": {
+      "type": "number",
+      "title": "Pseudocount",
+      "default": 0.5,
+      "description": "Added to every count before normalization.",
+      "minimum": 0
+    },
+    "background": {
+      "type": "string",
+      "title": "Background",
+      "default": "0.25,0.25,0.25,0.25",
+      "description": "Comma-separated A,C,G,T background frequencies."
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "pwm",
+      "description": "Context key for the PWM table."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

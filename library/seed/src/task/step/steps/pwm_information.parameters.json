@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "position_dim": {
+      "type": "string",
+      "title": "Position dimension",
+      "default": "position",
+      "description": "Dimension holding motif positions."
+    },
+    "base_dim": {
+      "type": "string",
+      "title": "Base dimension",
+      "default": "base",
+      "description": "Dimension holding A/C/G/T columns."
+    },
+    "background": {
+      "type": "string",
+      "title": "Background",
+      "default": "0.25,0.25,0.25,0.25",
+      "description": "Comma-separated A,C,G,T background frequencies."
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "information",
+      "description": "Context key for the information table."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

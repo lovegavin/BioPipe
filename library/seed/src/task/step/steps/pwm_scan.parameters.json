@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "sequence_dim": {
+      "type": "string",
+      "title": "Sequence dimension",
+      "default": "sequence",
+      "description": "Dimension holding sequence labels."
+    },
+    "position_dim": {
+      "type": "string",
+      "title": "Position dimension",
+      "default": "position",
+      "description": "Dimension holding sequence positions."
+    },
+    "pwm_position_dim": {
+      "type": "string",
+      "title": "PWM position dimension",
+      "default": "position",
+      "description": "Position dimension of the PWM table."
+    },
+    "base_dim": {
+      "type": "string",
+      "title": "Base dimension",
+      "default": "base",
+      "description": "Dimension holding A/C/G/T columns."
+    },
+    "min_score": {
+      "type": "number",
+      "title": "Minimum score",
+      "default": 8.0,
+      "description": "Log-odds score threshold for a hit."
+    },
+    "both_strands": {
+      "type": "boolean",
+      "title": "Scan both strands",
+      "default": true,
+      "description": "Scan the reverse complement as well."
+    },
+    "max_hits": {
+      "type": "integer",
+      "title": "Maximum hits",
+      "default": 0,
+      "description": "Maximum hits per sequence; 0 keeps all.",
+      "minimum": 0
+    },
+    "output": {
+      "type": "string",
+      "title": "Output name",
+      "default": "hits",
+      "description": "Context key for the hit table."
+    }
+  },
+  "required": [],
+  "additionalProperties": false
+}

@@ -5370,6 +5370,36 @@
     "status": "generated"
   },
   {
+    "id": "pwm_from_counts",
+    "kind": "operator",
+    "title": "pwm_from_counts",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Build a log-odds PWM and information content from a PFM.",
+    "doc": "src/task/step/steps/pwm_from_counts.PwmFromCountsStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pwm_information",
+    "kind": "operator",
+    "title": "pwm_information",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Compute per-position information content and consensus of a PWM.",
+    "doc": "src/task/step/steps/pwm_information.PwmInformationStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "pwm_scan",
+    "kind": "operator",
+    "title": "pwm_scan",
+    "category": "Sequence",
+    "version": "1.0.0",
+    "description": "Scan sequences for PWM matches above a log-odds threshold.",
+    "doc": "src/task/step/steps/pwm_scan.PwmScanStep.md",
+    "status": "generated"
+  },
+  {
     "id": "qc_metrics",
     "kind": "operator",
     "title": "qc_metrics",

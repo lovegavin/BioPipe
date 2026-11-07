@@ -1,0 +1,14 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {"counts": {}, "genome": {}},
+  "steps": [
+    {"name": "pwm_from_counts", "inputs": ["counts"], "params": {"output": "pwm"}, "context_params": {}},
+    {"name": "export_results", "inputs": ["pwm"], "params": {"format": "csv", "filename": "pwm"}, "context_params": {}},
+    {"name": "pwm_information", "inputs": ["pwm"], "params": {"output": "information"}, "context_params": {}},
+    {"name": "export_results", "inputs": ["information"], "params": {"format": "csv", "filename": "pwm_information"}, "context_params": {}},
+    {"name": "pwm_scan", "inputs": ["genome", "pwm"], "params": {"min_score": 8.0, "output": "hits"}, "context_params": {}},
+    {"name": "export_results", "inputs": ["hits"], "params": {"format": "csv", "filename": "pwm_hits"}, "context_params": {}}
+  ]
+}

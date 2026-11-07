@@ -1,0 +1,28 @@
+name: "PWM scan of a CTCF motif on human chr22"
+sources:
+  counts:
+    path: input/counts.csv
+    dims: [position, base]
+    labels:
+      position: {base: 0}
+      base: builtin
+    reader: CsvReader
+  genome:
+    path: input/chr22_200kb.fasta
+    dims: [sequence, position]
+    labels: {}
+    reader: FastaReader
+parameters_file: parameters.json
+steps:
+  - name: pwm_from_counts
+    inputs: [counts]
+  - name: export_results
+    inputs: [pwm]
+  - name: pwm_information
+    inputs: [pwm]
+  - name: export_results
+    inputs: [information]
+  - name: pwm_scan
+    inputs: [genome, pwm]
+  - name: export_results
+    inputs: [hits]

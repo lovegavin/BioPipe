@@ -206,6 +206,11 @@
       "sha256": "1a8bf5770a9340f72492838a67bb773275c1c0a5588bd32ef5cfa2b8ed6f7b1a",
       "parameters_sha256": "fa93f8abd650c802bc61435ea9b34daa4cfe048017aac126e081e57af8d28511"
     },
+    "route_8d9d5ea4abc4": {
+      "path": "routes/pwm_scan_chr22/task.yaml",
+      "sha256": "20eda5995f535791592253301d0ba6b1b95552530563da387cf8688a3880b3ee",
+      "parameters_sha256": "3db9a31600a51e1240cb04eb8c4443ebc7c33470fd242222c0c006e41526fd9b"
+    },
     "route_bbd048357651": {
       "path": "routes/read_preprocessing/task.yaml",
       "sha256": "cd80a7fc3cd80abefe769d7b833b65385517c77c94a2a51d6e9399d7489614ea",
@@ -19528,6 +19533,416 @@
                 "info_open": true,
                 "axis_info_open": true,
                 "ndim": 2
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_8d9d5ea4abc4",
+      "version": 1,
+      "name": "PWM scan of a CTCF motif on human chr22",
+      "graph": {
+        "schema_version": 2,
+        "name": "PWM scan of a CTCF motif on human chr22",
+        "base_dir": ".studio/builtin-inputs/pwm_scan_chr22",
+        "nodes": [
+          {
+            "id": "counts",
+            "kind": "source",
+            "operator": null,
+            "title": "counts",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "CsvReader",
+              "path": "input/counts.csv",
+              "dims": [
+                "position",
+                "base"
+              ],
+              "labels": {
+                "base": "builtin",
+                "position": {
+                  "base": 0
+                }
+              },
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "genome",
+            "kind": "source",
+            "operator": null,
+            "title": "genome",
+            "position": {
+              "x": 70.0,
+              "y": 310.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "FastaReader",
+              "path": "input/chr22_200kb.fasta",
+              "dims": [
+                "sequence",
+                "position"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pwm_from_counts_1",
+            "kind": "operator",
+            "operator": "pwm_from_counts",
+            "title": "pwm_from_counts",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "position_dim": "position",
+              "base_dim": "base",
+              "pseudocount": 0.5,
+              "background": "0.25,0.25,0.25,0.25",
+              "output": "pwm"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "pwm",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pwm_information_3",
+            "kind": "operator",
+            "operator": "pwm_information",
+            "title": "pwm_information",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "position_dim": "position",
+              "base_dim": "base",
+              "background": "0.25,0.25,0.25,0.25",
+              "output": "information"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "pwm_information",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "pwm_scan_5",
+            "kind": "operator",
+            "operator": "pwm_scan",
+            "title": "pwm_scan",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "sequence_dim": "sequence",
+              "position_dim": "position",
+              "pwm_position_dim": "position",
+              "base_dim": "base",
+              "min_score": 8.0,
+              "both_strands": true,
+              "max_hits": 0,
+              "output": "hits"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 2,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 940.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "pwm_hits",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "counts-pwm_from_counts_1-0",
+            "source": "counts",
+            "target": "pwm_from_counts_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pwm_from_counts_1-export_results_2-0",
+            "source": "pwm_from_counts_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pwm_from_counts_1-pwm_information_3-0",
+            "source": "pwm_from_counts_1",
+            "target": "pwm_information_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pwm_information_3-export_results_4-0",
+            "source": "pwm_information_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "genome-pwm_scan_5-0",
+            "source": "genome",
+            "target": "pwm_scan_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "pwm_from_counts_1-pwm_scan_5-1",
+            "source": "pwm_from_counts_1",
+            "target": "pwm_scan_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-1"
+          },
+          {
+            "id": "pwm_scan_5-export_results_6-0",
+            "source": "pwm_scan_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "counts",
+              "label": "counts",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "position",
+                  "base"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            },
+            {
+              "node_id": "genome",
+              "label": "genome",
+              "contract": {
+                "version": 1,
+                "ndim": 2,
+                "numeric": true,
+                "dims": [
+                  "sequence",
+                  "position"
+                ],
+                "labels": [],
+                "info": {
+                  "missing_code": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "encoders": {
+                    "type": "object",
+                    "optional": true
+                  },
+                  "alphabet": {
+                    "type": "string"
+                  },
+                  "representation": {
+                    "type": "string",
+                    "const": "sequence_codes"
+                  },
+                  "alphabet_map": {
+                    "type": "object"
+                  },
+                  "unknown_code": {
+                    "type": "integer"
+                  },
+                  "sequences": {
+                    "type": "array",
+                    "optional": true
+                  }
+                },
+                "info_open": false,
+                "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
               }
             }
           ]

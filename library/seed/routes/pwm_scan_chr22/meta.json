@@ -1,0 +1,6 @@
+{
+  "key": "pwm_scan_chr22",
+  "name": "PWM scan of a CTCF motif on human chr22",
+  "category": "Sequence",
+  "description": "Build a log-odds PWM from a JASPAR CTCF matrix and scan a 200 kb chr22 window on both strands."
+}
