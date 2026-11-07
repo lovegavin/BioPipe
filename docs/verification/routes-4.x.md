@@ -2751,3 +2751,71 @@ background) -> `export_results`; `pwm_information` -> `export_results`;
 - Uniform background and pseudocount 0.5 follow the oracle convention; a
   different background changes the score scale.
 - The enrichment baseline is a 5,000-draw Monte Carlo with a fixed seed.
+
+
+## Batch 36 — Genotype structure (1000 Genomes chr22)
+
+**Data.** `subset_snps.vcf.gz` (541,728 B, sha256
+`57c1870b83244ae3ba74880f89a1ef69b508bfecad50e8bc998e233a2d060c05`):
+28,522 biallelic SNPs on chr22 (17,000,515-18,000,000) in 50 1000 Genomes
+GBR samples (49 GBR + 1 CEU in the panel file), no missing genotype calls.
+The file is `bcftools view -m2 -M2 -v snps` applied to the 1000 Genomes chr22
+query VCF used by batch 25. Only **4,388** sites are polymorphic in these 50
+samples; the other 24,134 sites are monomorphic and contribute a zero column.
+
+**Route `genotype_structure` (6 steps).**
+
+| Step | Operator | WSL |
+| --- | --- | --- |
+| 1 | genotype_pca (5 components) | 0.418 s |
+| 2 | export_results | 0.002 s |
+| 3 | genotype_grm | 0.418 s |
+| 4 | export_results | 0.004 s |
+| 5 | genotype_pca_loadings | 0.495 s |
+| 6 | export_results | 0.029 s |
+
+WSL `total_elapsed` 1.3667 s; srv 3.271 s (0.958/0.023/0.890/0.004/1.305/0.091);
+Windows 1.809 s (0.548/0.008/0.546/0.004/0.657/0.046).
+
+**Results.**
+
+| Quantity | Value |
+| --- | --- |
+| Eigenvalues PC1-PC5 | 0.468376044939, 0.401771650144, 0.357612132983, 0.330650600133, 0.316326176133 |
+| GRM diagonal mean | 0.15144147113 |
+| Loading rows | 28,522 (4,388 non-zero) |
+
+**Oracle — plink2 2.00a6 AVX2.**
+
+| Comparison | Result |
+| --- | --- |
+| eigenvalues (`--pca 5`) | max abs 3.999e-07 (plink2 prints six decimals) |
+| PC scores | abs correlation 0.999999999999-1.0 |
+| GRM (`--make-rel square`) | max abs 4.728e-07 |
+| ALT-allele loadings (`--pca 3 allele-wts`) | max abs 5.044e-06 |
+
+The GRM divides by the total number of biallelic SNPs (28,522), including
+monomorphic sites, which is the plink2 convention; dividing only by the 4,388
+polymorphic sites would multiply every entry by 6.5. PCA component signs are
+arbitrary, so the oracle aligns each component's sign (1, -1, 1) before
+comparing loadings. The loadings operator computes
+`w = Z_used @ vectors / (2 * sqrt(lambda))`; the factor comes from plink2's
+allele-weight normalisation and was verified to 1e-6 across components.
+
+**Fixes during the batch.**
+
+- `genotype_pca_loadings` initially used `matrix[used].T @ vectors` although
+  `matrix` is already variant-by-sample; the unit test caught the dimension
+  mismatch and the operator now uses `matrix[used] @ vectors`.
+- Sign handling: comparing raw loadings reported a max abs of 8.15 because
+  plink2's per-component sign convention differs from `numpy.linalg.eigh`;
+  aligning each component by the sign of `dot(ours, theirs)` gives 5.04e-06.
+
+**Limitations.** Single population (GBR) and a single 1 Mb window, so the
+components reflect within-population structure only; the input has no missing
+calls, and the operators fill missing dosages with the mean when present.
+
+**Artifacts.** `genotype_pca.csv` 5,601 B md5 `55048be2fee76a5ee3697b8412e4338b`,
+`genotype_grm.csv` 54,864 B `a1cfbc2f62ca47debb93d90a11083006`,
+`genotype_pca_loadings.csv` 1,397,319 B `5547acd95188041907a87e254399bd68`.
+All three md5 values are identical on WSL, srv and Windows.
