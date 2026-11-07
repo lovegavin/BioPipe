@@ -1,0 +1,82 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "model": {}
+  },
+  "steps": [
+    {
+      "name": "fba_flux_distribution",
+      "inputs": [
+        "model"
+      ],
+      "params": {
+        "reaction_dim": "reaction",
+        "statistic_dim": "statistic",
+        "output": "fluxes"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "fluxes"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "fba_flux_distribution"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "fba_gene_knockout",
+      "inputs": [
+        "model"
+      ],
+      "params": {
+        "gene_dim": "gene",
+        "statistic_dim": "statistic",
+        "growth_threshold": 0.01,
+        "max_genes": 0,
+        "output": "knockouts"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "knockouts"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "fba_gene_knockout"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "fba_flux_variability",
+      "inputs": [
+        "model"
+      ],
+      "params": {
+        "reaction_dim": "reaction",
+        "statistic_dim": "statistic",
+        "fraction_of_maximum": 0.9,
+        "output": "variability"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "variability"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "fba_flux_variability"
+      },
+      "context_params": {}
+    }
+  ]
+}

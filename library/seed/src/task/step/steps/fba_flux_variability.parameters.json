@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "reaction_dim": {
+      "type": "string",
+      "default": "reaction"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic"
+    },
+    "fraction_of_maximum": {
+      "type": "number",
+      "default": 0.9,
+      "exclusiveMinimum": 0.0,
+      "maximum": 1.0
+    },
+    "output": {
+      "type": "string",
+      "default": "fva"
+    }
+  },
+  "additionalProperties": false
+}

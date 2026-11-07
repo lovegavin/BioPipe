@@ -920,6 +920,16 @@
     "status": "generated"
   },
   {
+    "id": "SbmlFileReader",
+    "kind": "reader",
+    "title": "SbmlFileReader",
+    "category": "Data",
+    "version": "1.0.0",
+    "description": "Reference an SBML metabolic model without parsing it.",
+    "doc": "src/reader/readers/sbml_file_reader.SbmlFileReader.md",
+    "status": "generated"
+  },
+  {
     "id": "SdfReader",
     "kind": "reader",
     "title": "Reader for SDF records; output is molecule x [atoms, bonds, molecular_weight]",

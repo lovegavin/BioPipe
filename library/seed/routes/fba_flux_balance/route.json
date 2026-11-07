@@ -1,0 +1,10 @@
+{
+  "key": "fba_flux_balance",
+  "name": "Metabolic flux balance analysis",
+  "description": "Flux balance analysis of the BiGG E. coli core model with knockout and variability scans.",
+  "tags": [
+    "metabolism",
+    "fba",
+    "flux"
+  ]
+}

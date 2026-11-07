@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "reaction_dim": {
+      "type": "string",
+      "default": "reaction"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic"
+    },
+    "output": {
+      "type": "string",
+      "default": "flux"
+    }
+  },
+  "additionalProperties": false
+}

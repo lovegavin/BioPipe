@@ -2320,6 +2320,36 @@
     "status": "generated"
   },
   {
+    "id": "fba_flux_distribution",
+    "kind": "operator",
+    "title": "FBA flux distribution",
+    "category": "Metabolism",
+    "version": "1.0.0",
+    "description": "Solve a flux balance model and report the optimal flux of every reaction.",
+    "doc": "src/task/step/steps/fba_flux_distribution.FbaFluxDistributionStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fba_flux_variability",
+    "kind": "operator",
+    "title": "FBA flux variability",
+    "category": "Metabolism",
+    "version": "1.0.0",
+    "description": "Report the minimum and maximum flux of every reaction at a fraction of optimal growth.",
+    "doc": "src/task/step/steps/fba_flux_variability.FbaFluxVariabilityStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "fba_gene_knockout",
+    "kind": "operator",
+    "title": "FBA gene knockout",
+    "category": "Metabolism",
+    "version": "1.0.0",
+    "description": "Delete each gene in turn and report the resulting growth rate and essentiality.",
+    "doc": "src/task/step/steps/fba_gene_knockout.FbaGeneKnockoutStep.md",
+    "status": "generated"
+  },
+  {
     "id": "filter_by",
     "kind": "operator",
     "title": "Filter by metrics",

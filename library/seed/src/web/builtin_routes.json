@@ -46,6 +46,11 @@
       "sha256": "b37ab2efe559605c2323af3b402b5f71ee29fb612bcc7e2e0eb66780f19c7d77",
       "parameters_sha256": "16967af63ea2bd91dc383a813d953e77fb69f0fefc999db659d3c31e6a460b0c"
     },
+    "route_d2a9ab1bb4a6": {
+      "path": "routes/fba_flux_balance/task.yaml",
+      "sha256": "73a44b337d48c9faa3f1c3c09775697198c0251dfadf25eddbd4a15068bf0e9b",
+      "parameters_sha256": "11e705088a05e2625816e214e959ee1bec1e8e1ab66c6b9d393d2f66e879efee"
+    },
     "route_25de74f7a56d": {
       "path": "routes/genome_comparison/task.yaml",
       "sha256": "b26e2b82cfe4e6699e7f6d255ecedbe97db0bdafc74e802d88cedc6badfa8b13",
@@ -25633,6 +25638,319 @@
                 },
                 "info_open": false,
                 "axis_info_open": false,
+                "parallel": []
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "node_id": "export_results_2",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_4",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            },
+            {
+              "node_id": "export_results_6",
+              "handle": "out",
+              "label": "Export results",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": {},
+                "info": {
+                  "representation": {
+                    "const": "exported_files"
+                  }
+                },
+                "axis_info": {},
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0
+              }
+            }
+          ]
+        },
+        "plugin_lock": {}
+      }
+    },
+    {
+      "id": "route_d2a9ab1bb4a6",
+      "version": 1,
+      "name": "Metabolic flux balance analysis",
+      "graph": {
+        "schema_version": 2,
+        "name": "Metabolic flux balance analysis",
+        "base_dir": ".studio/builtin-inputs/fba_flux_balance",
+        "nodes": [
+          {
+            "id": "model",
+            "kind": "source",
+            "operator": null,
+            "title": "model",
+            "position": {
+              "x": 70.0,
+              "y": 100.0
+            },
+            "params": {},
+            "context_params": {},
+            "source": {
+              "reader": "SbmlFileReader",
+              "path": "input/e_coli_core.xml",
+              "dims": [
+                "file"
+              ],
+              "labels": {},
+              "args": {},
+              "location": null
+            },
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fba_flux_distribution_1",
+            "kind": "operator",
+            "operator": "fba_flux_distribution",
+            "title": "FBA flux distribution",
+            "position": {
+              "x": 360.0,
+              "y": 100.0
+            },
+            "params": {
+              "reaction_dim": "reaction",
+              "statistic_dim": "statistic",
+              "output": "fluxes"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_2",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 100.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fba_flux_distribution",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fba_gene_knockout_3",
+            "kind": "operator",
+            "operator": "fba_gene_knockout",
+            "title": "FBA gene knockout",
+            "position": {
+              "x": 360.0,
+              "y": 310.0
+            },
+            "params": {
+              "gene_dim": "gene",
+              "statistic_dim": "statistic",
+              "growth_threshold": 0.01,
+              "max_genes": 0,
+              "output": "knockouts"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_4",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 310.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fba_gene_knockout",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_3"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "fba_flux_variability_5",
+            "kind": "operator",
+            "operator": "fba_flux_variability",
+            "title": "FBA flux variability",
+            "position": {
+              "x": 360.0,
+              "y": 520.0
+            },
+            "params": {
+              "reaction_dim": "reaction",
+              "statistic_dim": "statistic",
+              "fraction_of_maximum": 0.9,
+              "output": "variability"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          },
+          {
+            "id": "export_results_6",
+            "kind": "operator",
+            "operator": "export_results",
+            "title": "Export results",
+            "position": {
+              "x": 650.0,
+              "y": 520.0
+            },
+            "params": {
+              "format": "csv",
+              "filename": "fba_flux_variability",
+              "include_labels": true,
+              "buffer_mb": 1,
+              "assembly": "",
+              "topology": "linear",
+              "value_column": 0,
+              "directed": false,
+              "output": "export_results_5"
+            },
+            "context_params": {},
+            "source": null,
+            "input_count": 1,
+            "route": null
+          }
+        ],
+        "edges": [
+          {
+            "id": "model-fba_flux_distribution_1-0",
+            "source": "model",
+            "target": "fba_flux_distribution_1",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "fba_flux_distribution_1-export_results_2-0",
+            "source": "fba_flux_distribution_1",
+            "target": "export_results_2",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "model-fba_gene_knockout_3-0",
+            "source": "model",
+            "target": "fba_gene_knockout_3",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "fba_gene_knockout_3-export_results_4-0",
+            "source": "fba_gene_knockout_3",
+            "target": "export_results_4",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "model-fba_flux_variability_5-0",
+            "source": "model",
+            "target": "fba_flux_variability_5",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          },
+          {
+            "id": "fba_flux_variability_5-export_results_6-0",
+            "source": "fba_flux_variability_5",
+            "target": "export_results_6",
+            "sourceHandle": "out",
+            "targetHandle": "in-0"
+          }
+        ],
+        "memory": {
+          "enabled": false
+        },
+        "params": {},
+        "runtime": {},
+        "manifest_extra": {},
+        "interface": {
+          "version": 1,
+          "inputs": [
+            {
+              "node_id": "model",
+              "label": "model",
+              "contract": {
+                "version": 1,
+                "dims": [],
+                "labels": [],
+                "info": {
+                  "representation": {
+                    "type": "string",
+                    "const": "sbml"
+                  }
+                },
+                "info_open": true,
+                "axis_info_open": true,
+                "kind": "file",
+                "numeric": false,
+                "ndim": 0,
                 "parallel": []
               }
             }

@@ -1,0 +1,52 @@
+{
+  "name": "Metabolic flux balance analysis",
+  "sources": {
+    "model": {
+      "reader": "SbmlFileReader",
+      "path": "input/e_coli_core.xml",
+      "dims": [
+        "file"
+      ],
+      "labels": {}
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "fba_flux_distribution",
+      "inputs": [
+        "model"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "fluxes"
+      ]
+    },
+    {
+      "name": "fba_gene_knockout",
+      "inputs": [
+        "model"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "knockouts"
+      ]
+    },
+    {
+      "name": "fba_flux_variability",
+      "inputs": [
+        "model"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "variability"
+      ]
+    }
+  ]
+}
