@@ -3241,3 +3241,74 @@ sub-second.
 * The motif panel is a fixed default list and can be overridden per run.
 * GC bounds can be unreachable under the motif/homopolymer guards; the operator
   returns the best sequence found instead of failing.
+
+## Batch 43 — GWAS association on chr22
+
+Linear association testing, genomic control and distance clumping on a small
+1000 Genomes chr22 panel, with a synthetic phenotype built on real genotypes.
+
+### Inputs
+
+| file | size | sha256 |
+| --- | --- | --- |
+| `input/subset_snps.vcf.gz` | 541,728 B | `57c1870b83244ae3ba74880f89a1ef69b508bfecad50e8bc998e233a2d060c05` |
+| `input/pheno.csv` | 1,089 B | `0ef76db1eb248b129688f3bf6dd7e5516e9567ce26aa04d163b464ae8243fc50` |
+
+The VCF holds 28,522 biallelic SNPs (chr22:17,000,515-18,000,000) for 50 GBR
+samples; 4,388 variants are polymorphic in this panel. The phenotype is
+synthetic (`mode = synthetic phenotype on real genotypes`): 20 causal variants
+drawn with seed 7, effects N(0, 0.35), standard normal noise, standardised and
+median-split into 0/1.
+
+### Route
+
+`gwas_association` (min_maf 0.05) -> export; `gwas_inflation` -> export;
+`gwas_top_hits` (threshold 0.001, 1 Mb clumping window, max 50 hits) -> export.
+
+### Results
+
+- 2,816 variants tested (all polymorphic sites above the MAF floor).
+- Genomic inflation lambda = **1.104847**, mean chi2 1.179583, median p 0.478348.
+- Minimum p = **3.613e-4**; one lead variant **22:17839358:C:T** with
+  beta -0.872511 and SE 0.227279.
+
+### Oracles
+
+| oracle | scope | agreement |
+| --- | --- | --- |
+| plink2 2.00a6 `--glm` | 2,816 shared variants, allele-aligned | beta 4.65e-6 (6 significant digits), SE 5.0e-7, p 5.0e-7 |
+| plink2 2.00a6 | lambda on the same variants | 1.10484800 vs 1.10484682, diff 1.17e-6 |
+| base R 4.3.3 `lm` | beta, SE, p on the same variants | max abs 3.55e-15, 9.44e-16, 1.11e-15 |
+
+The plink2 export prints six significant digits, so its beta/SE/p residuals are
+bounded by that rounding rather than by the model. The R comparison re-derives
+every regression from the dosage table exported with `bcftools query`.
+
+### Three platforms
+
+| Host | Steps | Total elapsed | Exported files |
+| --- | --- | --- | --- |
+| WSL (Python 3.12) | 6/6 | 0.942 s | association `f4ec736f`, inflation `1ab18d59`, top hits `2b5e14d5` |
+| srv (Python 3.11) | 6/6 | 2.427 s | MD5 differs, numeric max abs 0 for association, inflation and top hits |
+| Windows (Python 3.12) | 6/6 | 0.823 s | MD5 differs, beta/SE/p max abs 6.7e-16, inflation 2.7e-18 |
+
+The three hosts use different SciPy/numpy builds, so the CSV text differs while
+the values agree; `workdir/b43_srv_compare.json` and
+`workdir/b43_win_compare.json` record the numeric comparisons (both passed).
+
+### Fixes
+
+1. The route manifest was missing `parameters_file`, so step parameters were
+   ignored at runtime and the phenotype column defaulted to `value`.
+2. The three operators passed Python lists into `Form`; they now build float
+   numpy arrays.
+3. The top-hit threshold was relaxed from 1e-4 to 1e-3 for this 50-sample
+   panel after the first run reported no variant below 1e-4.
+
+### Limitations
+
+* The phenotype is synthetic; the route validates the implementation, not a
+  biological association.
+* All samples come from one population, so no structure correction is needed
+  or demonstrated; the operator accepts a covariate table for that purpose.
+* Only autosome-style biallelic SNPs and an additive dosage model are handled.
