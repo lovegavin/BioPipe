@@ -2904,3 +2904,79 @@ are kept as separate blocks rather than resolved.
 **Artifacts.** `genome_alignment_stats.csv` 279 B `e266cd9c63f0d703d6ee4a505db8d1ea`,
 `genome_synteny_blocks.csv` 12,898 B `d593b7199a6a94231868a3c3ee9f507c`,
 `genome_rearrangement_summary.csv` 274 B `2152824136914d69665194b3c41d5a6d`.
+
+## Batch 39 — Network analysis of a STRING CRP interaction network
+
+### Data
+
+| Item | Value |
+| --- | --- |
+| Source | STRING v12.0, Escherichia coli K-12, CRP regulon with 100 added partners |
+| Query | `identifiers=crp&species=511145&add_nodes=100&required_score=400` |
+| Nodes / edges | 101 / 919 |
+| Input | `network_edges.csv` 19,724 B, sha256 `d91dfe2da126dece5cfbd40230c20843ae407dfc7614e7b980bec6eb935aee48` |
+| Graph model | undirected, unweighted, self loops skipped |
+
+### Route
+
+`expression`-independent 6-step route `ppi_network_analysis`: `network_summary`
+-> export, `network_centrality` -> export, `network_communities` -> export.
+
+| Platform | Total (s) | summary | centrality | communities |
+| --- | --- | --- | --- | --- |
+| WSL (Python 3.12) | 3.1272 | 0.008 | 0.042 | 3.073 |
+| srv (Python 3.11) | 6.2878 | 0.027 | 0.134 | 6.095 |
+| Windows (Python 3.12) | 5.2104 | 0.010 | 0.053 | 5.138 |
+
+### Results
+
+`network_summary` (9 metrics): nodes 101, edges 919, density 0.1819802,
+components 1, largest component 101, diameter 2, average degree 18.198,
+clustering coefficient 0.598534, degree assortativity -0.158518.
+
+`network_centrality` (101 rows): highest pagerank `crp` 0.0557800, `lacZ`
+0.0296186, `rpoS` 0.0289984.
+
+`network_communities`: three communities of 38, 22 and 41 nodes, modularity
+0.2684951116615615.
+
+### Oracles
+
+| Implementation | Version | Comparison | Result |
+| --- | --- | --- | --- |
+| networkx | 3.x | summary 9 metrics | max abs 1.39e-16 |
+| networkx | 3.x | centrality 5 metrics | max abs 3.45e-12 |
+| networkx | 3.x | greedy modularity partition | identical partition, modularity diff 0 |
+| base R | 4.3.3 | summary 9 metrics | max abs 1.11e-16 |
+| base R | 4.3.3 | modularity of exported partition | 0.2684951 |
+
+Two independent implementations agree; networkx checks centrality and the
+partition, while base R recomputes the summary and the modularity from the
+exported community labels.
+
+### Cross-platform parity
+
+`network_centrality.csv` `f12b2505d716ca622c6b0d39638be902` (9,198 B) and
+`network_communities.csv` `919b1ca7c61d4d57eedb1d2c5abe50e5` (1,014 B) are
+byte-identical on WSL, srv and Windows. `network_summary.csv` is
+`42c57a5667cf3021094aff50cfe0add6` on WSL/Windows and
+`54ceee483f5e9744e446abb5dcd2d6d0` on srv: only the last two digits of the
+assortativity differ (-0.15851767550170345 vs -0.15851767550170331, absolute
+1.4e-16), a floating summation-order difference.
+
+### Fixes found by the oracle
+
+1. Betweenness was divided by two after Brandes accumulation, halving every
+   score relative to networkx normalization; the route now matches to 3.45e-12.
+2. Greedy modularity compared the union of both communities instead of the
+   edges crossing them, so the first merge always looked best and the network
+   collapsed to one community with modularity 0. Counting crossing edges
+   produces the same three communities as networkx and reduces runtime from
+   16.7 s to 3.1 s.
+
+### Limitations
+
+- Edges are unweighted; STRING confidence scores are parsed but unused.
+- The undirected projection discards regulatory direction.
+- `network_communities` is greedy modularity, not an exhaustive optimum.
+- `diameter` is computed on the largest connected component only.
