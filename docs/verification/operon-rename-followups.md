@@ -84,6 +84,27 @@ branch, then create the standalone clone at `/home/gavin/Operon` with the
 sequence below. Until that clone exists, the moved directory must not be deleted
 or treated as independent.
 
+### 2.0.1 GitHub rename attempt (2026-11-07, blocked by token scope)
+
+- The 5.0 tree is committed as `3686fee8` on `release/5.0` and pushed to the
+  current remote (`git@github.com:lovegavin/BioPipe.git`); the branch is visible
+  as `release/5.0` on the old repository name.
+- A fine-grained token with `Contents: Read and write` was tried:
+  `GET /user` and `GET /repos/lovegavin/BioPipe` succeed and report
+  `permissions.admin = true` for the user, but
+  `PATCH /repos/lovegavin/BioPipe {"name": "Operon"}` returns
+  `403 Resource not accessible by personal access token`, and
+  `POST /user/repos` returns the same 403. The token therefore lacks
+  **Administration: Read and write**, which GitHub requires for rename/create.
+- Rename paths: (a) GitHub web UI: repository Settings -> General ->
+  Repository name `Operon` -> Rename (old URLs redirect); then
+  `git remote set-url origin git@github.com:lovegavin/Operon.git`.
+  (b) Issue a fine-grained token with Administration: Read and write and rerun
+  the API call.
+- The token must not be stored in the repository, docs or shell history; it is
+  supplied per command through the environment and revoked by the user after
+  the release.
+
 Current layout:
 
 | Path | Role | Commit |
