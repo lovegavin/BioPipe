@@ -1975,3 +1975,100 @@ and is reported at 1 Mb resolution only; no TAD/compartment analysis is claimed.
 **Registry/docs**: 795 operators / 106 readers / 7 packages / 48 routes,
 errors 0; docs 901 pages, changed 0, errors 0; portability 3,768 checked,
 6 pre-existing findings (4.0.5 docs in `C:\BioPipe` examples).
+
+## Batch 25 — VCF normalization, concatenation and merging (1000 Genomes chr22)
+
+Four new files: `_vcf_transform.py` plus `vcf_normalize`, `vcf_concat` and
+`vcf_merge`, and the built-in route `vcf_normalization`. All three operators
+write native VCF through `ctx.artifact_path` and return `result_files`; the
+route ends in three `export_results` steps. Because `export_results` has no VCF
+format, the exported CSV is the operator summary and the VCF itself is fetched
+from the registered native file.
+
+### Data
+
+| Source | File | Bytes | SHA256 |
+| --- | --- | --- | --- |
+| subset | `subset.vcf.gz` | 620,963 | `f67e2332b39e6c51aa5dcf6f33f6929937207debe99e4c042418fe6ef9ca042e` |
+| part_a | `partA.vcf.gz` | 273,934 | `a88b705bd1b3dd8678252cbf967698d780add2547490e63f98e25f142a815ed4` |
+| part_b | `partB.vcf.gz` | 350,336 | `26fcddd07bd2b2acb63c5af1ef4e3620aae04ec945ec2982e75f191f683501b3` |
+| truth_norm | `truth_norm.vcf.gz` | 30,944 | `3492060aa6272380403741dff1c4ea430745c4c1647940e0c695d847a0e9af5b` |
+| reference | `chr22_1000g.fa` | 52,330,662 | `51c376f6c0b898b23bc067f53d93ca801beabfb1d846898372837d37d5578829` |
+
+`subset` is the 1000 Genomes phase 3 chr22 callset restricted to 17–18 Mb with
+50 samples (30,104 records, 172 multi-allelic sites, 1,581 indels, FORMAT `GT`
+only). `partA`/`partB` are shards of the same file. `truth_norm` is GIAB HG001
+restricted to the same interval and split with `bcftools norm -m -any` so its
+records can be keyed by `(CHROM, POS, REF, ALT)`.
+
+### Route
+
+`vcf_normalize(subset, reference)` → `vcf_concat(part_a, part_b)` →
+`vcf_merge(normalized, truth_norm)`.
+
+`vcf_normalize` splits multi-allelic records, applies the vt trim-extend loop to
+left-align and trim alleles, remaps `GT` for the split rows (`1|2` → `1|0` /
+`0|1`) keeping the `|` phasing separator, recounts `AC/AF/AN` from the genotypes,
+and sorts the output by `(chrom, pos, ref, alt)` because left alignment can move
+a record behind its predecessor. `vcf_concat` appends shards after checking the
+sample lists are identical. `vcf_merge` takes the union of sites and samples,
+fills missing genotypes with `./.`, unions FORMAT keys and recomputes INFO
+`AC/AF/AN` over the merged 51 samples.
+
+### Result
+
+| Platform | total_elapsed | normalize | concat | merge |
+| --- | --- | --- | --- | --- |
+| WSL (py 3.12) | 2.5494 s | 0.465 s | 0.152 s | 1.932 s |
+| srv (py 3.11) | 4.872 s | 0.871 s | 0.316 s | 3.685 s |
+| Windows (py 3.12) | 2.5349 s | 0.406 s | 0.139 s | 1.990 s |
+
+All three platforms produced byte-identical VCFs:
+
+| Artifact | Bytes | MD5 |
+| --- | --- | --- |
+| `normalized.vcf` | 10,414,937 | `70892ad908c889538f3255aa69f2c1bf` |
+| `concatenated.vcf` | 10,350,619 | `70e71d4af57ff5e5e1e27d0265c0f767` |
+| `merged.vcf` | 10,962,555 | `53ba37713dba35e561be9e457b9453df` |
+
+Normalization emits 30,287 records from 30,104 inputs (183 split rows); the
+concat output reproduces the original 30,104; the merge output has 30,336 sites
+for 51 samples.
+
+### Oracle: bcftools 1.19
+
+| Step | Common | Only bcftools | Only ours | GT diffs | AC/AN diffs |
+| --- | --- | --- | --- | --- | --- |
+| normalize | 30,286 | 0 | 0 | 0 | 0 |
+| concat | 30,104 | 0 | 0 | 0 | 0 |
+| merge | 30,336 | 0 | 0 | 1 | 1 |
+
+Normalization is compared with REF/ALT upper-cased: bcftools keeps the
+soft-masked lower-case reference bases, the operator emits upper case, and the
+alleles themselves are identical. The single merge divergence at
+`22:17996285 A>ATCTC` is the multi-allelic overlap where bcftools keeps the
+first file's `FORMAT` (`GT`) and its original `AC=58;AN=100`, while the operator
+writes the FORMAT union and recounts `AC=59;AN=102`. Both are documented
+semantics; the GT alleles agree.
+
+### Fixes made while validating
+
+- Replaced the naive "trim then rotate" alignment with the vt trim-extend loop.
+  The old version could not walk an indel to the left edge of a repeat, which
+  produced 449 records present only on one side of the comparison.
+- Kept `|` in remapped genotypes; collapsing it to `/` caused 308 GT mismatches.
+- Re-sorted normalized records after left alignment so the VCF stays monotonic
+  (`bcftools index` rejected the previous output with `Unsorted positions`).
+- Recounted merge INFO instead of copying the first record's `AC/AN`.
+- Oracle plumbing only: bcftools needs bgzip and a tabix index for `merge`, so
+  the reference implementation converts the normalized VCF with
+  `bcftools view -Oz` + `bcftools index -f -t` before merging.
+
+### Limitations
+
+- One chromosome slice; no QUAL/depth filtering, no sorting of concatenated
+  shards, no duplicate removal.
+- `vcf_merge` merges exactly two files with disjoint sample names.
+- `vcf_concat` requires identical sample lists and order.
+- Ploidy and phasing are preserved per genotype; no phasing merge is attempted.
+- Symbolic and structural alleles are passed through untouched.
