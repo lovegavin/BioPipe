@@ -70,11 +70,11 @@ Exported bytes are identical across platforms:
 
 Command: `pytest -q` on the 5.0.0 tree.
 
-- 3,499 passed
-- 5 failed
-- 223 skipped
-- 51 warnings
-- 1,980.27 s
+- Default environment (NumPy 2.5.4): 3,499 passed, 5 failed, 223 skipped,
+  51 warnings, 1,980.27 s.
+- Final run in the dedicated NumPy 2.1.3 environment: **3,504 passed,
+  223 skipped, 0 failed**, 43 warnings, 2,338.58 s (39:00). This is the
+  release-gating result.
 
 The five failures are environment drift, not library behaviour: the shared
 environment carries NumPy 2.5.4 while Numba 0.61 requires NumPy ≤ 2.1, so the

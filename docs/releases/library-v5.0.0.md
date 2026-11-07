@@ -96,9 +96,10 @@ repository `LICENSE` apply to them.
 - The Windows bundle must be produced and verified on Windows; the Linux
   runner cannot cross-build it.
 - The default test environment pins NumPy 2.5.4 while numba 0.61.0 requires
-  NumPy <= 2.1. Five optional-analysis tests fail by import error there; they
-  pass in an isolated NumPy 2.1.3 venv (5 passed), so this is recorded as
-  environment drift, not a library regression.
+  NumPy <= 2.1. That combination fails five optional-analysis imports; in the
+  dedicated NumPy 2.1.3 environment the full suite is 3,504 passed / 223
+  skipped / 0 failed, so this is a host constraint rather than a library
+  regression.
 - Installer verification exercises dependency readiness with synthetic
   adapters. Real external tools and databases are covered by the
   three-platform route evidence, not by the bundle installer test.
@@ -112,3 +113,5 @@ repository `LICENSE` apply to them.
   domain.
 - Release verification: application unchanged after install, frozen route
   parameters preserved, idempotent install and worker streaming checks pass.
+- Full test suite (release-gating): 3,504 passed, 223 skipped, 0 failed in
+  2,338.58 s on Studio 3.0.2 with SDK 3.7.0 and NumPy 2.1.3.
