@@ -101,6 +101,23 @@ def test_static_docs_search_lazy_sections_and_validation(tmp_path, monkeypatch):
     assert not (source_dir.parent / 'escape.md').exists()
 
 
+def test_documentation_loads_from_deep_install_without_importing_operator(tmp_path, monkeypatch):
+    from biopipe.bytecode import io_path
+    from biopipe.operator_docs import document_bytes
+    from types import SimpleNamespace
+    source, markdown = extension(tmp_path, unsafe=True)
+    descriptor = compile_declaration(source_declarations(source, 'answer')[0], tmp_path)
+    deep = tmp_path / 'installed'
+    while len(str(deep)) < 280:
+        deep /= 'documentation' * 3
+    io_path(deep).mkdir(parents=True)
+    io_path(deep / source.name).write_bytes(source.read_bytes())
+    io_path(deep / markdown.name).write_bytes(markdown.read_bytes())
+    monkeypatch.setattr('biopipe.library_location.source_root', lambda: deep)
+    manager = SimpleNamespace(directory=tmp_path / 'new-profile')
+    assert document_bytes(manager, {}, descriptor) == markdown.read_bytes()
+
+
 def test_documented_wheel_checks_integrity_and_only_docs_are_nonexecuting(tmp_path):
     path, markdown = extension(tmp_path)
     first = single_file_wheel(path, tmp_path / 'first')
