@@ -45,6 +45,11 @@ class FallbackFinder:
     def find_spec(self, fullname, target=None):
         spec = self.ordinary.find_spec(fullname, target) if self.ordinary else None
         if spec is not None and spec.loader is not None:
+            # File discovery may honor Windows long-path policy while the DLL
+            # loader still rejects the same unprefixed path (notably Python 3.11).
+            if (isinstance(spec.loader, machinery.ExtensionFileLoader)
+                    and spec.origin and len(os.path.abspath(spec.origin)) >= 260):
+                return self.native.find_spec(fullname, target) or spec
             return spec
         # A long __init__.py can look like a namespace package to the ordinary
         # finder. Prefer its actual implementation when the native alias sees it.
