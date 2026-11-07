@@ -1,0 +1,83 @@
+{
+  "format": "biopipe.task-parameters",
+  "schema_version": 1,
+  "params": {},
+  "sources": {
+    "query": {},
+    "reference": {}
+  },
+  "steps": [
+    {
+      "name": "genome_alignment_stats",
+      "inputs": [
+        "query",
+        "reference"
+      ],
+      "params": {
+        "preset": "asm5",
+        "min_block": 1000,
+        "output": "stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "stats"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "genome_alignment_stats"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "genome_synteny_blocks",
+      "inputs": [
+        "query",
+        "reference"
+      ],
+      "params": {
+        "preset": "asm5",
+        "min_block": 1000,
+        "output": "blocks"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "blocks"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "genome_synteny_blocks"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "genome_rearrangement_summary",
+      "inputs": [
+        "query",
+        "reference"
+      ],
+      "params": {
+        "preset": "asm5",
+        "min_block": 1000,
+        "output": "summary"
+      },
+      "context_params": {}
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "summary"
+      ],
+      "params": {
+        "format": "csv",
+        "filename": "genome_rearrangement_summary"
+      },
+      "context_params": {}
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "preset": {
+      "type": "string",
+      "enum": [
+        "asm5",
+        "asm10",
+        "asm20"
+      ],
+      "default": "asm5",
+      "description": "minimap2 alignment preset for closely related assemblies."
+    },
+    "min_block": {
+      "type": "integer",
+      "minimum": 100,
+      "default": 1000,
+      "description": "Minimum alignment or block length in base pairs."
+    },
+    "min_identity": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "default": 0.0,
+      "description": "Minimum per-alignment identity to keep."
+    },
+    "max_reference_gap": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 50000,
+      "description": "Largest unaligned reference gap bridged inside one synteny block."
+    },
+    "threads": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1800
+    },
+    "minimap2_path": {
+      "type": "string",
+      "default": "minimap2"
+    },
+    "query_sequence_dim": {
+      "type": "string",
+      "default": "sequence"
+    },
+    "query_position_dim": {
+      "type": "string",
+      "default": "position"
+    },
+    "reference_sequence_dim": {
+      "type": "string",
+      "default": "sequence"
+    },
+    "reference_position_dim": {
+      "type": "string",
+      "default": "position"
+    },
+    "output": {
+      "type": "string",
+      "default": "summary"
+    },
+    "statistic_dim": {
+      "type": "string",
+      "default": "statistic"
+    },
+    "value_dim": {
+      "type": "string",
+      "default": "value"
+    }
+  },
+  "additionalProperties": false
+}

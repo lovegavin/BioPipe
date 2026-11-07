@@ -1,0 +1,65 @@
+{
+  "name": "Bacterial genome comparison (K-12 versus O157:H7)",
+  "sources": {
+    "query": {
+      "path": "input/o157.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    },
+    "reference": {
+      "path": "input/k12.fasta",
+      "dims": [
+        "sequence",
+        "position"
+      ],
+      "labels": {},
+      "reader": "FastaReader"
+    }
+  },
+  "parameters_file": "parameters.json",
+  "steps": [
+    {
+      "name": "genome_alignment_stats",
+      "inputs": [
+        "query",
+        "reference"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "stats"
+      ]
+    },
+    {
+      "name": "genome_synteny_blocks",
+      "inputs": [
+        "query",
+        "reference"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "blocks"
+      ]
+    },
+    {
+      "name": "genome_rearrangement_summary",
+      "inputs": [
+        "query",
+        "reference"
+      ]
+    },
+    {
+      "name": "export_results",
+      "inputs": [
+        "summary"
+      ]
+    }
+  ]
+}

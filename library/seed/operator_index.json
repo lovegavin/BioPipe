@@ -2640,6 +2640,16 @@
     "status": "generated"
   },
   {
+    "id": "genome_alignment_stats",
+    "kind": "operator",
+    "title": "Genome alignment statistics",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Align two assemblies with minimap2 and summarise aligned bases, coverage and identity.",
+    "doc": "src/task/step/steps/genome_alignment_stats.GenomeAlignmentStatsStep.md",
+    "status": "generated"
+  },
+  {
     "id": "genome_cds_check",
     "kind": "operator",
     "title": "CDS translation check",
@@ -2707,6 +2717,26 @@
     "version": "1.0.0",
     "description": "Extract the upstream window of every gene or CDS, reverse complementing minus-strand features, and return an aligned sequence Form with FASTA-ready info.sequences.",
     "doc": "src/task/step/steps/genome_promoter_extract.GenomePromoterExtractStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "genome_rearrangement_summary",
+    "kind": "operator",
+    "title": "Genome rearrangement summary",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Summarise inversions, translocations and breakpoints from synteny blocks.",
+    "doc": "src/task/step/steps/genome_rearrangement_summary.GenomeRearrangementSummaryStep.md",
+    "status": "generated"
+  },
+  {
+    "id": "genome_synteny_blocks",
+    "kind": "operator",
+    "title": "Genome synteny blocks",
+    "category": "Genome",
+    "version": "1.0.0",
+    "description": "Chain minimap2 alignments into collinear synteny blocks between two assemblies.",
+    "doc": "src/task/step/steps/genome_synteny_blocks.GenomeSyntenyBlocksStep.md",
     "status": "generated"
   },
   {

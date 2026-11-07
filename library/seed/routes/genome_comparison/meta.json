@@ -1,0 +1,13 @@
+{
+  "title": "Genome comparison (K-12 vs O157:H7)",
+  "description": "Align two bacterial assemblies with minimap2, chain synteny blocks and summarise breakpoints, inversion runs and syntenic fraction.",
+  "tags": [
+    "genome",
+    "alignment",
+    "synteny",
+    "minimap2"
+  ],
+  "difficulty": "intermediate",
+  "runtime": "seconds",
+  "source": "NCBI RefSeq GCF_000005845.2, GCF_000008865.2"
+}
