@@ -2072,3 +2072,86 @@ semantics; the GT alleles agree.
 - `vcf_concat` requires identical sample lists and order.
 - Ploidy and phasing are preserved per genotype; no phasing merge is attempted.
 - Symbolic and structural alleles are passed through untouched.
+
+## Batch 26 — proteomics digest, peptide mass and coverage (`proteomics_qc`)
+
+Third-party-free peptide QC over a real bacterial proteome: trypsin digestion,
+monoisotopic masses at charge 2, and per-protein coverage.
+
+### Data
+
+| Input | Source | Size | sha256 |
+| --- | --- | --- | --- |
+| `protein.faa` | NCBI RefSeq `GCF_000005845.2` (E. coli K-12 MG1655) protein FASTA | 1,750,878 B, 4,300 proteins | `9b8d21ea8ea5180bd9a96d7895dba9b5789002f43c6f421f2a7cdd1b141aa129` |
+
+The proteome contains three selenocysteine (`U`) residues; the operators raise
+on unsupported residues instead of inventing a mass, and no peptide in this
+digest needed that path (`skipped_unsupported = 0`).
+
+### Route
+
+`proteomics_qc` (6 steps): `protein_digest` → export, `peptide_mass` → export,
+`peptide_coverage` → export. Trypsin, `missed_cleavages = 0`, peptide length
+6–50, charge 2. WSL step timings (s): 0.4901 / 0.1079 / 0.3325 / 0.0873 /
+0.0541 / 0.0058, `total_elapsed 1.0777`.
+
+### Results
+
+| Metric | Value |
+| --- | --- |
+| Proteins | 4,300 |
+| Peptides (length 6–50) | 72,399 |
+| Unsupported-residue peptides skipped | 0 |
+| Mass range at charge 2 (Da) | 474.2438 – 5,948.0255 |
+| Proteins with at least one peptide | 4,289 |
+| Mean protein coverage | 0.8152563387729529 |
+
+Exports: `protein_digest.csv` 4,681,593 B, `peptide_mass.csv` 4,041,263 B,
+`peptide_coverage.csv` 205,464 B.
+
+### Oracles
+
+| Oracle | Scope | Result |
+| --- | --- | --- |
+| pyteomics `parser.xcleave(seq, "[KR](?!P)")` + `mass.calculate_mass` | peptide set and masses | 72,399 vs 72,399, no one-sided peptide, max abs mass difference **3.64e-12** |
+| EMBOSS `pepdigest` 6.6.0, `-menu 1 -mono Y -unfavoured Y` | cut sites and masses | 135,636 fragments; every fragment missing from the operator set is explained by a `K/R|P` cut (0 unexplained), 0 unexplained merges, max abs mass difference **6.22e-4** (EMBOSS prints three decimals) |
+| EMBOSS `pepdigest` default mode | self-consistency | 88,397 fragments tile the unfavoured fragments with 0 violations |
+
+EMBOSS documents two conventions that differ from the standard trypsin rule
+used by this operator and by pyteomics: `-unfavoured Y` cuts after every `K`/`R`
+including `K/R|P`, while the default mode skips `K/R` followed by `K`, `R`, `I`,
+`F`, `L` or `P`. This proteome has 5,767 `K/R|P` sites, which is exactly why
+the unfavoured fragment set is larger; the oracle therefore checks that each
+difference is such a split rather than a disagreement about peptide boundaries.
+Raw numbers: `workdir/b26_oracle.json`, `passed: true`.
+
+### Three platforms
+
+| Platform | Python | `total_elapsed` (s) | protein_digest.csv | peptide_mass.csv | peptide_coverage.csv |
+| --- | --- | --- | --- | --- | --- |
+| WSL | 3.12 | 1.0777 | `0941b31d…` | `dfa7e883…` | `66a83ce6…` |
+| srv | 3.11 | 2.2774 | `0941b31d…` | `dfa7e883…` | `66a83ce6…` |
+| Windows | 3.12 | 1.3526 | `0941b31d…` | `dfa7e883…` | `66a83ce6…` |
+
+The three CSV exports are byte-identical across platforms (4,681,593 /
+4,041,263 / 205,464 B). Registry after the batch: **801 operators / 106
+readers / 7 packages / 50 routes, errors 0** (WSL and Windows agree).
+
+### Fixes
+
+- Declared `field_dim` in `peptide_mass.parameters.json`; the input contract
+  referenced it, and the registry rejected the operator with
+  `Undeclared contract parameters: ['field_dim']`.
+- Removed the required `info.missing_code` entry from the two input contracts;
+  the runtime refused the route with
+  `peptide_mass input 1 (peptides) contract: 缺少 info.missing_code`.
+- Synced the editable provider source directory before `plugin refresh`;
+  otherwise the runner raised `Implementation code hash mismatch`.
+
+### Limitations
+
+- Standard trypsin semantics only in the operator (no cut before proline);
+  EMBOSS's KRIFLP heuristic is documented as an oracle convention difference.
+- Peptides outside 6–50 residues are filtered before mass and coverage.
+- Coverage is merged span overlap, not per-residue spectral evidence.
+- Charges 1–4; residues outside the 20 standard plus `U`/`O` are rejected.
