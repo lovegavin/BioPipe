@@ -43,6 +43,7 @@ def main():
     copy(args.desktop / 'Operon Studio.exe', 'Operon Studio.exe')
     if not args.lite:
         shutil.copytree(io_path(args.runtime), destination / 'runtime/python')
+        copy(root / 'scripts/bundled_paths.pth', 'runtime/python/Lib/site-packages/00_operon_paths.pth')
         bootstrapper = destination / 'runtime/MicrosoftEdgeWebview2Setup.exe'
         url = 'https://go.microsoft.com/fwlink/p/?LinkId=2124703'
         if args.webview_bootstrapper:

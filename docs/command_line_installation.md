@@ -52,6 +52,9 @@ A failed/cancelled graphical
 installation unlocks the directory field and **Change** button; edit the location
 and retry in the same window. Its disabled action button visibly says **Installing**
 during work. No automatic administrator elevation or system-Python changes occur.
+The private Windows runtime uses extended-length import aliases so a nested
+installation can load native wheels without changing the machine's long-path
+policy. Dependency workers use the same path support with `.pth` execution disabled.
 
 ## Linux server
 

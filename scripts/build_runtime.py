@@ -54,6 +54,7 @@ def build_runtime(source, destination, root, *, wheelhouse=None, offline=False, 
         raise ValueError('The source interpreter must be clean: ' + ', '.join(sorted(set(installed) - allowed)))
     # This copy is now managed by BioPipe's release builder, not the uv store.
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', 'EXTERNALLY-MANAGED'))
+    shutil.copy2(root / 'scripts/bundled_paths.pth', destination / 'Lib/site-packages/00_operon_paths.pth')
     # python-build-standalone's bootstrap pip can retain a direct_url pointing
     # at its CI build directory. Keep the archive hash, not a dead file URL.
     bootstrap_archives = []

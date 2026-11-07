@@ -18,6 +18,15 @@ def main():
     config, module, *arguments = sys.argv[1:]
     paths = json.loads(Path(config).read_text(encoding='utf-8'))['paths']
     sys.path[:] = list(dict.fromkeys([*paths, *sys.path]))
+    if os.name == 'nt':
+        # -S deliberately skips the private runtime's .pth startup hook. Keep
+        # dependency imports long-path capable without executing any .pth code.
+        def native(path):
+            value = os.path.abspath(path)
+            if value.startswith('\\\\?\\'):
+                return value
+            return '\\\\?\\UNC\\' + value[2:] if value.startswith('\\\\') else '\\\\?\\' + value
+        sys.path[:] = [native(path) for path in sys.path]
     if module == 'pip' and importlib.util.find_spec('pip') is None:
         # uv and other environment creators can omit pip. Run CPython's bundled
         # installer wheel directly, as ensurepip itself does, without installing
